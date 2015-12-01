@@ -1,3 +1,7 @@
+ext {
+	frameworkVersion = '1.0.0-SNAPSHOT'
+}
+
 allprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
@@ -5,8 +9,8 @@ allprojects {
 
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
-	group = 'dk.nikolajbrinch'
-	version = '1.0.0-SNAPSHOT'
+	group = 'org.diylc'
+	version = '4.0.0-SNAPSHOT'
 
 	compileJava.options.debug = true
 	compileGroovy.options.debug = true
@@ -19,6 +23,11 @@ allprojects {
     	maven { url "http://bits.netbeans.org/maven2/" }
     }
 
+	dependencies {
+		testCompile(group: 'junit', name: 'junit', version: '4.+')
+		testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4')
+	}
+	
     task sourcesJar(type: Jar, dependsOn:classes) {
 		classifier = 'sources'
 		from sourceSets.main.allSource
@@ -33,4 +42,28 @@ allprojects {
 		archives sourcesJar
 		archives javadocJar
 	}
+}
+
+project(':diylc-core') {
+    dependencies {
+        compile project(':app-framework')
+    }
+}
+
+project(':diylc-library') {
+    dependencies {
+        compile project(':diylc-core')
+    }
+}
+
+project(':swing-framework') {
+    dependencies {
+        compile project(':app-framework')
+    }
+}
+
+project(':diylc-swing') {
+    dependencies {
+        compile project(':diylc-library'), project (':swing-framework')
+    }
 }
