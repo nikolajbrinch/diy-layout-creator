@@ -1,0 +1,169 @@
+01:37:37,915 DEBUG [main] DIYLCStarter - Java version: 1.8.0_60-b27 by Oracle Corporation
+01:37:37,916 DEBUG [main] DIYLCStarter - OS: Mac OS X 10.11.1
+01:37:37,916  INFO [main] DIYLCStarter - Starting DIYLC with working directory /Users/neko/dev/projects/github/diy-layout-creator/diylc-swing
+01:37:38,318  INFO [main] ConfigurationManager - Initializing configuration
+01:37:38,436  INFO [main] Presenter - installPlugin(ToolBox)
+01:37:38,447  INFO [main] Presenter - Loading component types.
+01:37:38,528 DEBUG [main] ComponentProcessor - Loading "Breadboard"
+01:37:38,574 DEBUG [main] ComponentProcessor - Loading "Potentiometer (panel mount)"
+01:37:38,576 DEBUG [main] ComponentProcessor - Loading "Ground Fill"
+01:37:38,577 DEBUG [main] ComponentProcessor - Loading "9V Battery Snap"
+01:37:38,578 DEBUG [main] ComponentProcessor - Loading "Diode (plastic)"
+01:37:38,579 DEBUG [main] ComponentProcessor - Loading "Mini Toggle Switch"
+01:37:38,580 DEBUG [main] ComponentProcessor - Loading "Vero Board"
+01:37:38,581 DEBUG [main] ComponentProcessor - Loading "Lever Switch"
+01:37:38,585 DEBUG [main] ComponentProcessor - Loading "LED"
+01:37:38,586 DEBUG [main] ComponentProcessor - Loading "Film Capacitor (radial)"
+01:37:38,587 DEBUG [main] ComponentProcessor - Loading "Label"
+01:37:39,479 DEBUG [main] ComponentProcessor - Loading "Trimmer Potentiometer"
+01:37:39,481 DEBUG [main] ComponentProcessor - Loading "Capacitor (schematic symbol)"
+01:37:39,482 DEBUG [main] ComponentProcessor - Loading "Marshall Style Perf Board"
+01:37:39,482 DEBUG [main] ComponentProcessor - Loading "Trace Cut"
+01:37:39,483 DEBUG [main] ComponentProcessor - Loading "Hookup Wire"
+01:37:39,484 DEBUG [main] ComponentProcessor - Loading "Mini Relay"
+01:37:39,485 DEBUG [main] ComponentProcessor - Loading "Blank Board"
+01:37:39,486 DEBUG [main] ComponentProcessor - Loading "IC Symbol"
+01:37:39,487 DEBUG [main] ComponentProcessor - Loading "Plastic DC Jack"
+01:37:39,488 DEBUG [main] ComponentProcessor - Loading "Jumper"
+01:37:39,488 DEBUG [main] ComponentProcessor - Loading "Diode Symbol"
+01:37:39,489 DEBUG [main] ComponentProcessor - Loading "Transistor (TO-1 package)"
+01:37:39,490 DEBUG [main] ComponentProcessor - Loading "DIP IC"
+01:37:39,490 DEBUG [main] ComponentProcessor - Loading "Zener diode (schematic symbol)"
+01:37:39,491 DEBUG [main] ComponentProcessor - Loading "Inductor (schematic symbol)"
+01:37:39,491 DEBUG [main] ComponentProcessor - Loading "Humbucker Pickup"
+01:37:39,492 DEBUG [main] ComponentProcessor - Loading "Diode (schematic symbol)"
+01:37:39,492 DEBUG [main] ComponentProcessor - Loading "Perf Board w/ Pads"
+01:37:39,493 DEBUG [main] ComponentProcessor - Loading "Eyelet"
+01:37:39,493 DEBUG [main] ComponentProcessor - Loading "Copper Trace"
+01:37:39,493 DEBUG [main] ComponentProcessor - Loading "JFET Symbol"
+01:37:39,495 DEBUG [main] ComponentProcessor - Loading "Triode Symbol"
+01:37:39,503 DEBUG [main] ComponentProcessor - Loading "Electrolytic Capacitor (axial)"
+01:37:39,503 DEBUG [main] ComponentProcessor - Loading "Eyelet Board"
+01:37:39,504 DEBUG [main] ComponentProcessor - Loading "Closed 1/4" Jack"
+01:37:39,504 DEBUG [main] ComponentProcessor - Loading "LED (schematic symbol)"
+01:37:39,505 DEBUG [main] ComponentProcessor - Loading "Transistor (TO-92 package)"
+01:37:39,506 DEBUG [main] ComponentProcessor - Loading "Strat Single Coil Pickup"
+01:37:39,506 DEBUG [main] ComponentProcessor - Loading "Cliff 1/4" Jack"
+01:37:39,506 DEBUG [main] ComponentProcessor - Loading "Dot"
+01:37:39,507 DEBUG [main] ComponentProcessor - Loading "Pentode Symbol"
+01:37:39,507 DEBUG [main] ComponentProcessor - Loading "Polygon"
+01:37:39,508 DEBUG [main] ComponentProcessor - Loading "BJT Symbol"
+01:37:39,508 DEBUG [main] ComponentProcessor - Loading "Rectangle"
+01:37:39,508 DEBUG [main] ComponentProcessor - Loading "Electrolytic Capacitor"
+01:37:39,509 DEBUG [main] ComponentProcessor - Loading "Ellipse"
+01:37:39,510 DEBUG [main] ComponentProcessor - Loading "Film Capacitor (axial)"
+01:37:39,510 DEBUG [main] ComponentProcessor - Loading "Solder Pad"
+01:37:39,510 DEBUG [main] ComponentProcessor - Loading "PCB Text"
+01:37:39,511 DEBUG [main] ComponentProcessor - Loading "Schottky diode (schematic symbol)"
+01:37:39,512 DEBUG [main] ComponentProcessor - Loading "MOSFET Symbol"
+01:37:39,512 DEBUG [main] ComponentProcessor - Loading "Resistor"
+01:37:39,513 DEBUG [main] ComponentProcessor - Loading "Resistor (schematic symbol)"
+01:37:39,514 DEBUG [main] ComponentProcessor - Loading "Line"
+01:37:39,514 DEBUG [main] ComponentProcessor - Loading "Tube Socket"
+01:37:39,516 DEBUG [main] ComponentProcessor - Loading "Image"
+01:37:39,517 DEBUG [main] ComponentProcessor - Loading "TriPad Board"
+01:37:39,518 DEBUG [main] ComponentProcessor - Loading "Curved Trace"
+01:37:39,518 DEBUG [main] ComponentProcessor - Loading "Ceramic Capacitor (radial)"
+01:37:39,519 DEBUG [main] ComponentProcessor - Loading "Transistor (TO-3 package)"
+01:37:39,524 DEBUG [main] ComponentProcessor - Loading "SIP IC"
+01:37:39,524 DEBUG [main] ComponentProcessor - Loading "Transistor (TO-220 package)"
+01:37:39,525 DEBUG [main] ComponentProcessor - Loading "Ground Symbol"
+01:37:39,683  INFO [main] MainFrame - injectGUIComponent(org.diylc.swing.plugins.toolbox.ComponentTabbedPane, 1)
+01:37:39,747  INFO [main] Presenter - installPlugin(FileMenuPlugin)
+01:37:39,755  INFO [main] MainFrame - injectMenuAction(New, File)
+01:37:39,774  INFO [main] MainFrame - injectMenuAction(Open, File)
+01:37:39,778  INFO [main] MainFrame - injectMenuAction(Import, File)
+01:37:39,779  INFO [main] MainFrame - injectMenuAction(Save, File)
+01:37:39,780  INFO [main] MainFrame - injectMenuAction(Save As, File)
+01:37:39,782  INFO [main] MainFrame - injectMenuAction(Separator, File)
+01:37:39,784  INFO [main] MainFrame - injectMenuAction(Export to PDF, File)
+01:37:39,786  INFO [main] MainFrame - injectMenuAction(Export to PNG, File)
+01:37:39,787  INFO [main] MainFrame - injectMenuAction(Print..., File)
+01:37:39,789  INFO [main] MainFrame - injectSubmenu(Trace Mask, icon, File)
+01:37:39,789  INFO [main] MainFrame - injectMenuAction(Export to PDF, Trace Mask)
+01:37:39,789  INFO [main] MainFrame - injectMenuAction(Export to PNG, Trace Mask)
+01:37:39,790  INFO [main] MainFrame - injectMenuAction(Print..., Trace Mask)
+01:37:39,791  INFO [main] MainFrame - injectMenuAction(Create B.O.M., File)
+01:37:39,791  INFO [main] MainFrame - injectMenuAction(Separator, File)
+01:37:39,792  INFO [main] MainFrame - injectMenuAction(Exit, File)
+01:37:39,795 ERROR [main] IconLoader - Couldn't find file: null
+01:37:39,795 ERROR [main] IconLoader - Couldn't find file: null
+01:37:39,798  INFO [main] Presenter - installPlugin(EditMenuPlugin)
+01:37:39,798  INFO [main] MainFrame - injectMenuAction(Undo, Edit)
+01:37:39,799  INFO [main] MainFrame - injectMenuAction(Redo, Edit)
+01:37:39,799  INFO [main] MainFrame - injectMenuAction(Separator, Edit)
+01:37:39,800  INFO [main] MainFrame - injectMenuAction(Cut, Edit)
+01:37:39,801  INFO [main] MainFrame - injectMenuAction(Copy, Edit)
+01:37:39,802  INFO [main] MainFrame - injectMenuAction(Paste, Edit)
+01:37:39,803  INFO [main] MainFrame - injectMenuAction(Separator, Edit)
+01:37:39,804  INFO [main] MainFrame - injectMenuAction(Select All, Edit)
+01:37:39,805  INFO [main] MainFrame - injectMenuAction(Edit Selection, Edit)
+01:37:39,806  INFO [main] MainFrame - injectMenuAction(Delete Selection, Edit)
+01:37:39,807  INFO [main] MainFrame - injectMenuAction(Rotate Clockwise, Edit)
+01:37:39,808  INFO [main] MainFrame - injectMenuAction(Rotate Counterclockwise, Edit)
+01:37:39,810  INFO [main] MainFrame - injectMenuAction(Send Backward, Edit)
+01:37:39,811  INFO [main] MainFrame - injectMenuAction(Bring Forward, Edit)
+01:37:39,812  INFO [main] MainFrame - injectMenuAction(Group Selection, Edit)
+01:37:39,813  INFO [main] MainFrame - injectMenuAction(Ungroup Selection, Edit)
+01:37:39,813  INFO [main] MainFrame - injectMenuAction(Separator, Edit)
+01:37:39,814  INFO [main] MainFrame - injectMenuAction(Save as Template, Edit)
+01:37:39,815  INFO [main] MainFrame - injectSubmenu(Renumber Selection, icon, Edit)
+01:37:39,816  INFO [main] MainFrame - injectMenuAction(X Axis First, Renumber Selection)
+01:37:39,816  INFO [main] MainFrame - injectMenuAction(Y Axis First, Renumber Selection)
+01:37:39,817  INFO [main] MainFrame - injectSubmenu(Expand Selection, icon, Edit)
+01:37:39,818  INFO [main] MainFrame - injectMenuAction(All Connected, Expand Selection)
+01:37:39,818  INFO [main] MainFrame - injectMenuAction(Immediate Only, Expand Selection)
+01:37:39,819  INFO [main] MainFrame - injectMenuAction(Same Type Only, Expand Selection)
+01:37:39,819  INFO [main] MainFrame - injectMenuAction(Separator, Edit)
+01:37:39,820  INFO [main] MainFrame - injectMenuAction(Edit Project, Edit)
+01:37:39,846  INFO [main] Presenter - installPlugin(ConfigPlugin)
+01:37:39,847  INFO [main] MainFrame - injectMenuAction(Anti-Aliasing, Config)
+01:37:39,849  INFO [main] MainFrame - injectMenuAction(Auto-Create Pads, Config)
+01:37:39,849  INFO [main] MainFrame - injectMenuAction(Auto-Edit Mode, Config)
+01:37:39,850  INFO [main] MainFrame - injectMenuAction(Continuous Creation, Config)
+01:37:39,850  INFO [main] MainFrame - injectMenuAction(Export Grid, Config)
+01:37:39,850  INFO [main] MainFrame - injectMenuAction(Hi-Quality Rendering, Config)
+01:37:39,850  INFO [main] MainFrame - injectMenuAction(Mouse Wheel Zoom, Config)
+01:37:39,851  INFO [main] MainFrame - injectMenuAction(Outline Mode, Config)
+01:37:39,851  INFO [main] MainFrame - injectMenuAction(Snap to Grid, Config)
+01:37:39,851  INFO [main] MainFrame - injectMenuAction(Sticky Points, Config)
+01:37:39,853  INFO [main] MainFrame - injectSubmenu(Chassis, icon, Layers)
+01:37:39,853  INFO [main] MainFrame - injectMenuAction(Lock, Chassis)
+01:37:39,856  INFO [main] MainFrame - injectMenuAction(Select All, Chassis)
+01:37:39,856  INFO [main] MainFrame - injectSubmenu(Board, icon, Layers)
+01:37:39,856  INFO [main] MainFrame - injectMenuAction(Lock, Board)
+01:37:39,856  INFO [main] MainFrame - injectMenuAction(Select All, Board)
+01:37:39,857  INFO [main] MainFrame - injectSubmenu(Trace, icon, Layers)
+01:37:39,857  INFO [main] MainFrame - injectMenuAction(Lock, Trace)
+01:37:39,857  INFO [main] MainFrame - injectMenuAction(Select All, Trace)
+01:37:39,857  INFO [main] MainFrame - injectSubmenu(Component, icon, Layers)
+01:37:39,858  INFO [main] MainFrame - injectMenuAction(Lock, Component)
+01:37:39,858  INFO [main] MainFrame - injectMenuAction(Select All, Component)
+01:37:39,858  INFO [main] MainFrame - injectSubmenu(Text, icon, Layers)
+01:37:39,859  INFO [main] MainFrame - injectMenuAction(Lock, Text)
+01:37:39,859  INFO [main] MainFrame - injectMenuAction(Select All, Text)
+01:37:39,859  INFO [main] Presenter - installPlugin(LayersMenuPlugin)
+01:37:39,863  INFO [main] MainFrame - injectMenuAction(User Manual, Help)
+01:37:39,864  INFO [main] MainFrame - injectMenuAction(FAQ, Help)
+01:37:39,865  INFO [main] MainFrame - injectMenuAction(Component API, Help)
+01:37:39,866  INFO [main] MainFrame - injectMenuAction(Plugin API, Help)
+01:37:39,868  INFO [main] MainFrame - injectMenuAction(Submit a Bug, Help)
+01:37:39,868  INFO [main] MainFrame - injectMenuAction(Separator, Help)
+01:37:39,869  INFO [main] MainFrame - injectMenuAction(Donate, Help)
+01:37:39,871  INFO [main] MainFrame - injectMenuAction(About, Help)
+01:37:39,872  INFO [main] Presenter - installPlugin(HelpMenuPlugin)
+01:37:39,875  INFO [main] MainFrame - injectGUIComponent(org.diylc.swing.plugins.statusbar.StatusBar, 3)
+01:37:39,877  INFO [main] Presenter - installPlugin(StatusBar)
+01:37:39,920  INFO [SwingWorker-pool-1-thread-1] UpdateChecker - Trying to download file: http://www.diy-fever.com/update.xml
+01:37:39,923  INFO [main] Presenter - installPlugin(CanvasPlugin)
+01:37:39,970 ERROR [main] IconLoader - Couldn't find file: null
+01:37:39,972  INFO [main] MainFrame - injectGUIComponent(org.diylc.swingframework.ruler.RulerScrollPane, 0)
+01:37:39,984  INFO [main] Presenter - installPlugin(FramePlugin)
+01:37:39,987  INFO [main] Presenter - installPlugin(AutoSavePlugin)
+01:37:39,988  INFO [main] Presenter - createNewFile()
+01:37:39,988  INFO [AWT-EventQueue-0] ConfigurationManager - Saving configuration
+01:37:39,992  INFO [main] Presenter - loadProject(New Project, true)
+01:37:40,188 DEBUG [main] TemplateDialog - Found 0 templates
+01:37:40,189  INFO [SwingWorker-pool-1-thread-1] UpdateChecker - 0 updates found
+01:37:40,212  INFO [main] DIYLCStarter - Injecting default properties.
+01:37:40,224 ERROR [AWT-EventQueue-0] IconLoader - Couldn't find file: null

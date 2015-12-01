@@ -1,0 +1,34 @@
+:dependencies
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+archives - Configuration for archive artifacts.
+No dependencies
+
+compile - Compile classpath for source set 'main'.
++--- org.codehaus.groovy:groovy-all:2.4.5
++--- log4j:log4j:1.2.17
++--- org.codehaus.jettison:jettison:1.3.7
++--- com.thoughtworks.xstream:xstream:1.4.8
++--- com.lowagie:itext:2.1.7
+\--- org.apache.poi:poi:3.13
+
+default - Configuration for default artifacts.
++--- org.codehaus.groovy:groovy-all:2.4.5
++--- log4j:log4j:1.2.17
++--- org.codehaus.jettison:jettison:1.3.7
++--- com.thoughtworks.xstream:xstream:1.4.8
++--- com.lowagie:itext:2.1.7
+\--- org.apache.poi:poi:3.13
+
+runtime - Runtime classpath for source set 'main'.
++--- org.codehaus.groovy:groovy-all:2.4.5
++--- log4j:log4j:1.2.17
++--- org.codehaus.jettison:jettison:1.3.7
++--- com.thoughtworks.xstream:xstream:1.4.8
++--- com.lowagie:itext:2.1.7
+\--- org.apache.poi:poi:3.13
+
+testCompile - Compile classpath for source set 'test'.
