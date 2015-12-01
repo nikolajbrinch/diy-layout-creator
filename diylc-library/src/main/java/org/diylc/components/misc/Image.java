@@ -32,7 +32,7 @@ public class Image extends AbstractTransparentComponent<Void> {
 
 	static {
 		String name = "image.png";
-		java.net.URL imgURL = Image.class.getResource(name);
+		java.net.URL imgURL = Image.class.getResource("/images/" + name);
 		if (imgURL != null) {
 			ICON = new ImageIcon(imgURL, name);
 		}

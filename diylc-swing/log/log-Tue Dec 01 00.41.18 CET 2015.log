@@ -1,0 +1,6 @@
+00:41:18,771 DEBUG [main] DIYLCStarter - Java version: 1.8.0_60-b27 by Oracle Corporation
+00:41:18,771 DEBUG [main] DIYLCStarter - OS: Mac OS X 10.11.1
+00:41:18,771  INFO [main] DIYLCStarter - Starting DIYLC with working directory /Users/neko/dev/projects/github/diy-layout-creator/diylc-swing
+00:41:19,096  INFO [main] ConfigurationManager - Initializing configuration
+00:41:19,199  INFO [main] Presenter - installPlugin(ToolBox)
+00:41:19,206  INFO [main] Presenter - Loading component types.

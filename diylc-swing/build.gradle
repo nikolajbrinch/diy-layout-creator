@@ -1,22 +1,19 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'application'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-group = 'dk.nikolajbrinch'
-version = '1.0.0-SNAPSHOT'
-
-repositories {
-	mavenCentral()
-}
+mainClassName = "org.diylc.DIYLCStarter"
+applicationDefaultJvmArgs = [
+	"-Xms512m",
+	"-Xmx1024m",
+	"-Dorg.diylc.scriptRun=true"
+]
 
 dependencies {
-	compile 'dk.nikolajbrinch:diylc-app:1.0.0-SNAPSHOT'
-	compile 'dk.nikolajbrinch:swing-framework:1.0.0-SNAPSHOT'
-//	compile 'org.codeartisans.thirdparties.swing:org-openide-util:8.6.2'
-	compile 'org.netbeans.api:org-openide-awt:RELEASE721'
-	compile 'org.netbeans.api:org-openide-util:RELEASE721'
-	compile 'org.netbeans.api:org-openide-util-lookup:RELEASE721'
-	
-	testCompile group: 'junit', name: 'junit', version: '4.+'
+	compile(group: 'dk.nikolajbrinch', name: 'diylc-core', version: '1.0.0-SNAPSHOT')
+	compile(group: 'dk.nikolajbrinch', name: 'diylc-library', version: '1.0.0-SNAPSHOT')
+	compile(group: 'dk.nikolajbrinch', name: 'swing-framework', version: '1.0.0-SNAPSHOT')
+	compile(group: 'org.netbeans.api', name: 'org-openide-awt', version: 'RELEASE81')
+	compile(group: 'org.netbeans.api', name: 'org-openide-util', version: 'RELEASE81')
+	compile(group: 'org.netbeans.api', name: 'org-openide-util-lookup', version: 'RELEASE81')
+
+	testCompile(group: 'junit', name: 'junit', version: '4.+')
 }

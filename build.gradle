@@ -1,0 +1,36 @@
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'maven'
+
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+	group = 'dk.nikolajbrinch'
+	version = '1.0.0-SNAPSHOT'
+
+	compileJava.options.debug = true
+	compileGroovy.options.debug = true
+	compileTestJava.options.debug = true
+	compileTestGroovy.options.debug = true
+
+	repositories {
+		mavenLocal()
+        mavenCentral()
+    	maven { url "http://bits.netbeans.org/maven2/" }
+    }
+
+    task sourcesJar(type: Jar, dependsOn:classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	task javadocJar(type: Jar, dependsOn:javadoc) {
+		classifier = 'javadoc'
+		from javadoc.destinationDir
+	}
+
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
+}

@@ -8,6 +8,8 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.log4j.Logger;
+
 /**
  * Loads image resources as Icons.
  * 
@@ -41,6 +43,8 @@ public enum IconLoader {
 			"briefcase_into.png"), RotateCW("rotate_cw.png"), RotateCCW(
 			"rotate_ccw.png"), ElementInto("element_into.png");
 
+	private static final Logger LOG = Logger.getLogger(IconLoader.class);
+
 	protected String name;
 
 	private IconLoader(String name) {
@@ -48,11 +52,11 @@ public enum IconLoader {
 	}
 
 	public Icon getIcon() {
-		java.net.URL imgURL = getClass().getResource(name);
+		java.net.URL imgURL = getClass().getResource("/icons/" + name);
 		if (imgURL != null) {
 			return new ImageIcon(imgURL, name);
 		} else {
-			System.err.println("Couldn't find file: " + name);
+			LOG.error("Couldn't find file: " + imgURL);
 			return null;
 		}
 	}
@@ -60,9 +64,9 @@ public enum IconLoader {
 	public Image getImage() {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(getClass().getResourceAsStream(name));
+			img = ImageIO.read(getClass().getResourceAsStream("/icons/" + name));
 		} catch (IOException e) {
-			System.err.println("Couldn't find file: " + name);
+			LOG.error("Couldn't find file: " + name);
 		}
 		return img;
 	}
