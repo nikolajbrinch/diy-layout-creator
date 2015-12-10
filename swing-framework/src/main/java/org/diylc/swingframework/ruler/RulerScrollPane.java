@@ -21,7 +21,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import org.diylc.appframework.images.IconLoader;
+import org.diylc.appframework.images.AppIconLoader;
 import org.diylc.swingframework.IDrawingProvider;
 
 
@@ -110,7 +110,7 @@ public class RulerScrollPane extends JScrollPane {
 		setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner(Ruler.HORIZONTAL));
 		setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, new Corner(Ruler.VERTICAL));
 
-		navigateButton = new JButton(IconLoader.MoveSmall.getIcon());
+		navigateButton = new JButton(AppIconLoader.MoveSmall.getIcon());
 		navigateButton.setToolTipText("Auto-scroll");
 		navigateButton.setFocusable(false);
 		navigateButton.setMargin(new Insets(0, 0, 0, 0));

@@ -12,11 +12,12 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AutoFitTable extends JTable {
 
-	private final static Logger LOG = Logger.getLogger(AutoFitTable.class);
+	private final static Logger LOG = LoggerFactory.getLogger(AutoFitTable.class);
 
 	private static final long serialVersionUID = 1L;
 

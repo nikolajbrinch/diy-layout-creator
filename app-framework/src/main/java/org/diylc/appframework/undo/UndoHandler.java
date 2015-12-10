@@ -8,8 +8,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
-import org.diylc.appframework.images.IconLoader;
+import org.diylc.appframework.images.AppIconLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -25,7 +26,7 @@ import org.diylc.appframework.images.IconLoader;
  */
 public class UndoHandler<T> {
 
-	private static final Logger LOG = Logger.getLogger(UndoHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UndoHandler.class);
 
 	public static final int MAX_STACK_SIZE = 32;
 
@@ -88,7 +89,7 @@ public class UndoHandler<T> {
 			putValue(Action.NAME, "Undo");
 			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z,
 					ActionEvent.CTRL_MASK));
-			putValue(AbstractAction.SMALL_ICON, IconLoader.Undo.getIcon());
+			putValue(AbstractAction.SMALL_ICON, AppIconLoader.Undo.getIcon());
 		}
 
 		@Override
@@ -114,7 +115,7 @@ public class UndoHandler<T> {
 			putValue(Action.NAME, "Redo");
 			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y,
 					ActionEvent.CTRL_MASK));
-			putValue(AbstractAction.SMALL_ICON, IconLoader.Redo.getIcon());
+			putValue(AbstractAction.SMALL_ICON, AppIconLoader.Redo.getIcon());
 		}
 
 		@Override

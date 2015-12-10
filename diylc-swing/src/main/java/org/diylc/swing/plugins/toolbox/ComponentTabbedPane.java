@@ -18,7 +18,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
@@ -28,6 +27,8 @@ import org.diylc.core.Template;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.presenter.ComponentProcessor;
 import org.diylc.presenter.Presenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tabbed pane that shows all available components categorized into tabs.
@@ -38,8 +39,7 @@ class ComponentTabbedPane extends JTabbedPane {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger
-			.getLogger(ComponentTabbedPane.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ComponentTabbedPane.class);
 
 	public static int SCROLL_STEP = Presenter.ICON_SIZE
 			+ ComponentButtonFactory.MARGIN * 2 + 2;

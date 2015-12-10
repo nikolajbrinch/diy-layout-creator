@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.diylc.images.IconLoader;
+import org.diylc.images.CoreIconLoader;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swingframework.export.TableExporter;
 import org.diylc.swingframework.objecttable.ObjectListTable;
@@ -84,7 +84,7 @@ public class BomDialog extends JDialog {
 		public SaveToExcelAction() {
 			super();
 			putValue(Action.NAME, "Save to Excel");
-			putValue(Action.SMALL_ICON, IconLoader.Excel.getIcon());
+			putValue(Action.SMALL_ICON, CoreIconLoader.Excel.getIcon());
 		}
 
 		@Override
@@ -110,7 +110,7 @@ public class BomDialog extends JDialog {
 		public SaveToCSVAction() {
 			super();
 			putValue(Action.NAME, "Save to CSV");
-			putValue(Action.SMALL_ICON, IconLoader.CSV.getIcon());
+			putValue(Action.SMALL_ICON, CoreIconLoader.CSV.getIcon());
 		}
 
 		@Override
@@ -135,7 +135,7 @@ public class BomDialog extends JDialog {
 		public SaveToHTMLAction() {
 			super();
 			putValue(Action.NAME, "Save to HTML");
-			putValue(Action.SMALL_ICON, IconLoader.HTML.getIcon());
+			putValue(Action.SMALL_ICON, CoreIconLoader.HTML.getIcon());
 		}
 
 		@Override
@@ -160,7 +160,7 @@ public class BomDialog extends JDialog {
 		public SaveToPNGAction() {
 			super();
 			putValue(Action.NAME, "Save to PNG");
-			putValue(Action.SMALL_ICON, IconLoader.Image.getIcon());
+			putValue(Action.SMALL_ICON, CoreIconLoader.Image.getIcon());
 		}
 
 		@Override

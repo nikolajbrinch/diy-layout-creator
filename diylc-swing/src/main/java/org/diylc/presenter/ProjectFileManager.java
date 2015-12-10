@@ -20,7 +20,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.Display;
 import org.diylc.common.EventType;
@@ -54,6 +53,8 @@ import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -66,7 +67,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class ProjectFileManager {
 
-	private static final Logger LOG = Logger.getLogger(ProjectFileManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProjectFileManager.class);
 
 	// private static final int V1_PIXELS_PER_INCH = 200;
 	private static final Size V1_GRID_SPACING = new Size(0.1d, SizeUnit.in);

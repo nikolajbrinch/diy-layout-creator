@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
@@ -53,6 +52,8 @@ import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -64,14 +65,14 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public class Presenter implements IPlugInPort {
 
-	private static final Logger LOG = Logger.getLogger(Presenter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Presenter.class);
 
 	public static VersionNumber CURRENT_VERSION = new VersionNumber(3, 0, 0);
 	// Read the latest version from the local update.xml file
 	static {
 		try {
 			BufferedInputStream in = new BufferedInputStream(
-					new FileInputStream("update.xml"));
+					new FileInputStream(Utils.getConfigFile("update.xml")));
 			XStream xStream = new XStream(new DomDriver());
 			List<Version> allVersions = (List<Version>) xStream.fromXML(in);
 			in.close();

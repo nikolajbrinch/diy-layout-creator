@@ -10,7 +10,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.diylc.appframework.images.IconLoader;
+import org.diylc.appframework.images.AppIconLoader;
 
 
 /**
@@ -43,7 +43,7 @@ public class DoubleTextField extends JTextField {
 	public DoubleTextField() {
 		super();
 		setLayout(new BorderLayout());
-		errorLabel = new JLabel(IconLoader.Warning.getIcon());
+		errorLabel = new JLabel(AppIconLoader.Warning.getIcon());
 		errorLabel.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
 		add(errorLabel, BorderLayout.EAST);
 		getDocument().addDocumentListener(new DocumentListener() {

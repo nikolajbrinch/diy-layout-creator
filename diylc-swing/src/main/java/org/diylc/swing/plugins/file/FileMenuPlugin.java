@@ -5,7 +5,7 @@ import java.util.EnumSet;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.images.IconLoader;
+import org.diylc.images.CoreIconLoader;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
 
@@ -46,7 +46,7 @@ public class FileMenuPlugin implements IPlugIn {
 		swingUI.injectMenuAction(actionFactory.createExportPNGAction(drawingProvider, swingUI),
 				FILE_TITLE);
 		swingUI.injectMenuAction(actionFactory.createPrintAction(drawingProvider), FILE_TITLE);
-		swingUI.injectSubmenu(TRACE_MASK_TITLE, IconLoader.TraceMask.getIcon(), FILE_TITLE);
+		swingUI.injectSubmenu(TRACE_MASK_TITLE, CoreIconLoader.TraceMask.getIcon(), FILE_TITLE);
 		swingUI.injectMenuAction(actionFactory.createExportPDFAction(traceMaskDrawingProvider,
 				swingUI), TRACE_MASK_TITLE);
 		swingUI.injectMenuAction(actionFactory.createExportPNGAction(traceMaskDrawingProvider,

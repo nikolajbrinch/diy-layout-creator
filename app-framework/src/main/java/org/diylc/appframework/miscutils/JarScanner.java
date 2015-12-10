@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class that provides JAR manipulation methods.
@@ -19,7 +20,7 @@ import org.apache.log4j.Logger;
  */
 public class JarScanner {
 
-	private static final Logger LOG = Logger.getLogger(JarScanner.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JarScanner.class);
 
 	private static JarScanner instance;
 
@@ -35,9 +36,6 @@ public class JarScanner {
 
 	/**
 	 * Scans jar file for classes and returns a list of class names.
-	 * 
-	 * @param jar
-	 * @return
 	 */
 	public List<String> extractClassNames(File jar) {
 		ArrayList<String> classes = new ArrayList<String>();
@@ -109,11 +107,6 @@ public class JarScanner {
 	/**
 	 * Loads all JAR files from the specifier folder and tries to find and load
 	 * classes from those JARs that implement specified interface.
-	 * 
-	 * @param folderName
-	 * @param packageName
-	 * @param baseInterface
-	 * @return
 	 */
 	public List<Class<?>> scanFolder(String folderName, Class<?> baseInterface) {
 		List<File> jars = getJarFiles(new File(folderName), true);

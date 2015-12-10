@@ -7,7 +7,6 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-import org.apache.log4j.BasicConfigurator;
 import org.diylc.swing.plugins.online.model.ProjectEntity;
 import org.diylc.swingframework.objecttable.IActionProcessor;
 import org.diylc.swingframework.objecttable.ObjectListTable;
@@ -19,8 +18,6 @@ public class TableTest {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		BasicConfigurator.configure();
-
 		List<ProjectEntity> projects = new ArrayList<ProjectEntity>();
 		projects.add(new ProjectEntity(1, "first", "some text", "bane", "none"));
 		projects.add(new ProjectEntity(2, "second", "anoter text", "bisera", "none"));

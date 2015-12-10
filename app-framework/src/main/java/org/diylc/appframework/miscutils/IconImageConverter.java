@@ -9,7 +9,8 @@ import java.awt.image.PixelGrabber;
 
 import javax.swing.ImageIcon;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -19,7 +20,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class IconImageConverter implements Converter {
 
-	private static final Logger LOG = Logger.getLogger(IconImageConverter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(IconImageConverter.class);
 
 	@Override
 	public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {

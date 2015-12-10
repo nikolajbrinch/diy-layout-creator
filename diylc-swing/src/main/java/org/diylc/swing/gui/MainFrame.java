@@ -2,7 +2,6 @@ package org.diylc.swing.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,8 +33,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
+import javax.swing.WindowConstants;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.BadPositionException;
 import org.diylc.common.EventType;
@@ -44,7 +43,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
-import org.diylc.images.IconLoader;
+import org.diylc.images.CoreIconLoader;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
@@ -59,10 +58,12 @@ import org.diylc.swing.plugins.layers.LayersMenuPlugin;
 import org.diylc.swing.plugins.statusbar.StatusBar;
 import org.diylc.swing.plugins.toolbox.ToolBox;
 import org.diylc.swingframework.ButtonDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainFrame extends JFrame implements ISwingUI {
 
-	private static final Logger LOG = Logger.getLogger(MainFrame.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -81,14 +82,20 @@ public class MainFrame extends JFrame implements ISwingUI {
 	private CanvasPlugin canvasPlugin;
 
 	public MainFrame() {
-		super("DIYLC 3");
+		super("DIYLC 4");
+		initComponent();
+	}
+	
+	private void initComponent() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		
 		setPreferredSize(new Dimension(800, 600));
 		createBasePanels();
 		menuMap = new HashMap<String, JMenu>();
 		buttonGroupMap = new HashMap<String, ButtonGroup>();
-		setIconImages(Arrays.asList(IconLoader.IconSmall.getImage(), IconLoader.IconMedium
-				.getImage(), IconLoader.IconLarge.getImage()));
+		setIconImages(Arrays.asList(CoreIconLoader.IconSmall.getImage(), CoreIconLoader.IconMedium
+				.getImage(), CoreIconLoader.IconLarge.getImage()));
 		DialogFactory.getInstance().initialize(this);
 
 		this.presenter = new Presenter(this);
@@ -150,6 +157,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 
 		setGlassPane(new CustomGlassPane());
 		// getGlassPane().setVisible(true);
+		setLocationRelativeTo(null);
 	}
 
 	public Presenter getPresenter() {

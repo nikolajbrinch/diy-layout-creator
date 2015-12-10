@@ -7,11 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MySqlDBManager {
 
-	private final static Logger LOG = Logger.getLogger(MySqlDBManager.class);
+	private final static Logger LOG = LoggerFactory.getLogger(MySqlDBManager.class);
 
 	protected Connection connection;
 	protected Statement statement;

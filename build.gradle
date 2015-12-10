@@ -1,34 +1,53 @@
 ext {
 	frameworkVersion = '1.0.0-SNAPSHOT'
+	mainClass = 'org.diylc.DIYLCStarter'
+	minMemory = '512M'
+	maxMemory = '2048M'
+	scriptRun = 'true'
 }
 
 allprojects {
-    apply plugin: 'java'
-    apply plugin: 'groovy'
-    apply plugin: 'maven'
+	apply plugin: 'java'
+	apply plugin: 'groovy'
+	apply plugin: 'maven'
 
-	sourceCompatibility = 1.7
-	targetCompatibility = 1.7
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 	group = 'org.diylc'
 	version = '4.0.0-SNAPSHOT'
 
-	compileJava.options.debug = true
-	compileGroovy.options.debug = true
-	compileTestJava.options.debug = true
-	compileTestGroovy.options.debug = true
+	compileJava {
+		options.debug = true
+		options.debugOptions.debugLevel = "source,lines,vars"
+	}
+	
+	compileGroovy {
+		options.debug = true
+		options.debugOptions.debugLevel = "source,lines,vars"
+	}
+
+	compileTestJava {	
+		options.debug = true
+		options.debugOptions.debugLevel = "source,lines,vars"
+	}
+
+	compileTestGroovy {
+		options.debug = true
+		options.debugOptions.debugLevel = "source,lines,vars"
+	}
 
 	repositories {
 		mavenLocal()
-        mavenCentral()
-    	maven { url "http://bits.netbeans.org/maven2/" }
-    }
+		mavenCentral()
+		maven { url "http://bits.netbeans.org/maven2/" }
+	}
 
 	dependencies {
 		testCompile(group: 'junit', name: 'junit', version: '4.+')
 		testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4')
 	}
-	
-    task sourcesJar(type: Jar, dependsOn:classes) {
+
+	task sourcesJar(type: Jar, dependsOn:classes) {
 		classifier = 'sources'
 		from sourceSets.main.allSource
 	}
@@ -44,26 +63,34 @@ allprojects {
 	}
 }
 
+if (JavaVersion.current().isJava8Compatible()) {
+	allprojects {
+		tasks.withType(Javadoc) {
+			options.addStringOption('Xdoclint:none', '-quiet')
+		}
+	}
+}
+
 project(':diylc-core') {
-    dependencies {
-        compile project(':app-framework')
-    }
+	dependencies { compile project(':app-framework') }
 }
 
 project(':diylc-library') {
-    dependencies {
-        compile project(':diylc-core')
-    }
+	dependencies { compile project(':diylc-core') }
 }
 
 project(':swing-framework') {
-    dependencies {
-        compile project(':app-framework')
-    }
+	dependencies { compile project(':app-framework') }
 }
 
 project(':diylc-swing') {
-    dependencies {
-        compile project(':diylc-library'), project (':swing-framework')
-    }
+	dependencies {
+		compile project(':diylc-library'), project (':swing-framework')
+	}
+}
+
+project(':diylc') {
+	dependencies {
+		compile project(':diylc-swing')
+	}
 }
