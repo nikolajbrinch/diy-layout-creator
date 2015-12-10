@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -23,7 +24,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public class ConfigurationManager {
 
-	private static final Logger LOG = Logger.getLogger(ConfigurationManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConfigurationManager.class);
 
 	private static ConfigurationManager instance;
 
@@ -59,7 +60,10 @@ public class ConfigurationManager {
 	@SuppressWarnings("unchecked")
 	private void initializeConfiguration() {
 		LOG.info("Initializing configuration");
-		File configFile = new File("config.xml");
+		
+		File configFile = Utils.getConfigFile("config.xml");
+		
+		
 		try {
 			FileInputStream in = new FileInputStream(configFile);
 			configuration = (Map<String, Object>) xStream.fromXML(in);
@@ -71,7 +75,7 @@ public class ConfigurationManager {
 
 	public void saveConfigration() {
 		LOG.info("Saving configuration");
-		File configFile = new File("config.xml");
+		File configFile = Utils.getConfigFile("config.xml");
 		try {
 			FileOutputStream out = new FileOutputStream(configFile);
 			xStream.toXML(configuration, out);

@@ -9,7 +9,7 @@ import javax.swing.SwingWorker;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.images.IconLoader;
+import org.diylc.images.CoreIconLoader;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.plugins.online.presenter.LibraryPresenter;
 import org.diylc.swing.plugins.online.view.LoginDialog;
@@ -75,7 +75,7 @@ public class OnlineManager implements IPlugIn {
 		public LibraryAction() {
 			super();
 			putValue(AbstractAction.NAME, "Browse Library");
-			putValue(AbstractAction.SMALL_ICON, IconLoader.Chest.getIcon());
+			putValue(AbstractAction.SMALL_ICON, CoreIconLoader.Chest.getIcon());
 		}
 
 		@Override
@@ -90,7 +90,7 @@ public class OnlineManager implements IPlugIn {
 		public LoginAction() {
 			super();
 			putValue(AbstractAction.NAME, "Log in");
-			putValue(AbstractAction.SMALL_ICON, IconLoader.IdCard.getIcon());
+			putValue(AbstractAction.SMALL_ICON, CoreIconLoader.IdCard.getIcon());
 		}
 
 		@Override
@@ -107,7 +107,7 @@ public class OnlineManager implements IPlugIn {
 		public CreateAccountAction() {
 			super();
 			putValue(AbstractAction.NAME, "Create New Account");
-			putValue(AbstractAction.SMALL_ICON, IconLoader.IdCardAdd.getIcon());
+			putValue(AbstractAction.SMALL_ICON, CoreIconLoader.IdCardAdd.getIcon());
 		}
 
 		@Override
@@ -124,7 +124,7 @@ public class OnlineManager implements IPlugIn {
 		public UploadAction() {
 			super();
 			putValue(AbstractAction.NAME, "Upload Project");
-			putValue(AbstractAction.SMALL_ICON, IconLoader.Upload.getIcon());
+			putValue(AbstractAction.SMALL_ICON, CoreIconLoader.Upload.getIcon());
 		}
 
 		@Override
@@ -141,7 +141,7 @@ public class OnlineManager implements IPlugIn {
 		public ManageProjectsAction() {
 			super();
 			putValue(AbstractAction.NAME, "Manage Projects");
-			putValue(AbstractAction.SMALL_ICON, IconLoader.Wrench.getIcon());
+			putValue(AbstractAction.SMALL_ICON, CoreIconLoader.Wrench.getIcon());
 		}
 
 		@Override

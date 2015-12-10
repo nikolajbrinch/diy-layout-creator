@@ -7,7 +7,8 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link TableModel} that parses object of type <code>T</code> based on the
@@ -22,7 +23,7 @@ import org.apache.log4j.Logger;
  */
 public class ObjectListTableModel<T> extends AbstractTableModel {
 
-	private static final Logger LOG = Logger.getLogger(ObjectListTableModel.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ObjectListTableModel.class);
 
 	private static final long serialVersionUID = 1L;
 

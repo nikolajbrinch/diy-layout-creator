@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.log4j.Logger;
 import org.diylc.common.ComponentType;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.CreationMethod;
@@ -23,6 +22,8 @@ import org.diylc.core.IPropertyValidator;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class with component processing methods.
@@ -31,7 +32,7 @@ import org.diylc.core.annotations.EditableProperty;
  */
 public class ComponentProcessor {
 
-	private static final Logger LOG = Logger.getLogger(ComponentProcessor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ComponentProcessor.class);
 
 	private static ComponentProcessor instance;
 

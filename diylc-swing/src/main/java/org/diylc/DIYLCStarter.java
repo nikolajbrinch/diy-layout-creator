@@ -1,20 +1,13 @@
 package org.diylc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
-import java.util.Properties;
-
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.PropertyInjector;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
-import org.diylc.swing.gui.TemplateDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main class that runs DIYLC.
@@ -26,7 +19,8 @@ import org.diylc.swing.gui.TemplateDialog;
  */
 public class DIYLCStarter {
 
-	private static final Logger LOG = Logger.getLogger(DIYLCStarter.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(DIYLCStarter.class);
 
 	private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
@@ -34,15 +28,6 @@ public class DIYLCStarter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		URL url = DIYLCStarter.class.getResource("log4j.properties");
-		Properties properties = new Properties();
-		try {
-			properties.load(url.openStream());
-			PropertyConfigurator.configure(properties);
-		} catch (Exception e) {
-			LOG.error("Could not initialize log4j configuration", e);
-		}
-
 		LOG.debug("Java version: " + System.getProperty("java.runtime.version")
 				+ " by " + System.getProperty("java.vm.vendor"));
 		LOG.debug("OS: " + System.getProperty("os.name") + " "
@@ -72,33 +57,43 @@ public class DIYLCStarter {
 			}
 		}
 
-		MainFrame mainFrame = new MainFrame();
-		mainFrame.setLocationRelativeTo(null);
-		mainFrame.setVisible(true);
-		if (args.length > 0) {
-			mainFrame.getPresenter().loadProjectFromFile(args[0]);
-		} else {
-			boolean showTemplates = ConfigurationManager.getInstance()
-					.readBoolean(TemplateDialog.SHOW_TEMPLATES_KEY, true);
-			if (showTemplates) {
-				TemplateDialog templateDialog = new TemplateDialog(mainFrame,
-						mainFrame.getPresenter());
-				if (!templateDialog.getFiles().isEmpty()) {
-					templateDialog.setVisible(true);
-				}
-			}
-		}
+		Thread.setDefaultUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler());
+		System.setProperty("sun.awt.exception.handler",
+				DefaultUncaughtExceptionHandler.class.getName());
 
-		properties = new Properties();
-		try {
-			LOG.info("Injecting default properties.");
-			File f = new File("config.properties");
-			if (f.exists()) {
-				properties.load(new FileInputStream(f));
-				PropertyInjector.injectProperties(properties);
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				MainFrame mainFrame = new MainFrame();
+				mainFrame.setVisible(true);
 			}
-		} catch (Exception e) {
-			LOG.error("Could not read config.properties file", e);
-		}
+		});
+
+		// if (args.length > 0) {
+		// mainFrame.getPresenter().loadProjectFromFile(args[0]);
+		// } else {
+		// boolean showTemplates = ConfigurationManager.getInstance()
+		// .readBoolean(TemplateDialog.SHOW_TEMPLATES_KEY, true);
+		// if (showTemplates) {
+		// TemplateDialog templateDialog = new TemplateDialog(mainFrame,
+		// mainFrame.getPresenter());
+		// if (!templateDialog.getFiles().isEmpty()) {
+		// templateDialog.setVisible(true);
+		// }
+		// }
+		// }
+
+		// properties = new Properties();
+		// try {
+		// LOG.info("Injecting default properties.");
+		// File f = new File("config.properties");
+		// if (f.exists()) {
+		// properties.load(new FileInputStream(f));
+		// PropertyInjector.injectProperties(properties);
+		// }
+		// } catch (Exception e) {
+		// LOG.error("Could not read config.properties file", e);
+		// }
 	}
 }

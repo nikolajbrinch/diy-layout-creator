@@ -4,18 +4,19 @@ import java.util.EnumSet;
 
 import javax.swing.SwingConstants;
 
-import org.apache.log4j.Logger;
 import org.diylc.common.BadPositionException;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.plugins.statusbar.StatusBar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ToolBox implements IPlugIn {
 	
-	private static final Logger LOG = Logger.getLogger(StatusBar.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StatusBar.class);
 	
 	private ISwingUI swingUI;
 	private IPlugInPort plugInPort;

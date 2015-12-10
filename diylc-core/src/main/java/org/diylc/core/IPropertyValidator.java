@@ -8,7 +8,6 @@ package org.diylc.core;
 public interface IPropertyValidator {
 
 	/**
-	 * @param value
 	 * @throws ValidationException
 	 *             if validation fails. Message will contain the reason.
 	 */

@@ -8,8 +8,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.Utils;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,7 +49,7 @@ public class LinkLabel extends JLabel {
 				try {
 					Utils.openURL(protocol + url);
 				} catch (Exception e1) {
-					Logger.getLogger(LinkLabel.class).error("Could not launch default browser",
+					LoggerFactory.getLogger(LinkLabel.class).error("Could not launch default browser",
 							e1);
 				}
 			}

@@ -26,7 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.BadPositionException;
@@ -35,18 +34,20 @@ import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
-import org.diylc.images.IconLoader;
+import org.diylc.images.CoreIconLoader;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swingframework.MemoryBar;
 import org.diylc.swingframework.miscutils.PercentageListCellRenderer;
 import org.diylc.swingframework.update.UpdateLabel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StatusBar extends JPanel implements IPlugIn {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(StatusBar.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StatusBar.class);
 
 	public static String UPDATE_URL = "http://www.diy-fever.com/update.xml";
 	private static final Format sizeFormat = new DecimalFormat("0.##");
@@ -124,7 +125,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
 	public JLabel getSizeLabel() {
 		if (sizeLabel == null) {
-			sizeLabel = new JLabel(IconLoader.Size.getIcon());
+			sizeLabel = new JLabel(CoreIconLoader.Size.getIcon());
 			sizeLabel.setFocusable(true);
 			sizeLabel.setToolTipText("Click to calculate selection size");
 			sizeLabel.addMouseListener(new MouseAdapter() {

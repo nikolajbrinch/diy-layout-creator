@@ -7,13 +7,14 @@ import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import org.apache.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.measures.AbstractMeasure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FieldEditorFactory {
 
-	private static final Logger LOG = Logger.getLogger(FieldEditorFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FieldEditorFactory.class);
 
 	public static Component createFieldEditor(PropertyWrapper property) {
 		if (property.getType().equals(String.class)) {

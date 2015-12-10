@@ -5,11 +5,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MemoryCleaner {
 
-	private static final Logger LOG = Logger.getLogger(MemoryCleaner.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MemoryCleaner.class);
 
 	public static void clean(Object obj) {
 		Class<?> clazz = obj.getClass();
@@ -18,7 +19,7 @@ public class MemoryCleaner {
 			Method disposeMethod = clazz.getMethod("dispose");
 			disposeMethod.invoke(obj);
 		} catch (Exception e) {
-			LOG.error(e);
+			LOG.error("Error cleaning out object " + obj.hashCode() + " of type " + clazz.getName(), e);
 		}
 		// If it's a collection loop over and dispose elements.
 		if (Collection.class.isAssignableFrom(clazz)) {
@@ -35,7 +36,7 @@ public class MemoryCleaner {
 					field.set(obj, null);
 					clean(childObj);
 				} catch (Exception e) {
-					LOG.error(e);
+					LOG.error("Error cleaning field " + field.getName() + " from type " + clazz.getName(), e);
 				}
 			}
 		}

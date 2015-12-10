@@ -3,17 +3,22 @@ package org.diylc.images;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads image resources as Icons.
  * 
  * @author Branislav Stojkovic
  */
-public enum IconLoader {
+public enum CoreIconLoader {
 
 	Delete("delete.png"), Add("add.png"), FolderOut("folder_out.png"), Garbage("garbage.png"), DiskBlue(
 			"disk_blue.png"), SaveAs("save_as.png"), Exit("exit.png"), DocumentPlainYellow(
@@ -33,18 +38,20 @@ public enum IconLoader {
 			"edit_component.png"), Size("size.png"), Front("front.png"), Back("back.png"), Pens(
 			"pens.png"), Sort("sort.png"), ElementsSelection("elements_selection.png");
 
+	private static final Logger LOG = LoggerFactory.getLogger(CoreIconLoader.class);
+
 	protected String name;
 
-	private IconLoader(String name) {
+	private CoreIconLoader(String name) {
 		this.name = name;
 	}
 
 	public Icon getIcon() {
-		java.net.URL imgURL = getClass().getResource(name);
+		URL imgURL = getClass().getResource("/icons/" + name);
 		if (imgURL != null) {
 			return new ImageIcon(imgURL, name);
 		} else {
-			System.err.println("Couldn't find file: " + name);
+			LOG.error("Couldn't find file: " + imgURL);
 			return null;
 		}
 	}
@@ -52,9 +59,19 @@ public enum IconLoader {
 	public Image getImage() {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(getClass().getResourceAsStream(name));
+			URL imgURL = getClass().getResource("/icons/" + name);
+			System.out.println(imgURL.toString());
+			InputStream imgStream = null;
+			try {
+				imgStream = imgURL.openStream();
+				img = ImageIO.read(imgStream);
+			} finally {
+				if (imgStream != null) {
+					imgStream.close();
+				}
+			}
 		} catch (IOException e) {
-			System.err.println("Couldn't find file: " + name);
+			LOG.error("Couldn't find file: " + name);
 		}
 		return img;
 	}

@@ -1,12 +1,3 @@
-apply plugin: 'application'
-
-mainClassName = "org.diylc.DIYLCStarter"
-applicationDefaultJvmArgs = [
-	"-Xms512m",
-	"-Xmx1024m",
-	"-Dorg.diylc.scriptRun=true"
-]
-
 dependencies {
 	compile(group: 'org.netbeans.api', name: 'org-openide-awt', version: 'RELEASE81')
 	compile(group: 'org.netbeans.api', name: 'org-openide-util', version: 'RELEASE81')

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
@@ -20,6 +19,8 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
 import org.diylc.core.measures.Size;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages component instantiation.
@@ -28,8 +29,7 @@ import org.diylc.core.measures.Size;
  */
 public class InstantiationManager {
 
-	private static final Logger LOG = Logger
-			.getLogger(InstantiationManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(InstantiationManager.class);
 
 	public static int MAX_RECENT_COMPONENTS = 16;
 

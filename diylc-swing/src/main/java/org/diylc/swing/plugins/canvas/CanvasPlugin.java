@@ -25,7 +25,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.BadPositionException;
@@ -45,10 +44,12 @@ import org.diylc.swing.plugins.edit.ComponentTransferable;
 import org.diylc.swing.plugins.file.ProjectDrawingProvider;
 import org.diylc.swingframework.ruler.IRulerListener;
 import org.diylc.swingframework.ruler.RulerScrollPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
-	private static final Logger LOG = Logger.getLogger(CanvasPlugin.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CanvasPlugin.class);
 
 	private RulerScrollPane scrollPane;
 	private CanvasPanel canvasPanel;

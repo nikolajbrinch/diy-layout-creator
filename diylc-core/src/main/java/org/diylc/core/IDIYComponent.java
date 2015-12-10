@@ -43,8 +43,6 @@ public interface IDIYComponent<T> extends Serializable {
 
 	/**
 	 * Updates component instance name.
-	 * 
-	 * @param name
 	 */
 	void setName(String name);
 
@@ -55,8 +53,6 @@ public interface IDIYComponent<T> extends Serializable {
 
 	/**
 	 * Updates component value.
-	 * 
-	 * @param value
 	 */
 	void setValue(T value);
 
@@ -68,28 +64,22 @@ public interface IDIYComponent<T> extends Serializable {
 	int getControlPointCount();
 
 	/**
-	 * @param index
 	 * @return control point at the specified index.
 	 */
 	Point getControlPoint(int index);
 
 	/**
 	 * Updates the control point at the specified index.
-	 * 
-	 * @param point
-	 * @param index
 	 */
 	void setControlPoint(Point point, int index);
 
 	/**
-	 * @param index
 	 * @return true, if the specified control point may stick to control points
 	 *         of other components.
 	 */
 	boolean isControlPointSticky(int index);
 
 	/**
-	 * @param index
 	 * @return true, if the specified control point may overlap with other
 	 *         control points <b>of the same component</b>. The other control
 	 *         point must be able to overlap too.
@@ -100,12 +90,6 @@ public interface IDIYComponent<T> extends Serializable {
 
 	/**
 	 * Draws the component onto the {@link Graphics2D}.
-	 * 
-	 * @param g2d
-	 * @param componentState
-	 * @param outlineMode
-	 * @param project
-	 * @param drawingObserver
 	 */
 	void draw(Graphics2D g2d, ComponentState componentState,
 			boolean outlineMode, Project project,
@@ -114,17 +98,11 @@ public interface IDIYComponent<T> extends Serializable {
 	/**
 	 * Draws icon representation of the component. This should not depend on
 	 * component state, i.e. it should be treated as a static method.
-	 * 
-	 * @param g2d
-	 * @param width
-	 * @param height
 	 */
 	void drawIcon(Graphics2D g2d, int width, int height);
 
 	/**
 	 * Clones the component.
-	 * 
-	 * @return
 	 */
 	IDIYComponent<T> clone() throws CloneNotSupportedException;
 
@@ -135,9 +113,6 @@ public interface IDIYComponent<T> extends Serializable {
 
 	/**
 	 * Checks if two components are equal.
-	 * 
-	 * @param other
-	 * @return
 	 */
 	boolean equalsTo(IDIYComponent<?> other);
 }

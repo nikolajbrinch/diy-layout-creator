@@ -1,0 +1,22 @@
+plugins {
+	id 'application'
+	id "edu.sc.seis.macAppBundle" version "2.1.3"
+}
+
+mainClassName = "${mainClass}"
+applicationDefaultJvmArgs = [
+	"-Xms${minMemory}",
+	"-Xmx${maxMemory}",
+	"-Dorg.diylc.scriptRun=${scriptRun}"
+]
+
+macAppBundle {
+	appName = 'DIYLC4'
+	jvmVersion = '1.7+'
+	mainClassName = "${mainClass}"
+	bundleJRE = false
+	javaProperties.put("apple.laf.useScreenMenuBar", "true")
+	javaProperties.put("org.diylc.scriptRun", "${scriptRun}")
+	javaExtras.put("-Xms${minMemory}", null)
+	javaExtras.put("-Xmx${maxMemory}", null)
+}

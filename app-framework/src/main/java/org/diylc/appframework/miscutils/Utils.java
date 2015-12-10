@@ -233,4 +233,16 @@ public class Utils {
 		}
 		return builder.toString();
 	}
+	
+	public static File getUserHome() {
+		return new File(System.getProperty("user.home"));
+	}
+	
+	public static File getConfigDirectory() {
+		return new File(getUserHome(), ".diylc");
+	}
+
+	public static File getConfigFile(String filename) {
+		return new File(getConfigDirectory(), filename);
+	}
 }

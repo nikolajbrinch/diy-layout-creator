@@ -2,10 +2,11 @@ package org.diylc.appframework.miscutils;
 
 import java.awt.Color;
 import java.lang.reflect.Field;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class that injects the provided properties into class static fields.
@@ -24,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class PropertyInjector {
 
-	private static final Logger LOG = Logger.getLogger(PropertyInjector.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PropertyInjector.class);
 
 	private PropertyInjector() {
 	}

@@ -9,13 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.diylc.swing.plugins.online.model.ProjectEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class LibraryPresenter {
 
-	private final static Logger LOG = Logger.getLogger(LibraryPresenter.class);
+	private final static Logger LOG = LoggerFactory.getLogger(LibraryPresenter.class);
 
 	private static final String DB_HOST = "diy-fever.com";
 	private static final String DB_PORT = "3306";

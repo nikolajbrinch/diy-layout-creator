@@ -14,7 +14,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
@@ -22,7 +21,6 @@ import org.diylc.common.PropertyWrapper;
 import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IView;
-import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.images.IconLoader;
 import org.diylc.presenter.Presenter;
@@ -35,10 +33,12 @@ import org.diylc.swingframework.ButtonDialog;
 import org.diylc.swingframework.IDrawingProvider;
 import org.diylc.swingframework.export.DrawingExporter;
 import org.diylc.utils.BomEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ActionFactory {
 
-	private static final Logger LOG = Logger.getLogger(ActionFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ActionFactory.class);
 
 	private static ActionFactory instance;
 

@@ -32,19 +32,20 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
 import org.diylc.presenter.Presenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TemplateDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(TemplateDialog.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TemplateDialog.class);
 
 	private static final Dimension panelSize = new Dimension(400, 300);
 	public static final String SHOW_TEMPLATES_KEY = "showTemplatesAtStartup";

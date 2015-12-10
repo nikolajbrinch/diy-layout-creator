@@ -24,7 +24,7 @@ import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
-import org.diylc.images.IconLoader;
+import org.diylc.images.CoreIconLoader;
 import org.openide.awt.DropDownButtonFactory;
 
 /**
@@ -151,7 +151,7 @@ class ComponentButtonFactory {
 				plugInPort.setNewComponentTypeSlot(componentType, template);
 			}
 		});
-		JLabel label = new JLabel(IconLoader.Garbage.getIcon());
+		JLabel label = new JLabel(CoreIconLoader.Garbage.getIcon());
 		label.setToolTipText("Delete template");
 		label.addMouseListener(new MouseAdapter() {
 

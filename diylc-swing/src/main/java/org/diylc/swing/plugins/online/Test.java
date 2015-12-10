@@ -1,6 +1,5 @@
 package org.diylc.swing.plugins.online;
 
-import org.apache.log4j.BasicConfigurator;
 import org.diylc.swing.plugins.online.presenter.LibraryPresenter;
 
 
@@ -11,7 +10,6 @@ public class Test {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		BasicConfigurator.configure();
 		LibraryPresenter pres = new LibraryPresenter();
 		// pres.createUser("bancika", "pwd", "bancika@gmail.com");
 		System.out.println(pres.fetchCategories());

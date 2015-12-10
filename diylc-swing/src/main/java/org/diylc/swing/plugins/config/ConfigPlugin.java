@@ -5,14 +5,15 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.EnumSet;
 
-import org.apache.log4j.Logger;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.Theme;
-import org.diylc.images.IconLoader;
+import org.diylc.images.CoreIconLoader;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -24,7 +25,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  */
 public class ConfigPlugin implements IPlugIn {
 
-	private static final Logger LOG = Logger.getLogger(ConfigPlugin.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConfigPlugin.class);
 
 	private static final String CONFIG_MENU = "Config";
 	private static final String THEME_MENU = "Theme";
@@ -62,7 +63,7 @@ public class ConfigPlugin implements IPlugIn {
 		File themeDir = new File("themes");
 		if (themeDir.exists()) {
 			XStream xStream = new XStream(new DomDriver());
-			swingUI.injectSubmenu(THEME_MENU, IconLoader.Pens.getIcon(), CONFIG_MENU);
+			swingUI.injectSubmenu(THEME_MENU, CoreIconLoader.Pens.getIcon(), CONFIG_MENU);
 			for (File file : themeDir.listFiles()) {
 				if (file.getName().toLowerCase().endsWith(".xml")) {
 					try {
