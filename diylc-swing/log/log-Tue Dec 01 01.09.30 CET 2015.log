@@ -1,8 +1,0 @@
-01:09:30,883 DEBUG [main] DIYLCStarter - Java version: 1.8.0_60-b27 by Oracle Corporation
-01:09:30,883 DEBUG [main] DIYLCStarter - OS: Mac OS X 10.11.1
-01:09:30,883  INFO [main] DIYLCStarter - Starting DIYLC with working directory /Users/neko/dev/projects/github/diy-layout-creator/diylc-swing
-01:09:31,259  INFO [main] ConfigurationManager - Initializing configuration
-01:09:31,371  INFO [main] Presenter - installPlugin(ToolBox)
-01:09:31,379  INFO [main] Presenter - Loading component types.
-01:09:32,416  INFO [main] MainFrame - injectGUIComponent(org.diylc.swing.plugins.toolbox.ComponentTabbedPane, 1)
-01:09:32,480  INFO [main] Presenter - installPlugin(FileMenuPlugin)
