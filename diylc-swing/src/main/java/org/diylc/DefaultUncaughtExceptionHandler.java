@@ -1,7 +1,13 @@
 package org.diylc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DefaultUncaughtExceptionHandler implements
 		Thread.UncaughtExceptionHandler {
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(DefaultUncaughtExceptionHandler.class);
 
 	public void handle(Throwable thrown) {
 		handleException(Thread.currentThread().getName(), thrown);
@@ -12,7 +18,7 @@ public class DefaultUncaughtExceptionHandler implements
 	}
 
 	protected void handleException(String tname, Throwable thrown) {
-		System.err.println("Exception on " + tname);
+		LOG.error("Uncaught exception in thread " + tname, thrown);
 		thrown.printStackTrace();
 	}
 }

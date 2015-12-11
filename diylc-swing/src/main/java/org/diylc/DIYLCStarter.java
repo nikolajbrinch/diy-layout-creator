@@ -19,8 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DIYLCStarter {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DIYLCStarter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DIYLCStarter.class);
 
 	private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
