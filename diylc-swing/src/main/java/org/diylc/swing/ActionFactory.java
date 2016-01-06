@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
 
 public class ActionFactory {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ActionFactory.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ActionFactory.class);
 
 	private static ActionFactory instance;
 
@@ -60,6 +61,11 @@ public class ActionFactory {
 
 	public OpenAction createOpenAction(IPlugInPort plugInPort, ISwingUI swingUI) {
 		return new OpenAction(plugInPort, swingUI);
+	}
+
+	public OpenRecentAction createOpenRecentAction(IPlugInPort plugInPort,
+			ISwingUI swingUI, File file) {
+		return new OpenRecentAction(plugInPort, swingUI, file);
 	}
 
 	public ImportAction createImportAction(IPlugInPort plugInPort,
@@ -193,8 +199,8 @@ public class ActionFactory {
 			putValue(AbstractAction.NAME, "New");
 			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-			putValue(AbstractAction.SMALL_ICON, IconLoader.DocumentPlainYellow
-					.getIcon());
+			putValue(AbstractAction.SMALL_ICON,
+					IconLoader.DocumentPlainYellow.getIcon());
 		}
 
 		@Override
@@ -215,8 +221,8 @@ public class ActionFactory {
 			// Save default values.
 			for (PropertyWrapper property : editor.getDefaultedProperties()) {
 				if (property.getValue() != null) {
-					plugInPort.setProjectDefaultPropertyValue(property
-							.getName(), property.getValue());
+					plugInPort.setProjectDefaultPropertyValue(
+							property.getName(), property.getValue());
 				}
 			}
 		}
@@ -260,13 +266,84 @@ public class ActionFactory {
 
 					@Override
 					public void complete(Void result) {
+						plugInPort.addLruFile(file);
 					}
 
 					@Override
 					public void failed(Exception e) {
-						swingUI.showMessage("Could not open file. "
-								+ e.getMessage(), "Error",
-								ISwingUI.ERROR_MESSAGE);
+						swingUI.showMessage(
+								"Could not open file. " + e.getMessage(),
+								"Error", ISwingUI.ERROR_MESSAGE);
+					}
+				});
+			}
+		}
+	}
+
+	public static class OpenRecentAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1L;
+
+		private IPlugInPort plugInPort;
+		private ISwingUI swingUI;
+		private File file;
+
+		public OpenRecentAction(IPlugInPort plugInPort, ISwingUI swingUI,
+				File file) {
+			super();
+			this.plugInPort = plugInPort;
+			this.swingUI = swingUI;
+			this.file = file;
+			putValue(AbstractAction.NAME, createDisplayName(file));
+			putValue(AbstractAction.SMALL_ICON, IconLoader.FolderOut.getIcon());
+		}
+
+		private String createDisplayName(File file) {
+			String displayName = file.getAbsolutePath();
+
+			String lastPath = (String) ConfigurationManager.getInstance()
+					.readString("lastPath", null);
+
+			if (lastPath != null) {
+				if (displayName.startsWith(lastPath)) {
+					displayName = displayName.substring(lastPath.length());
+				}
+
+				if (displayName
+						.startsWith(System.getProperty("file.separator"))) {
+					displayName = displayName.substring(1);
+				}
+			}
+
+			return displayName;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LOG.info("OpenRecentAction triggered");
+			if (!plugInPort.allowFileAction()) {
+				return;
+			}
+			if (file != null) {
+				swingUI.executeBackgroundTask(new ITask<Void>() {
+
+					@Override
+					public Void doInBackground() throws Exception {
+						LOG.debug("Opening from " + file.getAbsolutePath());
+						plugInPort.loadProjectFromFile(file.getAbsolutePath());
+						return null;
+					}
+
+					@Override
+					public void complete(Void result) {
+						plugInPort.addLruFile(file);
+					}
+
+					@Override
+					public void failed(Exception e) {
+						swingUI.showMessage(
+								"Could not open file. " + e.getMessage(),
+								"Error", ISwingUI.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -315,8 +392,8 @@ public class ActionFactory {
 			putValue(AbstractAction.NAME, "Import");
 			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					KeyEvent.VK_I, ActionEvent.CTRL_MASK));
-			putValue(AbstractAction.SMALL_ICON, IconLoader.ElementInto
-					.getIcon());
+			putValue(AbstractAction.SMALL_ICON,
+					IconLoader.ElementInto.getIcon());
 		}
 
 		@Override
@@ -351,9 +428,9 @@ public class ActionFactory {
 
 					@Override
 					public void failed(Exception e) {
-						swingUI.showMessage("Could not open file. "
-								+ e.getMessage(), "Error",
-								ISwingUI.ERROR_MESSAGE);
+						swingUI.showMessage(
+								"Could not open file. " + e.getMessage(),
+								"Error", ISwingUI.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -397,13 +474,14 @@ public class ActionFactory {
 
 						@Override
 						public void complete(Void result) {
+							plugInPort.addLruFile(file);
 						}
 
 						@Override
 						public void failed(Exception e) {
-							swingUI.showMessage("Could not save to file. "
-									+ e.getMessage(), "Error",
-									ISwingUI.ERROR_MESSAGE);
+							swingUI.showMessage(
+									"Could not save to file. " + e.getMessage(),
+									"Error", ISwingUI.ERROR_MESSAGE);
 						}
 					});
 				}
@@ -414,8 +492,8 @@ public class ActionFactory {
 					public Void doInBackground() throws Exception {
 						LOG.debug("Saving to "
 								+ plugInPort.getCurrentFileName());
-						plugInPort.saveProjectToFile(plugInPort
-								.getCurrentFileName(), false);
+						plugInPort.saveProjectToFile(
+								plugInPort.getCurrentFileName(), false);
 						return null;
 					}
 
@@ -425,9 +503,9 @@ public class ActionFactory {
 
 					@Override
 					public void failed(Exception e) {
-						swingUI.showMessage("Could not save to file. "
-								+ e.getMessage(), "Error",
-								ISwingUI.ERROR_MESSAGE);
+						swingUI.showMessage(
+								"Could not save to file. " + e.getMessage(),
+								"Error", ISwingUI.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -446,8 +524,9 @@ public class ActionFactory {
 			this.plugInPort = plugInPort;
 			this.swingUI = swingUI;
 			putValue(AbstractAction.NAME, "Save As");
-			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					KeyEvent.VK_S, ActionEvent.CTRL_MASK
+			putValue(
+					AbstractAction.ACCELERATOR_KEY,
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK
 							| ActionEvent.SHIFT_MASK));
 			putValue(AbstractAction.SMALL_ICON, IconLoader.DiskBlue.getIcon());
 		}
@@ -471,13 +550,14 @@ public class ActionFactory {
 
 					@Override
 					public void complete(Void result) {
+						plugInPort.addLruFile(file);
 					}
 
 					@Override
 					public void failed(Exception e) {
-						swingUI.showMessage("Could not save to file. "
-								+ e.getMessage(), "Error",
-								ISwingUI.ERROR_MESSAGE);
+						swingUI.showMessage(
+								"Could not save to file. " + e.getMessage(),
+								"Error", ISwingUI.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -546,9 +626,9 @@ public class ActionFactory {
 
 					@Override
 					public void failed(Exception e) {
-						swingUI.showMessage("Could not export to PDF. "
-								+ e.getMessage(), "Error",
-								ISwingUI.ERROR_MESSAGE);
+						swingUI.showMessage(
+								"Could not export to PDF. " + e.getMessage(),
+								"Error", ISwingUI.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -594,9 +674,9 @@ public class ActionFactory {
 
 					@Override
 					public void failed(Exception e) {
-						swingUI.showMessage("Could not export to PNG. "
-								+ e.getMessage(), "Error",
-								ISwingUI.ERROR_MESSAGE);
+						swingUI.showMessage(
+								"Could not export to PNG. " + e.getMessage(),
+								"Error", ISwingUI.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -834,8 +914,8 @@ public class ActionFactory {
 			super();
 			this.plugInPort = plugInPort;
 			putValue(AbstractAction.NAME, "Edit Project");
-			putValue(AbstractAction.SMALL_ICON, IconLoader.DocumentEdit
-					.getIcon());
+			putValue(AbstractAction.SMALL_ICON,
+					IconLoader.DocumentEdit.getIcon());
 		}
 
 		@Override
@@ -852,8 +932,8 @@ public class ActionFactory {
 			// Save default values.
 			for (PropertyWrapper property : editor.getDefaultedProperties()) {
 				if (property.getValue() != null) {
-					plugInPort.setProjectDefaultPropertyValue(property
-							.getName(), property.getValue());
+					plugInPort.setProjectDefaultPropertyValue(
+							property.getName(), property.getValue());
 				}
 			}
 		}
@@ -871,8 +951,8 @@ public class ActionFactory {
 			putValue(AbstractAction.NAME, "Edit Selection");
 			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 					KeyEvent.VK_E, ActionEvent.CTRL_MASK));
-			putValue(AbstractAction.SMALL_ICON, IconLoader.EditComponent
-					.getIcon());
+			putValue(AbstractAction.SMALL_ICON,
+					IconLoader.EditComponent.getIcon());
 		}
 
 		@Override
@@ -898,8 +978,8 @@ public class ActionFactory {
 			super();
 			this.plugInPort = plugInPort;
 			putValue(AbstractAction.NAME, "Delete Selection");
-			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					KeyEvent.VK_DELETE, 0));
+			putValue(AbstractAction.ACCELERATOR_KEY,
+					KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
 			putValue(AbstractAction.SMALL_ICON, IconLoader.Delete.getIcon());
 		}
 
@@ -920,8 +1000,8 @@ public class ActionFactory {
 			super();
 			this.plugInPort = plugInPort;
 			putValue(AbstractAction.NAME, "Save as Template");
-			putValue(AbstractAction.SMALL_ICON, IconLoader.BriefcaseAdd
-					.getIcon());
+			putValue(AbstractAction.SMALL_ICON,
+					IconLoader.BriefcaseAdd.getIcon());
 		}
 
 		@Override
@@ -984,16 +1064,18 @@ public class ActionFactory {
 			this.direction = direction;
 			if (direction > 0) {
 				putValue(AbstractAction.NAME, "Rotate Clockwise");
-				putValue(AbstractAction.SMALL_ICON, IconLoader.RotateCW
-						.getIcon());
-				putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke
-						.getKeyStroke(KeyEvent.VK_RIGHT, ActionEvent.ALT_MASK));
+				putValue(AbstractAction.SMALL_ICON,
+						IconLoader.RotateCW.getIcon());
+				putValue(AbstractAction.ACCELERATOR_KEY,
+						KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,
+								ActionEvent.ALT_MASK));
 			} else {
 				putValue(AbstractAction.NAME, "Rotate Counterclockwise");
-				putValue(AbstractAction.SMALL_ICON, IconLoader.RotateCCW
-						.getIcon());
-				putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke
-						.getKeyStroke(KeyEvent.VK_LEFT, ActionEvent.ALT_MASK));
+				putValue(AbstractAction.SMALL_ICON,
+						IconLoader.RotateCCW.getIcon());
+				putValue(AbstractAction.ACCELERATOR_KEY,
+						KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,
+								ActionEvent.ALT_MASK));
 			}
 		}
 

@@ -3,10 +3,14 @@ package org.diylc.swing.gui;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -27,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
@@ -90,7 +95,8 @@ public class MainFrame extends JFrame implements ISwingUI {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
-		setPreferredSize(new Dimension(800, 600));
+		Map<String, Integer> windowBounds = loadWindowBounds();
+		setPreferredSize(new Dimension(windowBounds.get("width"), windowBounds.get("height")));
 		createBasePanels();
 		menuMap = new HashMap<String, JMenu>();
 		buttonGroupMap = new HashMap<String, ButtonGroup>();
@@ -112,6 +118,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 		canvasPlugin = new CanvasPlugin(this);
 		presenter.installPlugin(canvasPlugin);
 		presenter.installPlugin(new FramePlugin());
+		presenter.configure();
 
 		try {
 			File testFile = new File("test.tmp");
@@ -155,9 +162,53 @@ public class MainFrame extends JFrame implements ISwingUI {
 			}
 		});
 
+		setLocation(new Point(windowBounds.get("x"), windowBounds.get("y")));
+		setExtendedState(windowBounds.get("extendedState"));
+		
+		addComponentListener(new ComponentAdapter() {
+			@Override
+            public void componentResized(ComponentEvent e) {
+            	saveWindowBounds((JFrame) e.getComponent());
+            }
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+            	saveWindowBounds((JFrame) e.getComponent());
+			}
+            
+        });
+
 		setGlassPane(new CustomGlassPane());
-		// getGlassPane().setVisible(true);
-		setLocationRelativeTo(null);
+	}
+
+	private Map<String, Integer> loadWindowBounds() {
+		Map<String, Integer> defaultWindowBounds = new HashMap<>();
+		defaultWindowBounds.put("width", 800);
+		defaultWindowBounds.put("height", 600);
+		defaultWindowBounds.put("x", 100);
+		defaultWindowBounds.put("y", 100);
+		defaultWindowBounds.put("extendedState", JFrame.NORMAL);
+		
+		Map<String, Integer> windowBounds = (Map<String, Integer>) ConfigurationManager.getInstance().readObject("windowBounds", defaultWindowBounds);
+		
+		for (Map.Entry<String, Integer> entry : defaultWindowBounds.entrySet()) {
+			if (windowBounds.get(entry.getKey()) == null) {
+				windowBounds.put(entry.getKey(), entry.getValue());
+			}
+		}
+		
+		return windowBounds;
+	}
+
+	private void saveWindowBounds(JFrame frame) {
+		Map<String, Integer> windowBounds = new HashMap<>();
+		windowBounds.put("width", frame.getSize().width);
+		windowBounds.put("height", frame.getSize().height);
+		windowBounds.put("x", frame.getLocation().x);
+		windowBounds.put("y", frame.getLocation().y);
+		windowBounds.put("extendedState", frame.getExtendedState());
+
+		ConfigurationManager.getInstance().writeValue("windowBounds", windowBounds);
 	}
 
 	public Presenter getPresenter() {
@@ -246,17 +297,28 @@ public class MainFrame extends JFrame implements ISwingUI {
 	}
 
 	private JMenu findOrCreateMenu(String menuName) {
-		JMenu menu;
-		if (menuMap.containsKey(menuName)) {
-			menu = menuMap.get(menuName);
-		} else {
+		JMenu menu = findMenu(menuName);
+		
+		if (menu == null) {
 			menu = new JMenu(menuName);
 			menuMap.put(menuName, menu);
 			getMainMenuBar().add(menu);
 		}
+		
 		return menu;
 	}
 
+	private JMenu findMenu(String menuName) {
+		JMenu menu = null;
+		
+		if (menuMap.containsKey(menuName)) {
+			menu = menuMap.get(menuName);
+		}
+
+		return menu;
+	}
+
+	
 	@Override
 	public void injectGUIComponent(JComponent component, int position) throws BadPositionException {
 		LOG.info(String.format("injectGUIComponent(%s, %s)", component.getClass().getName(),
@@ -310,6 +372,31 @@ public class MainFrame extends JFrame implements ISwingUI {
 				menu.add(action);
 			}
 		}
+	}
+
+	@Override
+	public void removeMenuAction(Action action, String menuName) {
+		LOG.info(String.format("removeMenuAction(%s, %s)", action == null ? "Separator" : action
+				.getValue(Action.NAME), menuName));
+		JMenu menu = findMenu(menuName);
+		
+		if (menu != null) {
+			int itemCount = menu.getItemCount();
+			for (int i = 0; i < itemCount; i++) {
+				JMenuItem item = menu.getItem(i);
+				if (item.getAction() == action) {
+					menu.remove(i);
+					break;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void clearMenuItems(String menuName) {
+		LOG.info(String.format("clearMenuItems(%s)", menuName));
+		JMenu menu = findMenu(menuName);
+		menu.removeAll();
 	}
 
 	@Override
