@@ -5,9 +5,9 @@ import java.util.EnumSet;
 import javax.swing.SwingConstants;
 
 import org.diylc.common.BadPositionException;
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.plugins.statusbar.StatusBar;
 import org.slf4j.Logger;

@@ -16,19 +16,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.DrawOption;
-import org.diylc.common.EventType;
 import org.diylc.common.GridType;
 import org.diylc.common.IComponentFiler;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
+import org.diylc.core.config.Configuration;
+import org.diylc.presenter.plugin.EventType;
 import org.diylc.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +51,8 @@ public class DrawingManager {
 	public static Color CONTROL_POINT_COLOR = Color.blue;
 	public static Color SELECTED_CONTROL_POINT_COLOR = Color.green;
 
-	private Theme theme = (Theme) ConfigurationManager.getInstance()
-			.readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+	private Theme theme = Configuration.INSTANCE.getTheme();
+
 
 	// Keeps Area object of each drawn component.
 	private Map<IDIYComponent<?>, Area> componentAreaMap;
@@ -126,8 +125,7 @@ public class DrawingManager {
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		}
-		if (ConfigurationManager.getInstance().readBoolean(
-				IPlugInPort.HI_QUALITY_RENDER_KEY, false)) {
+		if (Configuration.INSTANCE.getHiQualityRender()) {
 			g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 					RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 			g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
@@ -419,8 +417,7 @@ public class DrawingManager {
 
 	public void setTheme(Theme theme) {
 		this.theme = theme;
-		ConfigurationManager.getInstance().writeValue(IPlugInPort.THEME_KEY,
-				theme);
+		Configuration.INSTANCE.setTheme(theme);
 		messageDispatcher.dispatchMessage(EventType.REPAINT);
 	}
 }

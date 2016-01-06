@@ -17,8 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.VolatileImage;
 import java.util.EnumSet;
 import java.util.Set;
@@ -27,9 +25,9 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.DrawOption;
-import org.diylc.common.IPlugInPort;
+import org.diylc.core.config.Configuration;
+import org.diylc.presenter.plugin.IPlugInPort;
 
 /**
  * GUI class used to draw onto.
@@ -121,12 +119,10 @@ class CanvasPanel extends JComponent implements Autoscroll {
 		Set<DrawOption> drawOptions = EnumSet.of(DrawOption.GRID,
 				DrawOption.SELECTION, DrawOption.ZOOM,
 				DrawOption.CONTROL_POINTS);
-		if (ConfigurationManager.getInstance().readBoolean(
-				IPlugInPort.ANTI_ALIASING_KEY, true)) {
+		if (Configuration.INSTANCE.getAntiAliasing()) {
 			drawOptions.add(DrawOption.ANTIALIASING);
 		}
-		if (ConfigurationManager.getInstance().readBoolean(
-				IPlugInPort.OUTLINE_KEY, false)) {
+		if (Configuration.INSTANCE.getOutline()) {
 			drawOptions.add(DrawOption.OUTLINE_MODE);
 		}
 		plugInPort.draw(g2d, drawOptions, null);

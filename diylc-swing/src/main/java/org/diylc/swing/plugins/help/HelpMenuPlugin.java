@@ -7,10 +7,10 @@ import javax.swing.AbstractAction;
 import javax.swing.Icon;
 
 import org.diylc.appframework.miscutils.Utils;
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.images.CoreIconLoader;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swingframework.AboutDialog;

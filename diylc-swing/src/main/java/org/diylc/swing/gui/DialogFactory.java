@@ -8,8 +8,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.PropertyWrapper;
+import org.diylc.core.config.Configuration;
 import org.diylc.swing.gui.components.OverwritePromptFileChooser;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
 import org.diylc.swing.plugins.online.view.LoginDialog;
@@ -24,8 +24,6 @@ import org.diylc.utils.BomEntry;
 public class DialogFactory {
 
 	private static DialogFactory instance;
-
-	private static final String PATH_KEY = "lastPath";
 
 	public static DialogFactory getInstance() {
 		if (instance == null) {
@@ -48,8 +46,8 @@ public class DialogFactory {
 	 */
 	public void initialize(JFrame mainFrame) {
 		this.mainFrame = mainFrame;
-		String lastDirectoryPath = (String) ConfigurationManager.getInstance()
-				.readString(PATH_KEY, null);
+		String lastDirectoryPath = Configuration.INSTANCE.getLastPath();
+		
 		if (lastDirectoryPath != null) {
 			lastDirectory = new File(lastDirectoryPath);
 		}
@@ -110,8 +108,7 @@ public class DialogFactory {
 		fileChooser.setAccessory(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
 			lastDirectory = fileChooser.getCurrentDirectory();
-			ConfigurationManager.getInstance().writeValue(PATH_KEY,
-					lastDirectory.getAbsolutePath());
+			Configuration.INSTANCE.setLastPath(lastDirectory.getAbsolutePath());
 			if (fileChooser.getSelectedFile().getAbsolutePath().contains(".")) {
 				return fileChooser.getSelectedFile();
 			} else {

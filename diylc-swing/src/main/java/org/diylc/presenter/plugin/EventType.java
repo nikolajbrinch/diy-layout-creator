@@ -1,8 +1,9 @@
-package org.diylc.common;
+package org.diylc.presenter.plugin;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
+import org.diylc.common.ComponentType;
 import org.diylc.core.Project;
 
 /**

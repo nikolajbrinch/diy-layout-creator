@@ -1,4 +1,4 @@
-package org.diylc.common;
+package org.diylc.presenter.plugin;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -13,6 +13,14 @@ import java.util.Set;
 import org.diylc.appframework.simplemq.IMessageListener;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.VersionNumber;
+import org.diylc.common.ComponentType;
+import org.diylc.common.DrawOption;
+import org.diylc.common.IComponentFiler;
+import org.diylc.common.IKeyProcessor;
+import org.diylc.common.IMouseProcessor;
+import org.diylc.common.ISelectionProcessor;
+import org.diylc.common.ITemplateProcessor;
+import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
@@ -31,21 +39,6 @@ import org.diylc.core.Theme;
  * @see EventType
  */
 public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyProcessor, ITemplateProcessor {
-
-	public static final String ANTI_ALIASING_KEY = "antiAliasing";
-	public static final String HI_QUALITY_RENDER_KEY = "hiQualityRender";
-	public static final String EXPORT_GRID_KEY = "exportGrid";
-	public static final String STICKY_POINTS_KEY = "stickyPoints";
-	public static final String METRIC_KEY = "metric";
-	public static final String SNAP_TO_GRID_KEY = "snapToGrid";
-	public static final String AUTO_PADS_KEY = "autoCreatePads";
-	public static final String CONTINUOUS_CREATION_KEY = "continuousCreation";
-	public static final String AUTO_EDIT_KEY = "autoEdit";
-	public static final String ABNORMAL_EXIT_KEY = "abnormalExit";
-	public static final String WHEEL_ZOOM_KEY = "wheelZoom";
-	public static final String OUTLINE_KEY = "outline";
-	public static final String THEME_KEY = "theme";
-	public static final String RECENT_COMPONENTS_KEY = "recentComponents";
 
 	public static final int DND_TOGGLE_STICKY = 0x1;
 	public static final int DND_TOGGLE_SNAP = 0x40000000;

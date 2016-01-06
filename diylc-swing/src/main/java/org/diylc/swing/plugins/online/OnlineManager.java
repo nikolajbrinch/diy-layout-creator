@@ -6,10 +6,10 @@ import java.util.EnumSet;
 import javax.swing.AbstractAction;
 import javax.swing.SwingWorker;
 
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.images.CoreIconLoader;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.plugins.online.presenter.LibraryPresenter;
 import org.diylc.swing.plugins.online.view.LoginDialog;

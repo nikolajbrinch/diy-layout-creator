@@ -10,7 +10,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -40,16 +39,17 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.BadPositionException;
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
+import org.diylc.core.config.Configuration;
+import org.diylc.core.config.WindowBounds;
 import org.diylc.images.CoreIconLoader;
 import org.diylc.presenter.Presenter;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
 import org.diylc.swing.plugins.arrange.ArrangeMenuPlugin;
@@ -97,8 +97,8 @@ public class MainFrame extends JFrame implements ISwingUI {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
-		Map<String, Integer> windowBounds = loadWindowBounds();
-		setPreferredSize(new Dimension(windowBounds.get("width"), windowBounds.get("height")));
+		WindowBounds windowBounds = Configuration.INSTANCE.getWindowBounds();
+		setPreferredSize(new Dimension(windowBounds.getWidth(), windowBounds.getHeight()));
 		createBasePanels();
 		menuMap = new HashMap<String, JMenu>();
 		buttonGroupMap = new HashMap<String, ButtonGroup>();
@@ -146,8 +146,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				if (presenter.allowFileAction()) {
-					ConfigurationManager.getInstance().writeValue(IPlugInPort.ABNORMAL_EXIT_KEY,
-							false);
+					Configuration.INSTANCE.setAbnormalExit(false);
 					dispose();
 					presenter.dispose();
 					System.exit(0);
@@ -157,8 +156,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (presenter.allowFileAction()) {
-					ConfigurationManager.getInstance().writeValue(IPlugInPort.ABNORMAL_EXIT_KEY,
-							false);
+					Configuration.INSTANCE.setAbnormalExit(false);
 					dispose();
 					presenter.dispose();
 					System.exit(0);
@@ -166,53 +164,25 @@ public class MainFrame extends JFrame implements ISwingUI {
 			}
 		});
 
-		setLocation(new Point(windowBounds.get("x"), windowBounds.get("y")));
-		setExtendedState(windowBounds.get("extendedState"));
+		setLocation(new Point(windowBounds.getX(), windowBounds.getY()));
+		setExtendedState(windowBounds.getExtendedState());
 		
 		addComponentListener(new ComponentAdapter() {
 			@Override
             public void componentResized(ComponentEvent e) {
-            	saveWindowBounds((JFrame) e.getComponent());
+				JFrame frame = (JFrame) e.getComponent();
+				Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
             }
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-            	saveWindowBounds((JFrame) e.getComponent());
+				JFrame frame = (JFrame) e.getComponent();
+				Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
 			}
             
         });
 
 		setGlassPane(new CustomGlassPane());
-	}
-
-	private Map<String, Integer> loadWindowBounds() {
-		Map<String, Integer> defaultWindowBounds = new HashMap<>();
-		defaultWindowBounds.put("width", 800);
-		defaultWindowBounds.put("height", 600);
-		defaultWindowBounds.put("x", 100);
-		defaultWindowBounds.put("y", 100);
-		defaultWindowBounds.put("extendedState", JFrame.NORMAL);
-		
-		Map<String, Integer> windowBounds = (Map<String, Integer>) ConfigurationManager.getInstance().readObject("windowBounds", defaultWindowBounds);
-		
-		for (Map.Entry<String, Integer> entry : defaultWindowBounds.entrySet()) {
-			if (windowBounds.get(entry.getKey()) == null) {
-				windowBounds.put(entry.getKey(), entry.getValue());
-			}
-		}
-		
-		return windowBounds;
-	}
-
-	private void saveWindowBounds(JFrame frame) {
-		Map<String, Integer> windowBounds = new HashMap<>();
-		windowBounds.put("width", frame.getSize().width);
-		windowBounds.put("height", frame.getSize().height);
-		windowBounds.put("x", frame.getLocation().x);
-		windowBounds.put("y", frame.getLocation().y);
-		windowBounds.put("extendedState", frame.getExtendedState());
-
-		ConfigurationManager.getInstance().writeValue("windowBounds", windowBounds);
 	}
 
 	public Presenter getPresenter() {

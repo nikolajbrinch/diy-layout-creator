@@ -5,17 +5,15 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.config.Configuration;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(name = "Diode (plastic)", author = "Branislav Stojkovic", category = "Semiconductors", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Plastic diode, like most rectifier, zener, schottky, etc.", zOrder = IDIYComponent.COMPONENT)
 public class DiodePlastic extends AbstractLeadedComponent<String> {
@@ -97,8 +95,7 @@ public class DiodePlastic extends AbstractLeadedComponent<String> {
 	protected void decorateComponentBody(Graphics2D g2d, boolean outlineMode) {
 		Color finalMarkerColor;
 		if (outlineMode) {
-			Theme theme = (Theme) ConfigurationManager.getInstance()
-					.readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+			Theme theme = Configuration.INSTANCE.getTheme();
 			finalMarkerColor = theme.getOutlineColor();
 		} else {
 			finalMarkerColor = markerColor;

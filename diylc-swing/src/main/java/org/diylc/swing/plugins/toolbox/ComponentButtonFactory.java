@@ -21,10 +21,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import org.diylc.common.ComponentType;
-import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
 import org.diylc.images.CoreIconLoader;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.openide.awt.DropDownButtonFactory;
 
 /**

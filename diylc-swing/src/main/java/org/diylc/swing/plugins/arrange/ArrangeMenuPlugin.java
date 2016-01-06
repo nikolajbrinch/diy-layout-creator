@@ -5,9 +5,9 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.util.EnumSet;
 
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
 
@@ -39,7 +39,7 @@ public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.GroupAction getGroupAction() {
 		if (groupAction == null) {
-			groupAction = ActionFactory.getInstance().createGroupAction(
+			groupAction = ActionFactory.INSTANCE.createGroupAction(
 					plugInPort);
 		}
 		return groupAction;
@@ -47,7 +47,7 @@ public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.UngroupAction getUngroupAction() {
 		if (ungroupAction == null) {
-			ungroupAction = ActionFactory.getInstance().createUngroupAction(
+			ungroupAction = ActionFactory.INSTANCE.createUngroupAction(
 					plugInPort);
 		}
 		return ungroupAction;
@@ -55,14 +55,14 @@ public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.SendToBackAction getSendToBackAction() {
 		if (sendToBackAction == null) {
-			sendToBackAction = ActionFactory.getInstance().createSendToBackAction(plugInPort);
+			sendToBackAction = ActionFactory.INSTANCE.createSendToBackAction(plugInPort);
 		}
 		return sendToBackAction;
 	}
 
 	public ActionFactory.BringToFrontAction getBringToFrontAction() {
 		if (bringToFrontAction == null) {
-			bringToFrontAction = ActionFactory.getInstance()
+			bringToFrontAction = ActionFactory.INSTANCE
 					.createBringToFrontAction(plugInPort);
 		}
 		return bringToFrontAction;
@@ -70,7 +70,7 @@ public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.RotateSelectionAction getRotateClockwiseAction() {
 		if (rotateClockwiseAction == null) {
-			rotateClockwiseAction = ActionFactory.getInstance()
+			rotateClockwiseAction = ActionFactory.INSTANCE
 					.createRotateSelectionAction(plugInPort, 1);
 		}
 		return rotateClockwiseAction;
@@ -78,7 +78,7 @@ public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.RotateSelectionAction getRotateCounterclockwiseAction() {
 		if (rotateCounterClockwiseAction == null) {
-			rotateCounterClockwiseAction = ActionFactory.getInstance()
+			rotateCounterClockwiseAction = ActionFactory.INSTANCE
 					.createRotateSelectionAction(plugInPort, -1);
 		}
 		return rotateCounterClockwiseAction;

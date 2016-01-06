@@ -18,15 +18,15 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
-import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
+import org.diylc.core.config.Configuration;
+import org.diylc.core.config.ConfigurationListener;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.presenter.ComponentProcessor;
 import org.diylc.presenter.Presenter;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,20 +158,14 @@ class ComponentTabbedPane extends JTabbedPane {
 		panel.setOpaque(false);
 
 		final Container toolbar = getRecentToolbar();
-		refreshRecentComponentsToolbar(toolbar,
-				(List<String>) ConfigurationManager.getInstance().readObject(
-						IPlugInPort.RECENT_COMPONENTS_KEY,
-						new ArrayList<String>()));
-		ConfigurationManager.getInstance().addConfigListener(
-				IPlugInPort.RECENT_COMPONENTS_KEY, new IConfigListener() {
-
-					@Override
-					public void valueChanged(String key, Object value) {
-						// Cache the new list, we'll refresh when there's a
-						// chance
-						pendingRecentComponents = (List<String>) value;
-					}
-				});
+		refreshRecentComponentsToolbar(toolbar, Configuration.INSTANCE.getRecentComponents());
+		
+		Configuration.INSTANCE.addListener(Configuration.Key.RECENT_COMPONENTS, new ConfigurationListener() {
+			@Override
+			public void onValueChanged(Object oldValue, Object newValue) {
+				pendingRecentComponents = (List<String>) newValue;
+			}
+		});
 
 		panel.add(toolbar, BorderLayout.CENTER);
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.awt.Color;
 import java.util.Properties;
 
-import org.diylc.appframework.miscutils.PropertyInjector;
 import org.junit.Test;
 
 public class PropertyInjectorTest {

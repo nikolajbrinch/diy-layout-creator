@@ -7,11 +7,11 @@ import java.util.concurrent.Executors;
 
 import javax.swing.SwingUtilities;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.core.IView;
+import org.diylc.core.config.Configuration;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 
 public class AutoSavePlugin implements IPlugIn {
 
@@ -37,8 +37,7 @@ public class AutoSavePlugin implements IPlugIn {
 
 			@Override
 			public void run() {
-				boolean wasAbnormal = ConfigurationManager.getInstance()
-						.readBoolean(IPlugInPort.ABNORMAL_EXIT_KEY, false);
+				boolean wasAbnormal = Configuration.INSTANCE.getAbnormalExit();
 				if (wasAbnormal && new File(AUTO_SAVE_FILE_NAME).exists()) {
 					int decision = view
 							.showConfirmDialog(
@@ -50,10 +49,11 @@ public class AutoSavePlugin implements IPlugIn {
 								.loadProjectFromFile(AUTO_SAVE_FILE_NAME);
 					}
 				}
-				// Set abnormal flag to true, GUI side of the app must flip to
-				// false when app closes regularly.
-				ConfigurationManager.getInstance().writeValue(
-						IPlugInPort.ABNORMAL_EXIT_KEY, true);
+				/* 
+				 * Set abnormal flag to true, GUI side of the app must flip to
+				 * false when app closes regularly.
+				 */
+				Configuration.INSTANCE.setAbnormalExit(true);
 			}
 		});
 	}

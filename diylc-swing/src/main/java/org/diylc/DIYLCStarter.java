@@ -8,8 +8,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.PropertyInjector;
+import org.diylc.core.config.Configuration;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
 import org.diylc.swing.gui.TemplateDialog;
@@ -84,8 +84,7 @@ public class DIYLCStarter {
 			if (args.length > 0) {
 				mainFrame.getPresenter().loadProjectFromFile(args[0]);
 			} else {
-				boolean showTemplates = ConfigurationManager.getInstance()
-						.readBoolean(TemplateDialog.SHOW_TEMPLATES_KEY, true);
+				boolean showTemplates = Configuration.INSTANCE.getShowTemplates();
 				if (showTemplates) {
 					TemplateDialog templateDialog = new TemplateDialog(
 							mainFrame, mainFrame.getPresenter());

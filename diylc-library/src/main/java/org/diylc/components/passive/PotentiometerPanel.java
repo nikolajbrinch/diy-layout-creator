@@ -10,8 +10,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.core.ComponentState;
@@ -22,9 +20,9 @@ import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.config.Configuration;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(name = "Potentiometer (panel mount)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.SINGLE_CLICK, instanceNamePrefix = "VR", description = "Panel mount potentiometer with solder lugs", zOrder = IDIYComponent.COMPONENT, stretchable = false)
 public class PotentiometerPanel extends AbstractPotentiometer {
@@ -182,8 +180,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 			boolean outlineMode, Project project,
 			IDrawingObserver drawingObserver) {
 		g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-		Theme theme = (Theme) ConfigurationManager.getInstance().readObject(
-				IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+		Theme theme = Configuration.INSTANCE.getTheme();
 		for (Area shape : getBody()) {
 			if (shape != null) {
 				g2d.setColor(bodyColor);

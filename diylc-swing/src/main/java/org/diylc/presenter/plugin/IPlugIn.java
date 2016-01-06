@@ -1,4 +1,4 @@
-package org.diylc.common;
+package org.diylc.presenter.plugin;
 
 import org.diylc.appframework.simplemq.IMessageListener;
 

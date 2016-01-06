@@ -1,18 +1,17 @@
 package org.diylc.swing.plugins.file;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.Environment;
-import org.diylc.appframework.miscutils.OsType;
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
+import org.diylc.common.LRU;
+import org.diylc.core.config.Configuration;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
+
+import com.sun.javafx.util.Utils;
 
 /**
  * Entry point class for File management utilities.
@@ -39,7 +38,7 @@ public class FileMenuPlugin implements IPlugIn {
 		this.plugInPort = plugInPort;
 		this.drawingProvider = new ProjectDrawingProvider(plugInPort, false, true);
 
-		ActionFactory actionFactory = ActionFactory.getInstance();
+		ActionFactory actionFactory = ActionFactory.INSTANCE;
 		swingUI.injectMenuAction(actionFactory.createNewAction(plugInPort), FILE_TITLE);
 		swingUI.injectMenuAction(actionFactory.createOpenAction(plugInPort, swingUI), FILE_TITLE);
 		swingUI.injectSubmenu(OPEN_RECENT_TITLE, null, FILE_TITLE);
@@ -52,7 +51,7 @@ public class FileMenuPlugin implements IPlugIn {
 		swingUI.injectMenuAction(null, FILE_TITLE);
 		swingUI.injectMenuAction(actionFactory.createPrintAction(drawingProvider), FILE_TITLE);
 		
-		if (Environment.INSTANCE.getOsType() != OsType.OSX) {
+		if (!Utils.isMac()) {
 			swingUI.injectMenuAction(null, FILE_TITLE);
 			swingUI.injectMenuAction(actionFactory.createExitAction(plugInPort), FILE_TITLE);
 		}
@@ -63,25 +62,23 @@ public class FileMenuPlugin implements IPlugIn {
 		return EnumSet.of(EventType.LRU_UPDATED);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void processMessage(EventType eventType, Object... params) {
 		if (eventType == EventType.LRU_UPDATED) {
-			updateLru((List<Path>) params[0]);
+			updateLru((LRU<Path>) params[0]);
 		}
 	}
 	
-	private void updateLru(List<Path> paths) {
+	private void updateLru(LRU<Path> lru) {
 		swingUI.clearMenuItems(OPEN_RECENT_TITLE);
-		ActionFactory actionFactory = ActionFactory.getInstance();
+		ActionFactory actionFactory = ActionFactory.INSTANCE;
 		
-		List<String> configLru = new ArrayList<>();
-		
-		for (Path path : paths) {
+		for (Path path : lru.getItems()) {
 			swingUI.injectMenuAction(actionFactory.createOpenRecentAction(plugInPort, swingUI, path), OPEN_RECENT_TITLE);
-			configLru.add(path.toAbsolutePath().normalize().toString());
 		}
 		
-		ConfigurationManager.getInstance().writeValue("lru", configLru);
+		Configuration.INSTANCE.setLru(lru);
 	}
 
 }

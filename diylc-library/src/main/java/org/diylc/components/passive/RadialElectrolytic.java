@@ -8,8 +8,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.AbstractRadialComponent;
 import org.diylc.core.CreationMethod;
@@ -18,10 +16,10 @@ import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
+import org.diylc.core.config.Configuration;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(name = "Electrolytic Capacitor", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Vertical mounted electrolytic capacitor, polarized or bipolar", zOrder = IDIYComponent.COMPONENT)
 public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
@@ -147,9 +145,7 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
 			}
 			Color finalTickColor;
 			if (outlineMode) {
-				Theme theme = (Theme) ConfigurationManager.getInstance()
-						.readObject(IPlugInPort.THEME_KEY,
-								Constants.DEFAULT_THEME);
+				Theme theme = Configuration.INSTANCE.getTheme();
 				finalTickColor = theme.getOutlineColor();
 			} else {
 				finalTickColor = tickColor;

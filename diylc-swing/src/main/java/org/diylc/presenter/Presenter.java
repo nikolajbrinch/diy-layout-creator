@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,20 +29,14 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.Environment;
-import org.diylc.appframework.miscutils.OsType;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.ComponentType;
 import org.diylc.common.DrawOption;
-import org.diylc.common.EventType;
 import org.diylc.common.IComponentFiler;
 import org.diylc.common.IKeyProcessor;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.LRU;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
@@ -55,7 +48,11 @@ import org.diylc.core.IView;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
+import org.diylc.core.config.Configuration;
 import org.diylc.core.measures.SizeUnit;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,21 +146,10 @@ public class Presenter implements IPlugInPort {
 	}
 
 	public void configure() {
-		readLruConfig();
-		messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru.getItems());
+		lru = Configuration.INSTANCE.getLru();
+		messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru);
 	}
 	
-	private void readLruConfig() {
-		List<String> configLru = (List<String>) ConfigurationManager
-				.getInstance().readObject("lru", Collections.EMPTY_LIST);
-
-		Collections.reverse(configLru);
-		
-		for (String file : configLru) {
-			lru.addItem(Paths.get(file));
-		}
-	}
-
 	public void installPlugin(IPlugIn plugIn) {
 		LOG.info(String.format("installPlugin(%s)", plugIn.getClass()
 				.getSimpleName()));
@@ -236,7 +222,7 @@ public class Presenter implements IPlugInPort {
 	public void addLruPath(Path path) {
 		lru.addItem(path);
 		messageDispatcher
-				.dispatchMessage(EventType.LRU_UPDATED, lru.getItems());
+				.dispatchMessage(EventType.LRU_UPDATED, lru);
 	}
 
 	@Override
@@ -521,13 +507,10 @@ public class Presenter implements IPlugInPort {
 										.getName(), e);
 					}
 
-					if (componentTypeSlot.isAutoEdit()
-							&& ConfigurationManager.getInstance().readBoolean(
-									IPlugInPort.AUTO_EDIT_KEY, false)) {
+					if (componentTypeSlot.isAutoEdit() && Configuration.INSTANCE.getAutoEdit()) {
 						editSelection();
 					}
-					if (ConfigurationManager.getInstance().readBoolean(
-							IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
+					if (Configuration.INSTANCE.getContinuousCreation()) {
 						setNewComponentTypeSlot(componentTypeSlot, template);
 					} else {
 						setNewComponentTypeSlot(null, null);
@@ -572,14 +555,10 @@ public class Presenter implements IPlugInPort {
 						updateSelection(newSelection);
 						messageDispatcher.dispatchMessage(EventType.REPAINT);
 
-						if (componentTypeSlot.isAutoEdit()
-								&& ConfigurationManager.getInstance()
-										.readBoolean(IPlugInPort.AUTO_EDIT_KEY,
-												false)) {
+						if (componentTypeSlot.isAutoEdit() && Configuration.INSTANCE.getAutoEdit()) {
 							editSelection();
 						}
-						if (ConfigurationManager.getInstance().readBoolean(
-								IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
+						if (Configuration.INSTANCE.getContinuousCreation()) {
 							setNewComponentTypeSlot(componentTypeSlot, template);
 						} else {
 							setNewComponentTypeSlot(null, null);
@@ -611,8 +590,7 @@ public class Presenter implements IPlugInPort {
 					IDIYComponent<?> topComponent = components.get(0);
 					// If ctrl is pressed just toggle the component under mouse
 					// cursor.
-					OsType osType = Environment.INSTANCE.getOsType();
-					if (metaDown && osType == OsType.OSX || ctrlDown && osType != OsType.OSX) {
+					if (metaDown && Utils.isMac() || ctrlDown && !Utils.isMac()) {
 						if (newSelection.contains(topComponent)) {
 							newSelection
 									.removeAll(findAllGroupedComponents(topComponent));
@@ -665,8 +643,7 @@ public class Presenter implements IPlugInPort {
 			return false;
 		}
 
-		boolean snapToGrid = ConfigurationManager.getInstance().readBoolean(
-				IPlugInPort.SNAP_TO_GRID_KEY, true);
+		boolean snapToGrid = Configuration.INSTANCE.getSnapToGrip();
 		if (shiftDown) {
 			snapToGrid = !snapToGrid;
 		}
@@ -688,8 +665,7 @@ public class Presenter implements IPlugInPort {
 		}
 
 		// Expand control points to include all stuck components.
-		boolean sticky = ConfigurationManager.getInstance().readBoolean(
-				IPlugInPort.STICKY_POINTS_KEY, true);
+		boolean sticky = Configuration.INSTANCE.getStickyPoints();
 		if (ctrlDown) {
 			sticky = !sticky;
 		}
@@ -939,8 +915,7 @@ public class Presenter implements IPlugInPort {
 				}
 			}
 			// Expand control points to include all stuck components.
-			boolean sticky = ConfigurationManager.getInstance().readBoolean(
-					IPlugInPort.STICKY_POINTS_KEY, true);
+			boolean sticky = Configuration.INSTANCE.getStickyPoints();
 			if (this.dragAction == IPlugInPort.DND_TOGGLE_STICKY) {
 				sticky = !sticky;
 			}
@@ -1036,8 +1011,7 @@ public class Presenter implements IPlugInPort {
 	}
 
 	private boolean isSnapToGrid() {
-		boolean snapToGrid = ConfigurationManager.getInstance().readBoolean(
-				IPlugInPort.SNAP_TO_GRID_KEY, true);
+		boolean snapToGrid = Configuration.INSTANCE.getSnapToGrip();
 		if (this.dragAction == IPlugInPort.DND_TOGGLE_SNAP)
 			snapToGrid = !snapToGrid;
 		return snapToGrid;
@@ -1385,15 +1359,17 @@ public class Presenter implements IPlugInPort {
 			Object value) {
 		LOG.info(String.format("setSelectionDefaultPropertyValue(%s, %s)",
 				propertyName, value));
+		Map<String, Map<String, Object>> objectProperties = Configuration.INSTANCE.getObjectProperties();
 		for (IDIYComponent<?> component : selectedComponents) {
 			String className = component.getClass().getName();
 			LOG.debug("Default property value set for " + className + ":"
 					+ propertyName);
-			ConfigurationManager.getInstance()
-					.writeValue(
-							DEFAULTS_KEY_PREFIX + className + ":"
-									+ propertyName, value);
+			Map<String, Object> objectValues = objectProperties.get(className);
+			if (objectValues != null) {
+				objectValues.put(propertyName, value);
+			}
 		}
+		Configuration.INSTANCE.setObjectProperties(objectProperties);
 	}
 
 	@Override
@@ -1402,15 +1378,14 @@ public class Presenter implements IPlugInPort {
 				propertyName, value));
 		LOG.debug("Default property value set for " + Project.class.getName()
 				+ ":" + propertyName);
-		ConfigurationManager.getInstance().writeValue(
-				DEFAULTS_KEY_PREFIX + Project.class.getName() + ":"
-						+ propertyName, value);
+		Map<String, Object> projectProperties = Configuration.INSTANCE.getProjectProperties();
+		projectProperties.put(propertyName, value);
+		Configuration.INSTANCE.setProjectProperties(projectProperties);
 	}
 
 	@Override
 	public void setMetric(boolean isMetric) {
-		ConfigurationManager.getInstance().writeValue(Presenter.METRIC_KEY,
-				isMetric);
+		Configuration.INSTANCE.setMetric(isMetric);
 	}
 
 	@Override
@@ -1640,8 +1615,7 @@ public class Presenter implements IPlugInPort {
 			}
 			controlPointMap.put(component, indices);
 		}
-		if (ConfigurationManager.getInstance().readBoolean(
-				IPlugInPort.STICKY_POINTS_KEY, true)) {
+		if (Configuration.INSTANCE.getStickyPoints()) {
 			includeStuckComponents(controlPointMap);
 		}
 		messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
@@ -1764,8 +1738,7 @@ public class Presenter implements IPlugInPort {
 		if (selectedComponents.isEmpty()) {
 			return null;
 		}
-		boolean metric = ConfigurationManager.getInstance().readBoolean(
-				METRIC_KEY, true);
+		boolean metric = Configuration.INSTANCE.getMetric();
 		Area area = new Area();
 		for (IDIYComponent<?> component : selectedComponents) {
 			Area componentArea = drawingManager.getComponentArea(component);
@@ -1829,9 +1802,7 @@ public class Presenter implements IPlugInPort {
 		} else {
 			currentProject.getComponents().add(component);
 		}
-		if (canCreatePads
-				&& ConfigurationManager.getInstance().readBoolean(
-						IPlugInPort.AUTO_PADS_KEY, false)
+		if (canCreatePads && Configuration.INSTANCE.getAutoCreatePads()
 				&& !(component instanceof SolderPad)) {
 			ComponentType padType = ComponentProcessor.getInstance()
 					.extractComponentTypeFrom(SolderPad.class);
@@ -1988,8 +1959,7 @@ public class Presenter implements IPlugInPort {
 				.extractComponentTypeFrom(
 						(Class<? extends IDIYComponent<?>>) component
 								.getClass());
-		Map<String, List<Template>> templateMap = (Map<String, List<Template>>) ConfigurationManager
-				.getInstance().readObject(TEMPLATES_KEY, null);
+		Map<String, List<Template>> templateMap = Configuration.INSTANCE.getTemplates();
 		if (templateMap == null) {
 			templateMap = new HashMap<String, List<Template>>();
 		}
@@ -2053,15 +2023,13 @@ public class Presenter implements IPlugInPort {
 
 		templates.add(template);
 
-		ConfigurationManager.getInstance().writeValue(TEMPLATES_KEY,
-				templateMap);
+		Configuration.INSTANCE.setTemplates(templateMap);
 	}
 
 	@Override
 	public List<Template> getTemplatesFor(String categoryName,
 			String componentTypeName) {
-		Map<String, List<Template>> templateMap = (Map<String, List<Template>>) ConfigurationManager
-				.getInstance().readObject(TEMPLATES_KEY, null);
+		Map<String, List<Template>> templateMap = Configuration.INSTANCE.getTemplates();
 		if (templateMap != null) {
 			return templateMap.get(categoryName + "." + componentTypeName);
 		}
@@ -2125,8 +2093,7 @@ public class Presenter implements IPlugInPort {
 	@Override
 	public void deleteTemplate(String categoryName, String componentTypeName,
 			String templateName) {
-		Map<String, List<Template>> templateMap = (Map<String, List<Template>>) ConfigurationManager
-				.getInstance().readObject(TEMPLATES_KEY, null);
+		Map<String, List<Template>> templateMap = Configuration.INSTANCE.getTemplates();
 		if (templateMap != null) {
 			List<Template> templates = templateMap.get(categoryName + "."
 					+ componentTypeName);

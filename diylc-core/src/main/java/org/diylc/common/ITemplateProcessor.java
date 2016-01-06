@@ -6,8 +6,6 @@ import org.diylc.core.Template;
 
 public interface ITemplateProcessor {
 
-	public static final String TEMPLATES_KEY = "templates";
-
 	void saveSelectedComponentAsTemplate(String templateName);
 
 	List<Template> getTemplatesFor(String categoryName, String componentTypeName);

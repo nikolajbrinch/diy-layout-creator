@@ -10,12 +10,12 @@ import java.util.EnumSet;
 
 import org.diylc.appframework.undo.IUndoListener;
 import org.diylc.appframework.undo.UndoHandler;
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.core.ExpansionMode;
 import org.diylc.core.Project;
 import org.diylc.images.IconLoader;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
 
@@ -73,7 +73,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.CutAction getCutAction() {
 		if (cutAction == null) {
-			cutAction = ActionFactory.getInstance().createCutAction(plugInPort,
+			cutAction = ActionFactory.INSTANCE.createCutAction(plugInPort,
 					clipboard, this);
 		}
 		return cutAction;
@@ -81,7 +81,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.CopyAction getCopyAction() {
 		if (copyAction == null) {
-			copyAction = ActionFactory.getInstance().createCopyAction(
+			copyAction = ActionFactory.INSTANCE.createCopyAction(
 					plugInPort, clipboard, this);
 		}
 		return copyAction;
@@ -89,7 +89,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.PasteAction getPasteAction() {
 		if (pasteAction == null) {
-			pasteAction = ActionFactory.getInstance().createPasteAction(
+			pasteAction = ActionFactory.INSTANCE.createPasteAction(
 					plugInPort, clipboard);
 		}
 		return pasteAction;
@@ -97,7 +97,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.EditSelectionAction getEditSelectionAction() {
 		if (editSelectionAction == null) {
-			editSelectionAction = ActionFactory.getInstance()
+			editSelectionAction = ActionFactory.INSTANCE
 					.createEditSelectionAction(plugInPort);
 		}
 		return editSelectionAction;
@@ -105,7 +105,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.DeleteSelectionAction getDeleteSelectionAction() {
 		if (deleteSelectionAction == null) {
-			deleteSelectionAction = ActionFactory.getInstance()
+			deleteSelectionAction = ActionFactory.INSTANCE
 					.createDeleteSelectionAction(plugInPort);
 		}
 		return deleteSelectionAction;
@@ -113,7 +113,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.RenumberAction getRenumberXAxisAction() {
 		if (renumberXAxisAction == null) {
-			renumberXAxisAction = ActionFactory.getInstance()
+			renumberXAxisAction = ActionFactory.INSTANCE
 					.createRenumberAction(plugInPort, true);
 		}
 		return renumberXAxisAction;
@@ -121,7 +121,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.RenumberAction getRenumberYAxisAction() {
 		if (renumberYAxisAction == null) {
-			renumberYAxisAction = ActionFactory.getInstance()
+			renumberYAxisAction = ActionFactory.INSTANCE
 					.createRenumberAction(plugInPort, false);
 		}
 		return renumberYAxisAction;
@@ -129,7 +129,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.ExpandSelectionAction getExpandSelectionAllAction() {
 		if (expandSelectionAllAction == null) {
-			expandSelectionAllAction = ActionFactory.getInstance()
+			expandSelectionAllAction = ActionFactory.INSTANCE
 					.createExpandSelectionAction(plugInPort, ExpansionMode.ALL);
 		}
 		return expandSelectionAllAction;
@@ -137,7 +137,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.ExpandSelectionAction getExpandSelectionImmediateAction() {
 		if (expandSelectionImmediateAction == null) {
-			expandSelectionImmediateAction = ActionFactory.getInstance()
+			expandSelectionImmediateAction = ActionFactory.INSTANCE
 					.createExpandSelectionAction(plugInPort,
 							ExpansionMode.IMMEDIATE);
 		}
@@ -146,7 +146,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.ExpandSelectionAction getExpandSelectionSameTypeAction() {
 		if (expandSelectionSameTypeAction == null) {
-			expandSelectionSameTypeAction = ActionFactory.getInstance()
+			expandSelectionSameTypeAction = ActionFactory.INSTANCE
 					.createExpandSelectionAction(plugInPort,
 							ExpansionMode.SAME_TYPE);
 		}
@@ -155,7 +155,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.SaveAsTemplateAction getSaveAsTemplateAction() {
 		if (saveAsTemplateAction == null) {
-			saveAsTemplateAction = ActionFactory.getInstance()
+			saveAsTemplateAction = ActionFactory.INSTANCE
 					.createSaveAsTemplateAction(plugInPort);
 		}
 		return saveAsTemplateAction;
@@ -165,7 +165,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 	public void connect(IPlugInPort plugInPort) {
 		this.plugInPort = plugInPort;
 
-		ActionFactory actionFactory = ActionFactory.getInstance();
+		ActionFactory actionFactory = ActionFactory.INSTANCE;
 
 		swingUI.injectMenuAction(undoHandler.getUndoAction(), EDIT_TITLE);
 		swingUI.injectMenuAction(undoHandler.getRedoAction(), EDIT_TITLE);

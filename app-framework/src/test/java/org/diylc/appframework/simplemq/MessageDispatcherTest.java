@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.EnumSet;
 
-import org.diylc.appframework.simplemq.IMessageListener;
-import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.junit.Before;
 import org.junit.Test;
 

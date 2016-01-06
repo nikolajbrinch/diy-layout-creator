@@ -7,7 +7,7 @@ import java.awt.dnd.DragSourceListener;
 
 import javax.swing.JComponent;
 
-import org.diylc.common.IPlugInPort;
+import org.diylc.presenter.plugin.IPlugInPort;
 
 
 /**

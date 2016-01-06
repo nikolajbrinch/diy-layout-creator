@@ -32,12 +32,12 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.DrawOption;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
+import org.diylc.core.config.Configuration;
 import org.diylc.presenter.Presenter;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,6 @@ public class TemplateDialog extends JDialog {
 	private static final Logger LOG = LoggerFactory.getLogger(TemplateDialog.class);
 
 	private static final Dimension panelSize = new Dimension(400, 300);
-	public static final String SHOW_TEMPLATES_KEY = "showTemplatesAtStartup";
 
 	private IPlugInPort plugInPort;
 
@@ -238,8 +237,7 @@ public class TemplateDialog extends JDialog {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					ConfigurationManager.getInstance().writeValue(SHOW_TEMPLATES_KEY,
-							showTemplatesBox.isSelected());
+					Configuration.INSTANCE.setShowTemplates(showTemplatesBox.isSelected());
 				}
 			});
 		}

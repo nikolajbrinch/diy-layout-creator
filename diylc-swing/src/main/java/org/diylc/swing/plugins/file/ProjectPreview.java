@@ -19,11 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.diylc.common.DrawOption;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
 import org.diylc.core.Project;
 import org.diylc.presenter.Presenter;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swingframework.IFileChooserAccessory;
 
 import com.thoughtworks.xstream.XStream;

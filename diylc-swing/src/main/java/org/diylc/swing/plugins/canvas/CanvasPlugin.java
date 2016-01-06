@@ -25,19 +25,18 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.BadPositionException;
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
+import org.diylc.core.config.Configuration;
+import org.diylc.core.config.ConfigurationListener;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.images.IconLoader;
-import org.diylc.presenter.Presenter;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.plugins.edit.ComponentTransferable;
@@ -195,19 +194,14 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 					new ProjectDrawingProvider(plugInPort, true, false),
 					new Size(1d, SizeUnit.cm).convertToPixels(), new Size(1d,
 							SizeUnit.in).convertToPixels());
-			boolean metric = ConfigurationManager.getInstance().readBoolean(
-					Presenter.METRIC_KEY, true);
-			boolean wheelZoom = ConfigurationManager.getInstance().readBoolean(
-					IPlugInPort.WHEEL_ZOOM_KEY, false);
-			ConfigurationManager.getInstance().addConfigListener(
-					IPlugInPort.WHEEL_ZOOM_KEY, new IConfigListener() {
-
-						@Override
-						public void valueChanged(String key, Object value) {
-							scrollPane
-									.setWheelScrollingEnabled(!(Boolean) value);
-						}
-					});
+			boolean metric = Configuration.INSTANCE.getMetric();
+			boolean wheelZoom = Configuration.INSTANCE.getWheelZoom();
+			Configuration.INSTANCE.addListener(Configuration.Key.WHEEL_ZOOM, new ConfigurationListener() {
+				@Override
+				public void onValueChanged(Object oldValue, Object newValue) {
+					scrollPane.setWheelScrollingEnabled(!(Boolean) newValue);
+				}
+			});
 			scrollPane.setMetric(metric);
 			scrollPane.setWheelScrollingEnabled(!wheelZoom);
 			scrollPane.addUnitListener(new IRulerListener() {
@@ -221,8 +215,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 				@Override
 				public void mouseWheelMoved(MouseWheelEvent e) {
-					boolean wheelZoom = ConfigurationManager.getInstance()
-							.readBoolean(IPlugInPort.WHEEL_ZOOM_KEY, false);
+					boolean wheelZoom = Configuration.INSTANCE.getWheelZoom();
 					if (!wheelZoom) {
 						return;
 					}
@@ -276,7 +269,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 			popupMenu.add(getApplyTemplateMenu());
 			popupMenu.add(getExpandMenu());
 			popupMenu.addSeparator();
-			popupMenu.add(ActionFactory.getInstance().createEditProjectAction(
+			popupMenu.add(ActionFactory.INSTANCE.createEditProjectAction(
 					plugInPort));
 		}
 		return popupMenu;
@@ -361,7 +354,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.CutAction getCutAction() {
 		if (cutAction == null) {
-			cutAction = ActionFactory.getInstance().createCutAction(plugInPort,
+			cutAction = ActionFactory.INSTANCE.createCutAction(plugInPort,
 					clipboard, this);
 		}
 		return cutAction;
@@ -369,7 +362,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.CopyAction getCopyAction() {
 		if (copyAction == null) {
-			copyAction = ActionFactory.getInstance().createCopyAction(
+			copyAction = ActionFactory.INSTANCE.createCopyAction(
 					plugInPort, clipboard, this);
 		}
 		return copyAction;
@@ -377,7 +370,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.PasteAction getPasteAction() {
 		if (pasteAction == null) {
-			pasteAction = ActionFactory.getInstance().createPasteAction(
+			pasteAction = ActionFactory.INSTANCE.createPasteAction(
 					plugInPort, clipboard);
 		}
 		return pasteAction;
@@ -385,7 +378,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.EditSelectionAction getEditSelectionAction() {
 		if (editSelectionAction == null) {
-			editSelectionAction = ActionFactory.getInstance()
+			editSelectionAction = ActionFactory.INSTANCE
 					.createEditSelectionAction(plugInPort);
 		}
 		return editSelectionAction;
@@ -393,7 +386,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.DeleteSelectionAction getDeleteSelectionAction() {
 		if (deleteSelectionAction == null) {
-			deleteSelectionAction = ActionFactory.getInstance()
+			deleteSelectionAction = ActionFactory.INSTANCE
 					.createDeleteSelectionAction(plugInPort);
 		}
 		return deleteSelectionAction;
@@ -401,7 +394,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.RotateSelectionAction getRotateClockwiseAction() {
 		if (rotateClockwiseAction == null) {
-			rotateClockwiseAction = ActionFactory.getInstance()
+			rotateClockwiseAction = ActionFactory.INSTANCE
 					.createRotateSelectionAction(plugInPort, 1);
 		}
 		return rotateClockwiseAction;
@@ -409,7 +402,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.RotateSelectionAction getRotateCounterclockwiseAction() {
 		if (rotateCounterclockwiseAction == null) {
-			rotateCounterclockwiseAction = ActionFactory.getInstance()
+			rotateCounterclockwiseAction = ActionFactory.INSTANCE
 					.createRotateSelectionAction(plugInPort, -1);
 		}
 		return rotateCounterclockwiseAction;
@@ -417,7 +410,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.SaveAsTemplateAction getSaveAsTemplateAction() {
 		if (saveAsTemplateAction == null) {
-			saveAsTemplateAction = ActionFactory.getInstance()
+			saveAsTemplateAction = ActionFactory.INSTANCE
 					.createSaveAsTemplateAction(plugInPort);
 		}
 		return saveAsTemplateAction;
@@ -425,7 +418,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.GroupAction getGroupAction() {
 		if (groupAction == null) {
-			groupAction = ActionFactory.getInstance().createGroupAction(
+			groupAction = ActionFactory.INSTANCE.createGroupAction(
 					plugInPort);
 		}
 		return groupAction;
@@ -433,7 +426,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.UngroupAction getUngroupAction() {
 		if (ungroupAction == null) {
-			ungroupAction = ActionFactory.getInstance().createUngroupAction(
+			ungroupAction = ActionFactory.INSTANCE.createUngroupAction(
 					plugInPort);
 		}
 		return ungroupAction;
@@ -441,7 +434,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.SendToBackAction getSendToBackAction() {
 		if (sendToBackAction == null) {
-			sendToBackAction = ActionFactory.getInstance()
+			sendToBackAction = ActionFactory.INSTANCE
 					.createSendToBackAction(plugInPort);
 		}
 		return sendToBackAction;
@@ -449,7 +442,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.BringToFrontAction getBringToFrontAction() {
 		if (bringToFrontAction == null) {
-			bringToFrontAction = ActionFactory.getInstance()
+			bringToFrontAction = ActionFactory.INSTANCE
 					.createBringToFrontAction(plugInPort);
 		}
 		return bringToFrontAction;
@@ -457,7 +450,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.ExpandSelectionAction getExpandSelectionAllAction() {
 		if (expandSelectionAllAction == null) {
-			expandSelectionAllAction = ActionFactory.getInstance()
+			expandSelectionAllAction = ActionFactory.INSTANCE
 					.createExpandSelectionAction(plugInPort, ExpansionMode.ALL);
 		}
 		return expandSelectionAllAction;
@@ -465,7 +458,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.ExpandSelectionAction getExpandSelectionImmediateAction() {
 		if (expandSelectionImmediateAction == null) {
-			expandSelectionImmediateAction = ActionFactory.getInstance()
+			expandSelectionImmediateAction = ActionFactory.INSTANCE
 					.createExpandSelectionAction(plugInPort,
 							ExpansionMode.IMMEDIATE);
 		}
@@ -474,7 +467,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
 	public ActionFactory.ExpandSelectionAction getExpandSelectionSameTypeAction() {
 		if (expandSelectionSameTypeAction == null) {
-			expandSelectionSameTypeAction = ActionFactory.getInstance()
+			expandSelectionSameTypeAction = ActionFactory.INSTANCE
 					.createExpandSelectionAction(plugInPort,
 							ExpansionMode.SAME_TYPE);
 		}

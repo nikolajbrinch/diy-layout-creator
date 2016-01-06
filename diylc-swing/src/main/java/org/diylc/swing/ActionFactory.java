@@ -17,18 +17,16 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.Environment;
-import org.diylc.appframework.miscutils.OsType;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IView;
 import org.diylc.core.Theme;
+import org.diylc.core.config.Configuration;
 import org.diylc.images.IconLoader;
 import org.diylc.presenter.Presenter;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
 import org.diylc.swing.plugins.edit.ComponentTransferable;
@@ -41,19 +39,15 @@ import org.diylc.utils.BomEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ActionFactory {
+import com.sun.javafx.util.Utils;
+
+public enum ActionFactory {
+
+	INSTANCE;
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ActionFactory.class);
 
-	private static ActionFactory instance;
-
-	public static ActionFactory getInstance() {
-		if (instance == null) {
-			instance = new ActionFactory();
-		}
-		return instance;
-	}
 
 	private ActionFactory() {
 	}
@@ -177,8 +171,8 @@ public class ActionFactory {
 	// Config actions.
 
 	public ConfigAction createConfigAction(IPlugInPort plugInPort,
-			String title, String configKey, boolean defaultValue) {
-		return new ConfigAction(plugInPort, title, configKey, defaultValue);
+			String title, Configuration.Key key, boolean defaultValue) {
+		return new ConfigAction(plugInPort, title, key, defaultValue);
 	}
 
 	public ThemeAction createThemeAction(IPlugInPort plugInPort, Theme theme) {
@@ -307,8 +301,7 @@ public class ActionFactory {
 		private String createDisplayName(Path path) {
 			String displayName = path.toString();
 			
-			String lastPathName = (String) ConfigurationManager.getInstance()
-					.readString("lastPath", null);
+			String lastPathName = Configuration.INSTANCE.getLastPath();
 
 			if (lastPathName != null) {
 				try {
@@ -344,8 +337,7 @@ public class ActionFactory {
 
 					@Override
 					public void complete(Void result) {
-						ConfigurationManager.getInstance().writeValue("lastPath",
-								path.getParent().toAbsolutePath().normalize().toString());
+						Configuration.INSTANCE.setLastPath(path.getParent().toAbsolutePath().normalize().toString());
 						plugInPort.addLruPath(path);
 					}
 
@@ -887,7 +879,7 @@ public class ActionFactory {
 			this.plugInPort = plugInPort;
 			putValue(AbstractAction.NAME, "Group Selection");
 
-			if (Environment.INSTANCE.getOsType() == OsType.OSX) {
+			if (Utils.isMac()) {
 				putValue(AbstractAction.ACCELERATOR_KEY,
 						KeyStroke.getKeyStroke(KeyEvent.VK_G, Toolkit
 								.getDefaultToolkit().getMenuShortcutKeyMask()
@@ -917,7 +909,7 @@ public class ActionFactory {
 			super();
 			this.plugInPort = plugInPort;
 			putValue(AbstractAction.NAME, "Ungroup Selection");
-			if (Environment.INSTANCE.getOsType() == OsType.OSX) {
+			if (Utils.isMac()) {
 				putValue(AbstractAction.ACCELERATOR_KEY,
 						KeyStroke.getKeyStroke(KeyEvent.VK_U, Toolkit
 								.getDefaultToolkit().getMenuShortcutKeyMask()
@@ -1132,7 +1124,7 @@ public class ActionFactory {
 			putValue(AbstractAction.NAME, "Send Backward");
 			putValue(AbstractAction.SMALL_ICON, IconLoader.Back.getIcon());
 
-			if (Environment.INSTANCE.getOsType() == OsType.OSX) {
+			if (Utils.isMac()) {
 				putValue(AbstractAction.ACCELERATOR_KEY,
 						KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit
 								.getDefaultToolkit().getMenuShortcutKeyMask()
@@ -1162,7 +1154,7 @@ public class ActionFactory {
 			this.plugInPort = plugInPort;
 			putValue(AbstractAction.NAME, "Bring Forward");
 			putValue(AbstractAction.SMALL_ICON, IconLoader.Front.getIcon());
-			if (Environment.INSTANCE.getOsType() == OsType.OSX) {
+			if (Utils.isMac()) {
 				putValue(AbstractAction.ACCELERATOR_KEY,
 						KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit
 								.getDefaultToolkit().getMenuShortcutKeyMask()
@@ -1186,24 +1178,22 @@ public class ActionFactory {
 		private static final long serialVersionUID = 1L;
 
 		private IPlugInPort plugInPort;
-		private String configKey;
+		private Configuration.Key key;
 
 		public ConfigAction(IPlugInPort plugInPort, String title,
-				String configKey, boolean defaultValue) {
+				Configuration.Key key, boolean defaultValue) {
 			super();
 			this.plugInPort = plugInPort;
-			this.configKey = configKey;
+			this.key = key;
 			putValue(AbstractAction.NAME, title);
 			putValue(IView.CHECK_BOX_MENU_ITEM, true);
-			putValue(AbstractAction.SELECTED_KEY, ConfigurationManager
-					.getInstance().readBoolean(configKey, defaultValue));
+			putValue(AbstractAction.SELECTED_KEY, Configuration.INSTANCE.getProperty(key, defaultValue));
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LOG.info(getValue(AbstractAction.NAME) + " triggered");
-			ConfigurationManager.getInstance().writeValue(configKey,
-					getValue(AbstractAction.SELECTED_KEY));
+			Configuration.INSTANCE.setProperty(key, getValue(AbstractAction.SELECTED_KEY));
 			plugInPort.refresh();
 		}
 	}

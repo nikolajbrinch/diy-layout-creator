@@ -22,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.Display;
-import org.diylc.common.EventType;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
@@ -52,6 +51,7 @@ import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
+import org.diylc.presenter.plugin.EventType;
 import org.diylc.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

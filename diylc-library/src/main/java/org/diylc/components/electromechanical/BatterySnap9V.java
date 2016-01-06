@@ -12,8 +12,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
@@ -25,6 +23,7 @@ import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.config.Configuration;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
@@ -69,8 +68,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
 
 		Color finalBorderColor;
 		if (outlineMode) {
-			Theme theme = (Theme) ConfigurationManager.getInstance().readObject(
-					IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+			Theme theme = Configuration.INSTANCE.getTheme();
 			finalBorderColor = componentState == ComponentState.SELECTED
 					|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR : theme
 					.getOutlineColor();

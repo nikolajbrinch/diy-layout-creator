@@ -8,9 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.ComponentType;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.PropertyWrapper;
@@ -18,6 +16,7 @@ import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
+import org.diylc.core.config.Configuration;
 import org.diylc.core.measures.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,9 +238,7 @@ public class InstantiationManager {
 		fillWithDefaultProperties(component, template);
 
 		// Write to recent components
-		List<String> recentComponentTypes = (List<String>) ConfigurationManager
-				.getInstance().readObject(IPlugInPort.RECENT_COMPONENTS_KEY,
-						new ArrayList<ComponentType>());
+		List<String> recentComponentTypes = Configuration.INSTANCE.getRecentComponents();
 		String className = componentType.getInstanceClass().getName();
 		if (recentComponentTypes.size() == 0
 				|| !recentComponentTypes.get(0).equals(className)) {
@@ -253,8 +250,7 @@ public class InstantiationManager {
 			if (recentComponentTypes.size() > MAX_RECENT_COMPONENTS) {
 				recentComponentTypes.remove(recentComponentTypes.size() - 1);
 			}
-			ConfigurationManager.getInstance().writeValue(
-					IPlugInPort.RECENT_COMPONENTS_KEY, recentComponentTypes);
+			Configuration.INSTANCE.setRecentComponents(recentComponentTypes);
 		}
 
 		List<IDIYComponent<?>> list = new ArrayList<IDIYComponent<?>>();
@@ -306,11 +302,12 @@ public class InstantiationManager {
 		// Override with default values if available.
 		for (PropertyWrapper property : properties) {
 			propertyCache.put(property.getName(), property);
-			Object defaultValue = ConfigurationManager.getInstance()
-					.readObject(
-							Presenter.DEFAULTS_KEY_PREFIX
-									+ object.getClass().getName() + ":"
-									+ property.getName(), null);
+			Map<String, Map<String, Object>> objectProperties = Configuration.INSTANCE.getObjectProperties();
+			Map<String, Object> objectValues = objectProperties.get(object.getClass().getName());
+			Object defaultValue = null;
+			if (objectValues != null) {
+				defaultValue = objectValues.get(property.getName());
+			}
 			if (defaultValue != null) {
 				property.setValue(defaultValue);
 				property.writeTo(object);

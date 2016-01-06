@@ -5,9 +5,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.DrawOption;
-import org.diylc.common.IPlugInPort;
+import org.diylc.core.config.Configuration;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
@@ -41,12 +41,10 @@ public class ProjectDrawingProvider implements IDrawingProvider {
 		if (useZoom) {
 			drawOptions.add(DrawOption.ZOOM);
 		}
-		if (showGridWhenNeeded
-				&& ConfigurationManager.getInstance().readBoolean(IPlugInPort.EXPORT_GRID_KEY,
-						false)) {
+		if (showGridWhenNeeded && Configuration.INSTANCE.getExportGrid()) {
 			drawOptions.add(DrawOption.GRID);
 		}
-		if (ConfigurationManager.getInstance().readBoolean(IPlugInPort.OUTLINE_KEY, false)) {
+		if (Configuration.INSTANCE.getOutline()) {
 			drawOptions.add(DrawOption.OUTLINE_MODE);
 		}
 		plugInPort.draw((Graphics2D) g, drawOptions, null);

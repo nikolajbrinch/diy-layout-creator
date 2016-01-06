@@ -7,7 +7,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 
-import org.diylc.common.IPlugInPort;
+import org.diylc.presenter.plugin.IPlugInPort;
 
 
 /**

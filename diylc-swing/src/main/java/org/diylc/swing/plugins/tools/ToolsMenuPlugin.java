@@ -2,10 +2,10 @@ package org.diylc.swing.plugins.tools;
 
 import java.util.EnumSet;
 
-import org.diylc.common.EventType;
-import org.diylc.common.IPlugIn;
-import org.diylc.common.IPlugInPort;
 import org.diylc.images.CoreIconLoader;
+import org.diylc.presenter.plugin.EventType;
+import org.diylc.presenter.plugin.IPlugIn;
+import org.diylc.presenter.plugin.IPlugInPort;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
 
@@ -32,7 +32,7 @@ public class ToolsMenuPlugin implements IPlugIn {
 	public void connect(IPlugInPort plugInPort) {
 		this.traceMaskDrawingProvider = new TraceMaskDrawingProvider(plugInPort);
 
-		ActionFactory actionFactory = ActionFactory.getInstance();
+		ActionFactory actionFactory = ActionFactory.INSTANCE;
 		swingUI.injectSubmenu(TRACE_MASK_TITLE, CoreIconLoader.TraceMask.getIcon(), TOOLS_TITLE);
 		swingUI.injectMenuAction(actionFactory.createExportPDFAction(traceMaskDrawingProvider, swingUI), TRACE_MASK_TITLE);
 		swingUI.injectMenuAction(actionFactory.createExportPNGAction(traceMaskDrawingProvider, swingUI), TRACE_MASK_TITLE); 

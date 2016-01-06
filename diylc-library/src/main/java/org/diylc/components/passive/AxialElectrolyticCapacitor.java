@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.core.CreationMethod;
@@ -15,10 +13,10 @@ import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
+import org.diylc.core.config.Configuration;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(name = "Electrolytic Capacitor (axial)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Axial electrolytic capacitor, similar to Sprague Atom, F&T, etc", zOrder = IDIYComponent.COMPONENT)
 public class AxialElectrolyticCapacitor extends
@@ -151,9 +149,7 @@ public class AxialElectrolyticCapacitor extends
 			}
 			Color finalTickColor;
 			if (outlineMode) {
-				Theme theme = (Theme) ConfigurationManager.getInstance()
-						.readObject(IPlugInPort.THEME_KEY,
-								Constants.DEFAULT_THEME);
+				Theme theme = Configuration.INSTANCE.getTheme();
 				finalTickColor = theme.getOutlineColor();
 			} else {
 				finalTickColor = tickColor;
