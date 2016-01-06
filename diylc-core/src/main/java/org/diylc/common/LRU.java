@@ -25,7 +25,7 @@ public class LRU<T> {
 	 * 
 	 * @param file
 	 */
-	public void addFile(T item) {
+	public void addItem(T item) {
 		if (lru.contains(item)) {
 			lru.remove(item);
 		}
@@ -36,7 +36,7 @@ public class LRU<T> {
 		}
 	}
 
-	public List<T> getFiles() {
+	public List<T> getItems() {
 		return Collections.unmodifiableList(lru);
 	}
 
