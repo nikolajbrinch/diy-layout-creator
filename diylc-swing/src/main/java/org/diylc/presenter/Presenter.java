@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -125,7 +127,7 @@ public class Presenter implements IPlugInPort {
 	private int dragAction;
 	private Point previousScaledPoint;
 
-	private LRU<File> lru = new LRU<>(15);
+	private LRU<Path> lru = new LRU<>(15);
 
 	public Presenter(IView view) {
 		super();
@@ -146,15 +148,17 @@ public class Presenter implements IPlugInPort {
 
 	public void configure() {
 		readLruConfig();
-		messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru.getFiles());
+		messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru.getItems());
 	}
 	
 	private void readLruConfig() {
 		List<String> configLru = (List<String>) ConfigurationManager
 				.getInstance().readObject("lru", Collections.EMPTY_LIST);
 
+		Collections.reverse(configLru);
+		
 		for (String file : configLru) {
-			lru.addFile(new File(file));
+			lru.addItem(Paths.get(file));
 		}
 	}
 
@@ -227,10 +231,10 @@ public class Presenter implements IPlugInPort {
 	}
 
 	@Override
-	public void addLruFile(File file) {
-		lru.addFile(file);
+	public void addLruPath(Path path) {
+		lru.addItem(path);
 		messageDispatcher
-				.dispatchMessage(EventType.LRU_UPDATED, lru.getFiles());
+				.dispatchMessage(EventType.LRU_UPDATED, lru.getItems());
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package org.diylc.swing.plugins.file;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -66,19 +66,19 @@ public class FileMenuPlugin implements IPlugIn {
 	@Override
 	public void processMessage(EventType eventType, Object... params) {
 		if (eventType == EventType.LRU_UPDATED) {
-			updateLru((List<File>) params[0]);
+			updateLru((List<Path>) params[0]);
 		}
 	}
 	
-	private void updateLru(List<File> files) {
+	private void updateLru(List<Path> paths) {
 		swingUI.clearMenuItems(OPEN_RECENT_TITLE);
 		ActionFactory actionFactory = ActionFactory.getInstance();
 		
 		List<String> configLru = new ArrayList<>();
 		
-		for (File file : files) {
-			swingUI.injectMenuAction(actionFactory.createOpenRecentAction(plugInPort, swingUI, file), OPEN_RECENT_TITLE);
-			configLru.add(file.getAbsolutePath());
+		for (Path path : paths) {
+			swingUI.injectMenuAction(actionFactory.createOpenRecentAction(plugInPort, swingUI, path), OPEN_RECENT_TITLE);
+			configLru.add(path.toAbsolutePath().normalize().toString());
 		}
 		
 		ConfigurationManager.getInstance().writeValue("lru", configLru);

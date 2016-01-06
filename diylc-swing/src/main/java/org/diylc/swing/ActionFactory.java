@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.print.PrinterException;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -67,8 +69,8 @@ public class ActionFactory {
 	}
 
 	public OpenRecentAction createOpenRecentAction(IPlugInPort plugInPort,
-			ISwingUI swingUI, File file) {
-		return new OpenRecentAction(plugInPort, swingUI, file);
+			ISwingUI swingUI, Path path) {
+		return new OpenRecentAction(plugInPort, swingUI, path);
 	}
 
 	public ImportAction createImportAction(IPlugInPort plugInPort,
@@ -271,7 +273,7 @@ public class ActionFactory {
 
 					@Override
 					public void complete(Void result) {
-						plugInPort.addLruFile(file);
+						plugInPort.addLruPath(file.toPath());
 					}
 
 					@Override
@@ -291,32 +293,33 @@ public class ActionFactory {
 
 		private IPlugInPort plugInPort;
 		private ISwingUI swingUI;
-		private File file;
+		private Path path;
 
 		public OpenRecentAction(IPlugInPort plugInPort, ISwingUI swingUI,
-				File file) {
+				Path path) {
 			super();
 			this.plugInPort = plugInPort;
 			this.swingUI = swingUI;
-			this.file = file;
-			putValue(AbstractAction.NAME, createDisplayName(file));
-			putValue(AbstractAction.SMALL_ICON, IconLoader.FolderOut.getIcon());
+			this.path = path;
+			putValue(AbstractAction.NAME, createDisplayName(path));
 		}
 
-		private String createDisplayName(File file) {
-			String displayName = file.getAbsolutePath();
-
-			String lastPath = (String) ConfigurationManager.getInstance()
+		private String createDisplayName(Path path) {
+			String displayName = path.toString();
+			
+			String lastPathName = (String) ConfigurationManager.getInstance()
 					.readString("lastPath", null);
 
-			if (lastPath != null) {
-				if (displayName.startsWith(lastPath)) {
-					displayName = displayName.substring(lastPath.length());
-				}
-
-				if (displayName
-						.startsWith(System.getProperty("file.separator"))) {
-					displayName = displayName.substring(1);
+			if (lastPathName != null) {
+				try {
+					Path lastPath = Paths.get(lastPathName).toAbsolutePath().normalize();
+					Path displayPath = lastPath.toAbsolutePath().normalize().relativize(path);
+					
+					displayName = displayPath.toString();
+				} catch (IllegalArgumentException e) {
+					/*
+					 * Ignore - a relative path cannot be calculated.
+					 */
 				}
 			}
 
@@ -329,19 +332,21 @@ public class ActionFactory {
 			if (!plugInPort.allowFileAction()) {
 				return;
 			}
-			if (file != null) {
+			if (path != null) {
 				swingUI.executeBackgroundTask(new ITask<Void>() {
 
 					@Override
 					public Void doInBackground() throws Exception {
-						LOG.debug("Opening from " + file.getAbsolutePath());
-						plugInPort.loadProjectFromFile(file.getAbsolutePath());
+						LOG.debug("Opening from " + path.toAbsolutePath().normalize());
+						plugInPort.loadProjectFromFile(path.toFile().getAbsolutePath());
 						return null;
 					}
 
 					@Override
 					public void complete(Void result) {
-						plugInPort.addLruFile(file);
+						ConfigurationManager.getInstance().writeValue("lastPath",
+								path.getParent().toAbsolutePath().normalize().toString());
+						plugInPort.addLruPath(path);
 					}
 
 					@Override
@@ -481,7 +486,7 @@ public class ActionFactory {
 
 						@Override
 						public void complete(Void result) {
-							plugInPort.addLruFile(file);
+							plugInPort.addLruPath(file.toPath());
 						}
 
 						@Override
@@ -556,7 +561,7 @@ public class ActionFactory {
 
 					@Override
 					public void complete(Void result) {
-						plugInPort.addLruFile(file);
+						plugInPort.addLruPath(file.toPath());
 					}
 
 					@Override
