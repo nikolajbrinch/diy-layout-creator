@@ -1,4 +1,4 @@
-package org.diylc.swing.plugins.file;
+package org.diylc.swing.plugins.tools;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

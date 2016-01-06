@@ -1,4 +1,4 @@
-package org.diylc.swing.plugins.file;
+package org.diylc.swing.plugins.tools;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 
 import org.diylc.images.CoreIconLoader;
 import org.diylc.swing.gui.DialogFactory;
+import org.diylc.swing.plugins.file.FileFilterEnum;
 import org.diylc.swingframework.export.TableExporter;
 import org.diylc.swingframework.objecttable.ObjectListTable;
 import org.diylc.utils.BomEntry;
