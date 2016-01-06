@@ -181,7 +181,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					plugInPort.mouseClicked(e.getPoint(), e.getButton(), e
-							.isControlDown(), e.isShiftDown(), e.isAltDown(), e
+							.isControlDown(), e.isShiftDown(), e.isAltDown(), e.isMetaDown(), e
 							.getClickCount());
 				}
 			});

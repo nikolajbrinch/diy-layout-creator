@@ -17,7 +17,7 @@ public interface IMouseProcessor {
 	 * @param clickCount
 	 */
 	void mouseClicked(Point point, int button, boolean ctrlDown, boolean shiftDown, boolean altDown,
-			int clickCount);
+			boolean metaDown, int clickCount);
 
 	/**
 	 * Notifies the presenter that mouse is moved.

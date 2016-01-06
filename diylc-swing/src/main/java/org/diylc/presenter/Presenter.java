@@ -31,6 +31,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
+import org.diylc.appframework.miscutils.Environment;
+import org.diylc.appframework.miscutils.OsType;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.Version;
@@ -473,7 +475,7 @@ public class Presenter implements IPlugInPort {
 
 	@Override
 	public void mouseClicked(Point point, int button, boolean ctrlDown,
-			boolean shiftDown, boolean altDown, int clickCount) {
+			boolean shiftDown, boolean altDown, boolean metaDown, int clickCount) {
 		LOG.debug(String.format("mouseClicked(%s, %s, %s, %s, %s)", point,
 				button, ctrlDown, shiftDown, altDown));
 		Point scaledPoint = scalePoint(point);
@@ -609,7 +611,8 @@ public class Presenter implements IPlugInPort {
 					IDIYComponent<?> topComponent = components.get(0);
 					// If ctrl is pressed just toggle the component under mouse
 					// cursor.
-					if (ctrlDown) {
+					OsType osType = Environment.INSTANCE.getOsType();
+					if (metaDown && osType == OsType.OSX || ctrlDown && osType != OsType.OSX) {
 						if (newSelection.contains(topComponent)) {
 							newSelection
 									.removeAll(findAllGroupedComponents(topComponent));
@@ -882,7 +885,8 @@ public class Presenter implements IPlugInPort {
 			mouseClicked(point, IPlugInPort.BUTTON1,
 					dragAction == DnDConstants.ACTION_COPY,
 					dragAction == DnDConstants.ACTION_LINK,
-					dragAction == DnDConstants.ACTION_MOVE, 1);
+					dragAction == DnDConstants.ACTION_MOVE, 
+					false, 1);
 			return;
 		}
 		this.dragInProgress = true;
