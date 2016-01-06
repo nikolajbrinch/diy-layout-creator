@@ -52,6 +52,7 @@ import org.diylc.images.CoreIconLoader;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
+import org.diylc.swing.plugins.arrange.ArrangeMenuPlugin;
 import org.diylc.swing.plugins.autosave.AutoSavePlugin;
 import org.diylc.swing.plugins.canvas.CanvasPlugin;
 import org.diylc.swing.plugins.config.ConfigPlugin;
@@ -62,6 +63,7 @@ import org.diylc.swing.plugins.help.HelpMenuPlugin;
 import org.diylc.swing.plugins.layers.LayersMenuPlugin;
 import org.diylc.swing.plugins.statusbar.StatusBar;
 import org.diylc.swing.plugins.toolbox.ToolBox;
+import org.diylc.swing.plugins.tools.ToolsMenuPlugin;
 import org.diylc.swingframework.ButtonDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,9 +111,11 @@ public class MainFrame extends JFrame implements ISwingUI {
 		presenter.installPlugin(new ToolBox(this));
 		presenter.installPlugin(new FileMenuPlugin(this));
 		presenter.installPlugin(new EditMenuPlugin(this));
+		presenter.installPlugin(new ArrangeMenuPlugin(this));
 		presenter.installPlugin(new ConfigPlugin(this));
 		presenter.installPlugin(new LayersMenuPlugin(this));
 		// presenter.installPlugin(new OnlineManager());
+		presenter.installPlugin(new ToolsMenuPlugin(this));
 		presenter.installPlugin(new HelpMenuPlugin(this));
 
 		presenter.installPlugin(new StatusBar(this));

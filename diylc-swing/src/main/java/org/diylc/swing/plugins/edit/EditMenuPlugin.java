@@ -35,18 +35,12 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 	private ActionFactory.PasteAction pasteAction;
 	private ActionFactory.EditSelectionAction editSelectionAction;
 	private ActionFactory.DeleteSelectionAction deleteSelectionAction;
-	private ActionFactory.GroupAction groupAction;
-	private ActionFactory.UngroupAction ungroupAction;
-	private ActionFactory.SendToBackAction sendToBackAction;
-	private ActionFactory.BringToFrontAction bringToFrontAction;
 	private ActionFactory.RenumberAction renumberXAxisAction;
 	private ActionFactory.RenumberAction renumberYAxisAction;
 	private ActionFactory.ExpandSelectionAction expandSelectionAllAction;
 	private ActionFactory.ExpandSelectionAction expandSelectionImmediateAction;
 	private ActionFactory.ExpandSelectionAction expandSelectionSameTypeAction;
 	private ActionFactory.SaveAsTemplateAction saveAsTemplateAction;
-	private ActionFactory.RotateSelectionAction rotateClockwiseAction;
-	private ActionFactory.RotateSelectionAction rotateCounterClockwiseAction;
 
 	private UndoHandler<Project> undoHandler;
 
@@ -117,38 +111,6 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 		return deleteSelectionAction;
 	}
 
-	public ActionFactory.GroupAction getGroupAction() {
-		if (groupAction == null) {
-			groupAction = ActionFactory.getInstance().createGroupAction(
-					plugInPort);
-		}
-		return groupAction;
-	}
-
-	public ActionFactory.UngroupAction getUngroupAction() {
-		if (ungroupAction == null) {
-			ungroupAction = ActionFactory.getInstance().createUngroupAction(
-					plugInPort);
-		}
-		return ungroupAction;
-	}
-
-	public ActionFactory.SendToBackAction getSendToBackAction() {
-		if (sendToBackAction == null) {
-			sendToBackAction = ActionFactory.getInstance()
-					.createSendToBackAction(plugInPort);
-		}
-		return sendToBackAction;
-	}
-
-	public ActionFactory.BringToFrontAction getBringToFrontAction() {
-		if (bringToFrontAction == null) {
-			bringToFrontAction = ActionFactory.getInstance()
-					.createBringToFrontAction(plugInPort);
-		}
-		return bringToFrontAction;
-	}
-
 	public ActionFactory.RenumberAction getRenumberXAxisAction() {
 		if (renumberXAxisAction == null) {
 			renumberXAxisAction = ActionFactory.getInstance()
@@ -199,22 +161,6 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 		return saveAsTemplateAction;
 	}
 
-	public ActionFactory.RotateSelectionAction getRotateClockwiseAction() {
-		if (rotateClockwiseAction == null) {
-			rotateClockwiseAction = ActionFactory.getInstance()
-					.createRotateSelectionAction(plugInPort, 1);
-		}
-		return rotateClockwiseAction;
-	}
-
-	public ActionFactory.RotateSelectionAction getRotateCounterclockwiseAction() {
-		if (rotateCounterClockwiseAction == null) {
-			rotateCounterClockwiseAction = ActionFactory.getInstance()
-					.createRotateSelectionAction(plugInPort, -1);
-		}
-		return rotateCounterClockwiseAction;
-	}
-
 	@Override
 	public void connect(IPlugInPort plugInPort) {
 		this.plugInPort = plugInPort;
@@ -228,16 +174,9 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 		swingUI.injectMenuAction(getCopyAction(), EDIT_TITLE);
 		swingUI.injectMenuAction(getPasteAction(), EDIT_TITLE);
 		swingUI.injectMenuAction(null, EDIT_TITLE);
-		swingUI.injectMenuAction(actionFactory
-				.createSelectAllAction(plugInPort), EDIT_TITLE);
+		swingUI.injectMenuAction(actionFactory.createSelectAllAction(plugInPort), EDIT_TITLE);
 		swingUI.injectMenuAction(getEditSelectionAction(), EDIT_TITLE);
 		swingUI.injectMenuAction(getDeleteSelectionAction(), EDIT_TITLE);
-		swingUI.injectMenuAction(getRotateClockwiseAction(), EDIT_TITLE);
-		swingUI.injectMenuAction(getRotateCounterclockwiseAction(), EDIT_TITLE);		
-		swingUI.injectMenuAction(getSendToBackAction(), EDIT_TITLE);
-		swingUI.injectMenuAction(getBringToFrontAction(), EDIT_TITLE);
-		swingUI.injectMenuAction(getGroupAction(), EDIT_TITLE);
-		swingUI.injectMenuAction(getUngroupAction(), EDIT_TITLE);
 		swingUI.injectMenuAction(null, EDIT_TITLE);
 		swingUI.injectMenuAction(getSaveAsTemplateAction(), EDIT_TITLE);
 		swingUI.injectSubmenu(RENUMBER_TITLE, IconLoader.Sort.getIcon(),
@@ -291,15 +230,9 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 		}
 		getEditSelectionAction().setEnabled(enabled);
 		getDeleteSelectionAction().setEnabled(enabled);
-		getGroupAction().setEnabled(enabled);
 		getExpandSelectionAllAction().setEnabled(enabled);
 		getExpandSelectionImmediateAction().setEnabled(enabled);
 		getExpandSelectionSameTypeAction().setEnabled(enabled);
-		getUngroupAction().setEnabled(enabled);
-		getSendToBackAction().setEnabled(enabled);
-		getBringToFrontAction().setEnabled(enabled);
-		getRotateClockwiseAction().setEnabled(enabled);
-		getRotateCounterclockwiseAction().setEnabled(enabled);
 		getSaveAsTemplateAction().setEnabled(enabled);
 	}
 

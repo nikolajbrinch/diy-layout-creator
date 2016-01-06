@@ -1,5 +1,6 @@
 package org.diylc.appframework.undo;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Stack;
@@ -9,9 +10,10 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 
 import org.diylc.appframework.images.AppIconLoader;
+import org.diylc.appframework.miscutils.Environment;
+import org.diylc.appframework.miscutils.OsType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Utility that handles undo/redo operations. Use {@link #getUndoAction()} and
@@ -26,7 +28,8 @@ import org.slf4j.LoggerFactory;
  */
 public class UndoHandler<T> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(UndoHandler.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(UndoHandler.class);
 
 	public static final int MAX_STACK_SIZE = 32;
 
@@ -73,9 +76,11 @@ public class UndoHandler<T> {
 	 * @param currentState
 	 * @param changeDescription
 	 */
-	public void stateChanged(T previousState, T currentState, String changeDescription) {
+	public void stateChanged(T previousState, T currentState,
+			String changeDescription) {
 		LOG.info("Undo state changed");
-		undoStack.push(new Change(previousState, currentState, changeDescription));
+		undoStack.push(new Change(previousState, currentState,
+				changeDescription));
 		redoStack.clear();
 		refreshActions();
 	}
@@ -87,8 +92,9 @@ public class UndoHandler<T> {
 		public UndoAction() {
 			super();
 			putValue(Action.NAME, "Undo");
-			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-					ActionEvent.CTRL_MASK));
+			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
+					KeyEvent.VK_Z, Toolkit.getDefaultToolkit()
+							.getMenuShortcutKeyMask()));
 			putValue(AbstractAction.SMALL_ICON, AppIconLoader.Undo.getIcon());
 		}
 
@@ -113,8 +119,17 @@ public class UndoHandler<T> {
 		public RedoAction() {
 			super();
 			putValue(Action.NAME, "Redo");
-			putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y,
-					ActionEvent.CTRL_MASK));
+			if (Environment.INSTANCE.getOsType() == OsType.OSX) {
+				putValue(AbstractAction.ACCELERATOR_KEY,
+						KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
+								.getDefaultToolkit().getMenuShortcutKeyMask()
+								| ActionEvent.SHIFT_MASK));
+			} else {
+				putValue(AbstractAction.ACCELERATOR_KEY,
+						KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit
+								.getDefaultToolkit().getMenuShortcutKeyMask()));
+			}
+			
 			putValue(AbstractAction.SMALL_ICON, AppIconLoader.Redo.getIcon());
 		}
 
@@ -137,13 +152,15 @@ public class UndoHandler<T> {
 		if (undoStack.isEmpty()) {
 			getUndoAction().putValue(Action.NAME, "Undo");
 		} else {
-			getUndoAction().putValue(Action.NAME, "Undo " + undoStack.peek().changeDescription);
+			getUndoAction().putValue(Action.NAME,
+					"Undo " + undoStack.peek().changeDescription);
 		}
 		getRedoAction().setEnabled(!redoStack.isEmpty());
 		if (redoStack.isEmpty()) {
 			getRedoAction().putValue(Action.NAME, "Redo");
 		} else {
-			getRedoAction().putValue(Action.NAME, "Redo " + redoStack.peek().changeDescription);
+			getRedoAction().putValue(Action.NAME,
+					"Redo " + redoStack.peek().changeDescription);
 		}
 		while (undoStack.size() > MAX_STACK_SIZE) {
 			undoStack.remove(0);
