@@ -40,6 +40,7 @@ import org.diylc.common.IComponentFiler;
 import org.diylc.common.IKeyProcessor;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
+import org.diylc.common.LRU;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.PropertyWrapper;
@@ -124,6 +125,8 @@ public class Presenter implements IPlugInPort {
 	private int dragAction;
 	private Point previousScaledPoint;
 
+	private LRU<File> lru = new LRU<>(15);
+
 	public Presenter(IView view) {
 		super();
 		this.view = view;
@@ -139,6 +142,20 @@ public class Presenter implements IPlugInPort {
 
 		// lockedLayers = EnumSet.noneOf(ComponentLayer.class);
 		// visibleLayers = EnumSet.allOf(ComponentLayer.class);
+	}
+
+	public void configure() {
+		readLruConfig();
+		messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru.getFiles());
+	}
+	
+	private void readLruConfig() {
+		List<String> configLru = (List<String>) ConfigurationManager
+				.getInstance().readObject("lru", Collections.EMPTY_LIST);
+
+		for (String file : configLru) {
+			lru.addFile(new File(file));
+		}
 	}
 
 	public void installPlugin(IPlugIn plugIn) {
@@ -207,6 +224,13 @@ public class Presenter implements IPlugInPort {
 	@Override
 	public Project getCurrentProject() {
 		return currentProject;
+	}
+
+	@Override
+	public void addLruFile(File file) {
+		lru.addFile(file);
+		messageDispatcher
+				.dispatchMessage(EventType.LRU_UPDATED, lru.getFiles());
 	}
 
 	@Override
@@ -507,18 +531,17 @@ public class Presenter implements IPlugInPort {
 					// First click is just to set the controlPointSlot and
 					// componentSlot.
 					if (isSnapToGrid()) {
-						CalcUtils.snapPointToGrid(scaledPoint, currentProject
-								.getGridSpacing());
+						CalcUtils.snapPointToGrid(scaledPoint,
+								currentProject.getGridSpacing());
 					}
 					if (instantiationManager.getComponentSlot() == null) {
 						try {
 							instantiationManager.instatiatePointByPoint(
 									scaledPoint, currentProject);
 						} catch (Exception e) {
-							view
-									.showMessage(
-											"Could not create component. Check log for details.",
-											"Error", IView.ERROR_MESSAGE);
+							view.showMessage(
+									"Could not create component. Check log for details.",
+									"Error", IView.ERROR_MESSAGE);
 							LOG.error("Could not create component", e);
 						}
 						messageDispatcher.dispatchMessage(
@@ -565,8 +588,8 @@ public class Presenter implements IPlugInPort {
 				if (!oldProject.equals(currentProject)) {
 					messageDispatcher.dispatchMessage(
 							EventType.PROJECT_MODIFIED, oldProject,
-							currentProject.clone(), "Add "
-									+ componentTypeSlot.getName());
+							currentProject.clone(),
+							"Add " + componentTypeSlot.getName());
 					projectFileManager.notifyFileChange();
 				}
 			} else {
@@ -712,10 +735,9 @@ public class Presenter implements IPlugInPort {
 				try {
 					applyPropertiesToSelection(properties);
 				} catch (Exception e1) {
-					view
-							.showMessage(
-									"Error occured while editing selection. Check the log for details.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+					view.showMessage(
+							"Error occured while editing selection. Check the log for details.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 					LOG.error("Error applying properties", e1);
 				}
 				// Save default values.
@@ -743,8 +765,8 @@ public class Presenter implements IPlugInPort {
 		this.previousScaledPoint = scalePoint(point);
 		if (instantiationManager.getComponentTypeSlot() != null) {
 			if (isSnapToGrid()) {
-				CalcUtils.snapPointToGrid(previousScaledPoint, currentProject
-						.getGridSpacing());
+				CalcUtils.snapPointToGrid(previousScaledPoint,
+						currentProject.getGridSpacing());
 			}
 			boolean refresh = false;
 			switch (instantiationManager.getComponentTypeSlot()
@@ -755,8 +777,8 @@ public class Presenter implements IPlugInPort {
 				break;
 			case SINGLE_CLICK:
 				refresh = instantiationManager.updateSingleClick(
-						previousScaledPoint, isSnapToGrid(), currentProject
-								.getGridSpacing());
+						previousScaledPoint, isSnapToGrid(),
+						currentProject.getGridSpacing());
 				break;
 			}
 			if (refresh) {
@@ -793,9 +815,8 @@ public class Presenter implements IPlugInPort {
 								break;
 							}
 						} catch (Exception e) {
-							LOG
-									.warn("Error reading control point for component of type: "
-											+ component.getClass().getName());
+							LOG.warn("Error reading control point for component of type: "
+									+ component.getClass().getName());
 						}
 					}
 				}
@@ -853,8 +874,7 @@ public class Presenter implements IPlugInPort {
 	public void dragStarted(Point point, int dragAction) {
 		LOG.debug(String.format("dragStarted(%s, %s)", point, dragAction));
 		if (instantiationManager.getComponentTypeSlot() != null) {
-			LOG
-					.debug("Cannot start drag because a new component is being created.");
+			LOG.debug("Cannot start drag because a new component is being created.");
 			mouseClicked(point, IPlugInPort.BUTTON1,
 					dragAction == DnDConstants.ACTION_COPY,
 					dragAction == DnDConstants.ACTION_LINK,
@@ -1071,17 +1091,17 @@ public class Presenter implements IPlugInPort {
 			Point testPoint = new Point(firstPoint);
 			testPoint.translate(dx, dy);
 			if (snapToGrid) {
-				CalcUtils.snapPointToGrid(testPoint, currentProject
-						.getGridSpacing());
+				CalcUtils.snapPointToGrid(testPoint,
+						currentProject.getGridSpacing());
 			}
 
 			actualDx = testPoint.x - firstPoint.x;
 			actualDy = testPoint.y - firstPoint.y;
 		} else if (snapToGrid) {
-			actualDx = CalcUtils.roundToGrid(dx, currentProject
-					.getGridSpacing());
-			actualDy = CalcUtils.roundToGrid(dy, currentProject
-					.getGridSpacing());
+			actualDx = CalcUtils.roundToGrid(dx,
+					currentProject.getGridSpacing());
+			actualDy = CalcUtils.roundToGrid(dy,
+					currentProject.getGridSpacing());
 		} else {
 			actualDx = dx;
 			actualDy = dy;
@@ -1098,8 +1118,8 @@ public class Presenter implements IPlugInPort {
 			IDIYComponent<?> component = entry.getKey();
 			Point[] controlPoints = new Point[component.getControlPointCount()];
 			for (int index = 0; index < component.getControlPointCount(); index++) {
-				controlPoints[index] = new Point(component
-						.getControlPoint(index));
+				controlPoints[index] = new Point(
+						component.getControlPoint(index));
 				// When the first point is moved, calculate how much it
 				// actually moved after snapping.
 				if (entry.getValue().contains(index)) {
@@ -1208,9 +1228,8 @@ public class Presenter implements IPlugInPort {
 							property.readFrom(component);
 							OrientationHV orientation = (OrientationHV) property
 									.getValue();
-							property
-									.setValue(OrientationHV.values()[1 - orientation
-											.ordinal()]);
+							property.setValue(OrientationHV.values()[1 - orientation
+									.ordinal()]);
 							property.writeTo(component);
 						} catch (Exception e) {
 							LOG.error(
@@ -1221,8 +1240,9 @@ public class Presenter implements IPlugInPort {
 				}
 			} else {
 				// Non-rotatable
-				Point componentCenter = getCenterOf(Arrays
-						.asList(new IDIYComponent<?>[] { component }), false);
+				Point componentCenter = getCenterOf(
+						Arrays.asList(new IDIYComponent<?>[] { component }),
+						false);
 				Point rotatedComponentCenter = new Point();
 				rotate.transform(componentCenter, rotatedComponentCenter);
 				for (int index = 0; index < component.getControlPointCount(); index++) {
@@ -1322,8 +1342,8 @@ public class Presenter implements IPlugInPort {
 	public void pasteComponents(List<IDIYComponent<?>> components) {
 		LOG.info(String.format("pasteComponents(%s)", components));
 		instantiationManager.pasteComponents(components,
-				this.previousScaledPoint, isSnapToGrid(), currentProject
-						.getGridSpacing());
+				this.previousScaledPoint, isSnapToGrid(),
+				currentProject.getGridSpacing());
 		messageDispatcher.dispatchMessage(EventType.REPAINT);
 		messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED,
 				instantiationManager.getComponentTypeSlot(),
@@ -1629,7 +1649,8 @@ public class Presenter implements IPlugInPort {
 		Set<String> selectedNamePrefixes = new HashSet<String>();
 		if (expansionMode == ExpansionMode.SAME_TYPE) {
 			for (IDIYComponent<?> component : getSelectedComponents()) {
-				selectedNamePrefixes.add(ComponentProcessor.getInstance()
+				selectedNamePrefixes.add(ComponentProcessor
+						.getInstance()
 						.extractComponentTypeFrom(
 								(Class<? extends IDIYComponent<?>>) component
 										.getClass()).getNamePrefix());
@@ -1783,9 +1804,11 @@ public class Presenter implements IPlugInPort {
 	private void addComponent(IDIYComponent<?> component, boolean canCreatePads) {
 		int index = currentProject.getComponents().size();
 		while (index > 0
-				&& ComponentProcessor.getInstance().extractComponentTypeFrom(
-						(Class<? extends IDIYComponent<?>>) component
-								.getClass()).getZOrder() < ComponentProcessor
+				&& ComponentProcessor
+						.getInstance()
+						.extractComponentTypeFrom(
+								(Class<? extends IDIYComponent<?>>) component
+										.getClass()).getZOrder() < ComponentProcessor
 						.getInstance()
 						.extractComponentTypeFrom(
 								(Class<? extends IDIYComponent<?>>) currentProject
@@ -1851,10 +1874,9 @@ public class Presenter implements IPlugInPort {
 			}
 		} catch (Exception e) {
 			LOG.error("Could not apply selection properties", e);
-			view
-					.showMessage(
-							"Could not apply changes to the selection. Check the log for details.",
-							"Error", IView.ERROR_MESSAGE);
+			view.showMessage(
+					"Could not apply changes to the selection. Check the log for details.",
+					"Error", IView.ERROR_MESSAGE);
 		} finally {
 			// Notify the listeners.
 			if (!oldProject.equals(currentProject)) {
@@ -1893,10 +1915,9 @@ public class Presenter implements IPlugInPort {
 			}
 		} catch (Exception e) {
 			LOG.error("Could not apply project properties", e);
-			view
-					.showMessage(
-							"Could not apply changes to the project. Check the log for details.",
-							"Error", IView.ERROR_MESSAGE);
+			view.showMessage(
+					"Could not apply changes to the project. Check the log for details.",
+					"Error", IView.ERROR_MESSAGE);
 		} finally {
 			// Notify the listeners.
 			if (!oldProject.equals(currentProject)) {
@@ -1940,10 +1961,9 @@ public class Presenter implements IPlugInPort {
 					instantiationManager.getFirstControlPoint());
 		} catch (Exception e) {
 			LOG.error("Could not set component type slot", e);
-			view
-					.showMessage(
-							"Could not set component type slot. Check log for details.",
-							"Error", IView.ERROR_MESSAGE);
+			view.showMessage(
+					"Could not set component type slot. Check log for details.",
+					"Error", IView.ERROR_MESSAGE);
 		}
 	}
 
@@ -2061,14 +2081,14 @@ public class Presenter implements IPlugInPort {
 						"Template can be applied on multiple components of the same type only");
 			}
 		}
-		return getTemplatesFor(selectedType.getCategory(), selectedType
-				.getName());
+		return getTemplatesFor(selectedType.getCategory(),
+				selectedType.getName());
 	}
 
 	@Override
 	public void applyTemplateToSelection(Template template) {
-		LOG.debug(String.format("applyTemplateToSelection(%s)", template
-				.getName()));
+		LOG.debug(String.format("applyTemplateToSelection(%s)",
+				template.getName()));
 
 		Project oldProject = currentProject.clone();
 
@@ -2140,8 +2160,9 @@ public class Presenter implements IPlugInPort {
 	 * @return
 	 */
 	private Point scalePoint(Point point) {
-		return point == null ? null : new Point((int) (point.x / drawingManager
-				.getZoomLevel()), (int) (point.y / drawingManager
-				.getZoomLevel()));
+		return point == null ? null : new Point(
+				(int) (point.x / drawingManager.getZoomLevel()),
+				(int) (point.y / drawingManager.getZoomLevel()));
 	}
+
 }

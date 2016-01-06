@@ -61,4 +61,19 @@ public interface ISwingUI extends IView {
 	void injectSubmenu(String name, Icon icon, String parentMenuName);
 	
 	<T extends Object> void executeBackgroundTask(ITask<T> task);
+
+	/**
+	 * Removes an action from a menu
+	 * 
+	 * @param action
+	 * @param menuName
+	 */
+	void removeMenuAction(Action action, String menuName);
+
+	/**
+	 * Clear a menus items
+	 * 
+	 * @param menuName
+	 */
+	void clearMenuItems(String menuName);
 }

@@ -79,5 +79,10 @@ public enum EventType {
 	/**
 	 * Called to update the status message. New status message is passed as a first parameter.
 	 */
-	STATUS_MESSAGE_CHANGED;
+	STATUS_MESSAGE_CHANGED, 
+	
+	/**
+	 * Called when the LRU file list is updated.
+	 */
+	LRU_UPDATED;
 }

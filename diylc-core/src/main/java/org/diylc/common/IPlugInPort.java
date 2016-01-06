@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +57,7 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     public static final int BUTTON1 = 1;
     public static final int BUTTON2 = 2;
     public static final int BUTTON3 = 3;
-
+    
 	/**
 	 * Returns size of the canvas that takes project dimensions into account as
 	 * well as zoom level. Each dimension is calculated as the product of the
@@ -317,4 +318,10 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	 * @param xAxisFirst
 	 */
 	void renumberSelectedComponents(boolean xAxisFirst);
+
+	/**
+	 * Add recent file to LRU list
+	 * @param file
+	 */
+	void addLruFile(File file);
 }
