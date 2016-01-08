@@ -1,4 +1,4 @@
-package org.diylc.presenter;
+package org.diylc.components;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.diylc.common.PropertyWrapper;
+import org.diylc.components.ComponentProcessor;
 import org.junit.Test;
 
 

@@ -128,15 +128,6 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	boolean allowFileAction();
 
 	/**
-	 * Returns all available {@link ComponentType}s classified by category.
-	 * Result is a {@link Map} between category name to a {@link List} of all
-	 * {@link ComponentType}s that share that category name.
-	 * 
-	 * @return
-	 */
-	Map<String, List<ComponentType>> getComponentTypes();
-
-	/**
 	 * Draws project on the provided {@link Graphics2D}. If the provided filter
 	 * is not null, it will be used to filter the components that are shown.
 	 * 

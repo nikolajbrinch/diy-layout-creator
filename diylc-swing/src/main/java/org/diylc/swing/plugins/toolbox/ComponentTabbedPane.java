@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,14 +19,14 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.diylc.components.ComparatorFactory;
+import org.diylc.components.ComponentRegistry;
 import org.diylc.components.ComponentType;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.ComponentTypeLoader;
+import org.diylc.components.Constants;
 import org.diylc.core.Template;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
-import org.diylc.presenter.ComparatorFactory;
-import org.diylc.presenter.ComponentProcessor;
-import org.diylc.presenter.Presenter;
 import org.diylc.presenter.plugin.IPlugInPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,19 +42,19 @@ class ComponentTabbedPane extends JTabbedPane {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ComponentTabbedPane.class);
 
-	public static int SCROLL_STEP = Presenter.ICON_SIZE
+	public static int SCROLL_STEP = Constants.ICON_SIZE
 			+ ComponentButtonFactory.MARGIN * 2 + 2;
 
 	private final IPlugInPort plugInPort;
 	private Container recentToolbar;
 	private List<String> pendingRecentComponents = null;
+	private ComponentTypeLoader componentTypeLoader = new ComponentTypeLoader();
 
 	public ComponentTabbedPane(IPlugInPort plugInPort) {
 		super();
 		this.plugInPort = plugInPort;
 		addTab("Recently Used", createRecentComponentsPanel());
-		Map<String, List<ComponentType>> componentTypes = plugInPort
-				.getComponentTypes();
+		Map<String, List<ComponentType>> componentTypes = ComponentRegistry.INSTANCE.getComponentTypes();
 		List<String> categories = new ArrayList<String>(componentTypes.keySet());
 		Collections.sort(categories);
 		for (String category : categories) {
@@ -68,8 +69,6 @@ class ComponentTabbedPane extends JTabbedPane {
 						null, null);
 				// Refresh recent components if needed
 				if (pendingRecentComponents != null) {
-					refreshRecentComponentsToolbar(getRecentToolbar(),
-							pendingRecentComponents);
 					getRecentToolbar().invalidate();
 					pendingRecentComponents = null;
 				}
@@ -172,24 +171,31 @@ class ComponentTabbedPane extends JTabbedPane {
 		return panel;
 	}
 
-	private void refreshRecentComponentsToolbar(Container toolbar,
+	private boolean refreshRecentComponentsToolbar(Container toolbar,
 			List<String> recentComponentClassList) {
 		toolbar.removeAll();
-		for (String componentClassName : recentComponentClassList) {
+		
+		boolean updateRecentComponentsConfiguraton = false;
+		        
+		Iterator<String> iterator = recentComponentClassList.iterator();
+		
+		while (iterator.hasNext()) {
+            String componentClassName = (String) iterator.next();
 			ComponentType componentType;
 			try {
-				componentType = ComponentProcessor.getInstance()
-						.extractComponentTypeFrom(
-								(Class<? extends IDIYComponent<?>>) Class
-										.forName(componentClassName));
+				componentType = componentTypeLoader.loadComponentType(componentClassName);
 				Component button = ComponentButtonFactory.create(plugInPort,
 						componentType, createTemplatePopup(componentType));
 				toolbar.add(button);
 			} catch (ClassNotFoundException e) {
 				LOG.error("Could not create recent component button for "
 						+ componentClassName, e);
+				iterator.remove();
+				updateRecentComponentsConfiguraton = true;
 			}
 		}
+		
+		return updateRecentComponentsConfiguraton;
 	}
 
 	private JPopupMenu createTemplatePopup(final ComponentType componentType) {

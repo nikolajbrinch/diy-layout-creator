@@ -20,16 +20,16 @@
     <unit class="org.diylc.core.measures.SizeUnit">in</unit>
   </gridSpacing>
   <components>
-    <org.diylc.components.boards.GroovyPerfBoard>
+    <org.diylc.components.boards.PerfBoard>
       <name>Board1</name>
       <alpha>127</alpha>
       <value></value>
       <controlPoints>
-        <java.awt.Point x="1.8" y="2.4"/>
-        <java.awt.Point x="3.295" y="3.6"/>
+        <java.awt.Point x="3.7" y="3.1"/>
+        <java.awt.Point x="5.195" y="4.3"/>
       </controlPoints>
-      <firstPoint x="1.8" y="2.4"/>
-      <secondPoint x="3.295" y="3.6"/>
+      <firstPoint x="3.7" y="3.1"/>
+      <secondPoint x="5.195" y="4.3"/>
       <boardColor>
         <red>248</red>
         <green>235</green>
@@ -59,7 +59,7 @@
         <blue>103</blue>
         <alpha>255</alpha>
       </padColor>
-    </org.diylc.components.boards.GroovyPerfBoard>
+    </org.diylc.components.boards.PerfBoard>
   </components>
   <groups/>
   <lockedLayers/>

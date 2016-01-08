@@ -1,6 +1,6 @@
 package org.diylc.swing;
 
-import org.diylc.presenter.ComponentProcessorTest;
+import org.diylc.components.ComponentProcessorTest;
 import org.diylc.utils.BomMakerTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

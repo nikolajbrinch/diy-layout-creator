@@ -16,9 +16,9 @@ import org.diylc.utils.Constants
 
 import java.awt.*
 
-@CompileStatic
-@ComponentDescriptor(name = "Groovy Perf Board w/ Pads", category = "Boards", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board with solder pads", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
-public class GroovyPerfBoard extends AbstractBoard {
+
+@ComponentDescriptor(name = "Perf Board w/ Pads", category = "Boards", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board with solder pads", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+public class PerfBoard extends AbstractBoard {
 
     private static final long serialVersionUID = 1L
 

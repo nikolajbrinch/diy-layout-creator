@@ -9,7 +9,6 @@ import java.util.List;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.CapacitanceUnit;
-import org.diylc.presenter.MockDIYComponent;
 import org.diylc.utils.BomEntry;
 import org.diylc.utils.BomMaker;
 import org.junit.Test;

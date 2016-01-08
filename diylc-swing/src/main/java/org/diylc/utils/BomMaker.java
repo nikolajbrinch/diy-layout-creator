@@ -10,9 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.diylc.components.ComponentType;
+import org.diylc.components.ComponentRegistry;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
-import org.diylc.presenter.ComponentProcessor;
 
 public class BomMaker {
 
@@ -56,10 +56,7 @@ public class BomMaker {
 			}			
 		});
 		for (IDIYComponent<?> component : sortedComponents) {
-			ComponentType type = ComponentProcessor.getInstance()
-					.extractComponentTypeFrom(
-							(Class<? extends IDIYComponent<?>>) component
-									.getClass());
+			ComponentType type = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
 			if (type.getBomPolicy() == BomPolicy.NEVER_SHOW)
 				continue;
 			String name = component.getName();

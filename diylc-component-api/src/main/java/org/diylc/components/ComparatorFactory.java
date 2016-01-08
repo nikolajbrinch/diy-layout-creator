@@ -1,4 +1,4 @@
-package org.diylc.presenter;
+package org.diylc.components;
 
 import java.util.Comparator;
 
@@ -14,6 +14,7 @@ public class ComparatorFactory {
 	private Comparator<ComponentType> componentTypeComparator;
 	private Comparator<PropertyWrapper> propertyNameComparator;
 	private Comparator<IDIYComponent<?>> componentZOrderComparator;
+	private ComponentTypeFactory componentTypeFactory = new ComponentTypeFactory();
 
 	public static ComparatorFactory getInstance() {
 		if (instance == null) {
@@ -73,12 +74,9 @@ public class ComparatorFactory {
 
 				@Override
 				public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
-					ComponentType type1 = ComponentProcessor.getInstance()
-							.extractComponentTypeFrom(
-									(Class<? extends IDIYComponent<?>>) o1.getClass());
-					ComponentType type2 = ComponentProcessor.getInstance()
-							.extractComponentTypeFrom(
-									(Class<? extends IDIYComponent<?>>) o2.getClass());
+					ComponentType type1 = componentTypeFactory.newComponentType(o1);
+					ComponentType type2 = componentTypeFactory.newComponentType(o2);
+					
 					return new Double(type1.getZOrder()).compareTo(type2.getZOrder());
 				}
 			};

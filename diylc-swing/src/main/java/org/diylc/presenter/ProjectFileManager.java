@@ -28,9 +28,10 @@ import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractBoard;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.ComparatorFactory;
 import org.diylc.components.Taper;
 import org.diylc.components.boards.BlankBoard;
-import org.diylc.components.boards.GroovyPerfBoard;
+import org.diylc.components.boards.PerfBoard;
 import org.diylc.components.boards.VeroBoard;
 import org.diylc.components.connectivity.CopperTrace;
 import org.diylc.components.connectivity.HookupWire;
@@ -198,7 +199,7 @@ public class ProjectFileManager {
 			board.setBoardColor(Color.white);
 			board.setBorderColor(Color.black);
 		} else if (type.equalsIgnoreCase("perfboard")) {
-			board = new GroovyPerfBoard();
+			board = new PerfBoard();
 		} else if (type.equalsIgnoreCase("stripboard")) {
 			board = new VeroBoard();
 		} else {

@@ -1,4 +1,4 @@
-package org.diylc.presenter;
+package org.diylc.utils;
 
 import java.awt.Color;
 import java.awt.Point;
