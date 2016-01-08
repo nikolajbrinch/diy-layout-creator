@@ -22,13 +22,13 @@ public class LayersMenuPlugin implements IPlugIn {
 
 	private IPlugInPort plugInPort;
 	private Map<Layer, Action> lockActionMap;
-	private Map<Integer, Action> selectAllActionMap;
+	private Map<Double, Action> selectAllActionMap;
 
 	public LayersMenuPlugin(ISwingUI swingUI) {
 		lockActionMap = new HashMap<Layer, Action>();
-		selectAllActionMap = new HashMap<Integer, Action>();
+		selectAllActionMap = new HashMap<Double, Action>();
 		for (Layer layer : Layer.values()) {
-			final int zOrder = layer.getZOrder();
+			final double zOrder = layer.getZOrder();
 			AbstractAction lockAction = new AbstractAction("Lock") {
 
 				private static final long serialVersionUID = 1L;
@@ -90,9 +90,9 @@ public class LayersMenuPlugin implements IPlugIn {
 				IDIYComponent.TEXT);
 
 		String title;
-		int zOrder;
+		double zOrder;
 
-		private Layer(String title, int order) {
+		private Layer(String title, double order) {
 			this.title = title;
 			zOrder = order;
 		}
@@ -101,7 +101,7 @@ public class LayersMenuPlugin implements IPlugIn {
 			return title;
 		}
 
-		public int getZOrder() {
+		public double getZOrder() {
 			return zOrder;
 		}
 	}

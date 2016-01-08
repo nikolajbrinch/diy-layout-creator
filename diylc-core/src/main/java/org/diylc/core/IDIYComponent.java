@@ -1,11 +1,10 @@
 package org.diylc.core;
 
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serializable;
 
-import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.graphics.GraphicsContext;
 
 /**
  * Interface for component instance. Implementation classes of this interface
@@ -30,11 +29,11 @@ import org.diylc.core.annotations.EditableProperty;
  */
 public interface IDIYComponent<T> extends Serializable {
 
-	public static final int CHASSIS = 1;
-	public static final int BOARD = 2;
-	public static final int TRACE = 3;
-	public static final int COMPONENT = 4;
-	public static final int TEXT = 5;
+	public static final double CHASSIS = 1.0;
+	public static final double BOARD = 2.0;
+	public static final double TRACE = 3.0;
+	public static final double COMPONENT = 4.0;
+	public static final double TEXT = 5.0;
 
 	/**
 	 * @return component instance name.
@@ -89,17 +88,17 @@ public interface IDIYComponent<T> extends Serializable {
 	VisibilityPolicy getControlPointVisibilityPolicy(int index);
 
 	/**
-	 * Draws the component onto the {@link Graphics2D}.
+	 * Draws the component onto the {@link GraphicsContext}.
 	 */
-	void draw(Graphics2D g2d, ComponentState componentState,
-			boolean outlineMode, Project project,
-			IDrawingObserver drawingObserver);
+	void draw(GraphicsContext graphicsContext, ComponentState componentState,
+			  boolean outlineMode, Project project,
+			  IDrawingObserver drawingObserver);
 
 	/**
 	 * Draws icon representation of the component. This should not depend on
 	 * component state, i.e. it should be treated as a static method.
 	 */
-	void drawIcon(Graphics2D g2d, int width, int height);
+	void drawIcon(GraphicsContext graphicsContext, int width, int height);
 
 	/**
 	 * Clones the component.

@@ -1,1 +1,5 @@
 version = "${frameworkVersion}"
+
+dependencies {
+    compile(group: 'org.diylc', name: 'app-framework', version: "${frameworkVersion}")
+}

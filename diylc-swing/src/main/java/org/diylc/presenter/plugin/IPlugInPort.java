@@ -13,14 +13,14 @@ import java.util.Set;
 import org.diylc.appframework.simplemq.IMessageListener;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.VersionNumber;
-import org.diylc.common.ComponentType;
 import org.diylc.common.DrawOption;
-import org.diylc.common.IComponentFiler;
 import org.diylc.common.IKeyProcessor;
 import org.diylc.common.IMouseProcessor;
 import org.diylc.common.ISelectionProcessor;
 import org.diylc.common.ITemplateProcessor;
 import org.diylc.common.PropertyWrapper;
+import org.diylc.components.ComponentType;
+import org.diylc.components.IComponentFiler;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
@@ -265,7 +265,7 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	 * @param layerZOrder
 	 * @param locked
 	 */
-	void setLayerLocked(int layerZOrder, boolean locked);
+	void setLayerLocked(double layerZOrder, boolean locked);
 
 	/**
 	 * @return selection size expressed in either inches or centimeters, based

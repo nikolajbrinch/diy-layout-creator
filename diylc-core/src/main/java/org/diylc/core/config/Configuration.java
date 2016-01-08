@@ -87,7 +87,7 @@ public enum Configuration {
 	}
 
 	public List<String> getRecentComponents() {
-		return getObjectProperty(Key.RECENT_COMPONENTS, Collections.emptyList());
+		return getObjectProperty(Key.RECENT_COMPONENTS, Collections.EMPTY_LIST);
 	}
 
 	public void setRecentComponents(List<String> recentComponents) {
@@ -186,7 +186,7 @@ public enum Configuration {
 	public LRU<Path> getLru() {
 		LRU<Path> lru = new LRU<Path>(15);
 
-		List<String> paths = getObjectProperty(Key.LRU, Collections.emptyList());
+		List<String> paths = getObjectProperty(Key.LRU, Collections.EMPTY_LIST);
 
 		Collections.reverse(paths);
 

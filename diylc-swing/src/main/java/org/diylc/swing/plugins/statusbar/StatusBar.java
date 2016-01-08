@@ -28,7 +28,7 @@ import javax.swing.SwingUtilities;
 
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.BadPositionException;
-import org.diylc.common.ComponentType;
+import org.diylc.components.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.config.Configuration;
 import org.diylc.images.CoreIconLoader;

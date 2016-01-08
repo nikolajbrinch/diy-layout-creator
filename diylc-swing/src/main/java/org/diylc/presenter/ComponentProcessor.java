@@ -14,14 +14,15 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.diylc.common.ComponentType;
 import org.diylc.common.PropertyWrapper;
+import org.diylc.components.ComponentDescriptor;
+import org.diylc.components.ComponentType;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IPropertyValidator;
 import org.diylc.core.annotations.BomPolicy;
-import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.graphics.GraphicsContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +114,7 @@ public class ComponentProcessor {
 			g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 			// g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
 			// RenderingHints.VALUE_STROKE_PURE);
-			componentInstance.drawIcon(g2d, Presenter.ICON_SIZE, Presenter.ICON_SIZE);
+			componentInstance.drawIcon(new GraphicsContext(g2d), Presenter.ICON_SIZE, Presenter.ICON_SIZE);
 			icon = new ImageIcon(image);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

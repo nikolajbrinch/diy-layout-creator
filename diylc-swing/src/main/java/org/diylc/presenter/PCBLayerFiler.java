@@ -2,8 +2,8 @@ package org.diylc.presenter;
 
 import java.lang.reflect.Method;
 
-import org.diylc.common.IComponentFiler;
-import org.diylc.common.PCBLayer;
+import org.diylc.components.IComponentFiler;
+import org.diylc.components.PCBLayer;
 import org.diylc.core.IDIYComponent;
 
 public class PCBLayerFiler implements IComponentFiler {

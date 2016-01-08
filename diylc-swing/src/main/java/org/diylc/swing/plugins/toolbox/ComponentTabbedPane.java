@@ -18,7 +18,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.diylc.common.ComponentType;
+import org.diylc.components.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
 import org.diylc.core.config.Configuration;

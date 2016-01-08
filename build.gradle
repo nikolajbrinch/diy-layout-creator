@@ -16,6 +16,9 @@ allprojects {
 	group = 'org.diylc'
 	version = '4.0.0-SNAPSHOT'
 
+	sourceSets.main.java.srcDirs = []
+	sourceSets.main.groovy.srcDirs += ["src/main/java"]
+
 	compileJava {
 		options.debug = true
 		options.debugOptions.debugLevel = "source,lines,vars"
@@ -43,6 +46,7 @@ allprojects {
 	}
 
 	dependencies {
+		compile 'org.codehaus.groovy:groovy-all:2.4.5'
 		testCompile(group: 'junit', name: 'junit', version: '4.+')
 		testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4')
 	}
@@ -75,8 +79,12 @@ project(':diylc-core') {
 	dependencies { compile project(':app-framework') }
 }
 
-project(':diylc-library') {
+project(':diylc-component-api') {
 	dependencies { compile project(':diylc-core') }
+}
+
+project(':diylc-component-library') {
+	dependencies { compile project(':diylc-component-api') }
 }
 
 project(':swing-framework') {
@@ -85,7 +93,7 @@ project(':swing-framework') {
 
 project(':diylc-swing') {
 	dependencies {
-		compile project(':diylc-library'), project (':swing-framework')
+		compile project(':diylc-component-library'), project (':swing-framework')
 	}
 }
 

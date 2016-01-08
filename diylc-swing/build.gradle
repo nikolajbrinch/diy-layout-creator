@@ -2,4 +2,6 @@ dependencies {
 	compile(group: 'org.netbeans.api', name: 'org-openide-awt', version: 'RELEASE81')
 	compile(group: 'org.netbeans.api', name: 'org-openide-util', version: 'RELEASE81')
 	compile(group: 'org.netbeans.api', name: 'org-openide-util-lookup', version: 'RELEASE81')
+	compile(group: 'org.diylc', name: 'diylc-component-library', version: '4.0.0-SNAPSHOT')
+	compile(group: 'org.diylc', name: 'swing-framework', version: '4.0.0-SNAPSHOT')
 }

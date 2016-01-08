@@ -1,1 +1,1 @@
-include 'app-framework', 'swing-framework', 'diylc-core', 'diylc-library', 'diylc-swing', 'diylc'
+include 'app-framework', 'swing-framework', 'diylc-core', 'diylc-component-api', 'diylc-component-library', 'diylc-swing', 'diylc'

@@ -3,8 +3,8 @@ package org.diylc.common;
 import java.awt.Point;
 import java.util.List;
 
-import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.ExpansionMode;
 
 public interface ISelectionProcessor {
 
@@ -47,7 +47,7 @@ public interface ISelectionProcessor {
 	 * @param int layer if > 0, designates which layer to select. If <= 0 we
 	 *        should select all regardless of layer
 	 */
-	void selectAll(int layer);
+	void selectAll(double layer);
 
 	/**
 	 * Rotates selection for 90 degrees.

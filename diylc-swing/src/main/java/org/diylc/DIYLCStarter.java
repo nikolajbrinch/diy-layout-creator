@@ -70,7 +70,7 @@ public class DIYLCStarter {
 		System.setProperty("sun.awt.exception.handler",
 				DefaultUncaughtExceptionHandler.class.getName());
 
-		MainFrame mainFrame = new MainFrame();
+		final MainFrame mainFrame = new MainFrame();
 
 		SwingUtilities.invokeLater(new Runnable() {
 

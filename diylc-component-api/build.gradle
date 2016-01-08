@@ -1,0 +1,3 @@
+dependencies {
+    compile(group: 'org.diylc', name: 'diylc-core', version: '4.0.0-SNAPSHOT')
+}

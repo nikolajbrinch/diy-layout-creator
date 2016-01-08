@@ -19,14 +19,15 @@ import java.util.Set;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.DrawOption;
 import org.diylc.common.GridType;
-import org.diylc.common.IComponentFiler;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.IComponentFiler;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.config.Configuration;
+import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.presenter.plugin.EventType;
 import org.diylc.utils.Constants;
 import org.slf4j.Logger;
@@ -228,7 +229,7 @@ public class DrawingManager {
 				}
 				// Draw the component through the g2dWrapper.
 				try {
-					component.draw(g2dWrapper, state, drawOptions
+					component.draw(new GraphicsContext(g2dWrapper), state, drawOptions
 							.contains(DrawOption.OUTLINE_MODE), project,
 							g2dWrapper);
 				} catch (Exception e) {
@@ -299,7 +300,7 @@ public class DrawingManager {
 			for (IDIYComponent<?> component : componentSlot) {
 				try {
 
-					component.draw(g2dWrapper, ComponentState.NORMAL,
+					component.draw(new GraphicsContext(g2dWrapper), ComponentState.NORMAL,
 							drawOptions.contains(DrawOption.OUTLINE_MODE),
 							project, g2dWrapper);
 

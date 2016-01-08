@@ -25,11 +25,12 @@ import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
+import org.diylc.components.AbstractBoard;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.AbstractTransparentComponent;
-import org.diylc.components.boards.AbstractBoard;
+import org.diylc.components.Taper;
 import org.diylc.components.boards.BlankBoard;
-import org.diylc.components.boards.PerfBoard;
+import org.diylc.components.boards.GroovyPerfBoard;
 import org.diylc.components.boards.VeroBoard;
 import org.diylc.components.connectivity.CopperTrace;
 import org.diylc.components.connectivity.HookupWire;
@@ -40,7 +41,6 @@ import org.diylc.components.passive.PotentiometerPanel;
 import org.diylc.components.passive.RadialElectrolytic;
 import org.diylc.components.passive.RadialFilmCapacitor;
 import org.diylc.components.passive.Resistor;
-import org.diylc.components.passive.Taper;
 import org.diylc.components.semiconductors.DIL_IC;
 import org.diylc.components.semiconductors.DiodePlastic;
 import org.diylc.components.semiconductors.LED;
@@ -198,7 +198,7 @@ public class ProjectFileManager {
 			board.setBoardColor(Color.white);
 			board.setBorderColor(Color.black);
 		} else if (type.equalsIgnoreCase("perfboard")) {
-			board = new PerfBoard();
+			board = new GroovyPerfBoard();
 		} else if (type.equalsIgnoreCase("stripboard")) {
 			board = new VeroBoard();
 		} else {

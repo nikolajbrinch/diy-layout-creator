@@ -67,7 +67,7 @@ class UpdateChecker {
 						.getChangeType()), change.getDescription());
 			}
 			bodyHtml += String.format(VERSION_HTML, version.getVersionNumber().getMajor(), version
-					.getVersionNumber().getMinor(), version.getVersionNumber().getBuild(),
+					.getVersionNumber().getMinor(), version.getVersionNumber().getPatch(),
 					dateFormat.format(version.getReleaseDate()), changeStr);
 		}
 		return String.format(MAIN_HTML, bodyHtml);

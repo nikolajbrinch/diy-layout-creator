@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.diylc.common.ComponentType;
+import org.diylc.components.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.presenter.ComponentProcessor;

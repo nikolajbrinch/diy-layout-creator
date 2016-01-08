@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.diylc.appframework.update.VersionNumber;
+import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Size;
@@ -41,12 +42,12 @@ public class Project implements Serializable {
 	private Size gridSpacing;
 	private List<IDIYComponent<?>> components;
 	private Set<Set<IDIYComponent<?>>> groups;
-	private Set<Integer> lockedLayers;
+	private Set<Double> lockedLayers;
 
 	public Project() {
 		components = new ArrayList<IDIYComponent<?>>();
 		groups = new HashSet<Set<IDIYComponent<?>>>();
-		lockedLayers = new HashSet<Integer>();
+		lockedLayers = new HashSet<Double>();
 		title = DEFAULT_TITLE;
 		author = System.getProperty("user.name");
 		width = DEFAULT_WIDTH;
@@ -126,7 +127,7 @@ public class Project implements Serializable {
 		return groups;
 	}
 
-	public Set<Integer> getLockedLayers() {
+	public Set<Double> getLockedLayers() {
 		return lockedLayers;
 	}
 

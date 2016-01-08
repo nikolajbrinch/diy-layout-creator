@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.diylc.common.DrawOption;
-import org.diylc.common.PCBLayer;
+import org.diylc.components.PCBLayer;
 import org.diylc.core.IDIYComponent;
 import org.diylc.presenter.PCBLayerFiler;
 import org.diylc.presenter.plugin.IPlugInPort;
