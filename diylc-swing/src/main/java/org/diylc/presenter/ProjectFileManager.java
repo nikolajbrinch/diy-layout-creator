@@ -28,6 +28,7 @@ import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.ComparatorFactory;
 import org.diylc.components.boards.AbstractBoard;
 import org.diylc.components.boards.BlankBoard;
 import org.diylc.components.boards.PerfBoard;

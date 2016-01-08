@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.diylc.common.PropertyWrapper;
+import org.diylc.components.ComponentProcessor;
 import org.diylc.testcomponents.MockDIYComponent;
 import org.junit.Test;
 

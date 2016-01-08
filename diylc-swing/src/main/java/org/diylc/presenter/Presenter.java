@@ -13,7 +13,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -48,6 +47,9 @@ import org.diylc.common.LRU;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.PropertyWrapper;
+import org.diylc.components.ComparatorFactory;
+import org.diylc.components.ComponentProcessor;
+import org.diylc.components.ComponentRegistry;
 import org.diylc.components.connectivity.SolderPad;
 import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
@@ -91,8 +93,6 @@ public class Presenter implements IPlugInPort {
 
 	public static final List<IDIYComponent<?>> EMPTY_SELECTION = Collections
 			.emptyList();
-
-	public static final int ICON_SIZE = 32;
 
 	private Project currentProject;
 	private Map<String, List<ComponentType>> componentTypes;
@@ -345,60 +345,6 @@ public class Presenter implements IPlugInPort {
 	@Override
 	public boolean isProjectModified() {
 		return projectFileManager.isModified();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Map<String, List<ComponentType>> getComponentTypes() {
-		if (componentTypes == null) {
-			LOG.info("Loading component types.");
-			componentTypes = new HashMap<String, List<ComponentType>>();
-			Set<Class<?>> componentTypeClasses = null;
-			try {
-				componentTypeClasses = Utils.getClasses("org.diylc.components");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// for (String path : classPath) {
-			// path = path.replace('\\', '/');
-			// File f = new File(path);
-			// try {
-			// if (f.isDirectory()) {
-			// LOG.info("Scanning folder for components: "
-			// + f.getAbsolutePath());
-			// componentTypeClasses.addAll(JarScanner.getInstance()
-			// .scanFolder(path, IDIYComponent.class));
-			// } else {
-			// LOG.info("Scanning JAR for components: "
-			// + f.getAbsolutePath());
-			// componentTypeClasses.addAll(JarScanner.getInstance()
-			// .scanJar(f, IDIYComponent.class));
-			// }
-			// } catch (Exception e) {
-			// LOG.warn("Could not scan path " + path, e);
-			// }
-			// }
-			for (Class<?> clazz : componentTypeClasses) {
-				if (!Modifier.isAbstract(clazz.getModifiers())
-						&& IDIYComponent.class.isAssignableFrom(clazz)) {
-					ComponentType componentType = ComponentProcessor
-							.getInstance().extractComponentTypeFrom(
-									(Class<? extends IDIYComponent<?>>) clazz);
-					List<ComponentType> nestedList;
-					if (componentTypes.containsKey(componentType.getCategory())) {
-						nestedList = componentTypes.get(componentType
-								.getCategory());
-					} else {
-						nestedList = new ArrayList<ComponentType>();
-						componentTypes.put(componentType.getCategory(),
-								nestedList);
-					}
-					nestedList.add(componentType);
-				}
-			}
-		}
-		return componentTypes;
 	}
 
 	@Override
@@ -796,10 +742,9 @@ public class Presenter implements IPlugInPort {
 			for (int i = currentProject.getComponents().size() - 1; i >= 0; i--) {
 				IDIYComponent<?> component = currentProject.getComponents()
 						.get(i);
-				ComponentType componentType = ComponentProcessor.getInstance()
-						.extractComponentTypeFrom(
-								(Class<? extends IDIYComponent<?>>) component
-										.getClass());
+				
+                ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
+				
 				for (int pointIndex = 0; pointIndex < component
 						.getControlPointCount(); pointIndex++) {
 					Point controlPoint = component.getControlPoint(pointIndex);
@@ -856,12 +801,10 @@ public class Presenter implements IPlugInPort {
 			Iterator<IDIYComponent<?>> i = newSelection.iterator();
 			while (i.hasNext()) {
 				IDIYComponent<?> c = i.next();
-				ComponentType type = ComponentProcessor.getInstance()
-						.extractComponentTypeFrom(
-								(Class<? extends IDIYComponent<?>>) c
-										.getClass());
-				if ((int) type.getZOrder() != layer)
+                ComponentType type = ComponentRegistry.INSTANCE.getComponentType(c.getClass().getName());
+				if ((int) type.getZOrder() != layer) {
 					i.remove();
+				}
 			}
 		}
 		updateSelection(newSelection);
@@ -967,10 +910,7 @@ public class Presenter implements IPlugInPort {
 		int oldSize = controlPointMap.size();
 		LOG.trace("Expanding selected component map");
 		for (IDIYComponent<?> component : currentProject.getComponents()) {
-			ComponentType componentType = ComponentProcessor.getInstance()
-					.extractComponentTypeFrom(
-							(Class<? extends IDIYComponent<?>>) component
-									.getClass());
+            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
 
 			// Check if there's a control point in the current selection
 			// that matches with one of its control points.
@@ -1199,10 +1139,7 @@ public class Presenter implements IPlugInPort {
 		// Update all points to new location.
 		for (IDIYComponent<?> component : components) {
 			drawingManager.invalidateComponent(component);
-			ComponentType type = ComponentProcessor.getInstance()
-					.extractComponentTypeFrom(
-							(Class<? extends IDIYComponent<?>>) component
-									.getClass());
+            ComponentType type = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
 			if (type.isRotatable()) {
 				for (int index = 0; index < component.getControlPointCount(); index++) {
 					Point p = new Point(component.getControlPoint(index));
@@ -1464,10 +1401,7 @@ public class Presenter implements IPlugInPort {
 		LOG.info("sendSelectionToBack()");
 		Project oldProject = currentProject.clone();
 		for (IDIYComponent<?> component : selectedComponents) {
-			ComponentType componentType = ComponentProcessor.getInstance()
-					.extractComponentTypeFrom(
-							(Class<? extends IDIYComponent<?>>) component
-									.getClass());
+            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
 			int index = currentProject.getComponents().indexOf(component);
 			if (index < 0) {
 				LOG.warn("Component not found in the project: "
@@ -1476,11 +1410,7 @@ public class Presenter implements IPlugInPort {
 				while (index > 0) {
 					IDIYComponent<?> componentBefore = currentProject
 							.getComponents().get(index - 1);
-					ComponentType componentBeforeType = ComponentProcessor
-							.getInstance()
-							.extractComponentTypeFrom(
-									(Class<? extends IDIYComponent<?>>) componentBefore
-											.getClass());
+                    ComponentType componentBeforeType = ComponentRegistry.INSTANCE.getComponentType(componentBefore.getClass().getName());
 					if (!componentType.isFlexibleZOrder()
 							&& componentBeforeType.getZOrder() < componentType
 									.getZOrder())
@@ -1503,10 +1433,8 @@ public class Presenter implements IPlugInPort {
 		LOG.info("bringSelectionToFront()");
 		Project oldProject = currentProject.clone();
 		for (IDIYComponent<?> component : selectedComponents) {
-			ComponentType componentType = ComponentProcessor.getInstance()
-					.extractComponentTypeFrom(
-							(Class<? extends IDIYComponent<?>>) component
-									.getClass());
+			@SuppressWarnings("unchecked")
+            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
 			int index = currentProject.getComponents().indexOf(component);
 			if (index < 0) {
 				LOG.warn("Component not found in the project: "
@@ -1515,11 +1443,8 @@ public class Presenter implements IPlugInPort {
 				while (index < currentProject.getComponents().size() - 1) {
 					IDIYComponent<?> componentAfter = currentProject
 							.getComponents().get(index + 1);
-					ComponentType componentAfterType = ComponentProcessor
-							.getInstance()
-							.extractComponentTypeFrom(
-									(Class<? extends IDIYComponent<?>>) componentAfter
-											.getClass());
+					@SuppressWarnings("unchecked")
+                    ComponentType componentAfterType = ComponentRegistry.INSTANCE.getComponentType(componentAfter.getClass().getName());
 					if (!componentType.isFlexibleZOrder()
 							&& componentAfterType.getZOrder() > componentType
 									.getZOrder())
@@ -1553,7 +1478,8 @@ public class Presenter implements IPlugInPort {
 		drawingManager.setTheme(theme);
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public void renumberSelectedComponents(final boolean xAxisFirst) {
 		LOG.info("renumberSelectedComponents(" + xAxisFirst + ")");
 		if (getSelectedComponents().isEmpty()) {
@@ -1619,9 +1545,7 @@ public class Presenter implements IPlugInPort {
 		// Assign new ones.
 		for (IDIYComponent<?> component : components) {
 			component.setName(instantiationManager.createUniqueName(
-					ComponentProcessor.getInstance().extractComponentTypeFrom(
-							(Class<? extends IDIYComponent<?>>) component
-									.getClass()), currentProject));
+			        ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName()), currentProject));
 		}
 
 		messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED,
@@ -1648,7 +1572,8 @@ public class Presenter implements IPlugInPort {
 				selectedComponents, controlPointMap.keySet());
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public void expandSelection(ExpansionMode expansionMode) {
 		LOG.info(String.format("expandSelection(%s)", expansionMode));
 		List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>(
@@ -1657,11 +1582,7 @@ public class Presenter implements IPlugInPort {
 		Set<String> selectedNamePrefixes = new HashSet<String>();
 		if (expansionMode == ExpansionMode.SAME_TYPE) {
 			for (IDIYComponent<?> component : getSelectedComponents()) {
-				selectedNamePrefixes.add(ComponentProcessor
-						.getInstance()
-						.extractComponentTypeFrom(
-								(Class<? extends IDIYComponent<?>>) component
-										.getClass()).getNamePrefix());
+				selectedNamePrefixes.add(ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName()).getNamePrefix());
 			}
 		}
 		// Now try to find components that intersect with at least one component
@@ -1695,11 +1616,7 @@ public class Presenter implements IPlugInPort {
 					break;
 				case SAME_TYPE:
 					if (selectedNamePrefixes
-							.contains(ComponentProcessor
-									.getInstance()
-									.extractComponentTypeFrom(
-											(Class<? extends IDIYComponent<?>>) component
-													.getClass())
+							.contains(ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName())
 									.getNamePrefix())) {
 						newSelection.add(component);
 					}
@@ -1809,19 +1726,12 @@ public class Presenter implements IPlugInPort {
 	 * 
 	 * @param component
 	 */
-	private void addComponent(IDIYComponent<?> component, boolean canCreatePads) {
+	@SuppressWarnings("unchecked")
+    private void addComponent(IDIYComponent<?> component, boolean canCreatePads) {
 		int index = currentProject.getComponents().size();
 		while (index > 0
-				&& ComponentProcessor
-						.getInstance()
-						.extractComponentTypeFrom(
-								(Class<? extends IDIYComponent<?>>) component
-										.getClass()).getZOrder() < ComponentProcessor
-						.getInstance()
-						.extractComponentTypeFrom(
-								(Class<? extends IDIYComponent<?>>) currentProject
-										.getComponents().get(index - 1)
-										.getClass()).getZOrder()) {
+				&& ComponentRegistry.INSTANCE.getComponentType( component.getClass().getName()).getZOrder() < 
+				ComponentRegistry.INSTANCE.getComponentType(currentProject.getComponents().get(index - 1).getClass().getName()).getZOrder()) {
 			index--;
 		}
 		if (index < currentProject.getComponents().size()) {
@@ -1833,8 +1743,7 @@ public class Presenter implements IPlugInPort {
 				&& ConfigurationManager.getInstance().readBoolean(
 						IPlugInPort.AUTO_PADS_KEY, false)
 				&& !(component instanceof SolderPad)) {
-			ComponentType padType = ComponentProcessor.getInstance()
-					.extractComponentTypeFrom(SolderPad.class);
+			ComponentType padType = ComponentRegistry.INSTANCE.getComponentType(SolderPad.class.getName());
 			for (int i = 0; i < component.getControlPointCount(); i++) {
 				if (component.isControlPointSticky(i)) {
 					try {
@@ -1984,10 +1893,7 @@ public class Presenter implements IPlugInPort {
 					"Can only save a single component as a template at once.");
 		}
 		IDIYComponent<?> component = selectedComponents.iterator().next();
-		ComponentType type = ComponentProcessor.getInstance()
-				.extractComponentTypeFrom(
-						(Class<? extends IDIYComponent<?>>) component
-								.getClass());
+		ComponentType type = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
 		Map<String, List<Template>> templateMap = (Map<String, List<Template>>) ConfigurationManager
 				.getInstance().readObject(TEMPLATES_KEY, null);
 		if (templateMap == null) {
@@ -2073,17 +1979,9 @@ public class Presenter implements IPlugInPort {
 		if (this.selectedComponents.isEmpty()) {
 			throw new RuntimeException("No components selected");
 		}
-		ComponentType selectedType = ComponentProcessor
-				.getInstance()
-				.extractComponentTypeFrom(
-						(Class<? extends IDIYComponent<?>>) this.selectedComponents
-								.get(0).getClass());
+        ComponentType selectedType = ComponentRegistry.INSTANCE.getComponentType(this.selectedComponents.get(0).getClass().getName());
 		for (int i = 1; i < this.selectedComponents.size(); i++) {
-			ComponentType newType = ComponentProcessor
-					.getInstance()
-					.extractComponentTypeFrom(
-							(Class<? extends IDIYComponent<?>>) this.selectedComponents
-									.get(i).getClass());
+            ComponentType newType = ComponentRegistry.INSTANCE.getComponentType(this.selectedComponents.get(i).getClass().getName());
 			if (newType.getInstanceClass() != selectedType.getInstanceClass()) {
 				throw new RuntimeException(
 						"Template can be applied on multiple components of the same type only");
@@ -2153,12 +2051,9 @@ public class Presenter implements IPlugInPort {
 	}
 
 	private boolean isComponentLocked(IDIYComponent<?> component) {
-		ComponentType componentType = ComponentProcessor.getInstance()
-				.extractComponentTypeFrom(
-						(Class<? extends IDIYComponent<?>>) component
-								.getClass());
-		return currentProject.getLockedLayers().contains(
-				(int) Math.round(componentType.getZOrder()));
+		ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
+		
+		return currentProject.getLockedLayers().contains((int) Math.round(componentType.getZOrder()));
 	}
 
 	/**

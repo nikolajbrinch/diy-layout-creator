@@ -79,6 +79,10 @@ public class ComponentType {
 		return icon;
 	}
 
+	public void setIcon(Icon icon) {
+	    this.icon = icon;
+    }
+
 	public Class<? extends IDIYComponent<?>> getInstanceClass() {
 		return instanceClass;
 	}
@@ -111,4 +115,5 @@ public class ComponentType {
 	public String toString() {
 		return name;
 	}
+
 }
