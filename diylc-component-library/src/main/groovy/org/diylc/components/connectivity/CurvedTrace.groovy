@@ -1,0 +1,83 @@
+package org.diylc.components.connectivity
+
+import java.awt.Color
+import java.awt.Graphics2D
+import java.awt.geom.CubicCurve2D
+
+import org.diylc.common.ObjectCache
+import org.diylc.components.AbstractCurvedComponent
+import org.diylc.components.ComponentDescriptor
+import org.diylc.components.PCBLayer
+import org.diylc.core.ComponentState
+import org.diylc.core.IDIYComponent
+import org.diylc.core.annotations.BomPolicy
+import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.graphics.GraphicsContext
+import org.diylc.core.measures.Size
+import org.diylc.core.measures.SizeUnit
+
+@ComponentDescriptor(name = "Curved Trace", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "Trace", description = "Curved copper trace with two control points", zOrder = IDIYComponent.TRACE, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
+public class CurvedTrace extends AbstractCurvedComponent<Void> {
+
+	private static final long serialVersionUID = 1L
+
+	public static Color COLOR = Color.black
+	public static Size SIZE = new Size(1d, SizeUnit.mm)
+
+	protected Size size = SIZE
+	private PCBLayer layer = PCBLayer._1
+
+	@Override
+	protected Color getDefaultColor() {
+		return COLOR
+	}
+
+	@Override
+	protected void drawCurve(CubicCurve2D curve, GraphicsContext graphicsContext, ComponentState componentState) {
+		int thickness = (int) size.convertToPixels()
+		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(thickness))
+		Color curveColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : color
+		graphicsContext.setColor(curveColor)
+		graphicsContext.draw(curve)
+	}
+
+	@EditableProperty(name = "Width")
+	public Size getThickness() {
+		return size
+	}
+
+	public void setThickness(Size size) {
+		this.size = size
+	}
+	
+	@EditableProperty
+	public PCBLayer getLayer() {
+		if (layer == null) {
+			layer = PCBLayer._1
+		}
+		return layer
+	}
+	
+	public void setLayer(PCBLayer layer) {
+		this.layer = layer
+	}
+
+	@Override
+	public Void getValue() {
+		return null
+	}
+
+	@Override
+	public void setValue(Void value) {
+	}
+
+	@Override
+	public Byte getAlpha() {
+		return super.getAlpha()
+	}
+
+	@Override
+	public void setAlpha(Byte alpha) {
+		super.setAlpha(alpha)
+	}
+}

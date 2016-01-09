@@ -77,7 +77,7 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
         while (p.y < secondPoint.y - spacing) {
             p.y += spacing;
 
-            drawCenteredText(graphicsContext, getCoordinateLabel(t++), p.x + 2, p.y, HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+            drawCenteredText(graphicsContext, getCoordinateLabel(t++), new Point(p.x + 2, p.y), HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         }
 
         p = new Point(firstPoint);
@@ -86,7 +86,7 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
         while (p.x < secondPoint.x - spacing) {
             p.x += spacing;
 
-            drawCenteredText(graphicsContext, getCoordinateLabel(t++), p.x, p.y - 2, HorizontalAlignment.CENTER, VerticalAlignment.TOP);
+            drawCenteredText(graphicsContext, getCoordinateLabel(t++), new Point(p.x, p.y - 2), HorizontalAlignment.CENTER, VerticalAlignment.TOP);
         }
     }
 

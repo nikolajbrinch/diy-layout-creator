@@ -101,13 +101,13 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
 		}
 		graphicsContext.setColor(finalLabelColor);
 		int x = (controlPoints[0].x + controlPoints[2].x) / 2;
-		drawCenteredText(graphicsContext, display == Display.VALUE ? getValue() : getName(), x,
-				controlPoints[0].y + pinSpacing, HorizontalAlignment.CENTER,
+		drawCenteredText(graphicsContext, display == Display.VALUE ? getValue() : getName(), new Point(x,
+				controlPoints[0].y + pinSpacing), HorizontalAlignment.CENTER,
 				VerticalAlignment.CENTER);
 		// Draw +/- markers
-		drawCenteredText(graphicsContext, "-", controlPoints[0].x + pinSpacing, controlPoints[0].y,
+		drawCenteredText(graphicsContext, "-", new Point(controlPoints[0].x + pinSpacing, controlPoints[0].y),
 				HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-		drawCenteredText(graphicsContext, "+", controlPoints[1].x + pinSpacing, controlPoints[1].y,
+		drawCenteredText(graphicsContext, "+", new Point(controlPoints[1].x + pinSpacing, controlPoints[1].y),
 				HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 	}
 
@@ -123,9 +123,9 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
 		graphicsContext.fill(area);
 		graphicsContext.setColor(BORDER_COLOR);
 		graphicsContext.setFont(LABEL_FONT.deriveFont(8f));
-		drawCenteredText(graphicsContext, "-", 3 * margin, height / 3, HorizontalAlignment.CENTER,
+		drawCenteredText(graphicsContext, "-", new Point(3 * margin, height / 3), HorizontalAlignment.CENTER,
 				VerticalAlignment.CENTER);
-		drawCenteredText(graphicsContext, "+", 3 * margin + 1, height * 2 / 3, HorizontalAlignment.CENTER,
+		drawCenteredText(graphicsContext, "+", new Point(3 * margin + 1, height * 2 / 3), HorizontalAlignment.CENTER,
 				VerticalAlignment.CENTER);
 		// g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND,
 		// BasicStroke.JOIN_ROUND));

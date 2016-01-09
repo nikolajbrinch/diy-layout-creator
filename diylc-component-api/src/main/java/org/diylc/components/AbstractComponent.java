@@ -109,7 +109,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 		return !clip.intersects(rect);
 	}
 
-	protected void drawCenteredText(GraphicsContext graphicsContext, String text, int x, int y,
+	protected void drawCenteredText(GraphicsContext graphicsContext, String text, Point point,
 			HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
 		FontMetrics fontMetrics = graphicsContext.getFontMetrics();
 		Rectangle stringBounds = fontMetrics.getStringBounds(text, graphicsContext.graphics2D).getBounds();
@@ -122,26 +122,26 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 		int textX = 0;
 		switch (horizontalAlignment) {
 		case CENTER:
-			textX = x - stringBounds.width / 2;
+			textX = point.x - stringBounds.width / 2;
 			break;
 		case LEFT:
-			textX = x;
+			textX = point.x;
 			break;
 		case RIGHT:
-			textX = x - stringBounds.width;
+			textX = point.x - stringBounds.width;
 			break;
 		}
 
 		int textY = 0;
 		switch (verticalAlignment) {
 		case TOP:
-			textY = y + stringBounds.height;
+			textY = point.y + stringBounds.height;
 			break;
 		case CENTER:
-			textY = y - visualBounds.height / 2 - visualBounds.y;
+			textY = point.y - visualBounds.height / 2 - visualBounds.y;
 			break;
 		case BOTTOM:
-			textY = y - visualBounds.y;
+			textY = point.y - visualBounds.y;
 			break;
 		}
 

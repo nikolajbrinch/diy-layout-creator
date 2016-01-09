@@ -86,7 +86,7 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent<String>
 		}
 		graphicsContext.setColor(finalLabelColor);
 		drawCenteredText(graphicsContext, display == Display.VALUE ? getValue() : getName(),
-				x + pinSpacing * 2, y, HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+				new Point(x + pinSpacing * 2, y), HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
 	}
 
 	@Override

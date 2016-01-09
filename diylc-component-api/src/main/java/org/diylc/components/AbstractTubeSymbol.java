@@ -81,7 +81,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 		graphicsContext.setColor(finalLabelColor);
 		Point p = getTextLocation();
 		drawCenteredText(graphicsContext,
-				display == Display.VALUE ? getValue() : getName(), p.x, p.y,
+				display == Display.VALUE ? getValue() : getName(), new Point(p.x, p.y),
 				HorizontalAlignment.LEFT, VerticalAlignment.TOP);
 	}
 
