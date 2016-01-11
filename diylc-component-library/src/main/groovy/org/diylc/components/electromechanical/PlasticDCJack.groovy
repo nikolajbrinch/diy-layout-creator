@@ -16,7 +16,7 @@ import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.DCPolarity
-import org.diylc.components.Geometry
+import org.diylc.components.Geometry;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver

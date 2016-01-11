@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.diylc.appframework.simplemq.IMessageListener;

@@ -21,11 +21,15 @@ import org.diylc.swing.plugins.file.FileFilterEnum;
 import org.diylc.swingframework.export.TableExporter;
 import org.diylc.swingframework.objecttable.ObjectListTable;
 import org.diylc.utils.BomEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BomDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
+    private static final Logger LOG = LoggerFactory.getLogger(BomDialog.class);
+	
 	private ObjectListTable<BomEntry> table;
 	private JPanel toolbar;
 
@@ -97,8 +101,7 @@ public class BomDialog extends JDialog {
 				try {
 					TableExporter.getInstance().exportToExcel(getTable(), file);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+	                LOG.warn("Error exporting to Excel", e1);
 				}
 			}
 		}
@@ -122,8 +125,7 @@ public class BomDialog extends JDialog {
 				try {
 					TableExporter.getInstance().exportToCSV(getTable(), file);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				    LOG.warn("Error exporting to CSV", e1);
 				}
 			}
 		}
@@ -147,8 +149,7 @@ public class BomDialog extends JDialog {
 				try {
 					TableExporter.getInstance().exportToHTML(getTable(), file);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				    LOG.warn("Error exporting to HTML", e1);
 				}
 			}
 		}
@@ -172,8 +173,7 @@ public class BomDialog extends JDialog {
 				try {
 					TableExporter.getInstance().exportToPNG(getTable(), file);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				    LOG.warn("Error exporting to PNG", e1);
 				}
 			}
 		}

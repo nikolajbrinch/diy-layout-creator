@@ -6,14 +6,8 @@ public class Voltage extends AbstractMeasure<VoltageUnit> {
 
 	private static final long serialVersionUID = 1L;
 
-//	public Voltage() {
-//		super();
-//		// TODO Auto-generated constructor stub
-//	}
-
 	public Voltage(Double value, VoltageUnit unit) {
 		super(value, unit);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -80,15 +80,6 @@ public class IconImageConverter implements Converter {
 		Image image = toolkit.createImage(new MemoryImageSource(width, height, colorModel, pixels,
 				0, width));
 
-//		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//		bimg.setRGB(0, 0, width, height, pixels, 0, width);
-//		File outputfile = new File("c:\\saved.png");
-//		try {
-//			ImageIO.write(bimg, "png", outputfile);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		return new ImageIcon(image);
 	}
 

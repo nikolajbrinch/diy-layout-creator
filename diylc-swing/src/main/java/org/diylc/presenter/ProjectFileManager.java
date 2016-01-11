@@ -25,7 +25,6 @@ import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
-import org.diylc.components.AbstractBoard;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.ComparatorFactory;
@@ -46,6 +45,7 @@ import org.diylc.components.semiconductors.DIL_IC;
 import org.diylc.components.semiconductors.DiodePlastic;
 import org.diylc.components.semiconductors.LED;
 import org.diylc.components.semiconductors.TransistorTO92;
+import org.diylc.components.AbstractBoard;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.measures.Capacitance;
@@ -525,10 +525,6 @@ public class ProjectFileManager {
 
 	private Project parseV2File(Element root) {
 		Project project = new Project();
-		String projectName = root.getAttribute("projectName");
-		String credits = root.getAttribute("credits");
-		String width = root.getAttribute("width");
-		String height = root.getAttribute("height");
 		NodeList childNodes = root.getChildNodes();
 		for (int i = 0; i < childNodes.getLength(); i++) {
 			Node node = childNodes.item(i);

@@ -1,8 +1,8 @@
 package org.diylc.components.boards
 
-import groovy.transform.CompileStatic
-import org.diylc.components.AbstractBoard
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.AbstractBoard;
+import org.diylc.components.Geometry;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -18,7 +18,7 @@ import java.awt.*
 
 
 @ComponentDescriptor(name = "Perf Board w/ Pads", category = "Boards", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board with solder pads", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
-public class PerfBoard extends AbstractBoard {
+public class PerfBoard extends AbstractBoard implements Geometry {
 
     private static final long serialVersionUID = 1L
 
@@ -53,7 +53,7 @@ public class PerfBoard extends AbstractBoard {
                 graphicsContext.setComposite(composite)
             }
 
-            Point p = new Point(firstPoint)
+            Point p = point(firstPoint)
             int diameter = getClosestOdd((int) PAD_SIZE.convertToPixels())
             int holeDiameter = getClosestOdd((int) HOLE_SIZE.convertToPixels())
             int spacing = (int) this.spacing.convertToPixels()

@@ -1,7 +1,32 @@
 package org.diylc.presenter;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.dnd.DnDConstants;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Point2D;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
@@ -34,30 +59,8 @@ import org.diylc.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.dnd.DnDConstants;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Point2D;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
  * The main presenter class, contains core app logic and drawing routines.
@@ -75,6 +78,7 @@ public class Presenter implements IPlugInPort {
         try {
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(Utils.getConfigFile("update.xml")));
             XStream xStream = new XStream(new DomDriver());
+            @SuppressWarnings("unchecked")
             List<Version> allVersions = (List<Version>) xStream.fromXML(in);
             in.close();
             CURRENT_VERSION = allVersions.get(allVersions.size() - 1).getVersionNumber();
@@ -90,7 +94,6 @@ public class Presenter implements IPlugInPort {
     public static final int ICON_SIZE = 32;
 
     private Project currentProject;
-    private Map<String, List<ComponentType>> componentTypes;
     // Maps component class names to ComponentType objects.
     private List<IPlugIn> plugIns;
 

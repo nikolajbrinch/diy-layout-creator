@@ -211,7 +211,6 @@ public class InstantiationManager {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<IDIYComponent<?>> instantiateComponent(
 			ComponentType componentType, Template template, Point point,
 			Project currentProject) throws Exception {

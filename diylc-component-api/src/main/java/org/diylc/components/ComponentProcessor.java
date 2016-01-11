@@ -132,14 +132,6 @@ public class ComponentProcessor {
                     }
                 }
             }
-            // for (PropertyWrapper property : properties) {
-            // try {
-            // property.readUniqueFrom(component);
-            // } catch (Exception e) {
-            // // TODO Auto-generated catch block
-            // e.printStackTrace();
-            // }
-            // }
         }
 
         Collections.sort(properties, ComparatorFactory.getInstance().getPropertyNameComparator());

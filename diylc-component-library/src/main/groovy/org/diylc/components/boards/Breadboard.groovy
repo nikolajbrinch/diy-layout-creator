@@ -1,7 +1,8 @@
 package org.diylc.components.boards
 
 import groovy.transform.CompileStatic
-import org.diylc.core.graphics.GraphicsContext;
+
+import org.diylc.core.graphics.GraphicsContext
 
 import java.awt.Color
 import java.awt.Graphics2D
@@ -12,6 +13,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -23,7 +25,7 @@ import org.diylc.core.measures.SizeUnit
 
 
 @ComponentDescriptor(name = "Breadboard", category = "Boards", author = "Branislav Stojkovic", description = "Prototyping solderless breadboard", instanceNamePrefix = "BB", stretchable = false, zOrder = IDIYComponent.BOARD, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
-public class Breadboard extends AbstractComponent<Void> {
+public class Breadboard extends AbstractComponent<Void> implements Geometry {
 
 	private static final long serialVersionUID = 1L
 
@@ -42,7 +44,7 @@ public class Breadboard extends AbstractComponent<Void> {
 	public static Size HOLE_SIZE = new Size(1.5d, SizeUnit.mm)
 	public static Size HOLE_ARC = new Size(1d, SizeUnit.mm)
 
-	protected Point point = new Point(0, 0)
+	protected Point point = point(0, 0)
 
 	@Override
 	public void draw(GraphicsContext graphicsContext, ComponentState componentState,

@@ -9,6 +9,7 @@ import java.awt.geom.GeneralPath
 import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractTubeSymbol
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Geometry;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IPropertyValidator
 import org.diylc.core.ValidationException
@@ -17,12 +18,12 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Diode Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "V", description = "Diode tube symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
-public class DiodeSymbol extends AbstractTubeSymbol {
+public class DiodeSymbol extends AbstractTubeSymbol implements Geometry {
 
 	private static final long serialVersionUID = 1L
 
-	protected Point[] controlPoints = [ new Point(0, 0),
-			new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) ] as Point[]
+	protected Point[] controlPoints = [ point(0, 0),
+			point(0, 0), point(0, 0), point(0, 0), point(0, 0) ] as Point[]
 
 	protected boolean directlyHeated = false
 
@@ -32,8 +33,8 @@ public class DiodeSymbol extends AbstractTubeSymbol {
 	}
 
 	public Shape[] getBody() {
-		if (body == null) {
-			body = new Shape[3]
+		if (this.@body == null) {
+			this.@body = new Shape[3]
 			int x = controlPoints[0].x
 			int y = controlPoints[0].y
 			int pinSpacing = (int) PIN_SPACING.convertToPixels()
@@ -42,66 +43,66 @@ public class DiodeSymbol extends AbstractTubeSymbol {
 			GeneralPath polyline = new GeneralPath()
 
 			// plate
-			polyline.moveTo(x + pinSpacing * 3 / 2, y - pinSpacing)
-			polyline.lineTo(x + pinSpacing * 9 / 2, y - pinSpacing)
+			polyline.moveTo((double) x + pinSpacing * 3 / 2, (double) y - pinSpacing)
+			polyline.lineTo((double) x + pinSpacing * 9 / 2, (double) y - pinSpacing)
 
 			// cathode
 			if (directlyHeated) {
-				polyline.moveTo(controlPoints[2].x, controlPoints[2].y
+				polyline.moveTo((double) controlPoints[2].x, (double) controlPoints[2].y
 						- pinSpacing)
-				polyline.lineTo(controlPoints[2].x + pinSpacing,
-						controlPoints[2].y - pinSpacing * 2)
-				polyline.lineTo(controlPoints[4].x, controlPoints[4].y
+				polyline.lineTo((double) controlPoints[2].x + pinSpacing,
+						(double) controlPoints[2].y - pinSpacing * 2)
+				polyline.lineTo((double) controlPoints[4].x, (double) controlPoints[4].y
 						- pinSpacing)
 			} else {
-				polyline.moveTo(x + pinSpacing * 2, y + pinSpacing)
-				polyline.lineTo(x + pinSpacing * 4, y + pinSpacing)
+				polyline.moveTo((double) x + pinSpacing * 2, (double) y + pinSpacing)
+				polyline.lineTo((double) x + pinSpacing * 4, (double) y + pinSpacing)
 			}
 
-			body[0] = polyline
+			this.@body[0] = polyline
 
 			// connectors
 			polyline = new GeneralPath()
 
 			// plate
-			polyline.moveTo(controlPoints[1].x, controlPoints[1].y)
-			polyline.lineTo(x + pinSpacing * 3, y - pinSpacing)
+			polyline.moveTo((double) controlPoints[1].x, (double) controlPoints[1].y)
+			polyline.lineTo((double) x + pinSpacing * 3, (double) y - pinSpacing)
 
 			// cathode
 			if (directlyHeated) {
-				polyline.moveTo(controlPoints[2].x, controlPoints[2].y)
-				polyline.lineTo(controlPoints[2].x, controlPoints[2].y
+				polyline.moveTo((double) controlPoints[2].x, (double) controlPoints[2].y)
+				polyline.lineTo((double) controlPoints[2].x, (double) controlPoints[2].y
 						- pinSpacing)
 
-				polyline.moveTo(controlPoints[4].x, controlPoints[4].y)
-				polyline.lineTo(controlPoints[4].x, controlPoints[4].y
+				polyline.moveTo((double) controlPoints[4].x, (double) controlPoints[4].y)
+				polyline.lineTo((double) controlPoints[4].x, (double) controlPoints[4].y
 						- pinSpacing)
 			} else {
-				polyline.moveTo(controlPoints[2].x, controlPoints[2].y)
+				polyline.moveTo((double) controlPoints[2].x, (double) controlPoints[2].y)
 				polyline.lineTo(x + pinSpacing * 2, y + pinSpacing)
 
 				if (showHeaters) {
-					polyline.moveTo(controlPoints[3].x, controlPoints[3].y)
-					polyline.lineTo(controlPoints[3].x, controlPoints[3].y
+					polyline.moveTo((double) controlPoints[3].x, (double) controlPoints[3].y)
+					polyline.lineTo((double) controlPoints[3].x, (double) controlPoints[3].y
 							- pinSpacing)
-					polyline.lineTo(controlPoints[3].x + pinSpacing / 2,
-							controlPoints[3].y - 3 * pinSpacing / 2)
+					polyline.lineTo((double) controlPoints[3].x + pinSpacing / 2,
+							(double) controlPoints[3].y - 3 * pinSpacing / 2)
 
-					polyline.moveTo(controlPoints[4].x, controlPoints[4].y)
-					polyline.lineTo(controlPoints[4].x, controlPoints[4].y
+					polyline.moveTo((double) controlPoints[4].x, (double) controlPoints[4].y)
+					polyline.lineTo((double) controlPoints[4].x, (double) controlPoints[4].y
 							- pinSpacing)
-					polyline.lineTo(controlPoints[4].x - pinSpacing / 2,
-							controlPoints[4].y - 3 * pinSpacing / 2)
+					polyline.lineTo((double) controlPoints[4].x - pinSpacing / 2,
+							(double) controlPoints[4].y - 3 * pinSpacing / 2)
 				}
 			}
 
-			body[1] = polyline
+			this.@body[1] = polyline
 
 			// bulb
-			body[2] = new Ellipse2D.Double(x + pinSpacing / 2, y - pinSpacing
+			this.@body[2] = new Ellipse2D.Double(x + pinSpacing / 2, y - pinSpacing
 					* 5 / 2, pinSpacing * 5, pinSpacing * 5)
 		}
-		return body
+		return this.@body
 	}
 
 	@Override
@@ -186,17 +187,17 @@ public class DiodeSymbol extends AbstractTubeSymbol {
 	@Override
 	protected Point getTextLocation() {
 		int pinSpacing = (int) PIN_SPACING.convertToPixels()
-		return new Point(controlPoints[0].x + pinSpacing * 5,
+		return point(controlPoints[0].x + pinSpacing * 5,
 				controlPoints[0].y + pinSpacing * 2)
 	}
 
 	@EditableProperty(name = "Directly heated")
 	public boolean getDirectlyHeated() {
-		return directlyHeated
+		return this.@directlyHeated
 	}
 
 	public void setDirectlyHeated(boolean directlyHeated) {
-		this.directlyHeated = directlyHeated
+		this.@directlyHeated = directlyHeated
 		// Invalidate body
 		body = null
 	}

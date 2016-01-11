@@ -708,8 +708,7 @@ public enum ActionFactory {
 			try {
 				DrawingExporter.getInstance().print(this.drawingProvider);
 			} catch (PrinterException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			    LOG.warn("Error printing", e1);
 			}
 		}
 	}

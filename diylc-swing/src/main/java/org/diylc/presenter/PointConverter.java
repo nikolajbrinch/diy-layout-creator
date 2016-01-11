@@ -33,8 +33,8 @@ public class PointConverter implements Converter {
 				* Constants.PIXELS_PER_INCH));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
+	@SuppressWarnings("rawtypes")
+    @Override
 	public boolean canConvert(Class clazz) {
 		return Point.class.isAssignableFrom(clazz);
 	}

@@ -19,14 +19,14 @@ import org.diylc.swingframework.ProgressDialog;
 
 public class OnlineManager implements IPlugIn {
 
-	private static final String ONLINE_TITLE = "Online";
+//	private static final String ONLINE_TITLE = "Online";
 
-	private IPlugInPort plugInPort;
+//	private IPlugInPort plugInPort;
 	private LibraryPresenter libraryPresenter;
 
 	@Override
 	public void connect(IPlugInPort plugInPort) {
-		this.plugInPort = plugInPort;
+//		this.plugInPort = plugInPort;
 		this.libraryPresenter = new LibraryPresenter();
 
 		initialize();

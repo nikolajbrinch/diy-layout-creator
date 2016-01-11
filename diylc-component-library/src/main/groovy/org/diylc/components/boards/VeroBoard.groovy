@@ -5,13 +5,13 @@ import org.diylc.core.graphics.GraphicsContext
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
-import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.Shape
 
 import org.diylc.common.OrientationHV
-import org.diylc.components.AbstractBoard
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.AbstractBoard;
+import org.diylc.components.Geometry;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -23,7 +23,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.utils.Constants
 
 @ComponentDescriptor(name = "Vero Board", category = "Boards", author = "Branislav Stojkovic", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated FR4 board with copper strips connecting all holes in a row", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
-public class VeroBoard extends AbstractBoard {
+public class VeroBoard extends AbstractBoard implements Geometry {
 
     private static final long serialVersionUID = 1L
 
@@ -56,7 +56,7 @@ public class VeroBoard extends AbstractBoard {
                 graphicsContext.setComposite(AlphaComposite.getInstance(
                         AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
             }
-            Point p = new Point(firstPoint)
+            Point p = point(firstPoint)
             int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels())
             int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels())
             int spacing = (int) this.spacing.convertToPixels()

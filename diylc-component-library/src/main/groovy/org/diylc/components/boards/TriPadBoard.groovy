@@ -1,8 +1,9 @@
 package org.diylc.components.boards
 
 import org.diylc.common.OrientationHV
-import org.diylc.components.AbstractBoard
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.AbstractBoard;
+import org.diylc.components.Geometry;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -16,7 +17,7 @@ import org.diylc.utils.Constants
 import java.awt.*
 
 @ComponentDescriptor(name = "TriPad Board", category = "Boards", author = "Hauke Juhls", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated FR4 board with copper strips connecting 3 holes in a row (aka TriPad Board)")
-public class TriPadBoard extends AbstractBoard {
+public class TriPadBoard extends AbstractBoard implements Geometry {
 
     private static final long serialVersionUID = 1L
 
@@ -50,7 +51,7 @@ public class TriPadBoard extends AbstractBoard {
                 graphicsContext.setComposite(AlphaComposite.getInstance(
                         AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
             }
-            Point p = new Point(firstPoint)
+            Point p = point(firstPoint)
             int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels())
             int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels())
             int spacing = (int) this.spacing.convertToPixels()

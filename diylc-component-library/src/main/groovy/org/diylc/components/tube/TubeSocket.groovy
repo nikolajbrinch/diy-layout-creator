@@ -13,6 +13,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Geometry;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -27,7 +28,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.utils.Constants
 
 @ComponentDescriptor(name = "Tube Socket", author = "Branislav Stojkovic", category = "Tubes", instanceNamePrefix = "V", description = "Various types of tube/valve sockets", stretchable = false, zOrder = IDIYComponent.COMPONENT)
-public class TubeSocket extends AbstractTransparentComponent<String> {
+public class TubeSocket extends AbstractTransparentComponent<String> implements Geometry {
 
 	private static final long serialVersionUID = 1L
 
@@ -44,7 +45,7 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
 	private Orientation orientation = Orientation.DEFAULT
 	// private Mount mount = Mount.CHASSIS;
 
-	private Point[] controlPoints = [ new Point(0, 0) ] as Point[]
+	private Point[] controlPoints = points(point(0, 0))
 
 	transient private Shape body
 
@@ -133,7 +134,7 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
 		double angle = initialAngle
 		controlPoints[0] = firstPoint
 		for (int i = 0; i < pinCount; i++) {
-			controlPoints[i + 1] = new Point((int) (firstPoint.getX() + Math.cos(angle)
+			controlPoints[i + 1] = point((int) (firstPoint.getX() + Math.cos(angle)
 					* pinCircleDiameter / 2), (int) (firstPoint.getY() + Math.sin(angle)
 					* pinCircleDiameter / 2))
 			angle += angleIncrement

@@ -6,14 +6,8 @@ public class Power extends AbstractMeasure<PowerUnit> {
 
 	private static final long serialVersionUID = 1L;
 
-//	public Power() {
-//		super();
-//		// TODO Auto-generated constructor stub
-//	}
-
 	public Power(Double value, PowerUnit unit) {
 		super(value, unit);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

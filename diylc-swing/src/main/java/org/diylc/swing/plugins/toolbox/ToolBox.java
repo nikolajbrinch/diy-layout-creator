@@ -46,13 +46,10 @@ public class ToolBox implements IPlugIn {
 
 	@Override
 	public EnumSet<EventType> getSubscribedEventTypes() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void processMessage(EventType eventType, Object... params) {
-		// TODO Auto-generated method stub
-
 	}
 }

@@ -10,18 +10,19 @@ import java.awt.geom.GeneralPath
 import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractTubeSymbol
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Geometry;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Triode Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "V", description = "Triode tube symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
-public class TriodeSymbol extends AbstractTubeSymbol {
+public class TriodeSymbol extends AbstractTubeSymbol implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    protected Point[] controlPoints = [ new Point(0, 0),
-        new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) ] as  Point[]
+    protected Point[] controlPoints = points(point(0, 0),
+    point(0, 0), point(0, 0), point(0, 0), point(0, 0))
 
     protected boolean directlyHeated = false
 
@@ -31,113 +32,100 @@ public class TriodeSymbol extends AbstractTubeSymbol {
     }
 
     public Shape[] getBody() {
-        if (body == null) {
-            body = new Shape[3]
+        if (this.@body == null) {
+            this.@body = new Shape[3]
             int x = controlPoints[0].x
             int y = controlPoints[0].y
             int pinSpacing = (int) PIN_SPACING.convertToPixels()
 
             // electrodes
             GeneralPath polyline = new GeneralPath()
+            polyline.with {
 
-            // grid
-            polyline.moveTo(x + pinSpacing * 5 / 4, y)
-            polyline.lineTo(x + pinSpacing * 7 / 4, y)
-            polyline.moveTo(x + pinSpacing * 9 / 4, y)
-            polyline.lineTo(x + pinSpacing * 11 / 4, y)
-            polyline.moveTo(x + pinSpacing * 13 / 4, y)
-            polyline.lineTo(x + pinSpacing * 15 / 4, y)
-            polyline.moveTo(x + pinSpacing * 17 / 4, y)
-            polyline.lineTo(x + pinSpacing * 19 / 4, y)
+                // grid
+                moveTo((double) x + pinSpacing * 5 / 4, (double) y)
+                lineTo((double) x + pinSpacing * 7 / 4, (double) y)
+                moveTo((double) x + pinSpacing * 9 / 4, (double) y)
+                lineTo((double) x + pinSpacing * 11 / 4, (double) y)
+                moveTo((double) x + pinSpacing * 13 / 4, (double) y)
+                lineTo((double) x + pinSpacing * 15 / 4, (double) y)
+                moveTo((double) x + pinSpacing * 17 / 4, (double) y)
+                lineTo((double) x + pinSpacing * 19 / 4, (double) y)
 
-            // plate
-            polyline.moveTo(x + pinSpacing * 3 / 2, y - pinSpacing)
-            polyline.lineTo(x + pinSpacing * 9 / 2, y - pinSpacing)
+                // plate
+                moveTo((double) x + pinSpacing * 3 / 2, (double) y - pinSpacing)
+                lineTo((double) x + pinSpacing * 9 / 2, (double) y - pinSpacing)
 
-            // cathode
-            if (directlyHeated) {
-                polyline.moveTo(controlPoints[2].x, controlPoints[2].y
-                - pinSpacing)
-                polyline.lineTo(controlPoints[2].x + pinSpacing,
-                controlPoints[2].y - pinSpacing * 2)
-                polyline.lineTo(controlPoints[4].x, controlPoints[4].y
-                - pinSpacing)
-            } else {
-                polyline.moveTo(x + pinSpacing * 2, y + pinSpacing)
-                polyline.lineTo(x + pinSpacing * 4, y + pinSpacing)
+                // cathode
+                if (directlyHeated) {
+                    moveTo((double) controlPoints[2].x, (double) controlPoints[2].y - pinSpacing)
+                    lineTo((double) controlPoints[2].x + pinSpacing, (double) controlPoints[2].y - pinSpacing * 2)
+                    lineTo((double) controlPoints[4].x, (double) controlPoints[4].y - pinSpacing)
+                } else {
+                    moveTo((double) x + pinSpacing * 2, (double) y + pinSpacing)
+                    lineTo((double) x + pinSpacing * 4, (double) y + pinSpacing)
+                }
             }
-
-            body[0] = polyline
+            this.@body[0] = polyline
 
             // connectors
             polyline = new GeneralPath()
+            polyline.with {
 
-            // grid
-            polyline.moveTo(x, y)
-            polyline.lineTo(x + pinSpacing, y)
+                // grid
+                moveTo((double) x, (double) y)
+                lineTo((double) x + pinSpacing, (double) y)
 
-            // plate
-            polyline.moveTo(controlPoints[1].x, controlPoints[1].y)
-            polyline.lineTo(x + pinSpacing * 3, y - pinSpacing)
+                // plate
+                moveTo((double) controlPoints[1].x, (double) controlPoints[1].y)
+                lineTo((double) x + pinSpacing * 3, (double) y - pinSpacing)
 
-            // cathode
-            if (directlyHeated) {
-                polyline.moveTo(controlPoints[2].x, controlPoints[2].y)
-                polyline.lineTo(controlPoints[2].x, controlPoints[2].y
-                - pinSpacing)
+                // cathode
+                if (directlyHeated) {
+                    moveTo((double) controlPoints[2].x, (double) controlPoints[2].y)
+                    lineTo((double) controlPoints[2].x, (double) controlPoints[2].y - pinSpacing)
+                    moveTo((double) controlPoints[4].x, (double) controlPoints[4].y)
+                    lineTo((double) controlPoints[4].x, (double) controlPoints[4].y - pinSpacing)
+                } else {
+                    moveTo((double) controlPoints[2].x, (double) controlPoints[2].y)
+                    lineTo((double) x + pinSpacing * 2, (double) y + pinSpacing)
 
-                polyline.moveTo(controlPoints[4].x, controlPoints[4].y)
-                polyline.lineTo(controlPoints[4].x, controlPoints[4].y
-                - pinSpacing)
-            } else {
-                polyline.moveTo(controlPoints[2].x, controlPoints[2].y)
-                polyline.lineTo(x + pinSpacing * 2, y + pinSpacing)
+                    if (showHeaters) {
+                        moveTo((double) controlPoints[3].x, (double) controlPoints[3].y)
+                        lineTo((double) controlPoints[3].x, (double) controlPoints[3].y - pinSpacing)
+                        lineTo((double) controlPoints[3].x + pinSpacing / 2, (double) controlPoints[3].y - 3 * pinSpacing / 2)
 
-                if (showHeaters) {
-                    polyline.moveTo(controlPoints[3].x, controlPoints[3].y)
-                    polyline.lineTo(controlPoints[3].x, controlPoints[3].y
-                    - pinSpacing)
-                    polyline.lineTo(controlPoints[3].x + pinSpacing / 2,
-                    controlPoints[3].y - 3 * pinSpacing / 2)
-
-                    polyline.moveTo(controlPoints[4].x, controlPoints[4].y)
-                    polyline.lineTo(controlPoints[4].x, controlPoints[4].y
-                    - pinSpacing)
-                    polyline.lineTo(controlPoints[4].x - pinSpacing / 2,
-                    controlPoints[4].y - 3 * pinSpacing / 2)
+                        moveTo((double) controlPoints[4].x, (double) controlPoints[4].y)
+                        lineTo((double) controlPoints[4].x, (double) controlPoints[4].y - pinSpacing)
+                        lineTo((double) controlPoints[4].x - pinSpacing / 2, (double) controlPoints[4].y - 3 * pinSpacing / 2)
+                    }
                 }
+
             }
 
-            body[1] = polyline
+            this.@body[1] = polyline
 
             // bulb
-            body[2] = new Ellipse2D.Double(x + pinSpacing / 2, y - pinSpacing
-            * 5 / 2, pinSpacing * 5, pinSpacing * 5)
+            this.@body[2] = new Ellipse2D.Double(x + pinSpacing / 2, y - pinSpacing
+                    * 5 / 2, pinSpacing * 5, pinSpacing * 5)
         }
-        return body
+        return this.@body
     }
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        graphicsContext.setColor(COLOR)
-
-        graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
-
-        graphicsContext.drawLine(width / 4, height / 4, width * 3 / 4, height / 4)
-        graphicsContext.drawLine(width / 2, height / 4, width / 2, 0)
-
-        graphicsContext.drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width * 3 / 4
-        - 4 * width / 32, height * 3 / 4)
-        graphicsContext.drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width / 4 + 2
-        * width / 32, height - 1)
-
-        graphicsContext.drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width
-        / 32)
-
-		graphicsContext.drawLine(0, height / 2, width / 8, height / 2)
-        graphicsContext.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND,
-        BasicStroke.JOIN_BEVEL, 0, [ 3f ] as float[], 6f))
-        graphicsContext.drawLine(width / 8, height / 2, width * 7 / 8, height / 2)
+        graphicsContext.with {
+            setColor(COLOR)
+            setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
+            drawLine(width / 4, height / 4, width * 3 / 4, height / 4)
+            drawLine(width / 2, height / 4, width / 2, 0)
+            drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width * 3 / 4 - 4 * width / 32, height * 3 / 4)
+            drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width / 4 + 2 * width / 32, height - 1)
+            drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width / 32)
+            drawLine(0, height / 2, width / 8, height / 2)
+            setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0, [3f ] as float[], 6f))
+            drawLine(width / 8, height / 2, width * 7 / 8, height / 2)
+        }
     }
 
     @Override
@@ -180,12 +168,12 @@ public class TriodeSymbol extends AbstractTubeSymbol {
     public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
         if (directlyHeated) {
             return index != 3 ? VisibilityPolicy.WHEN_SELECTED
-            : VisibilityPolicy.NEVER
+                    : VisibilityPolicy.NEVER
         } else if (showHeaters) {
             return VisibilityPolicy.WHEN_SELECTED
         } else {
             return index < 3 ? VisibilityPolicy.WHEN_SELECTED
-            : VisibilityPolicy.NEVER
+                    : VisibilityPolicy.NEVER
         }
     }
 
@@ -203,17 +191,17 @@ public class TriodeSymbol extends AbstractTubeSymbol {
     @Override
     protected Point getTextLocation() {
         int pinSpacing = (int) PIN_SPACING.convertToPixels()
-        return new Point(controlPoints[0].x + pinSpacing * 5,
-        controlPoints[0].y + pinSpacing * 2)
+        return point(controlPoints[0].x + pinSpacing * 5,
+                controlPoints[0].y + pinSpacing * 2)
     }
 
     @EditableProperty(name = "Directly heated")
     public boolean getDirectlyHeated() {
-        return directlyHeated
+        return this.@directlyHeated
     }
 
     public void setDirectlyHeated(boolean directlyHeated) {
-        this.directlyHeated = directlyHeated
+        this.@directlyHeated = directlyHeated
         // Invalidate body
         body = null
     }

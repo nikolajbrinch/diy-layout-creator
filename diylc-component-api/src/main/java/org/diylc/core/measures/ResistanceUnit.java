@@ -1,7 +1,5 @@
 package org.diylc.core.measures;
 
-import org.diylc.core.measures.Unit;
-
 public enum ResistanceUnit implements Unit {
 
 	R(1, "\u2126"), K(1e3, "K"), M(1e6, "M");

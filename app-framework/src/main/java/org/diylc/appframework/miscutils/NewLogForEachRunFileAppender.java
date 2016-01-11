@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.appender.AbstractOutputStreamAppender;
-import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.appender.FileManager;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -27,8 +26,6 @@ import org.apache.logging.log4j.core.util.Integers;
 @Plugin(name = "NewLogForEachRunFileAppender", category = "File", elementType = "appender", printObject = true)
 public class NewLogForEachRunFileAppender extends AbstractOutputStreamAppender<FileManager> {
 	
-	private FileAppender fileAppender;
-
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_BUFFER_SIZE = 8192;
     private final String fileName;

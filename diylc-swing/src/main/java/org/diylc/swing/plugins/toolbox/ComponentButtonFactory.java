@@ -35,8 +35,6 @@ import org.openide.awt.DropDownButtonFactory;
  */
 class ComponentButtonFactory {
 
-	private static final long serialVersionUID = 1L;
-
 	public static int MARGIN = 3;
 
 	public static JButton create(final IPlugInPort plugInPort,

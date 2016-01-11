@@ -17,11 +17,11 @@ import org.diylc.presenter.plugin.IPlugInPort;
  */
 class ToolboxSourceListener implements DragSourceListener {
 
-	private IPlugInPort presenter;
+//	private IPlugInPort presenter;
 
 	public ToolboxSourceListener(IPlugInPort presenter) {
 		super();
-		this.presenter = presenter;
+//		this.presenter = presenter;
 	}
 
 	@Override

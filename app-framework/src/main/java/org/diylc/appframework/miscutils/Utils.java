@@ -3,18 +3,9 @@ package org.diylc.appframework.miscutils;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 public class Utils {
 

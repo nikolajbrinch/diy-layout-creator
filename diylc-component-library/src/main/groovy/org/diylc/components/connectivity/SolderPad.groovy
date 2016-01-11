@@ -47,8 +47,8 @@ public class SolderPad extends AbstractComponent<Void> {
 				|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR
 				: color)
         
-		int x = point.x - diameter / 2
-        int y = point.y - diameter / 2
+		int x = point.x - diameter.intdiv(2)
+        int y = point.y - diameter.intdiv(2)
         
 		if (type == Type.ROUND) {
 			graphicsContext.fillOval(x, y, diameter, diameter)
@@ -58,7 +58,7 @@ public class SolderPad extends AbstractComponent<Void> {
 		
 		if (getHoleSize().getValue() > 0) {
 			graphicsContext.setColor(Constants.CANVAS_COLOR)
-			graphicsContext.fillOval(point.x - (int) holeDiameter / 2, point.y - (int) holeDiameter / 2, holeDiameter, holeDiameter)
+			graphicsContext.fillOval(point.x - holeDiameter.intdiv(2), point.y - holeDiameter.intdiv(2), holeDiameter, holeDiameter)
 		}
 	}
 

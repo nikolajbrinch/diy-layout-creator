@@ -160,7 +160,8 @@ class ComponentTabbedPane extends JTabbedPane {
 		refreshRecentComponentsToolbar(toolbar, Configuration.INSTANCE.getRecentComponents());
 		
 		Configuration.INSTANCE.addListener(Configuration.Key.RECENT_COMPONENTS, new ConfigurationListener() {
-			@Override
+			@SuppressWarnings("unchecked")
+            @Override
 			public void onValueChanged(Object oldValue, Object newValue) {
 				pendingRecentComponents = (List<String>) newValue;
 			}

@@ -74,7 +74,9 @@ public class ProjectEntity implements Serializable {
 
 		Action a = new AbstractAction() {
 
-			@Override
+		    private static final long serialVersionUID = 1L;
+
+		    @Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, name);
 			}

@@ -110,9 +110,11 @@ public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 	@Override
 	public void processMessage(EventType eventType, Object... params) {
 		switch (eventType) {
-		case SELECTION_CHANGED:
-			refreshActions();
-			break;
+    		case SELECTION_CHANGED:
+    			refreshActions();
+    			break;
+			default:
+			    break;
 		}
 	}
 

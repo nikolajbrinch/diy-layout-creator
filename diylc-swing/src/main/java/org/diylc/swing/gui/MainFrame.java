@@ -70,377 +70,366 @@ import org.slf4j.LoggerFactory;
 
 public class MainFrame extends JFrame implements ISwingUI {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MainFrame.class);
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private JPanel centerPanel;
-	private JPanel leftPanel;
-	private JPanel rightPanel;
-	private JPanel topPanel;
-	private JPanel bottomPanel;
+    private JPanel centerPanel;
+    private JPanel leftPanel;
+    private JPanel rightPanel;
+    private JPanel topPanel;
+    private JPanel bottomPanel;
 
-	private Presenter presenter;
+    private Presenter presenter;
 
-	private JMenuBar mainMenuBar;
-	private Map<String, JMenu> menuMap;
-	private Map<String, ButtonGroup> buttonGroupMap;
+    private JMenuBar mainMenuBar;
+    private Map<String, JMenu> menuMap;
+    private Map<String, ButtonGroup> buttonGroupMap;
 
-	private CanvasPlugin canvasPlugin;
+    private CanvasPlugin canvasPlugin;
 
-	public MainFrame() {
-		super("DIYLC 4");
-		initComponent();
-	}
-	
-	private void initComponent() {
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
-		WindowBounds windowBounds = Configuration.INSTANCE.getWindowBounds();
-		setPreferredSize(new Dimension(windowBounds.getWidth(), windowBounds.getHeight()));
-		createBasePanels();
-		menuMap = new HashMap<String, JMenu>();
-		buttonGroupMap = new HashMap<String, ButtonGroup>();
-		setIconImages(Arrays.asList(CoreIconLoader.IconSmall.getImage(), CoreIconLoader.IconMedium
-				.getImage(), CoreIconLoader.IconLarge.getImage()));
-		DialogFactory.getInstance().initialize(this);
+    public MainFrame() {
+        super("DIYLC 4");
+        initComponent();
+    }
 
-		this.presenter = new Presenter(this);
+    private void initComponent() {
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		presenter.installPlugin(new ToolBox(this));
-		presenter.installPlugin(new FileMenuPlugin(this));
-		presenter.installPlugin(new EditMenuPlugin(this));
-		presenter.installPlugin(new ArrangeMenuPlugin(this));
-		presenter.installPlugin(new ConfigPlugin(this));
-		presenter.installPlugin(new LayersMenuPlugin(this));
-		// presenter.installPlugin(new OnlineManager());
-		presenter.installPlugin(new ToolsMenuPlugin(this));
-		presenter.installPlugin(new HelpMenuPlugin(this));
+        WindowBounds windowBounds = Configuration.INSTANCE.getWindowBounds();
+        setPreferredSize(new Dimension(windowBounds.getWidth(), windowBounds.getHeight()));
+        createBasePanels();
+        menuMap = new HashMap<String, JMenu>();
+        buttonGroupMap = new HashMap<String, ButtonGroup>();
+        setIconImages(Arrays.asList(CoreIconLoader.IconSmall.getImage(), CoreIconLoader.IconMedium.getImage(),
+                CoreIconLoader.IconLarge.getImage()));
+        DialogFactory.getInstance().initialize(this);
 
-		presenter.installPlugin(new StatusBar(this));
-		canvasPlugin = new CanvasPlugin(this);
-		presenter.installPlugin(canvasPlugin);
-		presenter.installPlugin(new FramePlugin());
-		presenter.configure();
+        this.presenter = new Presenter(this);
 
-		try {
-			File testFile = new File("test.tmp");
-			Writer out = new OutputStreamWriter(new FileOutputStream(testFile));
-			out.write("This is a test");
-			out.close();
-			testFile.delete();
-			presenter.installPlugin(new AutoSavePlugin(this));
-		} catch (Exception e) {
-			showMessage(
-					"The current user does not have permissions to access folder "
-							+ new File(".").getAbsolutePath()
-							+ ".\nAuto-save feature will not be available, contact your system administrator.",
-					"Warning", IView.WARNING_MESSAGE);
-		}
+        presenter.installPlugin(new ToolBox(this));
+        presenter.installPlugin(new FileMenuPlugin(this));
+        presenter.installPlugin(new EditMenuPlugin(this));
+        presenter.installPlugin(new ArrangeMenuPlugin(this));
+        presenter.installPlugin(new ConfigPlugin(this));
+        presenter.installPlugin(new LayersMenuPlugin(this));
+        // presenter.installPlugin(new OnlineManager());
+        presenter.installPlugin(new ToolsMenuPlugin(this));
+        presenter.installPlugin(new HelpMenuPlugin(this));
 
-		presenter.createNewProject();
+        presenter.installPlugin(new StatusBar(this));
+        canvasPlugin = new CanvasPlugin(this);
+        presenter.installPlugin(canvasPlugin);
+        presenter.installPlugin(new FramePlugin());
+        presenter.configure();
 
-		addWindowListener(new WindowAdapter() {
+        try {
+            File testFile = new File("test.tmp");
+            Writer out = new OutputStreamWriter(new FileOutputStream(testFile));
+            out.write("This is a test");
+            out.close();
+            testFile.delete();
+            presenter.installPlugin(new AutoSavePlugin(this));
+        } catch (Exception e) {
+            showMessage("The current user does not have permissions to access folder " + new File(".").getAbsolutePath()
+                    + ".\nAuto-save feature will not be available, contact your system administrator.", "Warning", IView.WARNING_MESSAGE);
+        }
 
-			@Override
-			public void windowClosed(WindowEvent e) {
-				if (presenter.allowFileAction()) {
-					Configuration.INSTANCE.setAbnormalExit(false);
-					dispose();
-					presenter.dispose();
-					System.exit(0);
-				}
-			}
+        presenter.createNewProject();
 
-			@Override
-			public void windowClosing(WindowEvent e) {
-				if (presenter.allowFileAction()) {
-					Configuration.INSTANCE.setAbnormalExit(false);
-					dispose();
-					presenter.dispose();
-					System.exit(0);
-				}
-			}
-		});
+        addWindowListener(new WindowAdapter() {
 
-		setLocation(new Point(windowBounds.getX(), windowBounds.getY()));
-		setExtendedState(windowBounds.getExtendedState());
-		
-		addComponentListener(new ComponentAdapter() {
-			@Override
-            public void componentResized(ComponentEvent e) {
-				JFrame frame = (JFrame) e.getComponent();
-				Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
+            @Override
+            public void windowClosed(WindowEvent e) {
+                exit();
             }
 
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				JFrame frame = (JFrame) e.getComponent();
-				Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
-			}
-            
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit();
+
+            }
         });
 
-		setGlassPane(new CustomGlassPane());
-	}
+        setLocation(new Point(windowBounds.getX(), windowBounds.getY()));
+        setExtendedState(windowBounds.getExtendedState());
 
-	public Presenter getPresenter() {
-		return presenter;
-	}
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                JFrame frame = (JFrame) e.getComponent();
+                Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
+            }
 
-	@Override
-	public void setVisible(boolean b) {
-		super.setVisible(b);
-		// TODO: hack to prevent painting issues in the scroll bar rulers. Find
-		// a better fix if possible.
-		Timer timer = new Timer(500, new ActionListener() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                JFrame frame = (JFrame) e.getComponent();
+                Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
+            }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				canvasPlugin.refresh();
-			}
+        });
 
-		});
-		timer.setRepeats(false);
-		timer.start();
-		// if (b) {
-		// SwingUtilities.invokeLater(new Runnable() {
-		// @Override
-		// public void run() {
-		//					
-		// }
-		// });
-		// }
-	}
+        setGlassPane(new CustomGlassPane());
+    }
 
-	private void createBasePanels() {
-		Container c = new Container();
-		c.setLayout(new BorderLayout());
+    public Presenter getPresenter() {
+        return presenter;
+    }
 
-		centerPanel = new JPanel(new BorderLayout());
-		c.add(centerPanel, BorderLayout.CENTER);
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        // TODO: hack to prevent painting issues in the scroll bar rulers. Find
+        // a better fix if possible.
+        Timer timer = new Timer(500, new ActionListener() {
 
-		topPanel = new JPanel();
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-		c.add(topPanel, BorderLayout.NORTH);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                canvasPlugin.refresh();
+            }
 
-		leftPanel = new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
-		c.add(leftPanel, BorderLayout.WEST);
+        });
+        timer.setRepeats(false);
+        timer.start();
+        // if (b) {
+        // SwingUtilities.invokeLater(new Runnable() {
+        // @Override
+        // public void run() {
+        //
+        // }
+        // });
+        // }
+    }
 
-		bottomPanel = new JPanel();
-		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-		c.add(bottomPanel, BorderLayout.SOUTH);
+    private void createBasePanels() {
+        Container c = new Container();
+        c.setLayout(new BorderLayout());
 
-		rightPanel = new JPanel();
-		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.X_AXIS));
-		c.add(rightPanel, BorderLayout.EAST);
+        centerPanel = new JPanel(new BorderLayout());
+        c.add(centerPanel, BorderLayout.CENTER);
 
-		setContentPane(c);
-	}
+        topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        c.add(topPanel, BorderLayout.NORTH);
 
-	private JMenuBar getMainMenuBar() {
-		if (mainMenuBar == null) {
-			mainMenuBar = new JMenuBar();
-			setJMenuBar(mainMenuBar);
-		}
-		return mainMenuBar;
-	}
+        leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
+        c.add(leftPanel, BorderLayout.WEST);
 
-	// IView
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        c.add(bottomPanel, BorderLayout.SOUTH);
 
-	@Override
-	public void showMessage(String message, String title, int messageType) {
-		JOptionPane.showMessageDialog(this, message, title, messageType);
-	}
+        rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.X_AXIS));
+        c.add(rightPanel, BorderLayout.EAST);
 
-	@Override
-	public int showConfirmDialog(String message, String title, int optionType, int messageType) {
-		return JOptionPane.showConfirmDialog(this, message, title, optionType, messageType);
-	}
+        setContentPane(c);
+    }
 
-	@Override
-	public boolean editProperties(List<PropertyWrapper> properties,
-			Set<PropertyWrapper> defaultedProperties) {
-		PropertyEditorDialog editor = DialogFactory.getInstance().createPropertyEditorDialog(
-				properties, "Edit Selection");
-		editor.setVisible(true);
-		defaultedProperties.addAll(editor.getDefaultedProperties());
-		return ButtonDialog.OK.equals(editor.getSelectedButtonCaption());
-	}
+    private JMenuBar getMainMenuBar() {
+        if (mainMenuBar == null) {
+            mainMenuBar = new JMenuBar();
+            setJMenuBar(mainMenuBar);
+        }
+        return mainMenuBar;
+    }
 
-	private JMenu findOrCreateMenu(String menuName) {
-		JMenu menu = findMenu(menuName);
-		
-		if (menu == null) {
-			menu = new JMenu(menuName);
-			menuMap.put(menuName, menu);
-			getMainMenuBar().add(menu);
-		}
-		
-		return menu;
-	}
+    // IView
 
-	private JMenu findMenu(String menuName) {
-		JMenu menu = null;
-		
-		if (menuMap.containsKey(menuName)) {
-			menu = menuMap.get(menuName);
-		}
+    @Override
+    public void showMessage(String message, String title, int messageType) {
+        JOptionPane.showMessageDialog(this, message, title, messageType);
+    }
 
-		return menu;
-	}
+    @Override
+    public int showConfirmDialog(String message, String title, int optionType, int messageType) {
+        return JOptionPane.showConfirmDialog(this, message, title, optionType, messageType);
+    }
 
-	
-	@Override
-	public void injectGUIComponent(JComponent component, int position) throws BadPositionException {
-		LOG.info(String.format("injectGUIComponent(%s, %s)", component.getClass().getName(),
-				position));
-		switch (position) {
-		case SwingConstants.TOP:
-			topPanel.add(component);
-			break;
-		case SwingConstants.LEFT:
-			leftPanel.add(component);
-			break;
-		case SwingConstants.BOTTOM:
-			bottomPanel.add(component);
-			break;
-		case SwingConstants.RIGHT:
-			rightPanel.add(component);
-			break;
-		case SwingConstants.CENTER:
-			centerPanel.add(component, BorderLayout.CENTER);
-			break;
-		default:
-			throw new BadPositionException();
-		}
-		pack();
-	}
+    @Override
+    public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
+        PropertyEditorDialog editor = DialogFactory.getInstance().createPropertyEditorDialog(properties, "Edit Selection");
+        editor.setVisible(true);
+        defaultedProperties.addAll(editor.getDefaultedProperties());
+        return ButtonDialog.OK.equals(editor.getSelectedButtonCaption());
+    }
 
-	@Override
-	public void injectMenuAction(Action action, String menuName) {
-		LOG.info(String.format("injectMenuAction(%s, %s)", action == null ? "Separator" : action
-				.getValue(Action.NAME), menuName));
-		JMenu menu = findOrCreateMenu(menuName);
-		if (action == null) {
-			menu.addSeparator();
-		} else {
-			Boolean isCheckBox = (Boolean) action.getValue(IView.CHECK_BOX_MENU_ITEM);
-			String groupName = (String) action.getValue(IView.RADIO_BUTTON_GROUP_KEY);
-			if (isCheckBox != null && isCheckBox) {
-				menu.add(new JCheckBoxMenuItem(action));
-			} else if (groupName != null) {
-				ButtonGroup group;
-				if (buttonGroupMap.containsKey(groupName)) {
-					group = buttonGroupMap.get(groupName);
-				} else {
-					group = new ButtonGroup();
-					buttonGroupMap.put(groupName, group);
-				}
-				JRadioButtonMenuItem item = new JRadioButtonMenuItem(action);
-				group.add(item);
-				menu.add(item);
-			} else {
-				menu.add(action);
-			}
-		}
-	}
+    private JMenu findOrCreateMenu(String menuName) {
+        JMenu menu = findMenu(menuName);
 
-	@Override
-	public void removeMenuAction(Action action, String menuName) {
-		LOG.info(String.format("removeMenuAction(%s, %s)", action == null ? "Separator" : action
-				.getValue(Action.NAME), menuName));
-		JMenu menu = findMenu(menuName);
-		
-		if (menu != null) {
-			int itemCount = menu.getItemCount();
-			for (int i = 0; i < itemCount; i++) {
-				JMenuItem item = menu.getItem(i);
-				if (item.getAction() == action) {
-					menu.remove(i);
-					break;
-				}
-			}
-		}
-	}
+        if (menu == null) {
+            menu = new JMenu(menuName);
+            menuMap.put(menuName, menu);
+            getMainMenuBar().add(menu);
+        }
 
-	@Override
-	public void clearMenuItems(String menuName) {
-		LOG.info(String.format("clearMenuItems(%s)", menuName));
-		JMenu menu = findMenu(menuName);
-		menu.removeAll();
-	}
+        return menu;
+    }
 
-	@Override
-	public void injectSubmenu(String name, Icon icon, String parentMenuName) {
-		LOG.info(String.format("injectSubmenu(%s, icon, %s)", name, parentMenuName));
-		JMenu menu = findOrCreateMenu(parentMenuName);
-		JMenu submenu = new JMenu(name);
-		submenu.setIcon(icon);
-		menu.add(submenu);
-		menuMap.put(name, submenu);
-	}
-	
-	@Override
-	public <T extends Object> void executeBackgroundTask(final ITask<T> task) {
-		getGlassPane().setVisible(true);
-		SwingWorker<T, Void> worker = new SwingWorker<T, Void>() {
+    private JMenu findMenu(String menuName) {
+        JMenu menu = null;
 
-			@Override
-			protected T doInBackground() throws Exception {
-				return task.doInBackground();
-			}
+        if (menuMap.containsKey(menuName)) {
+            menu = menuMap.get(menuName);
+        }
 
-			@Override
-			protected void done() {
-				try {
-					T result = get();
-					task.complete(result);
-				} catch (Exception e) {
-					LOG.error("Task failed", e);
-					task.failed(e);
-				}
-				getGlassPane().setVisible(false);
-			}
-		};
-		worker.execute();
-	}
-	
-	@Override
-	public File promptFileSave() {
-		return DialogFactory.getInstance().showSaveDialog(
-				FileFilterEnum.DIY.getFilter(), null,
-				FileFilterEnum.DIY.getExtensions()[0], null);
-	}
+        return menu;
+    }
 
-	class FramePlugin implements IPlugIn {
+    @Override
+    public void injectGUIComponent(JComponent component, int position) throws BadPositionException {
+        LOG.info(String.format("injectGUIComponent(%s, %s)", component.getClass().getName(), position));
+        switch (position) {
+        case SwingConstants.TOP:
+            topPanel.add(component);
+            break;
+        case SwingConstants.LEFT:
+            leftPanel.add(component);
+            break;
+        case SwingConstants.BOTTOM:
+            bottomPanel.add(component);
+            break;
+        case SwingConstants.RIGHT:
+            rightPanel.add(component);
+            break;
+        case SwingConstants.CENTER:
+            centerPanel.add(component, BorderLayout.CENTER);
+            break;
+        default:
+            throw new BadPositionException();
+        }
+        pack();
+    }
 
-		private IPlugInPort plugInPort;
+    @Override
+    public void injectMenuAction(Action action, String menuName) {
+        LOG.info(String.format("injectMenuAction(%s, %s)", action == null ? "Separator" : action.getValue(Action.NAME), menuName));
+        JMenu menu = findOrCreateMenu(menuName);
+        if (action == null) {
+            menu.addSeparator();
+        } else {
+            Boolean isCheckBox = (Boolean) action.getValue(IView.CHECK_BOX_MENU_ITEM);
+            String groupName = (String) action.getValue(IView.RADIO_BUTTON_GROUP_KEY);
+            if (isCheckBox != null && isCheckBox) {
+                menu.add(new JCheckBoxMenuItem(action));
+            } else if (groupName != null) {
+                ButtonGroup group;
+                if (buttonGroupMap.containsKey(groupName)) {
+                    group = buttonGroupMap.get(groupName);
+                } else {
+                    group = new ButtonGroup();
+                    buttonGroupMap.put(groupName, group);
+                }
+                JRadioButtonMenuItem item = new JRadioButtonMenuItem(action);
+                group.add(item);
+                menu.add(item);
+            } else {
+                menu.add(action);
+            }
+        }
+    }
 
-		@Override
-		public void connect(IPlugInPort plugInPort) {
-			this.plugInPort = plugInPort;
-		}
+    @Override
+    public void removeMenuAction(Action action, String menuName) {
+        LOG.info(String.format("removeMenuAction(%s, %s)", action == null ? "Separator" : action.getValue(Action.NAME), menuName));
+        JMenu menu = findMenu(menuName);
 
-		@Override
-		public EnumSet<EventType> getSubscribedEventTypes() {
-			return EnumSet.of(EventType.FILE_STATUS_CHANGED);
-		}
+        if (menu != null) {
+            int itemCount = menu.getItemCount();
+            for (int i = 0; i < itemCount; i++) {
+                JMenuItem item = menu.getItem(i);
+                if (item.getAction() == action) {
+                    menu.remove(i);
+                    break;
+                }
+            }
+        }
+    }
 
-		@Override
-		public void processMessage(EventType eventType, Object... params) {
-			if (eventType == EventType.FILE_STATUS_CHANGED) {
-				String fileName = (String) params[0];
-				if (fileName == null) {
-					fileName = "Untitled";
-				}
-				String modified = (Boolean) params[1] ? " (modified)" : "";
-				setTitle(String.format("DIYLC %s - %s %s", plugInPort
-						.getCurrentVersionNumber(), fileName, modified));
-			}
-		}
-	}
+    @Override
+    public void clearMenuItems(String menuName) {
+        LOG.info(String.format("clearMenuItems(%s)", menuName));
+        JMenu menu = findMenu(menuName);
+        menu.removeAll();
+    }
+
+    @Override
+    public void injectSubmenu(String name, Icon icon, String parentMenuName) {
+        LOG.info(String.format("injectSubmenu(%s, icon, %s)", name, parentMenuName));
+        JMenu menu = findOrCreateMenu(parentMenuName);
+        JMenu submenu = new JMenu(name);
+        submenu.setIcon(icon);
+        menu.add(submenu);
+        menuMap.put(name, submenu);
+    }
+
+    @Override
+    public <T extends Object> void executeBackgroundTask(final ITask<T> task) {
+        getGlassPane().setVisible(true);
+        SwingWorker<T, Void> worker = new SwingWorker<T, Void>() {
+
+            @Override
+            protected T doInBackground() throws Exception {
+                return task.doInBackground();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    T result = get();
+                    task.complete(result);
+                } catch (Exception e) {
+                    LOG.error("Task failed", e);
+                    task.failed(e);
+                }
+                getGlassPane().setVisible(false);
+            }
+        };
+        worker.execute();
+    }
+
+    @Override
+    public File promptFileSave() {
+        return DialogFactory.getInstance()
+                .showSaveDialog(FileFilterEnum.DIY.getFilter(), null, FileFilterEnum.DIY.getExtensions()[0], null);
+    }
+
+    private void exit() {
+        if (presenter.allowFileAction()) {
+            Configuration.INSTANCE.setAbnormalExit(false);
+            dispose();
+            presenter.dispose();
+            System.exit(0);
+        }
+    }
+
+    class FramePlugin implements IPlugIn {
+
+        private IPlugInPort plugInPort;
+
+        @Override
+        public void connect(IPlugInPort plugInPort) {
+            this.plugInPort = plugInPort;
+        }
+
+        @Override
+        public EnumSet<EventType> getSubscribedEventTypes() {
+            return EnumSet.of(EventType.FILE_STATUS_CHANGED);
+        }
+
+        @Override
+        public void processMessage(EventType eventType, Object... params) {
+            if (eventType == EventType.FILE_STATUS_CHANGED) {
+                String fileName = (String) params[0];
+                if (fileName == null) {
+                    fileName = "Untitled";
+                }
+                String modified = (Boolean) params[1] ? " (modified)" : "";
+                setTitle(String.format("DIYLC %s - %s %s", plugInPort.getCurrentVersionNumber(), fileName, modified));
+            }
+        }
+    }
 
 }
