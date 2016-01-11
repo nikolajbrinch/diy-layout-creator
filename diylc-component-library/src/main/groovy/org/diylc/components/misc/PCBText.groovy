@@ -13,6 +13,7 @@ import org.diylc.common.Orientation
 import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Geometry;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -23,7 +24,7 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "PCB Text", author = "Branislav Stojkovic", category = "Misc", description = "Mirrored text for PCB artwork", instanceNamePrefix = "L", zOrder = IDIYComponent.TRACE, flexibleZOrder = false, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
-class PCBText extends AbstractComponent<Void> {
+class PCBText extends AbstractComponent<Void> implements Geometry {
 
     public static String DEFAULT_TEXT = "Double click to edit text"
 
@@ -43,9 +44,7 @@ class PCBText extends AbstractComponent<Void> {
     public void draw(GraphicsContext graphicsContext, ComponentState componentState,
             boolean outlineMode, Project project,
             IDrawingObserver drawingObserver) {
-        graphicsContext
-                .setColor(componentState == ComponentState.SELECTED ? LABEL_COLOR_SELECTED
-                : color)
+        graphicsContext.setColor(componentState == ComponentState.SELECTED ? LABEL_COLOR_SELECTED : color)
         graphicsContext.setFont(font)
         FontMetrics fontMetrics = graphicsContext.getFontMetrics()
         Rectangle2D rect = fontMetrics.getStringBounds(text, graphicsContext.graphics2D)
@@ -107,7 +106,7 @@ class PCBText extends AbstractComponent<Void> {
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.setColor(LABEL_COLOR)
-        graphicsContext.setFont(DEFAULT_FONT.deriveFont((float) 15f * width / 32).deriveFont(Font.BOLD))
+        graphicsContext.setFont(DEFAULT_FONT.deriveFont(toFloat(15f * width / 32)).deriveFont(Font.BOLD))
 
         FontMetrics fontMetrics = graphicsContext.getFontMetrics()
         Rectangle2D rect = fontMetrics.getStringBounds("Abc", graphicsContext.graphics2D)
@@ -196,7 +195,7 @@ class PCBText extends AbstractComponent<Void> {
     }
 
     public void setFontSize(int size) {
-        font = font.deriveFont((float) size)
+        font = font.deriveFont(toFloat( size))
     }
 
     @Override

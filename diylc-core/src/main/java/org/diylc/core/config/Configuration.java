@@ -1,5 +1,6 @@
 package org.diylc.core.config;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -44,7 +45,8 @@ public enum Configuration {
 		AUTO_EDIT("autoEdit"), 
 		CONTINUOUS_CREATION("continuousCreation"), 
 		OBJECT_PROPERTIES("objectProperties"), 
-		PROJECT_PROPERTIES("projectProperties")
+		PROJECT_PROPERTIES("projectProperties"), 
+		COMPONENT_DIRECTORIES("componentDirectories")
 		;
 
 		private String keyValue;
@@ -235,6 +237,13 @@ public enum Configuration {
 		setObjectProperty(Key.OBJECT_PROPERTIES, objectProperties);
 	}
 
+    public File[] getComponentDirectories() {
+        return getObjectProperty(Key.COMPONENT_DIRECTORIES, new File[] {
+                new File(new File(System.getProperty("user.home")), ".diylc/lib/components")
+        });
+    }
+
+	
 	public <T> T getProperty(Key key, T defaultValue) {
 		return getObjectProperty(key, defaultValue);
 	}
@@ -291,4 +300,5 @@ public enum Configuration {
 			}
 		}
 	}
+
 }

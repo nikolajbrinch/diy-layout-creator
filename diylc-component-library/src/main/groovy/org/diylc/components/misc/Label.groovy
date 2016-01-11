@@ -12,6 +12,7 @@ import org.diylc.common.Orientation
 import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Geometry;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -22,7 +23,7 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Label", author = "Branislav Stojkovic", category = "Misc", description = "User defined label", instanceNamePrefix = "L", zOrder = IDIYComponent.TEXT, flexibleZOrder = true, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
-public class Label extends AbstractComponent<Void> {
+public class Label extends AbstractComponent<Void> implements Geometry {
 
     public static String DEFAULT_TEXT = "Double click to edit text"
 
@@ -100,8 +101,7 @@ public class Label extends AbstractComponent<Void> {
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.setColor(LABEL_COLOR)
-        graphicsContext.setFont(LABEL_FONT.deriveFont((float) 13f * width / 32).deriveFont(
-                Font.PLAIN))
+        graphicsContext.setFont(LABEL_FONT.deriveFont(toFloat(13f * width / 32)).deriveFont(Font.PLAIN))
 
         FontMetrics fontMetrics = graphicsContext.getFontMetrics()
         Rectangle2D rect = fontMetrics.getStringBounds("Abc", graphicsContext.graphics2D)
@@ -188,7 +188,7 @@ public class Label extends AbstractComponent<Void> {
     }
 
     public void setFontSize(int size) {
-        font = font.deriveFont((float) size)
+        font = font.deriveFont(toFloat(size))
     }
 
     @Override

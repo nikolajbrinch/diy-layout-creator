@@ -206,8 +206,8 @@ public class TrimmerPotentiometer extends AbstractPotentiometer implements Geome
 			int length = 0
 			int width = 0
 			switch (type) {
-			case FLAT_LARGE:
-			case FLAT_SMALL:
+			case TrimmerType.FLAT_LARGE:
+			case TrimmerType.FLAT_SMALL:
 				length = getClosestOdd(FLAT_BODY_SIZE.convertToPixels())
 				width = length
 				int shaftSize = getClosestOdd(FLAT_SHAFT_SIZE.convertToPixels())
@@ -220,8 +220,8 @@ public class TrimmerPotentiometer extends AbstractPotentiometer implements Geome
 				shaft.subtract(slot)
 				body[1] = shaft
 				break
-			case VERTICAL_INLINE:
-			case VERTICAL_OFFSET:
+			case TrimmerType.VERTICAL_INLINE:
+			case TrimmerType.VERTICAL_OFFSET:
 				length = getClosestOdd(VERTICAL_BODY_LENGTH.convertToPixels())
 				width = getClosestOdd(VERTICAL_BODY_WIDTH.convertToPixels())
 				break

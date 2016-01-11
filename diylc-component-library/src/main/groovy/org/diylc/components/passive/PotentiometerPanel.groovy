@@ -235,14 +235,13 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
         int margin = 4 * width / 32
         int spacing = width / 3 - 1
         graphicsContext.setColor(BORDER_COLOR)
-        graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke((int) 2 * width / 32))
+        graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(toInt(2 * width / 32)))
         graphicsContext.drawLine(width / 2 - spacing, height / 2, width / 2 - spacing,
                 height - margin)
         graphicsContext.drawLine(width / 2 + spacing, height / 2, width / 2 + spacing,
                 height - margin)
         graphicsContext.drawLine(width / 2, height / 2, width / 2, height - margin)
-        graphicsContext.setStroke(ObjectCache.getInstance()
-                .fetchBasicStroke((int) 4 * width / 32))
+        graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(toInt(4 * width / 32)))
         graphicsContext.drawLine(width / 2 - spacing, height - margin, width / 2 - spacing,
                 height - margin)
         graphicsContext.drawLine(width / 2 + spacing, height - margin, width / 2 + spacing,

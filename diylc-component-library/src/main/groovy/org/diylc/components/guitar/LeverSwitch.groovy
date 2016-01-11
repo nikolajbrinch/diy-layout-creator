@@ -153,13 +153,13 @@ public class LeverSwitch extends AbstractTransparentComponent<String> {
 			// Rotate if needed
 			if (orientation != Orientation.DEFAULT) {
 				switch (orientation) {
-				case _90:
+				case Orientation._90:
 					theta = Math.PI / 2
 					break
-				case _180:
+				case Orientation._180:
 					theta = Math.PI
 					break
-				case _270:
+				case Orientation._270:
 					theta = Math.PI * 3 / 2
 					break
 				}

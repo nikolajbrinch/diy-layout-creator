@@ -18,6 +18,7 @@ import org.diylc.common.Orientation
 import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Geometry;
 import org.diylc.components.JackType
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
@@ -33,7 +34,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.utils.Constants
 
 @ComponentDescriptor(name = "Cliff 1/4\" Jack", category = "Electromechanical", author = "Branislav Stojkovic", description = "Cliff-style closed panel mount 1/4\" phono jack", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "J", autoEdit = false)
-public class CliffJack1_4 extends AbstractTransparentComponent<String> {
+public class CliffJack1_4 extends AbstractTransparentComponent<String> implements Geometry {
 
 	private static final long serialVersionUID = 1L
 
@@ -48,7 +49,7 @@ public class CliffJack1_4 extends AbstractTransparentComponent<String> {
 	private static Size BODY_LENGTH = new Size(0.9d, SizeUnit.in)
 	private static Size TAIL_LENGTH = new Size(0.1d, SizeUnit.in)
 
-	private Point[] controlPoints = [ new Point(0, 0) ] as Point[]
+	private Point[] controlPoints = points(point(0, 0))
 	private JackType type = JackType.MONO
 	private Orientation orientation = Orientation.DEFAULT
 	transient private Shape[] body
@@ -67,13 +68,13 @@ public class CliffJack1_4 extends AbstractTransparentComponent<String> {
 		int spacing = (int) SPACING.convertToPixels()
 		controlPoints = new Point[type == JackType.STEREO ? 6 : 4]
 
-		controlPoints[0] = new Point(x, y)
-		controlPoints[1] = new Point(x, y + 2 * spacing)
-		controlPoints[2] = new Point(x + 2 * spacing, y)
-		controlPoints[3] = new Point(x + 2 * spacing, y + 2 * spacing)
+		controlPoints[0] = point(x, y)
+		controlPoints[1] = point(x, y + 2 * spacing)
+		controlPoints[2] = point(x + 2 * spacing, y)
+		controlPoints[3] = point(x + 2 * spacing, y + 2 * spacing)
 		if (type == JackType.STEREO) {
-			controlPoints[4] = new Point(x + spacing, y)
-			controlPoints[5] = new Point(x + spacing, y + 2 * spacing)
+			controlPoints[4] = point(x + spacing, y)
+			controlPoints[5] = point(x + spacing, y + 2 * spacing)
 		}
 
 		// Apply rotation if necessary
@@ -115,8 +116,7 @@ public class CliffJack1_4 extends AbstractTransparentComponent<String> {
 			int bodyWidth = (int) BODY_WIDTH.convertToPixels()
 			int centerX = (controlPoints[0].x + controlPoints[3].x) / 2
 			int centerY = (controlPoints[0].y + controlPoints[3].y) / 2
-			body[0] = new Rectangle(centerX - bodyLength / 2, centerY
-					- bodyWidth / 2, bodyLength, bodyWidth)
+			body[0] = rectangle(centerX - bodyLength / 2, centerY - bodyWidth / 2, bodyLength, bodyWidth)
 
 			int tailLength = (int) TAIL_LENGTH.convertToPixels()
 			body[1] = new RoundRectangle2D.Double(centerX - bodyLength / 2
@@ -126,10 +126,10 @@ public class CliffJack1_4 extends AbstractTransparentComponent<String> {
 			tailArea.subtract(new Area(body[0]))
 			body[1] = tailArea
 
-			body[2] = new Rectangle(centerX + bodyLength / 2, centerY
+			body[2] = rectangle(centerX + bodyLength / 2, centerY
 					- bodyWidth / 4, tailLength, bodyWidth / 2)
 
-			body[3] = new Rectangle(centerX + bodyLength / 2 + tailLength,
+			body[3] = rectangle(centerX + bodyLength / 2 + tailLength,
 					centerY - bodyWidth / 4, tailLength, bodyWidth / 2)
 			tailArea = new Area(body[3])
 			int radius = bodyLength / 2 + tailLength * 2
@@ -160,10 +160,10 @@ public class CliffJack1_4 extends AbstractTransparentComponent<String> {
 				Rectangle pin
 				if (orientation == Orientation.DEFAULT
 						|| orientation == Orientation._180) {
-					pin = new Rectangle(point.x - pinWidth / 2, point.y
+					pin = rectangle(point.x - pinWidth / 2, point.y
 							- pinThickness / 2, pinWidth, pinThickness)
 				} else {
-					pin = new Rectangle(point.x - pinThickness / 2, point.y
+					pin = rectangle(point.x - pinThickness / 2, point.y
 							- pinWidth / 2, pinThickness, pinWidth)
 				}
 				pins.add(new Area(pin))
@@ -233,7 +233,7 @@ public class CliffJack1_4 extends AbstractTransparentComponent<String> {
 		graphicsContext.setFont(LABEL_FONT)
 		int centerX = (controlPoints[0].x + controlPoints[3].x) / 2
 		int centerY = (controlPoints[0].y + controlPoints[3].y) / 2
-		drawCenteredText(graphicsContext, name, centerX, centerY,
+		drawCenteredText(graphicsContext, name, point(centerX, centerY),
 				HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
 	}
 

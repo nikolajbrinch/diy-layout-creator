@@ -62,51 +62,53 @@ public class HumbuckerPickup extends AbstractTransparentComponent<String> implem
 					 Project project, IDrawingObserver drawingObserver) {
 		Shape[] body = getBody()
 
-		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
-		if (componentState != ComponentState.DRAGGING) {
-			Composite oldComposite = graphicsContext.getComposite()
-			if (alpha < MAX_ALPHA) {
-				graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha
-						/ MAX_ALPHA))
-			}
-			graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color)
-			graphicsContext.fill(body[0])
-			graphicsContext.fill(body[1])
-			graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : POINT_COLOR)
-			graphicsContext.fill(body[2])
-			graphicsContext.setComposite(oldComposite)
+		graphicsContext.with { 
+            setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
+    		if (componentState != ComponentState.DRAGGING) {
+    			Composite oldComposite = getComposite()
+    			if (alpha < MAX_ALPHA) {
+    				setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha
+    						/ MAX_ALPHA))
+    			}
+    			setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color)
+    			fill(body[0])
+    			fill(body[1])
+    			setColor(outlineMode ? Constants.TRANSPARENT_COLOR : POINT_COLOR)
+    			fill(body[2])
+    			setComposite(oldComposite)
+    		}
+    
+    		Color finalBorderColor
+    		if (outlineMode) {
+    			Theme theme = Configuration.INSTANCE.getTheme()
+    			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : theme.getOutlineColor()
+    		} else {
+    			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : color.darker()
+    		}
+    
+    		setColor(finalBorderColor)
+    		draw(body[0])
+    		draw(body[1])
+    		if (!outlineMode) {
+    			setColor(color.darker())
+    			draw(body[3])
+    		}
+    
+    		Color finalLabelColor
+    		if (outlineMode) {
+    			Theme theme = Configuration.INSTANCE.getTheme()
+    			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED : theme
+    					.getOutlineColor()
+    		} else {
+    			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+    					: LABEL_COLOR
+    		}
+    		setColor(finalLabelColor)
+    		setFont(LABEL_FONT)
+    		Rectangle bounds = body[0].getBounds()
+    		drawCenteredText(graphicsContext, value, point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2),
+    				HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
 		}
-
-		Color finalBorderColor
-		if (outlineMode) {
-			Theme theme = Configuration.INSTANCE.getTheme()
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : theme.getOutlineColor()
-		} else {
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : color.darker()
-		}
-
-		graphicsContext.setColor(finalBorderColor)
-		graphicsContext.draw(body[0])
-		graphicsContext.draw(body[1])
-		if (!outlineMode) {
-			graphicsContext.setColor(color.darker())
-			graphicsContext.draw(body[3])
-		}
-
-		Color finalLabelColor
-		if (outlineMode) {
-			Theme theme = Configuration.INSTANCE.getTheme()
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED : theme
-					.getOutlineColor()
-		} else {
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-					: LABEL_COLOR
-		}
-		graphicsContext.setColor(finalLabelColor)
-		graphicsContext.setFont(LABEL_FONT)
-		Rectangle bounds = body[0].getBounds()
-		drawCenteredText(graphicsContext, value, point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2),
-				HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
 	}
 
 	public Shape[] getBody() {
@@ -162,13 +164,13 @@ public class HumbuckerPickup extends AbstractTransparentComponent<String> implem
 			if (orientation != Orientation.DEFAULT) {
 				double theta = 0
 				switch (orientation) {
-				case _90:
+				case Orientation._90:
 					theta = Math.PI / 2
 					break
-				case _180:
+				case Orientation._180:
 					theta = Math.PI
 					break
-				case _270:
+				case Orientation._270:
 					theta = Math.PI * 3 / 2
 					break
 				}
@@ -187,19 +189,21 @@ public class HumbuckerPickup extends AbstractTransparentComponent<String> implem
 		int baseWidth = 16 * width / 32
 		int baseLength = 27 * width / 32
 
-		graphicsContext.setColor(BODY_COLOR)
-		graphicsContext.fillRoundRect((width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1,
-				2 * width / 32, 2 * width / 32)
-		graphicsContext.setColor(BODY_COLOR.darker())
-		graphicsContext.drawRoundRect((width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1,
-				2 * width / 32, 2 * width / 32)
-
-		graphicsContext.setColor(BODY_COLOR)
-		graphicsContext.fillRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth,
-				baseLength, 4 * width / 32, 4 * width / 32)
-		graphicsContext.setColor(BODY_COLOR.darker())
-		graphicsContext.drawRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth,
-				baseLength, 4 * width / 32, 4 * width / 32)
+		graphicsContext.with {
+            setColor(BODY_COLOR)
+    		fillRoundRect((width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1,
+    				2 * width / 32, 2 * width / 32)
+    		setColor(BODY_COLOR.darker())
+    		drawRoundRect((width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1,
+    				2 * width / 32, 2 * width / 32)
+    
+    		setColor(BODY_COLOR)
+    		fillRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth,
+    				baseLength, 4 * width / 32, 4 * width / 32)
+    		setColor(BODY_COLOR.darker())
+    		drawRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth,
+    				baseLength, 4 * width / 32, 4 * width / 32)
+		}
 	}
 
 	@Override

@@ -44,6 +44,36 @@ public class ComponentScanner {
         return classNames;
     }
 
+    public Set<File> getGroovyFiles(File[] directories) throws IOException {
+        Set<File> files = new HashSet<File>();
+
+        for (File directory : directories) {
+            if (directory.exists() && directory.isDirectory()) {
+                files.addAll(getGroovyFilesInDirectory(directory));
+            }
+        }
+
+        return files;
+    }
+
+    private Set<File> getGroovyFilesInDirectory(File directory) {
+        Set<File> files = new HashSet<File>();
+
+        for (File file : directory.listFiles()) {
+            if (file.isDirectory()) {
+                files.addAll(getGroovyFilesInDirectory(file));
+            } else {
+                if (file.getName().endsWith(".groovy")) {
+                    LOG.debug("Found groovy file \"" + file.getAbsolutePath() +  "\"");
+                    files.add(file);
+                }
+            }
+        }
+
+        return files;
+
+    }
+
     private List<String> getResources(ClassLoader loader, String packageName) throws IOException {
         List<String> filenames = new ArrayList<>();
 

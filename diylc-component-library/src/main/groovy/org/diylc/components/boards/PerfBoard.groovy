@@ -48,28 +48,30 @@ public class PerfBoard extends AbstractBoard implements Geometry {
         super.draw(graphicsContext, componentState, outlineMode, project, drawingObserver)
 
         if (componentState != ComponentState.DRAGGING) {
-            if (alpha < MAX_ALPHA) {
-                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha.intdiv(MAX_ALPHA))
-                graphicsContext.setComposite(composite)
-            }
-
             Point p = point(firstPoint)
             int diameter = getClosestOdd((int) PAD_SIZE.convertToPixels())
             int holeDiameter = getClosestOdd((int) HOLE_SIZE.convertToPixels())
             int spacing = (int) this.spacing.convertToPixels()
 
-            while (p.y < secondPoint.y - spacing) {
-                p.@x = firstPoint.x as int
-                p.@y += spacing
+            graphicsContext.with {
+                if (alpha < MAX_ALPHA) {
+                    AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, toFloat(alpha / MAX_ALPHA))
+                    setComposite(composite)
+                }
 
-                while (p.x < secondPoint.x - spacing - diameter) {
-                    p.@x += spacing
+                while (p.y < secondPoint.y - spacing) {
+                    p.@x = firstPoint.x as int
+                    p.@y += spacing
 
-                    graphicsContext.drawFilledOval(p.x - diameter / 2, p.y - diameter / 2, diameter, padColor.darker(), padColor)
-                    graphicsContext.drawFilledOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, padColor.darker(), Constants.CANVAS_COLOR)
+                    while (p.x < secondPoint.x - spacing - diameter) {
+                        p.@x += spacing
+
+                        drawFilledOval(p.x - diameter / 2, p.y - diameter / 2, diameter, padColor.darker(), padColor)
+                        drawFilledOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, padColor.darker(), Constants.CANVAS_COLOR)
+                    }
                 }
             }
-
+            
             drawCoordinates(graphicsContext, spacing)
         }
     }

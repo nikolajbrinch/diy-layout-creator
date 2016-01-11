@@ -10,8 +10,8 @@ import java.awt.Shape
 
 import org.diylc.common.OrientationHV
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard;
-import org.diylc.components.Geometry;
+import org.diylc.components.AbstractBoard
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver

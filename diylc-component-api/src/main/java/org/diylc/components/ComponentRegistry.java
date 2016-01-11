@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.config.Configuration;
 
 public enum ComponentRegistry {
 
@@ -18,7 +19,7 @@ public enum ComponentRegistry {
     Map<String, ComponentType> components = new HashMap<String, ComponentType>();
 
     private ComponentRegistry() {
-        componentTypes = componentTypeLoader.loadComponentTypes();
+        componentTypes = componentTypeLoader.loadComponentTypes(Configuration.INSTANCE.getComponentDirectories());
 
         for (String category : componentTypes.keySet()) {
             for (ComponentType component : componentTypes.get(category)) {

@@ -2,8 +2,8 @@ package org.diylc.components.boards
 
 import org.diylc.common.OrientationHV
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard;
-import org.diylc.components.Geometry;
+import org.diylc.components.AbstractBoard
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -36,107 +36,92 @@ public class TriPadBoard extends AbstractBoard implements Geometry {
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState,
-                     boolean outlineMode, Project project,
-                     IDrawingObserver drawingObserver) {
+            boolean outlineMode, Project project,
+            IDrawingObserver drawingObserver) {
         Shape clip = graphicsContext.getClip()
         if (checkPointsClipped(clip)
-                && !clip.contains(firstPoint.x, secondPoint.y)
-                && !clip.contains(secondPoint.x, firstPoint.y)) {
+        && !clip.contains(firstPoint.x, secondPoint.y)
+        && !clip.contains(secondPoint.x, firstPoint.y)) {
             return
         }
         super.draw(graphicsContext, componentState, outlineMode, project, drawingObserver)
         if (componentState != ComponentState.DRAGGING) {
-            Composite oldComposite = graphicsContext.getComposite()
-            if (alpha < MAX_ALPHA) {
-                graphicsContext.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
-            }
-            Point p = point(firstPoint)
-            int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels())
-            int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels())
-            int spacing = (int) this.spacing.convertToPixels()
+            graphicsContext.with {
+                Composite oldComposite = getComposite()
 
-            if (orientation == OrientationHV.HORIZONTAL) {
-                while (p.y < secondPoint.y - spacing) {
-                    p.x = firstPoint.x
-                    p.y += spacing
-
-                    while (p.x + spacing < secondPoint.x) {
-
-                        int remainingSpace = secondPoint.x - p.x
-                        int spacesToDraw = stripSpan
-
-                        if (remainingSpace < (stripSize + (stripSpan * spacing))) {
-                            spacesToDraw = (remainingSpace - stripSize) / spacing
-                        }
-
-                        graphicsContext.setColor(stripColor)
-                        graphicsContext.fillRect(p.x + spacing - stripSize / 2, p.y
-                                - stripSize / 2, spacing * (spacesToDraw - 1)
-                                + stripSize, stripSize)
-                        graphicsContext.setColor(stripColor.darker())
-
-                        graphicsContext.drawRect(p.x + spacing - stripSize / 2, p.y
-                                - stripSize / 2, spacing * (spacesToDraw - 1)
-                                + stripSize, stripSize)
-
-                        p.x += spacing * spacesToDraw
-                    }
-
-                    // draw holes
-                    p.x = firstPoint.x
-
-                    while (p.x < secondPoint.x - spacing - holeSize) {
-                        p.x += spacing
-                        graphicsContext.setColor(Constants.CANVAS_COLOR)
-                        graphicsContext.fillOval(p.x - holeSize / 2, p.y - holeSize / 2,
-                                holeSize, holeSize)
-                        graphicsContext.setColor(stripColor.darker())
-                        graphicsContext.drawOval(p.x - holeSize / 2, p.y - holeSize / 2,
-                                holeSize, holeSize)
-                    }
+                if (alpha < MAX_ALPHA) {
+                    setComposite(AlphaComposite.getInstance(
+                            AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
                 }
-            } else {
-                while (p.x < secondPoint.x - spacing) {
-                    p.x += spacing
-                    p.y = firstPoint.y
 
-                    while (p.y + spacing < secondPoint.y) {
+                Point p = point(firstPoint)
+                int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels())
+                int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels())
+                int spacing = (int) this.spacing.convertToPixels()
 
-                        int remainingSpace = secondPoint.y - p.y
-                        int spacesToDraw = stripSpan
-
-                        if (remainingSpace < (stripSize + (stripSpan * spacing))) {
-                            spacesToDraw = (remainingSpace - stripSize) / spacing
-                        }
-
-                        graphicsContext.setColor(stripColor)
-                        graphicsContext.fillRect(p.x - stripSize / 2, p.y + spacing
-                                - stripSize / 2, stripSize, spacing
-                                * (spacesToDraw - 1) + stripSize)
-                        graphicsContext.setColor(stripColor.darker())
-                        graphicsContext.drawRect(p.x - stripSize / 2, p.y + spacing
-                                - stripSize / 2, stripSize, spacing
-                                * (spacesToDraw - 1) + stripSize)
-
-                        p.y += spacing * spacesToDraw
-                    }
-
-                    // draw holes
-                    p.y = firstPoint.y
-
-                    while (p.y < secondPoint.y - spacing - holeSize) {
+                if (orientation == OrientationHV.HORIZONTAL) {
+                    while (p.y < secondPoint.y - spacing) {
+                        p.x = firstPoint.x
                         p.y += spacing
-                        graphicsContext.setColor(Constants.CANVAS_COLOR)
-                        graphicsContext.fillOval(p.x - holeSize / 2, p.y - holeSize / 2,
-                                holeSize, holeSize)
-                        graphicsContext.setColor(stripColor.darker())
-                        graphicsContext.drawOval(p.x - holeSize / 2, p.y - holeSize / 2,
-                                holeSize, holeSize)
+
+                        while (p.x + spacing < secondPoint.x) {
+
+                            int remainingSpace = secondPoint.x - p.x
+                            int spacesToDraw = stripSpan
+
+                            if (remainingSpace < (stripSize + (stripSpan * spacing))) {
+                                spacesToDraw = (remainingSpace - stripSize) / spacing
+                            }
+
+                            drawFilledRect(p.x + spacing - stripSize / 2, p.y
+                                    - stripSize / 2, spacing * (spacesToDraw - 1)
+                                    + stripSize, stripSize, stripColor.darker(), stripColor)
+
+                            p.x += spacing * spacesToDraw
+                        }
+
+                        // draw holes
+                        p.x = firstPoint.x
+
+                        while (p.x < secondPoint.x - spacing - holeSize) {
+                            p.x += spacing
+                            drawFilledOval(p.x - holeSize / 2, p.y - holeSize / 2,
+                                    holeSize, holeSize, stripColor.darker(), Constants.CANVAS_COLOR)
+                        }
+                    }
+                } else {
+                    while (p.x < secondPoint.x - spacing) {
+                        p.x += spacing
+                        p.y = firstPoint.y
+
+                        while (p.y + spacing < secondPoint.y) {
+
+                            int remainingSpace = secondPoint.y - p.y
+                            int spacesToDraw = stripSpan
+
+                            if (remainingSpace < (stripSize + (stripSpan * spacing))) {
+                                spacesToDraw = (remainingSpace - stripSize) / spacing
+                            }
+
+                            drawFilledRect(p.x - stripSize / 2, p.y + spacing
+                                    - stripSize / 2, stripSize, spacing
+                                    * (spacesToDraw - 1) + stripSize, stripColor.darker(), stripColor)
+
+                            p.y += spacing * spacesToDraw
+                        }
+
+                        // draw holes
+                        p.y = firstPoint.y
+
+                        while (p.y < secondPoint.y - spacing - holeSize) {
+                            p.y += spacing
+                            drawFilledOval(p.x - holeSize / 2, p.y - holeSize / 2,
+                                    holeSize, holeSize, stripColor.darker(), Constants.CANVAS_COLOR)
+                        }
                     }
                 }
+                setComposite(oldComposite)
             }
-            graphicsContext.setComposite(oldComposite)
         }
     }
 
@@ -169,38 +154,37 @@ public class TriPadBoard extends AbstractBoard implements Geometry {
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        graphicsContext.setColor(BOARD_COLOR)
-        graphicsContext.fillRect(0, 0, width, height)
+        graphicsContext.with {
+            setColor(BOARD_COLOR)
+            fillRect(0, 0, width, height)
 
-        final int horizontalSpacing = width / 5
-        final int horizontalIndent = horizontalSpacing / 2
+            final int horizontalSpacing = width / 5
+            final int horizontalIndent = horizontalSpacing / 2
 
-        final int verticalSpacing = height / 5
-        final int verticalIndent = verticalSpacing / 2
+            final int verticalSpacing = height / 5
+            final int verticalIndent = verticalSpacing / 2
 
-        for (int row = 0; row < 5; row++) {
-            graphicsContext.setColor(STRIP_COLOR)
-            graphicsContext.fillRect(0, row * verticalSpacing + 2, horizontalIndent / 2
-                    + horizontalSpacing, verticalSpacing - 1)
+            for (int row = 0; row < 5; row++) {
+                setColor(STRIP_COLOR)
+                fillRect(0, row * verticalSpacing + 2, horizontalIndent / 2
+                        + horizontalSpacing, verticalSpacing - 1)
 
-            graphicsContext.setColor(STRIP_COLOR)
-            graphicsContext.fillRect(horizontalSpacing + 2, row * verticalSpacing + 2,
-                    horizontalSpacing * 3 - 1, verticalSpacing - 1)
+                setColor(STRIP_COLOR)
+                fillRect(horizontalSpacing + 2, row * verticalSpacing + 2,
+                        horizontalSpacing * 3 - 1, verticalSpacing - 1)
 
-            graphicsContext.fillRect(horizontalSpacing * 4 + 2, row * verticalSpacing + 2,
-                    horizontalIndent / 2 + horizontalSpacing,
-                    verticalSpacing - 1)
-        }
+                fillRect(horizontalSpacing * 4 + 2, row * verticalSpacing + 2,
+                        horizontalIndent / 2 + horizontalSpacing,
+                        verticalSpacing - 1)
+            }
 
-        // draw dots
-        for (int row = 0; row < 5; row++) {
-            int y = (verticalSpacing * row) + verticalIndent
-            for (int col = 0; col < 5; col++) {
-                int x = (horizontalSpacing * col) + horizontalIndent
-                graphicsContext.setColor(Constants.CANVAS_COLOR)
-                graphicsContext.fillOval(x, y, 2, 2)
-                graphicsContext.setColor(STRIP_COLOR.darker())
-                graphicsContext.drawOval(x, y, 2, 2)
+            // draw dots
+            for (int row = 0; row < 5; row++) {
+                int y = (verticalSpacing * row) + verticalIndent
+                for (int col = 0; col < 5; col++) {
+                    int x = (horizontalSpacing * col) + horizontalIndent
+                    drawFilledOval(x, y, 2, 2, STRIP_COLOR.darker(), Constants.CANVAS_COLOR)
+                }
             }
         }
     }
