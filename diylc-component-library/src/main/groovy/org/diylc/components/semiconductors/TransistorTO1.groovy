@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -16,7 +18,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -46,35 +48,38 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 	public static Size BODY_LENGTH = new Size(0.4d, SizeUnit.in)
 	public static Size EDGE_RADIUS = new Size(2d, SizeUnit.mm)
 
-	private String value = ""
-	private Orientation orientation = Orientation.DEFAULT
+	transient private Area body
+
 	private Point[] controlPoints = points( point(0, 0),
 			point(0, 0), point(0, 0))
-	transient private Area body
-	private Color bodyColor = BODY_COLOR
-	private Color borderColor = BORDER_COLOR
-	private Color labelColor = LABEL_COLOR
-	protected Display display = Display.NAME
-	private boolean folded = false
-	private Size pinSpacing = PIN_SPACING
+
+	@EditableProperty
+	String value = ""
+
+	@EditableProperty
+	Orientation orientation = Orientation.DEFAULT
+
+	@EditableProperty(name = "Body")
+	Color bodyColor = BODY_COLOR
+
+	@EditableProperty(name = "Border")
+	Color borderColor = BORDER_COLOR
+
+	@EditableProperty(name = "Label")
+	Color labelColor = LABEL_COLOR
+
+	@EditableProperty
+	Display display = Display.NAME
+
+	@EditableProperty
+	boolean folded = false
+
+	@EditableProperty(name = "Pin spacing")
+	Size pinSpacing = PIN_SPACING
 
 	public TransistorTO1() {
 		super()
 		updateControlPoints()
-	}
-
-	@EditableProperty
-	public String getValue() {
-		return value
-	}
-
-	public void setValue(String value) {
-		this.value = value
-	}
-
-	@EditableProperty
-	public Orientation getOrientation() {
-		return orientation
 	}
 
 	public void setOrientation(Orientation orientation) {
@@ -163,8 +168,7 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 					body = new Area(new RoundRectangle2D.Double(x
 							- bodyDiameter / 2, y - bodyLength, bodyDiameter,
 							bodyLength, edgeRadius, edgeRadius))
-					body.add(new Area(new Rectangle2D.Double(x - bodyDiameter
-							/ 2, y - bodyLength / 2, bodyDiameter,
+					body.add(new Area(new Rectangle2D.Double(x - bodyDiameter / 2, y - bodyLength / 2, bodyDiameter,
 							bodyLength / 2)))
 					break
 				case _180:
@@ -178,8 +182,7 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 					body = new Area(new RoundRectangle2D.Double(x
 							- bodyDiameter / 2, y, bodyDiameter, bodyLength,
 							edgeRadius, edgeRadius))
-					body.add(new Area(new Rectangle2D.Double(x - bodyDiameter
-							/ 2, y, bodyDiameter, bodyLength / 2)))
+					body.add(new Area(new Rectangle2D.Double(x - bodyDiameter / 2, y, bodyDiameter, bodyLength / 2)))
 					break
 				default:
 					throw new RuntimeException("Unexpected orientation: "
@@ -204,9 +207,9 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 		int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2
 		Area mainArea = getBody()
 		Composite oldComposite = graphicsContext.getComposite()
-		if (alpha < MAX_ALPHA) {
+		if (alpha < Colors.MAX_ALPHA) {
 			graphicsContext.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+					AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
 		}
 		graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor)
 		graphicsContext.fill(mainArea)
@@ -214,10 +217,10 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 		Color finalBorderColor
 		Theme theme = Configuration.INSTANCE.getTheme()
 		if (outlineMode) {
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
 					: theme.getOutlineColor()
 		} else {
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
 					: borderColor
 		}
 		graphicsContext.setColor(finalBorderColor)
@@ -240,10 +243,10 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 		graphicsContext.setFont(LABEL_FONT)
 		Color finalLabelColor
 		if (outlineMode) {
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
 					: theme.getOutlineColor()
 		} else {
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
 					: getLabelColor()
 		}
 		graphicsContext.setColor(finalLabelColor)
@@ -277,30 +280,11 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 		}
 	}
 
-	@EditableProperty(name = "Body")
-	public Color getBodyColor() {
-		return bodyColor
-	}
-
-	public void setBodyColor(Color bodyColor) {
-		this.bodyColor = bodyColor
-	}
-
-	@EditableProperty
-	public boolean getFolded() {
-		return folded
-	}
-
 	public void setFolded(boolean folded) {
 		this.folded = folded
 		updateControlPoints()
 		// Reset body shape;
 		body = null
-	}
-
-	@EditableProperty(name = "Pin spacing")
-	public Size getPinSpacing() {
-		return pinSpacing
 	}
 
 	public void setPinSpacing(Size pinSpacing) {
@@ -310,33 +294,4 @@ public class TransistorTO1 extends AbstractTransparentComponent<String> implemen
 		body = null
 	}
 
-	@EditableProperty(name = "Border")
-	public Color getBorderColor() {
-		return borderColor
-	}
-
-	public void setBorderColor(Color borderColor) {
-		this.borderColor = borderColor
-	}
-
-	@EditableProperty(name = "Label")
-	public Color getLabelColor() {
-		return labelColor
-	}
-
-	public void setLabelColor(Color labelColor) {
-		this.labelColor = labelColor
-	}
-
-	@EditableProperty
-	public Display getDisplay() {
-		if (display == null) {
-			display = Display.NAME
-		}
-		return display
-	}
-
-	public void setDisplay(Display display) {
-		this.display = display
-	}
 }

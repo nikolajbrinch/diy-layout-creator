@@ -1,5 +1,7 @@
 package org.diylc.components.tube
 
+import org.diylc.components.Colors
+
 import java.awt.BasicStroke
 import java.awt.Graphics2D
 import java.awt.Point
@@ -10,7 +12,7 @@ import java.awt.geom.GeneralPath
 import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractTubeSymbol
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.IDIYComponent
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
@@ -23,7 +25,8 @@ public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
 
     protected Point[] controlPoints = points(point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0))
 
-    protected boolean exposeSuppressorGrid = true
+    @EditableProperty(name = "Suppressor grid")
+    boolean exposeSuppressorGrid = true
 
     public PentodeSymbol() {
         super()
@@ -40,52 +43,54 @@ public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
             // electrodes
             GeneralPath polyline = new GeneralPath()
 
-            // grid 1
-            polyline.moveTo((double) x + pinSpacing * 5 / 4, (double) y - pinSpacing * 3 / 8)
-            polyline.lineTo((double) x + pinSpacing * 7 / 4, (double) y - pinSpacing * 3 / 8)
-            polyline.moveTo((double) x + pinSpacing * 9 / 4, (double) y - pinSpacing * 3 / 8)
-            polyline.lineTo((double) x + pinSpacing * 11 / 4,(double)  y - pinSpacing * 3 / 8)
-            polyline.moveTo((double) x + pinSpacing * 13 / 4,(double)  y - pinSpacing * 3 / 8)
-            polyline.lineTo((double) x + pinSpacing * 15 / 4,(double)  y - pinSpacing * 3 / 8)
-            polyline.moveTo((double) x + pinSpacing * 17 / 4,(double)  y - pinSpacing * 3 / 8)
-            polyline.lineTo((double) x + pinSpacing * 19 / 4,(double)  y - pinSpacing * 3 / 8)
+            polyline.with {
+                // grid 1
+                moveTo((double) x + pinSpacing * 5 / 4, (double) y - pinSpacing * 3 / 8)
+                lineTo((double) x + pinSpacing * 7 / 4, (double) y - pinSpacing * 3 / 8)
+                moveTo((double) x + pinSpacing * 9 / 4, (double) y - pinSpacing * 3 / 8)
+                lineTo((double) x + pinSpacing * 11 / 4, (double) y - pinSpacing * 3 / 8)
+                moveTo((double) x + pinSpacing * 13 / 4, (double) y - pinSpacing * 3 / 8)
+                lineTo((double) x + pinSpacing * 15 / 4, (double) y - pinSpacing * 3 / 8)
+                moveTo((double) x + pinSpacing * 17 / 4, (double) y - pinSpacing * 3 / 8)
+                lineTo((double) x + pinSpacing * 19 / 4, (double) y - pinSpacing * 3 / 8)
 
-            // grid 2
-            polyline.moveTo((double) x + pinSpacing * 5 / 4, (double) y - pinSpacing)
-            polyline.lineTo((double) x + pinSpacing * 7 / 4, (double) y - pinSpacing)
-            polyline.moveTo((double) x + pinSpacing * 9 / 4,(double)  y - pinSpacing)
-            polyline.lineTo((double) x + pinSpacing * 11 / 4, (double) y - pinSpacing)
-            polyline.moveTo((double) x + pinSpacing * 13 / 4, (double) y - pinSpacing)
-            polyline.lineTo((double) x + pinSpacing * 15 / 4, (double) y - pinSpacing)
-            polyline.moveTo((double) x + pinSpacing * 17 / 4, (double) y - pinSpacing)
-            polyline.lineTo((double) x + pinSpacing * 19 / 4, (double) y - pinSpacing)
+                // grid 2
+                moveTo((double) x + pinSpacing * 5 / 4, (double) y - pinSpacing)
+                lineTo((double) x + pinSpacing * 7 / 4, (double) y - pinSpacing)
+                moveTo((double) x + pinSpacing * 9 / 4, (double) y - pinSpacing)
+                lineTo((double) x + pinSpacing * 11 / 4, (double) y - pinSpacing)
+                moveTo((double) x + pinSpacing * 13 / 4, (double) y - pinSpacing)
+                lineTo((double) x + pinSpacing * 15 / 4, (double) y - pinSpacing)
+                moveTo((double) x + pinSpacing * 17 / 4, (double) y - pinSpacing)
+                lineTo((double) x + pinSpacing * 19 / 4, (double) y - pinSpacing)
 
-            // grid 3
-            polyline.moveTo((double) x + pinSpacing * 5 / 4, (double) y - pinSpacing - pinSpacing
-                    * 5 / 8)
-            polyline.lineTo((double) x + pinSpacing * 7 / 4, (double) y - pinSpacing - pinSpacing
-                    * 5 / 8)
-            polyline.moveTo((double) x + pinSpacing * 9 / 4, (double) y - pinSpacing - pinSpacing
-                    * 5 / 8)
-            polyline.lineTo((double) x + pinSpacing * 11 / 4, (double) y - pinSpacing
-                    - pinSpacing * 5 / 8)
-            polyline.moveTo((double) x + pinSpacing * 13 / 4, (double) y - pinSpacing
-                    - pinSpacing * 5 / 8)
-            polyline.lineTo((double) x + pinSpacing * 15 / 4, (double) y - pinSpacing
-                    - pinSpacing * 5 / 8)
-            polyline.moveTo((double) x + pinSpacing * 17 / 4, (double) y - pinSpacing
-                    - pinSpacing * 5 / 8)
-            polyline.lineTo((double) x + pinSpacing * 19 / 4, (double) y - pinSpacing
-                    - pinSpacing * 5 / 8)
+                // grid 3
+                moveTo((double) x + pinSpacing * 5 / 4, (double) y - pinSpacing - pinSpacing
+                        * 5 / 8)
+                lineTo((double) x + pinSpacing * 7 / 4, (double) y - pinSpacing - pinSpacing
+                        * 5 / 8)
+                moveTo((double) x + pinSpacing * 9 / 4, (double) y - pinSpacing - pinSpacing
+                        * 5 / 8)
+                lineTo((double) x + pinSpacing * 11 / 4, (double) y - pinSpacing
+                        - pinSpacing * 5 / 8)
+                moveTo((double) x + pinSpacing * 13 / 4, (double) y - pinSpacing
+                        - pinSpacing * 5 / 8)
+                lineTo((double) x + pinSpacing * 15 / 4, (double) y - pinSpacing
+                        - pinSpacing * 5 / 8)
+                moveTo((double) x + pinSpacing * 17 / 4, (double) y - pinSpacing
+                        - pinSpacing * 5 / 8)
+                lineTo((double) x + pinSpacing * 19 / 4, (double) y - pinSpacing
+                        - pinSpacing * 5 / 8)
 
-            // plate
-            polyline.moveTo((double) x + pinSpacing * 3 / 2, (double) y - pinSpacing * 9 / 4)
-            polyline.lineTo((double) x + pinSpacing * 9 / 2, (double) y - pinSpacing * 9 / 4)
+                // plate
+                moveTo((double) x + pinSpacing * 3 / 2, (double) y - pinSpacing * 9 / 4)
+                lineTo((double) x + pinSpacing * 9 / 2, (double) y - pinSpacing * 9 / 4)
 
-            // cathode
-            polyline.moveTo((double) x + pinSpacing * 2, (double) y + pinSpacing * 3 / 8)
-            polyline.lineTo((double) x + pinSpacing * 4, (double) y + pinSpacing * 3 / 8)
-
+                // cathode
+                moveTo((double) x + pinSpacing * 2, (double) y + pinSpacing * 3 / 8)
+                lineTo((double) x + pinSpacing * 4, (double) y + pinSpacing * 3 / 8)
+            }
+            
             this.@body[0] = polyline
 
             // connectors
@@ -112,8 +117,7 @@ public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
                 polyline.lineTo((double) x + pinSpacing * 5, (double) y - pinSpacing - pinSpacing
                         * 5 / 8)
                 polyline.lineTo((double) x + pinSpacing * 5, (double) y - pinSpacing * 5 / 4)
-                polyline.curveTo((double) x + pinSpacing * 21 / 4, (double) y - pinSpacing * 5
-                        / 4, (double) x + pinSpacing * 21 / 4, (double) y - pinSpacing * 3 / 4, (double) x
+                polyline.curveTo((double) x + pinSpacing * 21 / 4, (double) y - pinSpacing * 5 / 4, (double) x + pinSpacing * 21 / 4, (double) y - pinSpacing * 3 / 4, (double) x
                         + pinSpacing * 5, (double) y - pinSpacing * 3 / 4)
                 polyline.moveTo((double) x + pinSpacing * 5, (double) y - pinSpacing * 3 / 4)
                 polyline.lineTo((double) x + pinSpacing * 5, (double) y + pinSpacing * 3 / 8)
@@ -153,7 +157,7 @@ public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        graphicsContext.setColor(COLOR)
+        graphicsContext.setColor(Colors.SCHEMATIC_COLOR)
 
         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
 
@@ -165,8 +169,7 @@ public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
         graphicsContext.drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width / 4 + 2
                 * width / 32, height - 1)
 
-        graphicsContext.drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width
-                / 32)
+        graphicsContext.drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width / 32)
 
 		graphicsContext.drawLine(0, height / 2, width / 8, height / 2)
         graphicsContext.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND,
@@ -243,11 +246,6 @@ public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
         int pinSpacing = (int) PIN_SPACING.convertToPixels()
         return point(controlPoints[0].x + pinSpacing * 5,
                 controlPoints[0].y + pinSpacing)
-    }
-
-    @EditableProperty(name = "Suppressor grid")
-    public boolean getExposeSuppressorGrid() {
-        return this.@exposeSuppressorGrid
     }
 
     public void setExposeSuppressorGrid(boolean exposeSuppressorGrid) {

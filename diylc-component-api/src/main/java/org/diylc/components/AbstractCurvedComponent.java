@@ -3,7 +3,6 @@ package org.diylc.components;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.CubicCurve2D;
 
@@ -22,7 +21,6 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
 	private static final long serialVersionUID = 1L;
 
-	public static Color GUIDELINE_COLOR = Color.blue;
 	public static Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
 
 	protected Point[] controlPoints = new Point[] {
@@ -72,7 +70,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 			// Do not track guidelines.
 			drawingObserver.stopTracking();
 			graphicsContext.setStroke(Constants.DASHED_STROKE);
-			graphicsContext.setColor(GUIDELINE_COLOR);
+			graphicsContext.setColor(Colors.GUIDELINE_COLOR);
 			graphicsContext.drawLine(controlPoints[0].x, controlPoints[0].y, controlPoints[1].x,
 					controlPoints[1].y);
 			graphicsContext.drawLine(controlPoints[1].x, controlPoints[1].y, controlPoints[2].x,
@@ -86,9 +84,9 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 				controlPoints[3].x, controlPoints[3].y);
 
 		Composite oldComposite = graphicsContext.getComposite();
-		if (alpha < MAX_ALPHA) {
+		if (alpha < Colors.MAX_ALPHA) {
 			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha
-					/ MAX_ALPHA));
+					/ Colors.MAX_ALPHA));
 		}
 		// g2d.setColor(color.darker());
 		// g2d.setStroke(new BasicStroke(thickness));

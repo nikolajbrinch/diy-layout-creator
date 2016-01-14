@@ -1,6 +1,7 @@
 package org.diylc.components.boards
 
 import org.diylc.common.OrientationHV
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
@@ -21,18 +22,21 @@ public class TriPadBoard extends AbstractBoard implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    public static Color STRIP_COLOR = Color.decode("#DA8A67")
-    public static Color BORDER_COLOR = BOARD_COLOR.darker()
-
     public static Size SPACING = new Size(0.1d, SizeUnit.in)
     public static Size STRIP_SIZE = new Size(0.07d, SizeUnit.in)
     public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm)
 
-    protected int stripSpan = 3 // determines how many holes are covered by a
-    // strip
-    protected Size spacing = SPACING
-    protected Color stripColor = STRIP_COLOR
-    protected OrientationHV orientation = OrientationHV.HORIZONTAL
+    @EditableProperty(name = "Holes per strip")
+    int stripSpan = 3 // determines how many holes are covered by a
+
+    @EditableProperty
+    Size spacing = SPACING
+
+    @EditableProperty(name = "Strip color")
+    Color stripColor = Colors.PCB_STRIP_COLOR
+    
+    @EditableProperty
+    OrientationHV orientation = OrientationHV.HORIZONTAL
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState,
@@ -49,9 +53,9 @@ public class TriPadBoard extends AbstractBoard implements Geometry {
             graphicsContext.with {
                 Composite oldComposite = getComposite()
 
-                if (alpha < MAX_ALPHA) {
+                if (alpha < Colors.MAX_ALPHA) {
                     setComposite(AlphaComposite.getInstance(
-                            AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                            AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
                 }
 
                 Point p = point(firstPoint)
@@ -125,37 +129,10 @@ public class TriPadBoard extends AbstractBoard implements Geometry {
         }
     }
 
-    @EditableProperty(name = "Strip color")
-    public Color getStripColor() {
-        return stripColor
-    }
-
-    public void setStripColor(Color padColor) {
-        this.stripColor = padColor
-    }
-
-    @EditableProperty
-    public Size getSpacing() {
-        return spacing
-    }
-
-    public void setSpacing(Size spacing) {
-        this.spacing = spacing
-    }
-
-    @EditableProperty
-    public OrientationHV getOrientation() {
-        return orientation
-    }
-
-    public void setOrientation(OrientationHV orientation) {
-        this.orientation = orientation
-    }
-
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.with {
-            setColor(BOARD_COLOR)
+            setColor(Colors.PCB_BOARD_COLOR)
             fillRect(0, 0, width, height)
 
             final int horizontalSpacing = width / 5
@@ -165,11 +142,11 @@ public class TriPadBoard extends AbstractBoard implements Geometry {
             final int verticalIndent = verticalSpacing / 2
 
             for (int row = 0; row < 5; row++) {
-                setColor(STRIP_COLOR)
+                setColor(Colors.PCB_STRIP_COLOR)
                 fillRect(0, row * verticalSpacing + 2, horizontalIndent / 2
                         + horizontalSpacing, verticalSpacing - 1)
 
-                setColor(STRIP_COLOR)
+                setColor(Colors.PCB_STRIP_COLOR)
                 fillRect(horizontalSpacing + 2, row * verticalSpacing + 2,
                         horizontalSpacing * 3 - 1, verticalSpacing - 1)
 
@@ -183,15 +160,10 @@ public class TriPadBoard extends AbstractBoard implements Geometry {
                 int y = (verticalSpacing * row) + verticalIndent
                 for (int col = 0; col < 5; col++) {
                     int x = (horizontalSpacing * col) + horizontalIndent
-                    drawFilledOval(x, y, 2, 2, STRIP_COLOR.darker(), Constants.CANVAS_COLOR)
+                    drawFilledOval(x, y, 2, 2, Colors.PCB_STRIP_COLOR.darker(), Constants.CANVAS_COLOR)
                 }
             }
         }
-    }
-
-    @EditableProperty(name = "Holes per strip")
-    public int getStripSpan() {
-        return stripSpan
     }
 
     public void setStripSpan(int stripSpan) {

@@ -1,5 +1,7 @@
 package org.diylc.components.guitar
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -50,11 +52,17 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 	private static Size POLE_SIZE = new Size(3d, SizeUnit.mm)
 	private static Size POLE_SPACING = new Size(11.68d, SizeUnit.mm)
 
-	private String value = ""
 	private Point controlPoint = new Point(0, 0)
 	transient Shape[] body
-	private Orientation orientation = Orientation.DEFAULT
-	private Color color = BODY_COLOR
+	
+    @EditableProperty(name = "Model")
+    String value = ""
+    
+    @EditableProperty
+	Orientation orientation = Orientation.DEFAULT
+    
+    @EditableProperty
+	Color color = BODY_COLOR
 
 	@Override
 	public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode,
@@ -64,9 +72,8 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
 		if (componentState != ComponentState.DRAGGING) {
 			Composite oldComposite = graphicsContext.getComposite()
-			if (alpha < MAX_ALPHA) {
-				graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha
-						/ MAX_ALPHA))
+			if (alpha < Colors.MAX_ALPHA) {
+				graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
 			}
 			graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color)
 			graphicsContext.fill(body[0])
@@ -78,10 +85,10 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 		Color finalBorderColor
 		if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme()
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : theme
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : theme
 					.getOutlineColor()
 		} else {
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : color
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : color
 					.brighter()
 		}
 
@@ -94,11 +101,11 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 		Color finalLabelColor
 		if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme()
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED : theme
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED : theme
 					.getOutlineColor()
 		} else {
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-					: LABEL_COLOR
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
+					: Colors.LABEL_COLOR
 		}
 		graphicsContext.setColor(finalLabelColor)
 		graphicsContext.setFont(LABEL_FONT)
@@ -127,10 +134,8 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 					x + length / 2 - width / 2, x + lipLength / 2, x - lipLength / 2 ] as int[], [
 					y - lipWidth / 2, y - lipWidth / 2, y + lipWidth / 2, y + lipWidth / 2 ] as int[], 4)))
 			// Cutout holes
-			mainArea.subtract(new Area(new Ellipse2D.Double(x - length / 2 + holeMargin - holeSize
-					/ 2, y - lipWidth / 2 - width / 2 - holeSize / 2, holeSize, holeSize)))
-			mainArea.subtract(new Area(new Ellipse2D.Double(x + length / 2 - holeMargin - holeSize
-					/ 2, y - lipWidth / 2 - width / 2 - holeSize / 2, holeSize, holeSize)))
+			mainArea.subtract(new Area(new Ellipse2D.Double(x - length / 2 + holeMargin - holeSize / 2, y - lipWidth / 2 - width / 2 - holeSize / 2, holeSize, holeSize)))
+			mainArea.subtract(new Area(new Ellipse2D.Double(x + length / 2 - holeMargin - holeSize / 2, y - lipWidth / 2 - width / 2 - holeSize / 2, holeSize, holeSize)))
 
 			body[0] = mainArea
 
@@ -218,20 +223,9 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 		body = null
 	}
 
-	@EditableProperty(name = "Model")
-	@Override
-	public String getValue() {
-		return value
-	}
-
 	@Override
 	public void setValue(String value) {
 		this.value = value
-	}
-
-	@EditableProperty
-	public Orientation getOrientation() {
-		return orientation
 	}
 
 	public void setOrientation(Orientation orientation) {
@@ -240,12 +234,4 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 		body = null
 	}
 
-	@EditableProperty
-	public Color getColor() {
-		return color
-	}
-
-	public void setColor(Color color) {
-		this.color = color
-	}
 }

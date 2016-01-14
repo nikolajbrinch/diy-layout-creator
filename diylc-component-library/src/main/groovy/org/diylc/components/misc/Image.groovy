@@ -1,5 +1,7 @@
 package org.diylc.components.misc
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Composite
 import java.awt.Graphics2D
@@ -32,19 +34,30 @@ class Image extends AbstractTransparentComponent<Void> {
 	static ImageIcon ICON
 	static byte DEFAULT_SCALE = 50
 
+	Point point = new Point(0, 0)
+	
+    Void value = null
+    
+    @XStreamConverter(IconImageConverter.class)
+    @EditableProperty(defaultable = false)
+	ImageIcon image
+
+    @EditableProperty(defaultable = false)
+	byte scale = 50
+
 	static {
 		String name = "image.png"
 		java.net.URL imgURL = Image.class.getResource("/images/" + name)
+
 		if (imgURL != null) {
 			ICON = new ImageIcon(imgURL, name)
 		}
 	}
 
-	Point point = new Point(0, 0)
-	
-    @XStreamConverter(IconImageConverter.class)
-	ImageIcon image = ICON
-	byte scale = 50
+	Image() {
+		this.image = ICON
+	}
+
 
 	@Override
 	void draw(GraphicsContext graphicsContext, ComponentState componentState,
@@ -57,9 +70,9 @@ class Image extends AbstractTransparentComponent<Void> {
 			return
 		}
 		Composite oldComposite = graphicsContext.getComposite()
-		if (alpha < MAX_ALPHA) {
+		if (alpha < Colors.MAX_ALPHA) {
 			graphicsContext.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+					AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
 		}
 
 		graphicsContext.scale(s, s)
@@ -68,7 +81,7 @@ class Image extends AbstractTransparentComponent<Void> {
 		if (componentState == ComponentState.SELECTED) {
 			graphicsContext.setComposite(oldComposite)
 			graphicsContext.scale(1 / s, 1 / s)
-			graphicsContext.setColor(SELECTION_COLOR)
+			graphicsContext.setColor(Colors.SELECTION_COLOR)
 			graphicsContext.drawRect(point.x, point.y, (int) (image.getIconWidth() * s),
 					(int) (image.getIconHeight() * s))
 		}
@@ -104,35 +117,9 @@ class Image extends AbstractTransparentComponent<Void> {
 		this.point.setLocation(point)
 	}
 
-	@EditableProperty(defaultable = false)
-	ImageIcon getImage() {
-		return image
-	}
-
-	void setImage(ImageIcon image) {
-		this.image = image
-	}
-
-	@EditableProperty(defaultable = false)
-	byte getScale() {
-		return scale
-	}
-
-	void setScale(byte scale) {
-		this.scale = scale
-	}
-
 	@Override
 	String getName() {
 		return super.getName()
 	}
 
-	@Override
-	Void getValue() {
-		return null
-	}
-
-	@Override
-	void setValue(Void value) {
-	}
 }

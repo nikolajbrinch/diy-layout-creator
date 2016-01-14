@@ -37,21 +37,34 @@ public abstract class AbstractLeadedComponent<T> extends
 
 	private static final long serialVersionUID = 1L;
 
-	public static Color LEAD_COLOR = Color.decode("#CCCCCC");
-	public static Color LEAD_COLOR_ICON = LEAD_COLOR.darker().darker();
 	public static Size LEAD_THICKNESS = new Size(0.6d, SizeUnit.mm);
 	public static Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
 
+    @EditableProperty(name = "Length", defaultable = true)
 	protected Size length;
+
+	@EditableProperty(name = "Width", defaultable = true)
 	protected Size width;
+	
 	protected Point[] points = new Point[] {
 			new Point((int) (-DEFAULT_SIZE.convertToPixels() / 2), 0),
 			new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0) };
+	
+    @EditableProperty(name = "Color")
 	protected Color bodyColor = Color.white;
+
+	@EditableProperty(name = "Border")
 	protected Color borderColor = Color.black;
-	protected Color labelColor = LABEL_COLOR;
-	protected Color leadColor = LEAD_COLOR;
+
+	@EditableProperty(name = "Label color")
+	protected Color labelColor = Colors.LABEL_COLOR;
+
+    @EditableProperty(name = "Lead color")
+	protected Color leadColor = Colors.DEFAULT_LEAD_COLOR;
+    
+    @EditableProperty
 	protected Display display = Display.NAME;
+    
 	private boolean flipStanding = false;
 
 	protected AbstractLeadedComponent() {
@@ -85,9 +98,9 @@ public abstract class AbstractLeadedComponent<T> extends
 					- width / 2, (getFlipStanding() ? points[1] : points[0]).y
 					- width / 2, width, width);
 			Composite oldComposite = graphicsContext.getComposite();
-			if (alpha < MAX_ALPHA) {
+			if (alpha < Colors.MAX_ALPHA) {
 				graphicsContext.setComposite(AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+						AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA));
 			}
 			graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR
 					: getStandingBodyColor());
@@ -98,11 +111,11 @@ public abstract class AbstractLeadedComponent<T> extends
 				Theme theme = Configuration.INSTANCE.getTheme();
 
 				finalBorderColor = componentState == ComponentState.SELECTED
-						|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+						|| componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
 						: theme.getOutlineColor();
 			} else {
 				finalBorderColor = componentState == ComponentState.SELECTED
-						|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+						|| componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
 						: borderColor;
 			}
 
@@ -176,9 +189,9 @@ public abstract class AbstractLeadedComponent<T> extends
 			graphicsContext.rotate(theta, length / 2, width / 2);
 			// Draw body.
 			Composite oldComposite = graphicsContext.getComposite();
-			if (alpha < MAX_ALPHA) {
+			if (alpha < Colors.MAX_ALPHA) {
 				graphicsContext.setComposite(AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+						AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA));
 			}
 			if (bodyColor != null) {
 				if (bodyColor != null) {
@@ -194,11 +207,11 @@ public abstract class AbstractLeadedComponent<T> extends
 			if (outlineMode) {
 				Theme theme = Configuration.INSTANCE.getTheme();
 				finalBorderColor = componentState == ComponentState.SELECTED
-						|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+						|| componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
 						: theme.getOutlineColor();
 			} else {
 				finalBorderColor = componentState == ComponentState.SELECTED
-						|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+						|| componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
 						: borderColor;
 			}
 			graphicsContext.setColor(finalBorderColor);
@@ -257,11 +270,11 @@ public abstract class AbstractLeadedComponent<T> extends
 			if (outlineMode) {
 				Theme theme = Configuration.INSTANCE.getTheme();
 				finalLabelColor = componentState == ComponentState.SELECTED
-						|| componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+						|| componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
 						: theme.getOutlineColor();
 			} else {
 				finalLabelColor = componentState == ComponentState.SELECTED
-						|| componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+						|| componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
 						: labelColor;
 			}
 			graphicsContext.setColor(finalLabelColor);
@@ -367,14 +380,13 @@ public abstract class AbstractLeadedComponent<T> extends
 	 */
 	protected Color getLeadColorForPainting(ComponentState componentState) {
 		return componentState == ComponentState.SELECTED
-				|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+				|| componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
 				: getLeadColor();
 	}
 
-	@EditableProperty(name = "Lead color")
 	public Color getLeadColor() {
 		if (leadColor == null) {
-			leadColor = LEAD_COLOR_ICON;
+			leadColor = Colors.LEAD_COLOR_ICON;
 		}
 		return leadColor;
 	}
@@ -412,7 +424,6 @@ public abstract class AbstractLeadedComponent<T> extends
 		points[index].setLocation(point);
 	}
 
-	@EditableProperty(name = "Color")
 	public Color getBodyColor() {
 		return bodyColor;
 	}
@@ -425,7 +436,6 @@ public abstract class AbstractLeadedComponent<T> extends
 		return bodyColor;
 	}
 
-	@EditableProperty(name = "Border")
 	public Color getBorderColor() {
 		return borderColor;
 	}
@@ -434,7 +444,6 @@ public abstract class AbstractLeadedComponent<T> extends
 		this.borderColor = borderColor;
 	}
 
-	@EditableProperty(name = "Length", defaultable = true)
 	public Size getLength() {
 		return length;
 	}
@@ -443,7 +452,6 @@ public abstract class AbstractLeadedComponent<T> extends
 		this.length = length;
 	}
 
-	@EditableProperty(name = "Width", defaultable = true)
 	public Size getWidth() {
 		return width;
 	}
@@ -452,7 +460,6 @@ public abstract class AbstractLeadedComponent<T> extends
 		this.width = width;
 	}
 
-	@EditableProperty
 	public Display getDisplay() {
 		return display;
 	}
@@ -461,7 +468,6 @@ public abstract class AbstractLeadedComponent<T> extends
 		this.display = display;
 	}
 
-	@EditableProperty(name = "Label color")
 	public Color getLabelColor() {
 		return labelColor;
 	}

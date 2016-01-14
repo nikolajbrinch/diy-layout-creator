@@ -7,9 +7,10 @@ import java.awt.Color
 import java.awt.Point
 import java.awt.Shape
 
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard;
-import org.diylc.components.Geometry;
+import org.diylc.components.AbstractBoard
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -25,22 +26,22 @@ public class EyeletBoard extends AbstractBoard implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    public static Color BOARD_COLOR = Color.decode("#CCFFCC")
-    public static Color BORDER_COLOR = BOARD_COLOR.darker()
-    public static Color EYELET_COLOR = Color.decode("#C3E4ED")
-
     public static Size SPACING = new Size(0.5d, SizeUnit.in)
+
     public static Size EYELET_SIZE = new Size(0.2d, SizeUnit.in)
+
     public static Size HOLE_SIZE = new Size(0.1d, SizeUnit.in)
 
-    // private Area copperArea
-    protected Size spacing = SPACING
-    protected Color eyeletColor = EYELET_COLOR
+    @EditableProperty
+    Size spacing = SPACING
+
+    @EditableProperty(name = "Eyelet color")
+    Color eyeletColor = Colors.EYELET_COLOR
 
     public EyeletBoard() {
         super()
-        this.boardColor = BOARD_COLOR
-        this.borderColor = BORDER_COLOR
+        this.boardColor = Colors.EYELET_BOARD_COLOR
+        this.borderColor = Colors.EYELET_BORDER_COLOR
     }
 
     @Override
@@ -60,8 +61,8 @@ public class EyeletBoard extends AbstractBoard implements Geometry {
             int spacing = (int) this.spacing.convertToPixels()
 
             graphicsContext.with {
-                if (alpha < MAX_ALPHA) {
-                    setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                if (alpha < Colors.MAX_ALPHA) {
+                    setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
                 }
 
                 while (p.y < secondPoint.y - spacing) {
@@ -75,36 +76,18 @@ public class EyeletBoard extends AbstractBoard implements Geometry {
                 }
 
             }
-            
+
             super.drawCoordinates(graphicsContext, spacing)
         }
-    }
-
-    @EditableProperty(name = "Eyelet color")
-    public Color getEyeletColor() {
-        return eyeletColor
-    }
-
-    public void setEyeletColor(Color padColor) {
-        this.eyeletColor = padColor
-    }
-
-    @EditableProperty
-    public Size getSpacing() {
-        return spacing
-    }
-
-    public void setSpacing(Size spacing) {
-        this.spacing = spacing
     }
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         int factor = 32 / width
         graphicsContext.with {
-            drawFilledRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor, BORDER_COLOR, BOARD_COLOR)
-            drawFilledOval(width / 4, width / 4, width / 2, width / 2, EYELET_COLOR.darker(), EYELET_COLOR)
-            drawFilledOval(width / 2 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), EYELET_COLOR.darker(), Constants.CANVAS_COLOR)
+            drawFilledRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor, Colors.EYELET_BORDER_COLOR, Colors.EYELET_BOARD_COLOR)
+            drawFilledOval(width / 4, width / 4, width / 2, width / 2, Colors.EYELET_COLOR.darker(), Colors.EYELET_COLOR)
+            drawFilledOval(width / 2 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), Colors.EYELET_COLOR.darker(), Constants.CANVAS_COLOR)
         }
     }
 }

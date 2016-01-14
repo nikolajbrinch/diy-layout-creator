@@ -31,7 +31,7 @@ public interface IDIYComponent<T> extends Serializable {
 
 	public static final double CHASSIS = 1.0;
 	public static final double BOARD = 2.0;
-	public static final double TRACE_CUT = BOARD + 1.0;
+	public static final double TRACE_CUT = 3.0;
 	public static final double TRACE = 3.0;
 	public static final double PAD = 3.1;
 	public static final double COMPONENT = 4.0;

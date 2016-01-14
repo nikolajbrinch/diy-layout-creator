@@ -1,5 +1,7 @@
 package org.diylc.components.connectivity
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.CubicCurve2D
@@ -23,7 +25,8 @@ public class HookupWire extends AbstractCurvedComponent<Void> {
 	public static Color COLOR = Color.green
 	public static double INSULATION_THICKNESS_PCT = 0.3
 
-	protected AWG gauge = AWG._22
+    @EditableProperty(name = "AWG")
+	AWG gauge = AWG._22
 
 	@Override
 	protected Color getDefaultColor() {
@@ -36,7 +39,7 @@ public class HookupWire extends AbstractCurvedComponent<Void> {
 		int thickness = (int) (Math.pow(Math.E, -1.12436 - 0.11594
 				* gauge.getValue())
 				* Constants.PIXELS_PER_INCH * (1 + 2 * INSULATION_THICKNESS_PCT))
-		Color curveColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : color.darker()
+		Color curveColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : color.darker()
 		graphicsContext.setColor(curveColor)
 		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(thickness))
 		graphicsContext.draw(curve)
@@ -45,15 +48,6 @@ public class HookupWire extends AbstractCurvedComponent<Void> {
 			graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(thickness - 2))
 			graphicsContext.draw(curve)
 		}
-	}
-
-	@EditableProperty(name = "AWG")
-	public AWG getGauge() {
-		return gauge
-	}
-
-	public void setGauge(AWG gauge) {
-		this.gauge = gauge
 	}
 
 	@Override

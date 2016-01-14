@@ -1,5 +1,7 @@
 package org.diylc.components.connectivity
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Point
 
@@ -7,7 +9,6 @@ import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.boards.VeroBoard
-import org.diylc.components.AbstractBoard;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -30,12 +31,23 @@ public class TraceCut extends AbstractComponent<Void> {
 	public static Color BORDER_COLOR = Color.red
 	public static Color SELECTION_COLOR = Color.blue
 
-	private Size size = SIZE
-	private Color fillColor = FILL_COLOR
-	private Color borderColor = BORDER_COLOR
-	private Color boardColor = AbstractBoard.BOARD_COLOR
-	private Boolean cutBetweenHoles = true
-	private Size holeSpacing = VeroBoard.SPACING
+    @EditableProperty
+	Size size = SIZE
+    
+    @EditableProperty(name = "Fill")
+	Color fillColor = FILL_COLOR
+    
+    @EditableProperty(name = "Border")
+	Color borderColor = BORDER_COLOR
+    
+    @EditableProperty(name = "Board")
+	Color boardColor = Colors.PCB_BOARD_COLOR
+    
+    @EditableProperty(name = "Cut between holes")
+	Boolean cutBetweenHoles = true
+    
+    @EditableProperty(name = "Hole spacing")
+	Size holeSpacing = VeroBoard.SPACING
 
 	protected Point point = new Point(0, 0)
 
@@ -117,70 +129,8 @@ public class TraceCut extends AbstractComponent<Void> {
 	@Override
 	public void setValue(Void value) {
 	}
-
-	@EditableProperty
-	public Size getSize() {
-		return size
-	}
-
-	public void setSize(Size size) {
-		this.size = size
-	}
-
-	@EditableProperty(name = "Fill")
-	public Color getFillColor() {
-		return fillColor
-	}
-
-	public void setFillColor(Color fillColor) {
-		this.fillColor = fillColor
-	}
-
-	@EditableProperty(name = "Border")
-	public Color getBorderColor() {
-		return borderColor
-	}
-
-	public void setBorderColor(Color borderColor) {
-		this.borderColor = borderColor
-	}
-
-	@EditableProperty(name = "Cut between holes")
-	public boolean getCutBetweenHoles() {
-		if (cutBetweenHoles == null) {
-			cutBetweenHoles = false
-		}
-		return cutBetweenHoles
-	}
 	
-	public void setCutBetweenHoles(boolean cutBetweenHoles) {
-		this.cutBetweenHoles = cutBetweenHoles
-	}
 	
-	@EditableProperty(name = "Board")
-	public Color getBoardColor() {
-		if (boardColor == null) {
-			boardColor = AbstractBoard.BOARD_COLOR
-		}
-		return boardColor
-	}
-	
-	public void setBoardColor(Color boardColor) {
-		this.boardColor = boardColor
-	}
-	
-	@EditableProperty(name = "Hole spacing")
-	public Size getHoleSpacing() {
-		if (holeSpacing == null) {
-			holeSpacing = VeroBoard.SPACING
-		}
-		return holeSpacing
-	}
-	
-	public void setHoleSpacing(Size holeSpacing) {
-		this.holeSpacing = holeSpacing
-	}
-
 	@Deprecated
 	@Override
 	public String getName() {

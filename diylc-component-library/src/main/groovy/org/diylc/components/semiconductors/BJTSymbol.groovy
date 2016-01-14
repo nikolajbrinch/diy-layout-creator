@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.Polygon
 import java.awt.Shape
 import java.awt.geom.AffineTransform
@@ -19,7 +21,8 @@ public class BJTSymbol extends AbstractTransistorSymbol {
 
 	private static final long serialVersionUID = 1L
 
-	protected BJTPolarity polarity = BJTPolarity.NPN
+	@EditableProperty(name = "Polarity")
+	BJTPolarity polarity = BJTPolarity.NPN
 
 	public Shape[] getBody() {
 		if (this.@body == null) {
@@ -76,7 +79,7 @@ public class BJTSymbol extends AbstractTransistorSymbol {
 
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-		graphicsContext.setColor(COLOR)
+		graphicsContext.setColor(Colors.SCHEMATIC_COLOR)
 
 		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(2))
 		graphicsContext.drawLine(width / 3, height / 5, width / 3, height * 4 / 5)
@@ -90,11 +93,6 @@ public class BJTSymbol extends AbstractTransistorSymbol {
 		graphicsContext.drawLine(width * 3 / 4, height - 1, width * 3 / 4, height * 3 / 4)
 		graphicsContext.drawLine(width / 3, height * 2 / 3 - 1, width * 3 / 4,
 				height * 3 / 4)
-	}
-
-	@EditableProperty(name = "Polarity")
-	public BJTPolarity getPolarity() {
-		return polarity
 	}
 
 	public void setPolarity(BJTPolarity polarity) {

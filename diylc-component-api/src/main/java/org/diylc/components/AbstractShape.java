@@ -12,8 +12,6 @@ public abstract class AbstractShape  extends AbstractTransparentComponent<Void> 
 
 	private static final long serialVersionUID = 1L;
 
-	public static Color COLOR = Color.white;
-	public static Color BORDER_COLOR = Color.black;
 	public static Size DEFAULT_WIDTH = new Size(0.6d, SizeUnit.in);
 	public static Size DEFAULT_HEIGHT = new Size(0.4d, SizeUnit.in);
 
@@ -25,8 +23,8 @@ public abstract class AbstractShape  extends AbstractTransparentComponent<Void> 
 	protected Point firstPoint = new Point();
 	protected Point secondPoint = new Point();
 
-	protected Color color = COLOR;
-	protected Color borderColor = BORDER_COLOR;
+	protected Color color = Colors.SHAPE_FILL_COLOR;
+	protected Color borderColor = Colors.SHAPE_BORDER_COLOR;
 	protected Size borderThickness = new Size(0.2d, SizeUnit.mm);
 
 	@EditableProperty(name = "Color")

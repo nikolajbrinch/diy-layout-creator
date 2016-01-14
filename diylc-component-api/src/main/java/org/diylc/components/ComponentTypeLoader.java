@@ -53,7 +53,7 @@ public class ComponentTypeLoader {
 
                 });
 
-        // componentClasses.addAll(loadCompiledClasses(classLoader));
+//        componentClasses.addAll(loadCompiledClasses(classLoader));
         componentClasses.addAll(loadGroovyClasses(classLoader, directories));
 
         Map<String, List<ComponentType>> componentTypes = new HashMap<String, List<ComponentType>>();

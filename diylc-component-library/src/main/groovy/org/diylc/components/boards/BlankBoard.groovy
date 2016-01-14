@@ -5,6 +5,7 @@ import org.diylc.core.graphics.GraphicsContext
 import java.awt.Shape
 
 import org.diylc.components.AbstractBoard
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
@@ -21,7 +22,7 @@ class BlankBoard extends AbstractBoard {
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
 		int factor = 32 / width
-        graphicsContext.drawFilledRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor, BORDER_COLOR, BOARD_COLOR)
+        graphicsContext.drawFilledRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor, Colors.PCB_BORDER_COLOR, Colors.PCB_BOARD_COLOR)
 	}
 	
 	@Override

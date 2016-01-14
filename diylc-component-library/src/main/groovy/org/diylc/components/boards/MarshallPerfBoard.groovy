@@ -7,9 +7,10 @@ import java.awt.Color
 import java.awt.Point
 import java.awt.Shape
 
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard;
-import org.diylc.components.Geometry;
+import org.diylc.components.AbstractBoard
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -25,18 +26,17 @@ public class MarshallPerfBoard extends AbstractBoard implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    public static Color BOARD_COLOR = Color.decode("#CD8500")
-    public static Color BORDER_COLOR = BOARD_COLOR.darker()
     public static Size SPACING = new Size(3 / 8d, SizeUnit.in)
+
     public static Size HOLE_SIZE = new Size(1 / 8d, SizeUnit.in)
 
-    // private Area copperArea
-    protected Size spacing = SPACING
+    @EditableProperty
+    Size spacing = SPACING
 
     public MarshallPerfBoard() {
         super()
-        this.boardColor = BOARD_COLOR
-        this.borderColor = BORDER_COLOR
+        this.boardColor = Colors.MARSHALL_BOARD_COLOR
+        this.borderColor = Colors.MARSHALL_BORDER_COLOR
     }
 
     @Override
@@ -45,15 +45,15 @@ public class MarshallPerfBoard extends AbstractBoard implements Geometry {
             IDrawingObserver drawingObserver) {
         Shape clip = graphicsContext.getClip()
         if (checkPointsClipped(clip)
-                && !clip.contains(firstPoint.x, secondPoint.y)
-                && !clip.contains(secondPoint.x, firstPoint.y)) {
+        && !clip.contains(firstPoint.x, secondPoint.y)
+        && !clip.contains(secondPoint.x, firstPoint.y)) {
             return
         }
         super.draw(graphicsContext, componentState, outlineMode, project, drawingObserver)
         if (componentState != ComponentState.DRAGGING) {
-            if (alpha < MAX_ALPHA) {
+            if (alpha < Colors.MAX_ALPHA) {
                 graphicsContext.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                        AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
             }
             Point p = point(firstPoint)
             int holeDiameter = getClosestOdd((int) HOLE_SIZE.convertToPixels())
@@ -74,48 +74,39 @@ public class MarshallPerfBoard extends AbstractBoard implements Geometry {
         }
     }
 
-    @EditableProperty
-    public Size getSpacing() {
-        return spacing
-    }
-
-    public void setSpacing(Size spacing) {
-        this.spacing = spacing
-    }
-
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         int factor = 32 / width
-        graphicsContext.setColor(BOARD_COLOR)
+        graphicsContext.setColor(Colors.MARSHALL_BOARD_COLOR)
         graphicsContext.fillRect(2 / factor, 2 / factor, width - 4 / factor, height - 4  / factor)
-        graphicsContext.setColor(BORDER_COLOR)
+        graphicsContext.setColor(Colors.MARSHALL_BORDER_COLOR)
         graphicsContext.drawRect(2 / factor, 2 / factor, width - 4 / factor, height - 4  / factor)
 
         graphicsContext.setColor(Constants.CANVAS_COLOR)
         graphicsContext.fillOval(width / 3 - 2 / factor, width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
-        graphicsContext.setColor(BORDER_COLOR)
+        graphicsContext.setColor(Colors.MARSHALL_BORDER_COLOR)
         graphicsContext.drawOval(width / 3 - 2 / factor, width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
 
         graphicsContext.setColor(Constants.CANVAS_COLOR)
         graphicsContext.fillOval(2 * width / 3 - 2 / factor, width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
-        graphicsContext.setColor(BORDER_COLOR)
+        graphicsContext.setColor(Colors.MARSHALL_BORDER_COLOR)
         graphicsContext.drawOval(2 * width / 3 - 2 / factor, width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
 
         graphicsContext.setColor(Constants.CANVAS_COLOR)
         graphicsContext.fillOval(width / 3 - 2 / factor, 2 * width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
-        graphicsContext.setColor(BORDER_COLOR)
+        graphicsContext.setColor(Colors.MARSHALL_BORDER_COLOR)
         graphicsContext.drawOval(width / 3 - 2 / factor, 2 * width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
 
         graphicsContext.setColor(Constants.CANVAS_COLOR)
         graphicsContext.fillOval(2 * width / 3 - 2 / factor, 2 * width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
-        graphicsContext.setColor(BORDER_COLOR)
+        graphicsContext.setColor(Colors.MARSHALL_BORDER_COLOR)
         graphicsContext.drawOval(2 * width / 3 - 2 / factor, 2 * width / 3 - 2 / factor,
                 getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
     }

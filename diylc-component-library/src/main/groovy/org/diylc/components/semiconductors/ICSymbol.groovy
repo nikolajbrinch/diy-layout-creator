@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -16,7 +18,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.components.ICPointCount
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
@@ -40,14 +42,26 @@ public class ICSymbol extends AbstractTransparentComponent<String> implements Ge
 	public static Color BODY_COLOR = Color.white
 	public static Color BORDER_COLOR = Color.black
 
-	protected ICPointCount icPointCount = ICPointCount._5
-	protected String value = ""
+	transient private Shape[] body
+
 	protected Point[] controlPoints = points( point(0, 0), point(0, 0),
 			point(0, 0), point(0, 0), point(0, 0))
-	protected Color bodyColor = BODY_COLOR
-	protected Color borderColor = BORDER_COLOR
-	protected Display display = Display.NAME
-	transient private Shape[] body
+
+	@EditableProperty(name = "Contacts")
+	ICPointCount icPointCount = ICPointCount._5
+
+	@EditableProperty
+	String value = ""
+
+	@EditableProperty(name = "Body")
+	Color bodyColor = BODY_COLOR
+
+	@EditableProperty(name = "Border")
+	Color borderColor = BORDER_COLOR
+
+	@EditableProperty
+	Display display = Display.NAME
+
 
 	public ICSymbol() {
 		super()
@@ -62,9 +76,8 @@ public class ICSymbol extends AbstractTransparentComponent<String> implements Ge
 		}
 		int pinSpacing = (int) PIN_SPACING.convertToPixels()
 		Composite oldComposite = graphicsContext.getComposite()
-		if (alpha < MAX_ALPHA) {
-			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha
-					/ MAX_ALPHA))
+		if (alpha < Colors..MAX_ALPHA) {
+			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
 		}
 
 		Shape[] body = getBody()
@@ -91,11 +104,11 @@ public class ICSymbol extends AbstractTransparentComponent<String> implements Ge
 		Color finalLabelColor
 		if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme()
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED : theme
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED : theme
 					.getOutlineColor()
 		} else {
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-					: LABEL_COLOR
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
+					: Colors.LABEL_COLOR
 		}
 		graphicsContext.setColor(finalLabelColor)
 		int x = (controlPoints[0].x + controlPoints[2].x) / 2
@@ -193,17 +206,6 @@ public class ICSymbol extends AbstractTransparentComponent<String> implements Ge
 		return VisibilityPolicy.WHEN_SELECTED
 	}
 
-	@EditableProperty
-	@Override
-	public String getValue() {
-		return this.value
-	}
-
-	@Override
-	public void setValue(String value) {
-		this.value = value
-	}
-
 	@Override
 	public boolean isControlPointSticky(int index) {
 		return true
@@ -215,41 +217,11 @@ public class ICSymbol extends AbstractTransparentComponent<String> implements Ge
 		body = null
 	}
 
-	@EditableProperty(name = "Contacts")
-	public ICPointCount getIcPointCount() {
-		return icPointCount
-	}
-
 	public void setIcPointCount(ICPointCount icPointCount) {
 		this.icPointCount = icPointCount
 		updateControlPoints()
 		body = null
 	}
 
-	@EditableProperty(name = "Body")
-	public Color getBodyColor() {
-		return bodyColor
-	}
 
-	public void setBodyColor(Color bodyColor) {
-		this.bodyColor = bodyColor
-	}
-
-	@EditableProperty(name = "Border")
-	public Color getBorderColor() {
-		return borderColor
-	}
-
-	public void setBorderColor(Color borderColor) {
-		this.borderColor = borderColor
-	}
-
-	@EditableProperty
-	public Display getDisplay() {
-		return display
-	}
-
-	public void setDisplay(Display display) {
-		this.display = display
-	}
 }

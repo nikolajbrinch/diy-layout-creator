@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -17,7 +19,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -51,33 +53,32 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> implemen
     public static Size PIN_OFFSET = new Size(1.85d, SizeUnit.mm)
     public static Size PIN_DIAMETER = new Size(1d, SizeUnit.mm)
 
-    private String value = ""
-    private Orientation orientation = Orientation.DEFAULT
-    private Point[] controlPoints = points( point(0, 0),
-    point(0, 0) )
     transient private Area[] body
-    private Color bodyColor = BODY_COLOR
-    private Color borderColor = BORDER_COLOR
-    private Color labelColor = LABEL_COLOR
-    protected Display display = Display.NAME
+
+    private Point[] controlPoints = points( point(0, 0),
+            point(0, 0) )
+
+    @EditableProperty
+    String value = ""
+
+    @EditableProperty
+    Orientation orientation = Orientation.DEFAULT
+
+    @EditableProperty(name = "Body")
+    Color bodyColor = BODY_COLOR
+
+    @EditableProperty(name = "Border")
+    Color borderColor = BORDER_COLOR
+
+    @EditableProperty(name = "Label")
+    Color labelColor = LABEL_COLOR
+
+    @EditableProperty
+    Display display = Display.NAME
 
     public TransistorTO3() {
         super()
         updateControlPoints()
-    }
-
-    @EditableProperty
-    public String getValue() {
-        return value
-    }
-
-    public void setValue(String value) {
-        this.value = value
-    }
-
-    @EditableProperty
-    public Orientation getOrientation() {
-        return orientation
     }
 
     public void setOrientation(Orientation orientation) {
@@ -231,9 +232,9 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> implemen
         Area mainArea = getBody()[0]
         Area innerArea = getBody()[1]
         Composite oldComposite = graphicsContext.getComposite()
-        if (alpha < MAX_ALPHA) {
+        if (alpha < Colors.MAX_ALPHA) {
             graphicsContext.setComposite(AlphaComposite.getInstance(
-                    AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                    AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
         }
         graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor)
         graphicsContext.fill(mainArea)
@@ -241,10 +242,10 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> implemen
         Color finalBorderColor
         Theme theme = Configuration.INSTANCE.getTheme()
         if (outlineMode) {
-            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                     : theme.getOutlineColor()
         } else {
-            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                     : borderColor
         }
         graphicsContext.setColor(finalBorderColor)
@@ -268,10 +269,10 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> implemen
         graphicsContext.setFont(LABEL_FONT)
         Color finalLabelColor
         if (outlineMode) {
-            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
                     : theme.getOutlineColor()
         } else {
-            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
                     : getLabelColor()
         }
         graphicsContext.setColor(finalLabelColor)
@@ -310,12 +311,10 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> implemen
         // -height / 2));
         // p.transform(t);
         // area.add(new Area(p));
-        area.add(new Area(new Ellipse2D.Double((width - sizeSmall) / 2, height
-                / 8 - sizeSmall / 2, sizeSmall, sizeSmall)))
+        area.add(new Area(new Ellipse2D.Double((width - sizeSmall) / 2, height / 8 - sizeSmall / 2, sizeSmall, sizeSmall)))
         area.add(new Area(new Ellipse2D.Double((width - sizeSmall) / 2, height
                 * 7 / 8 - sizeSmall / 2, sizeSmall, sizeSmall)))
-        area.subtract(new Area(new Ellipse2D.Double((width - hole) / 2, height
-                / 8 - hole / 2, hole, hole)))
+        area.subtract(new Area(new Ellipse2D.Double((width - hole) / 2, height / 8 - hole / 2, hole, hole)))
         area.subtract(new Area(new Ellipse2D.Double((width - hole) / 2, height
                 * 7 / 8 - hole / 2, hole, hole)))
         area.transform(AffineTransform.getRotateInstance(Math.PI / 4,
@@ -328,42 +327,4 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> implemen
                 sizeInner, sizeInner)
     }
 
-    @EditableProperty(name = "Body")
-    public Color getBodyColor() {
-        return bodyColor
-    }
-
-    public void setBodyColor(Color bodyColor) {
-        this.bodyColor = bodyColor
-    }
-
-    @EditableProperty(name = "Border")
-    public Color getBorderColor() {
-        return borderColor
-    }
-
-    public void setBorderColor(Color borderColor) {
-        this.borderColor = borderColor
-    }
-
-    @EditableProperty(name = "Label")
-    public Color getLabelColor() {
-        return labelColor
-    }
-
-    public void setLabelColor(Color labelColor) {
-        this.labelColor = labelColor
-    }
-
-    @EditableProperty
-    public Display getDisplay() {
-        if (display == null) {
-            display = Display.NAME
-        }
-        return display
-    }
-
-    public void setDisplay(Display display) {
-        this.display = display
-    }
 }

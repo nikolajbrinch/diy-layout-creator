@@ -1,5 +1,7 @@
 package org.diylc.components.passive
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Shape
 import java.awt.geom.Rectangle2D
@@ -31,14 +33,23 @@ AbstractLeadedComponent<Capacitance> {
     public static Color MARKER_COLOR = Color.gray
     public static Color TICK_COLOR = Color.white
 
-    private Capacitance value = null
-    @Deprecated
-    private Voltage voltage = Voltage._63V
-    private Voltage voltageNew = null
+    @EditableProperty(validatorClass = PositiveMeasureValidator.class)
+    Capacitance value = null
 
-    private Color markerColor = MARKER_COLOR
-    private Color tickColor = TICK_COLOR
-    private boolean polarized = true
+    @Deprecated
+    Voltage voltage = Voltage._63V
+
+    @EditableProperty(name = "Voltage")
+    org.diylc.core.measures.Voltage voltageNew = null
+
+    @EditableProperty(name = "Marker")
+    Color markerColor = MARKER_COLOR
+    
+    @EditableProperty(name = "Tick")
+    Color tickColor = TICK_COLOR
+    
+    @EditableProperty(name = "Polarized")
+    boolean polarized = true
 
     public AxialElectrolyticCapacitor() {
         super()
@@ -46,43 +57,15 @@ AbstractLeadedComponent<Capacitance> {
         this.borderColor = BORDER_COLOR
     }
 
-    @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-    public Capacitance getValue() {
-        return value
-    }
-
-    public void setValue(Capacitance value) {
-        this.value = value
-    }
-
     @Override
     public String getValueForDisplay() {
         return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString())
     }
 
-    @Deprecated
-    public Voltage getVoltage() {
-        return voltage
-    }
-
-    @Deprecated
-    public void setVoltage(Voltage voltage) {
-        this.voltage = voltage
-    }
-
-    @EditableProperty(name = "Voltage")
-    public Voltage getVoltageNew() {
-        return voltageNew
-    }
-
-    public void setVoltageNew(Voltage voltageNew) {
-        this.voltageNew = voltageNew
-    }
-
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.rotate(-Math.PI / 4, width / 2, height / 2)
-        graphicsContext.setColor(LEAD_COLOR_ICON)
+        graphicsContext.setColor(Colors.LEAD_COLOR_ICON)
         graphicsContext.drawLine(0, height / 2, width, height / 2)
         graphicsContext.setColor(BODY_COLOR)
         graphicsContext.fillRect(4, height / 2 - 3, width - 8, 6)
@@ -102,33 +85,6 @@ AbstractLeadedComponent<Capacitance> {
     @Override
     protected Size getDefaultLength() {
         return DEFAULT_WIDTH
-    }
-
-    @EditableProperty(name = "Marker")
-    public Color getMarkerColor() {
-        return markerColor
-    }
-
-    public void setMarkerColor(Color coverColor) {
-        this.markerColor = coverColor
-    }
-
-    @EditableProperty(name = "Tick")
-    public Color getTickColor() {
-        return tickColor
-    }
-
-    public void setTickColor(Color tickColor) {
-        this.tickColor = tickColor
-    }
-
-    @EditableProperty(name = "Polarized")
-    public boolean getPolarized() {
-        return polarized
-    }
-
-    public void setPolarized(boolean polarized) {
-        this.polarized = polarized
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.diylc.components.connectivity
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Shape
@@ -43,7 +45,7 @@ public class Jumper extends AbstractLeadedComponent<Void> {
 
 	@Override
 	public Color getLeadColorForPainting(ComponentState componentState) {
-		return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : getLeadColor()
+		return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : getLeadColor()
 	}
 	
 	@Override

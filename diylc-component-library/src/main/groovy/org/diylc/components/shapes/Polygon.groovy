@@ -1,5 +1,7 @@
 package org.diylc.components.shapes
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -10,7 +12,7 @@ import java.util.Arrays
 import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractShape
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -24,7 +26,8 @@ public class Polygon extends AbstractShape implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    protected PointCount pointCount = PointCount._4
+    @EditableProperty(name = "Edges")
+    PointCount pointCount = PointCount._4
 
     public Polygon() {
         super()
@@ -47,8 +50,8 @@ public class Polygon extends AbstractShape implements Geometry {
             }
 
             Composite oldComposite = getComposite()
-            if (this.alpha < MAX_ALPHA) {
-                setComposite(AlphaComposite.getInstance(3, 1.0F * this.alpha / MAX_ALPHA))
+            if (this.alpha < Colors.MAX_ALPHA) {
+                setComposite(AlphaComposite.getInstance(3, 1.0F * this.alpha / Colors.MAX_ALPHA))
             }
             fillPolygon(xPoints, yPoints, controlPoints.length)
             setComposite(oldComposite)
@@ -58,15 +61,10 @@ public class Polygon extends AbstractShape implements Geometry {
              * tracked so far.
              */
             drawingObserver.stopTracking()
-            Color lineColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : borderColor
+            Color lineColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : borderColor
             setColor(lineColor)
             drawPolygon(xPoints, yPoints, controlPoints.length)
         }
-    }
-
-    @EditableProperty(name = "Edges")
-    public PointCount getPointCount() {
-        return pointCount
     }
 
     public void setPointCount(PointCount pointCount) {
@@ -90,11 +88,11 @@ public class Polygon extends AbstractShape implements Geometry {
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         int factor = 32 / width
         graphicsContext.with {
-            setColor(COLOR)
+            setColor(Colors.SHAPE_FILL_COLOR)
             def x = [2 / factor, width - 2 / factor, width - 4 / factor, 3 / factor ] as int[]
             def y = [4 / factor, 2 / factor, height - 5 / factor, height - 2 / factor ] as int[]
             fillPolygon(x, y, 4)
-            setColor(BORDER_COLOR)
+            setColor(Colors.SHAPE_BORDER_COLOR)
             drawPolygon(x, y, 4)
         }
     }

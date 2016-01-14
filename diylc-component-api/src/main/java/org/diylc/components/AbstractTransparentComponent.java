@@ -6,11 +6,9 @@ public abstract class AbstractTransparentComponent<T> extends AbstractComponent<
 
 	private static final long serialVersionUID = 1L;
 
-	public static byte MAX_ALPHA = 127;
+    @EditableProperty
+	protected byte alpha = Colors.MAX_ALPHA;
 
-	protected byte alpha = MAX_ALPHA;
-
-	@EditableProperty
 	public Byte getAlpha() {
 		return alpha;
 	}

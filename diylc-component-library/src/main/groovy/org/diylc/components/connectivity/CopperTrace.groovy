@@ -1,5 +1,7 @@
 package org.diylc.components.connectivity
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Shape
@@ -26,7 +28,10 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
 	public static Size THICKNESS = new Size(1d, SizeUnit.mm)
 	public static Color COLOR = Color.black
 
-	private Size thickness = THICKNESS
+    @EditableProperty(name = "Width")
+	Size thickness = THICKNESS
+    
+    @EditableProperty
 	private PCBLayer layer = PCBLayer._1
 	
 	public CopperTrace() {
@@ -43,7 +48,7 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
 
 	@Override
 	protected Color getLeadColorForPainting(ComponentState componentState) {
-		return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : getLeadColor()
+		return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : getLeadColor()
 	}
 	
 	@Override
@@ -56,28 +61,7 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
 	public Color getLeadColor() {
 		return this.@leadColor
 	}
-
-	@EditableProperty(name = "Width")
-	public Size getThickness() {
-		return this.@thickness
-	}
-
-	public void setThickness(Size thickness) {
-		this.@thickness = thickness
-	}
 	
-	@EditableProperty
-	public PCBLayer getLayer() {
-		if (this.@layer == null) {
-			this.@layer = PCBLayer._1
-		}
-		return this.@layer
-	}
-	
-	public void setLayer(PCBLayer layer) {
-		this.@layer = layer
-	}
-
 	@Override
 	protected int getLeadThickness() {
 		return (int) getThickness().convertToPixels()

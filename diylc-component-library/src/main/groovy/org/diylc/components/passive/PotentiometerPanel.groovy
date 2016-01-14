@@ -1,5 +1,7 @@
 package org.diylc.components.passive
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -13,7 +15,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.Orientation
 import org.diylc.components.AbstractPotentiometer
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.CreationMethod
 import org.diylc.core.IDIYComponent
@@ -37,13 +39,23 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
     protected static Color BODY_COLOR = Color.gray.brighter()
     protected static Color BORDER_COLOR = Color.gray
 
-    protected Size bodyDiameter = BODY_DIAMETER
-    protected Size spacing = SPACING
-    protected Size lugDiameter = LUG_DIAMETER
-    protected Color bodyColor = BODY_COLOR
-    protected Color borderColor = BORDER_COLOR
     // Array of 7 elements: 3 lug connectors, 1 pot body and 3 lugs
     transient protected Area[] body = null
+
+    @EditableProperty(name = "Diameter")
+    Size bodyDiameter = BODY_DIAMETER
+
+    @EditableProperty
+    Size spacing = SPACING
+
+    @EditableProperty(name = "Lug size")
+    Size lugDiameter = LUG_DIAMETER
+
+    @EditableProperty(name = "Body")
+    Color bodyColor = BODY_COLOR
+
+    @EditableProperty(name = "Border")
+    Color borderColor = BORDER_COLOR
 
     public PotentiometerPanel() {
         controlPoints = points( point(0, 0), point(0, 0),
@@ -171,9 +183,9 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
             if (shape != null) {
                 graphicsContext.setColor(bodyColor)
                 Composite oldComposite = graphicsContext.getComposite()
-                if (alpha < MAX_ALPHA) {
+                if (alpha < Colors.MAX_ALPHA) {
                     graphicsContext.setComposite(AlphaComposite.getInstance(
-                            AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                            AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
                 }
                 if (!outlineMode) {
                     graphicsContext.fill(shape)
@@ -181,10 +193,10 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
                 graphicsContext.setComposite(oldComposite)
                 Color finalBorderColor
                 if (outlineMode) {
-                    finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+                    finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                             : theme.getOutlineColor()
                 } else {
-                    finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+                    finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                             : borderColor
                 }
                 graphicsContext.setColor(finalBorderColor)
@@ -195,11 +207,11 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
         graphicsContext.setFont(LABEL_FONT)
         Color finalLabelColor
         if (outlineMode) {
-            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
                     : theme.getOutlineColor()
         } else {
             finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-                    : LABEL_COLOR
+                    : Colors.LABEL_COLOR
         }
         graphicsContext.setColor(finalLabelColor)
         FontMetrics fontMetrics = graphicsContext.getFontMetrics()
@@ -256,20 +268,10 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
                 * margin)
     }
 
-    @EditableProperty
-    public Size getSpacing() {
-        return this.@spacing
-    }
-
     public void setSpacing(Size spacing) {
         this.@spacing = spacing
         updateControlPoints()
         body = null
-    }
-
-    @EditableProperty(name = "Diameter")
-    public Size getBodyDiameter() {
-        return this.@bodyDiameter
     }
 
     public void setBodyDiameter(Size bodyDiameter) {
@@ -277,31 +279,9 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
         body = null
     }
 
-    @EditableProperty(name = "Lug size")
-    public Size getLugDiameter() {
-        return this.@lugDiameter
-    }
-
     public void setLugDiameter(Size lugDiameter) {
         this.@lugDiameter = lugDiameter
         body = null
     }
 
-    @EditableProperty(name = "Body")
-    public Color getBodyColor() {
-        return this.@bodyColor
-    }
-
-    public void setBodyColor(Color bodyColor) {
-        this.@bodyColor = bodyColor
-    }
-
-    @EditableProperty(name = "Border")
-    public Color getBorderColor() {
-        return this.@borderColor
-    }
-
-    public void setBorderColor(Color borderColor) {
-        this.@borderColor = borderColor
-    }
 }

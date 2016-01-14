@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.Polygon
 
 import org.diylc.common.ObjectCache
@@ -23,10 +25,10 @@ public class DiodeSymbol extends AbstractDiodeSymbol {
 		int size = width * 3 / 8
 		int bandSize = 1
 		graphicsContext.rotate(-Math.PI / 4, width / 2, height / 2)
-		graphicsContext.setColor(LEAD_COLOR)
+		graphicsContext.setColor(Colors.SCHEMATIC_LEAD_COLOR)
 		graphicsContext.drawLine(0, height / 2, (width - size) / 2, height / 2)
 		graphicsContext.drawLine((int) (width + size / Math.sqrt(2) + bandSize) / 2, height / 2, width, height / 2)
-		graphicsContext.setColor(COLOR)
+		graphicsContext.setColor(Colors.SCHEMATIC_COLOR)
 		graphicsContext.fill(new Polygon([ (width - size) / 2, (width - size) / 2, (int) ((width - size) / 2 + size / Math.sqrt(2)) ] as int[], [(height - size) / 2, (height + size) / 2, height / 2 ] as int[], 3))
 		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(bandSize))
 		graphicsContext.drawLine((int) ((width - size) / 2 + size / Math.sqrt(2)), (height - size) / 2, (int) ((width - size) / 2 + size / Math.sqrt(2)), (height + size) / 2)

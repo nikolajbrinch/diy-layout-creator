@@ -1,5 +1,7 @@
 package org.diylc.components.tube
 
+import org.diylc.components.Colors
+
 import java.awt.BasicStroke
 import java.awt.Graphics2D
 import java.awt.Point
@@ -10,7 +12,7 @@ import java.awt.geom.GeneralPath
 import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractTubeSymbol
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.IDIYComponent
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
@@ -24,7 +26,8 @@ public class TriodeSymbol extends AbstractTubeSymbol implements Geometry {
     protected Point[] controlPoints = points(point(0, 0),
     point(0, 0), point(0, 0), point(0, 0), point(0, 0))
 
-    protected boolean directlyHeated = false
+    @EditableProperty(name = "Directly heated")
+    boolean directlyHeated = false
 
     public TriodeSymbol() {
         super()
@@ -115,7 +118,7 @@ public class TriodeSymbol extends AbstractTubeSymbol implements Geometry {
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.with {
-            setColor(COLOR)
+            setColor(Colors.SCHEMATIC_COLOR)
             setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
             drawLine(width / 4, height / 4, width * 3 / 4, height / 4)
             drawLine(width / 2, height / 4, width / 2, 0)
@@ -193,11 +196,6 @@ public class TriodeSymbol extends AbstractTubeSymbol implements Geometry {
         int pinSpacing = (int) PIN_SPACING.convertToPixels()
         return point(controlPoints[0].x + pinSpacing * 5,
                 controlPoints[0].y + pinSpacing * 2)
-    }
-
-    @EditableProperty(name = "Directly heated")
-    public boolean getDirectlyHeated() {
-        return this.@directlyHeated
     }
 
     public void setDirectlyHeated(boolean directlyHeated) {

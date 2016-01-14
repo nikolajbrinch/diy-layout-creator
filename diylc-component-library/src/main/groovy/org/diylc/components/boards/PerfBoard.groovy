@@ -1,8 +1,9 @@
 package org.diylc.components.boards
 
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard;
-import org.diylc.components.Geometry;
+import org.diylc.components.AbstractBoard
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -30,10 +31,11 @@ public class PerfBoard extends AbstractBoard implements Geometry {
 
     public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm)
 
-    // private Area copperArea
-    protected Size spacing = SPACING
+    @EditableProperty
+    Size spacing = SPACING
 
-    protected Color padColor = COPPER_COLOR
+    @EditableProperty(name = "Pad color")
+    Color padColor = COPPER_COLOR
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode, Project project, IDrawingObserver drawingObserver) {
@@ -54,8 +56,8 @@ public class PerfBoard extends AbstractBoard implements Geometry {
             int spacing = (int) this.spacing.convertToPixels()
 
             graphicsContext.with {
-                if (alpha < MAX_ALPHA) {
-                    AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, toFloat(alpha / MAX_ALPHA))
+                if (alpha < Colors.MAX_ALPHA) {
+                    AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, toFloat(alpha / Colors.MAX_ALPHA))
                     setComposite(composite)
                 }
 
@@ -76,29 +78,11 @@ public class PerfBoard extends AbstractBoard implements Geometry {
         }
     }
 
-    @EditableProperty(name = "Pad color")
-    public Color getPadColor() {
-        return padColor
-    }
-
-    public void setPadColor(Color padColor) {
-        this.padColor = padColor
-    }
-
-    @EditableProperty
-    public Size getSpacing() {
-        return spacing
-    }
-
-    public void setSpacing(Size spacing) {
-        this.spacing = spacing
-    }
-
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         int factor = 32 / width
 
-        graphicsContext.drawFilledRect( 2 / factor, width -  4 / factor, BORDER_COLOR, BOARD_COLOR)
+        graphicsContext.drawFilledRect( 2 / factor, width -  4 / factor, Colors.PCB_BORDER_COLOR, Colors.PCB_BOARD_COLOR)
         graphicsContext.drawFilledOval(width / 4,  width / 2, COPPER_COLOR.darker(), COPPER_COLOR)
         graphicsContext.drawFilledOval(width / 2 - 2 / factor, getClosestOdd(5.0 / factor), COPPER_COLOR.darker(), Constants.CANVAS_COLOR)
     }

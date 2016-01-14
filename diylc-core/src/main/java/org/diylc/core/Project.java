@@ -34,13 +34,25 @@ public class Project implements Serializable {
 
 	private VersionNumber fileVersion;
 
+    @EditableProperty(defaultable = false)
 	private String title;
+    
+    @EditableProperty
 	private String author;
+    
+    @EditableProperty(defaultable = false)
 	private String description;
+    
+    @EditableProperty
 	private Size width;
+    
+    @EditableProperty
 	private Size height;
+    
+	@EditableProperty(name = "Grid spacing", validatorClass = SpacingValidator.class)
 	private Size gridSpacing;
-	private List<IDIYComponent<?>> components;
+
+    private List<IDIYComponent<?>> components;
 	private Set<Set<IDIYComponent<?>>> groups;
 	private Set<Double> lockedLayers;
 
@@ -55,7 +67,6 @@ public class Project implements Serializable {
 		gridSpacing = DEFAULT_GRID_SPACING;
 	}
 
-	@EditableProperty(defaultable = false)
 	public String getTitle() {
 		return title;
 	}
@@ -64,7 +75,6 @@ public class Project implements Serializable {
 		this.title = title;
 	}
 
-	@EditableProperty
 	public String getAuthor() {
 		return author;
 	}
@@ -73,7 +83,6 @@ public class Project implements Serializable {
 		this.author = author;
 	}
 
-	@EditableProperty(defaultable = false)
 	public String getDescription() {
 		return description;
 	}
@@ -82,7 +91,6 @@ public class Project implements Serializable {
 		this.description = description;
 	}
 
-	@EditableProperty
 	public Size getWidth() {
 		return width;
 	}
@@ -91,7 +99,6 @@ public class Project implements Serializable {
 		this.width = width;
 	}
 
-	@EditableProperty
 	public Size getHeight() {
 		return height;
 	}
@@ -100,7 +107,6 @@ public class Project implements Serializable {
 		this.height = height;
 	}
 
-	@EditableProperty(name = "Grid spacing", validatorClass = SpacingValidator.class)
 	public Size getGridSpacing() {
 		return gridSpacing;
 	}

@@ -1,5 +1,7 @@
 package org.diylc.components.passive
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Shape
 import java.awt.geom.Rectangle2D
@@ -25,10 +27,14 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
     public static Color BODY_COLOR = Color.decode("#FFE303")
     public static Color BORDER_COLOR = BODY_COLOR.darker()
 
-    private Capacitance value = null
+    @EditableProperty(validatorClass = PositiveMeasureValidator.class)
+    Capacitance value = null
+    
     @Deprecated
-    private Voltage voltage = Voltage._63V
-    private Voltage voltageNew = null
+    Voltage voltage = Voltage._63V
+    
+    @EditableProperty(name = "Voltage")
+    org.diylc.core.measures.Voltage voltageNew = null
 
     public AxialFilmCapacitor() {
         super()
@@ -41,43 +47,15 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
         return true
     }
 
-    @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-    public Capacitance getValue() {
-        return value
-    }
-
-    public void setValue(Capacitance value) {
-        this.value = value
-    }
-
-    @Deprecated
-    public Voltage getVoltage() {
-        return voltage
-    }
-
-    @Deprecated
-    public void setVoltage(Voltage voltage) {
-        this.voltage = voltage
-    }
-
     @Override
     public String getValueForDisplay() {
         return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString())
     }
 
-    @EditableProperty(name = "Voltage")
-    public Voltage getVoltageNew() {
-        return voltageNew
-    }
-
-    public void setVoltageNew(Voltage voltageNew) {
-        this.voltageNew = voltageNew
-    }
-
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.rotate(-Math.PI / 4, width / 2, height / 2)
-        graphicsContext.setColor(LEAD_COLOR_ICON)
+        graphicsContext.setColor(Colors.LEAD_COLOR_ICON)
         graphicsContext.drawLine(0, height / 2, width, height / 2)
         graphicsContext.setColor(BODY_COLOR)
         graphicsContext.fillRect(4, height / 2 - 3, width - 8, 6)

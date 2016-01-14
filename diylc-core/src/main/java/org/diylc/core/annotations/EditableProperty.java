@@ -39,4 +39,8 @@ public @interface EditableProperty {
 	 * @return
 	 */
 	Class<? extends IPropertyValidator> validatorClass() default AllowAllValidator.class;
+	
+	String setter() default "";
+	
+	String getter() default "";
 }

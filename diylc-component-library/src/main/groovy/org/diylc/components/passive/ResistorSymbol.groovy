@@ -1,5 +1,7 @@
 package org.diylc.components.passive
 
+import org.diylc.components.Colors
+
 import java.awt.Shape
 import java.awt.geom.GeneralPath
 
@@ -22,37 +24,20 @@ public class ResistorSymbol extends AbstractSchematicLeadedSymbol<Resistance> {
     public static Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in)
     public static Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in)
 
-    private Resistance value = null
+    @EditableProperty
+    Resistance value = null
 
     @Deprecated
-    private Power power = Power.HALF
-    private org.diylc.core.measures.Power powerNew = new org.diylc.core.measures.Power(0.5, PowerUnit.W)
-
-    @EditableProperty
-    public Resistance getValue() {
-        return this.@value
-    }
-
-    public void setValue(Resistance value) {
-        this.@value = value
-    }
+    Power power = Power.HALF
+    
+    @EditableProperty(name = "Power rating")
+    org.diylc.core.measures.Power powerNew = new org.diylc.core.measures.Power(0.5, PowerUnit.W)
 
     @Override
     public String getValueForDisplay() {
         return getValue().toString() + (getPowerNew() == null ? "" : " " + getPowerNew().toString())
     }
 
-    @Deprecated
-    public Power getPower() {
-        return this.@power
-    }
-
-    @Deprecated
-    public void setPower(Power power) {
-        this.@power = power
-    }
-
-    @EditableProperty(name = "Power rating")
     public org.diylc.core.measures.Power getPowerNew() {
         // Backward compatibility
         if (powerNew == null) {
@@ -63,17 +48,12 @@ public class ResistorSymbol extends AbstractSchematicLeadedSymbol<Resistance> {
         return powerNew
     }
 
-    public void setPowerNew(org.diylc.core.measures.Power powerNew) {
-        this.@powerNew = powerNew
-    }
-
-
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.rotate(-Math.PI / 4, width / 2, height / 2)
-        graphicsContext.setColor(LEAD_COLOR)
+        graphicsContext.setColor(Colors.SCHEMATIC_LEAD_COLOR)
         graphicsContext.drawLine(0, height / 2, 4, height / 2)
         graphicsContext.drawLine(width - 4, height / 2, width, height / 2)
-        graphicsContext.setColor(COLOR)
+        graphicsContext.setColor(Colors.SCHEMATIC_COLOR)
         graphicsContext.drawPolyline([ 4, 6, 10, 14, 18, 22, 26, 28 ] as int[], [ height / 2,
             height / 2 + 2, height / 2 - 2, height / 2 + 2, height / 2 - 2, height / 2 + 2,
             height / 2 - 2, height / 2 ] as int[], 8)

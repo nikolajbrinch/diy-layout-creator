@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -16,7 +18,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -45,17 +47,38 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 	public static Size PIN_SIZE = new Size(0.04d, SizeUnit.in)
 	public static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in)
 
-	private String value = ""
-	private Orientation orientation = Orientation.DEFAULT
-	private PinCount pinCount = PinCount._8
-	private Size pinSpacing = new Size(0.1d, SizeUnit.in)
-	private Size rowSpacing = new Size(0.3d, SizeUnit.in)
 	private Point[] controlPoints = points(point(0, 0))
-	protected Display display = Display.NAME
-	private Color bodyColor = BODY_COLOR
-	private Color borderColor = BORDER_COLOR
-	private Color labelColor = LABEL_COLOR
-	private Color indentColor = INDENT_COLOR
+
+	@EditableProperty
+	String value = ""
+
+	@EditableProperty
+	Orientation orientation = Orientation.DEFAULT
+
+	@EditableProperty(name = "Pins")
+	SIL_IC.PinCount pinCount = SIL_IC.PinCount._8
+
+	@EditableProperty(name = "Pin spacing")
+	Size pinSpacing = new Size(0.1d, SizeUnit.in)
+
+	@EditableProperty(name = "Row spacing")
+	Size rowSpacing = new Size(0.3d, SizeUnit.in)
+
+	@EditableProperty
+	Display display = Display.NAME
+
+	@EditableProperty(name = "Body")
+	Color bodyColor = BODY_COLOR
+
+	@EditableProperty(name = "Border")
+	Color borderColor = BORDER_COLOR
+
+	@EditableProperty(name = "Label")
+	Color labelColor = LABEL_COLOR
+
+	@EditableProperty(name = "Indent")
+	Color indentColor = INDENT_COLOR
+
 	// point(0, pinSpacing.convertToPixels()),
 	// point(0, 2 * pinSpacing.convertToPixels()),
 	// point(0, 3 * pinSpacing.convertToPixels()),
@@ -73,30 +96,11 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 		updateControlPoints()
 	}
 
-	@EditableProperty
-	public String getValue() {
-		return value
-	}
-
-	public void setValue(String value) {
-		this.value = value
-	}
-
-	@EditableProperty
-	public Orientation getOrientation() {
-		return orientation
-	}
-
 	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation
 		updateControlPoints()
 		// Reset body shape.
 		body = null
-	}
-
-	@EditableProperty(name = "Pins")
-	public PinCount getPinCount() {
-		return pinCount
 	}
 
 	public void setPinCount(PinCount pinCount) {
@@ -106,20 +110,6 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 		body = null
 	}
 
-	@EditableProperty(name = "Pin spacing")
-	public Size getPinSpacing() {
-		return pinSpacing
-	}
-
-	public void setPinSpacing(Size pinSpacing) {
-		this.pinSpacing = pinSpacing
-	}
-
-	@EditableProperty(name = "Row spacing")
-	public Size getRowSpacing() {
-		return rowSpacing
-	}
-
 	public void setRowSpacing(Size rowSpacing) {
 		this.rowSpacing = rowSpacing
 		updateControlPoints()
@@ -127,18 +117,6 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 		body = null
 	}
 	
-	@EditableProperty
-	public Display getDisplay() {
-		if (display == null) {
-			display = Display.VALUE
-		}
-		return display
-	}
-	
-	public void setDisplay(Display display) {
-		this.display = display
-	}
-
 	@Override
 	public int getControlPointCount() {
 		return controlPoints.length
@@ -286,9 +264,8 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 			}
 		}
 		Composite oldComposite = graphicsContext.getComposite()
-		if (alpha < MAX_ALPHA) {
-			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha
-					/ MAX_ALPHA))
+		if (alpha < Colors.MAX_ALPHA) {
+			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, toFloat(alpha / Colors.MAX_ALPHA)))
 		}
 		graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor())
 		graphicsContext.fill(mainArea)
@@ -297,9 +274,9 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 		Color finalBorderColor
 		if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme()
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : theme.getOutlineColor()
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : theme.getOutlineColor()
 		} else {
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : getBorderColor()
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : getBorderColor()
 		}
 		graphicsContext.setColor(finalBorderColor)
 		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
@@ -319,10 +296,10 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 		Color finalLabelColor
 		if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme()
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED : theme
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED : theme
 					.getOutlineColor()
 		} else {
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
 					: getLabelColor()
 		}
 		graphicsContext.setColor(finalLabelColor)
@@ -353,54 +330,6 @@ public class DIL_IC extends AbstractTransparentComponent<String> implements Geom
 		}
 	}
 	
-	@EditableProperty(name = "Body")
-	public Color getBodyColor() {
-		if (bodyColor == null) {
-			bodyColor = BODY_COLOR
-		}
-		return bodyColor
-	}
-
-	public void setBodyColor(Color bodyColor) {
-		this.bodyColor = bodyColor
-	}
-
-	@EditableProperty(name = "Border")
-	public Color getBorderColor() {
-		if (borderColor == null) {
-			borderColor = BORDER_COLOR
-		}
-		return borderColor
-	}
-
-	public void setBorderColor(Color borderColor) {
-		this.borderColor = borderColor
-	}
-
-	@EditableProperty(name = "Label")
-	public Color getLabelColor() {
-		if (labelColor == null) {
-			labelColor = LABEL_COLOR
-		}
-		return labelColor
-	}
-
-	public void setLabelColor(Color labelColor) {
-		this.labelColor = labelColor
-	}
-	
-	@EditableProperty(name = "Indent")
-	public Color getIndentColor() {
-		if (indentColor == null) {
-			indentColor = INDENT_COLOR
-		}
-		return indentColor
-	}
-	
-	public void setIndentColor(Color indentColor) {
-		this.indentColor = indentColor
-	}
-
 	public static enum PinCount {
 
 		_4, _6, _8, _10, _12, _14, _16, _18, _20, _22, _24, _26, _28, _30, _32, _34, _36, _38, _40, _42, _44, _46, _48, _50

@@ -12,6 +12,7 @@ import org.diylc.common.HorizontalAlignment
 import org.diylc.common.ObjectCache
 import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractComponent
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
@@ -29,19 +30,12 @@ public class Breadboard extends AbstractComponent<Void> implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    public static Color FILL_COLOR = Color.white
-    public static Color BORDER_COLOR = Color.black
     public static Size BODY_ARC = new Size(3d, SizeUnit.mm)
-    public static Color SELECTION_COLOR = Color.red
-    public static Color HOLE_COLOR = Color.decode("#EEEEEE")
-
-    public static Color PLUS_COLOR = Color.red
-    public static Color MINUS_COLOR = Color.blue
 
     public static float COORDINATE_FONT_SIZE = 9f
-    public static Color COORDINATE_COLOR = Color.gray.brighter()
 
     public static Size HOLE_SIZE = new Size(1.5d, SizeUnit.mm)
+
     public static Size HOLE_ARC = new Size(1d, SizeUnit.mm)
 
     protected Point point = point(0, 0)
@@ -59,23 +53,23 @@ public class Breadboard extends AbstractComponent<Void> implements Geometry {
 
         graphicsContext.with {
             // draw body
-            setColor(FILL_COLOR)
+            setColor(Colors.SHAPE_FILL_COLOR)
             int width = (int) (23 * project.getGridSpacing().convertToPixels())
             int height = (int) (31 * project.getGridSpacing().convertToPixels())
             fillRoundRect(point.x, point.y, width, height, bodyArc, bodyArc)
             setColor(componentState == ComponentState.SELECTED
-                    || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
-                    : BORDER_COLOR)
+                    || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
+                    : Colors.SHAPE_BORDER_COLOR)
             setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
             drawRoundRect(point.x, point.y, width, height, bodyArc, bodyArc)
 
             drawingObserver.stopTracking()
 
             // draw lines
-            setColor(PLUS_COLOR)
+            setColor(Colors.PLUS_COLOR)
             drawLine(point.x + spacing, point.y + spacing, point.x + spacing, point.y + 30 * spacing)
             drawLine(point.x + 19 * spacing, point.y + spacing, point.x + 19 * spacing, point.y + 30 * spacing)
-            setColor(MINUS_COLOR)
+            setColor(Colors.MINUS_COLOR)
             drawLine(point.x + 4 * spacing, point.y + spacing, point.x + 4 * spacing, point.y + 30 * spacing)
             drawLine(point.x + 22 * spacing, point.y + spacing, point.x + 22 * spacing, point.y + 30 * spacing)
 
@@ -90,7 +84,7 @@ public class Breadboard extends AbstractComponent<Void> implements Geometry {
                 double offset = section * 7 * spacing
 
                 for (int y = 0; y < 30; y++) {
-                    setColor(COORDINATE_COLOR)
+                    setColor(Colors.COORDINATE_COLOR)
                     int coordinateX
                     if (section == 0) {
                         coordinateX = (int) (point.x + offset + 5.5 * spacing)
@@ -103,14 +97,14 @@ public class Breadboard extends AbstractComponent<Void> implements Geometry {
                     for (int x = 0; x < 5; x++) {
                         int holeX = (int) (point.x + offset + (x + 6) * spacing)
                         int holeY = (int) (point.y + (y + 1) * spacing)
-                        setColor(HOLE_COLOR)
+                        setColor(Colors.BREADBOARD_HOLE_COLOR)
                         fillRoundRect(holeX - holeSize / 2, holeY - holeSize / 2, holeSize, holeSize, holeArc, holeArc)
-                        setColor(BORDER_COLOR)
+                        setColor(Colors.SHAPE_BORDER_COLOR)
                         drawRoundRect(holeX - holeSize / 2, holeY - holeSize / 2, holeSize, holeSize, holeArc, holeArc)
 
                         // Draw horizontal labels
                         if (y == 0) {
-                            setColor(COORDINATE_COLOR)
+                            setColor(Colors.COORDINATE_COLOR)
                             drawCenteredText(graphicsContext, new String([
                                 (byte) (a + x + 5 * section)] as byte[]), point(holeX, point.y), HorizontalAlignment.CENTER, VerticalAlignment.TOP)
                             drawCenteredText(graphicsContext, new String([
@@ -131,9 +125,9 @@ public class Breadboard extends AbstractComponent<Void> implements Geometry {
                             continue
                         int holeX = (int) (point.x + offset + (x + 2) * spacing)
                         int holeY = (int) (point.y + (y + 1 + 0.5) * spacing)
-                        setColor(HOLE_COLOR)
+                        setColor(Colors.BREADBOARD_HOLE_COLOR)
                         fillRoundRect(holeX - holeSize / 2, holeY - holeSize / 2, holeSize, holeSize, holeArc, holeArc)
-                        setColor(BORDER_COLOR)
+                        setColor(Colors.SHAPE_BORDER_COLOR)
                         drawRoundRect(holeX - holeSize / 2, holeY - holeSize / 2, holeSize, holeSize, holeArc, holeArc)
                     }
                 }
@@ -146,27 +140,27 @@ public class Breadboard extends AbstractComponent<Void> implements Geometry {
         int factor = 32 / width
         int arc = 4 / factor
         graphicsContext.with {
-            setColor(FILL_COLOR)
+            setColor(Colors.SHAPE_FILL_COLOR)
             fillRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor)
-            setColor(BORDER_COLOR)
+            setColor(Colors.SHAPE_BORDER_COLOR)
             drawRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor)
-            setColor(HOLE_COLOR)
+            setColor(Colors.BREADBOARD_HOLE_COLOR)
             fillRoundRect(width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(BORDER_COLOR)
+            setColor(Colors.SHAPE_BORDER_COLOR)
             drawRoundRect(width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(HOLE_COLOR)
+            setColor(Colors.BREADBOARD_HOLE_COLOR)
             fillRoundRect(2 * width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(BORDER_COLOR)
+            setColor(Colors.SHAPE_BORDER_COLOR)
             drawRoundRect(2 * width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(HOLE_COLOR)
+            setColor(Colors.BREADBOARD_HOLE_COLOR)
             fillRoundRect(width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(BORDER_COLOR)
+            setColor(Colors.SHAPE_BORDER_COLOR)
             drawRoundRect(width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(HOLE_COLOR)
+            setColor(Colors.BREADBOARD_HOLE_COLOR)
             fillRoundRect(2 * width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(BORDER_COLOR)
+            setColor(Colors.SHAPE_BORDER_COLOR)
             drawRoundRect(2 * width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor), arc, arc)
-            setColor(MINUS_COLOR)
+            setColor(Colors.MINUS_COLOR)
             drawLine(width / 2, 2 / factor, width / 2, height - 4 / factor)
         }
     }

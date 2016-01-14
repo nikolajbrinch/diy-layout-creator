@@ -31,15 +31,11 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
 	private static final long serialVersionUID = 1L;
 
+    @EditableProperty(defaultable = false)
 	protected String name = "";
 
-	public static Color SELECTION_COLOR = Color.red;
-	public static Color LABEL_COLOR = Color.black;
-	public static Color LABEL_COLOR_SELECTED = Color.red;
 	public static Font LABEL_FONT = new Font("Tahoma", Font.PLAIN, 14);
-	public static Color METAL_COLOR = Color.decode("#236B8E");
-
-	@EditableProperty(defaultable = false)
+	
 	@Override
 	public String getName() {
 		return name;

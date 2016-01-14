@@ -21,6 +21,7 @@ public abstract class AbstractRadialComponent<T> extends
 
 	public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
 
+    @EditableProperty(name = "Pin spacing")
 	private Size pinSpacing = PIN_SPACING;
 
 	@Override
@@ -28,7 +29,6 @@ public abstract class AbstractRadialComponent<T> extends
 		return getClosestOdd(getPinSpacing().convertToPixels());
 	}
 
-	@EditableProperty(name = "Pin spacing")
 	public Size getPinSpacing() {
 		if (pinSpacing == null) {
 			pinSpacing = PIN_SPACING;

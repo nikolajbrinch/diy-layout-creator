@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Shape
 import java.awt.geom.Rectangle2D
@@ -28,8 +30,11 @@ public class DiodePlastic extends AbstractLeadedComponent<String> {
 	public static Color LABEL_COLOR = Color.white
 	public static Color BORDER_COLOR = BODY_COLOR.darker()
 
-	private String value = ""
-	private Color markerColor = MARKER_COLOR		
+	@EditableProperty
+	String value = ""
+
+	@EditableProperty(name = "Marker")
+	Color markerColor = MARKER_COLOR
 
 	public DiodePlastic() {
 		super()
@@ -53,19 +58,10 @@ public class DiodePlastic extends AbstractLeadedComponent<String> {
 		return super.getFlipStanding()
 	}
 
-	@EditableProperty
-	public String getValue() {
-		return value
-	}
-
-	public void setValue(String value) {
-		this.value = value
-	}
-
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
 		graphicsContext.rotate(-Math.PI / 4, width / 2, height / 2)
-		graphicsContext.setColor(LEAD_COLOR_ICON)
+		graphicsContext.setColor(Colors.LEAD_COLOR_ICON)
 		graphicsContext.drawLine(0, height / 2, width, height / 2)
 		graphicsContext.setColor(BODY_COLOR)
 		graphicsContext.fillRect(6, height / 2 - 3, width - 12, 6)
@@ -108,12 +104,4 @@ public class DiodePlastic extends AbstractLeadedComponent<String> {
 				getClosestOdd(getWidth().convertToPixels()))
 	}
 
-	@EditableProperty(name = "Marker")
-	public Color getMarkerColor() {
-		return markerColor
-	}
-
-	public void setMarkerColor(Color markerColor) {
-		this.markerColor = markerColor
-	}
 }

@@ -19,7 +19,7 @@ public abstract class AbstractDiodeSymbol extends AbstractSchematicLeadedSymbol<
 
 	public AbstractDiodeSymbol() {
 		super();
-		this.bodyColor = COLOR;
+		this.bodyColor = Colors.SCHEMATIC_COLOR;
 		this.borderColor = null;
 	}
 

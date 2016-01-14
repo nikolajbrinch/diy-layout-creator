@@ -1,5 +1,7 @@
 package org.diylc.components.tube
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -13,7 +15,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -40,11 +42,15 @@ public class TubeSocket extends AbstractTransparentComponent<String> implements 
 	public static Size HOLE_SIZE = new Size(5d, SizeUnit.mm)
 	public static Size TICK_SIZE = new Size(2d, SizeUnit.mm)
 
-	private Base base = Base.B9A
-	private String type = ""
-	private Orientation orientation = Orientation.DEFAULT
-	// private Mount mount = Mount.CHASSIS;
+    @EditableProperty
+	Base base = Base.B9A
+    
+    @EditableProperty
+	Orientation orientation = Orientation.DEFAULT
 
+    @EditableProperty(name = "Type")
+    String value = ""
+    
 	private Point[] controlPoints = points(point(0, 0))
 
 	transient private Shape body
@@ -54,21 +60,11 @@ public class TubeSocket extends AbstractTransparentComponent<String> implements 
 		updateControlPoints()
 	}
 
-	@EditableProperty
-	public Base getBase() {
-		return base
-	}
-
 	public void setBase(Base base) {
 		this.base = base
 		updateControlPoints()
 		// Reset body shape
 		body = null
-	}
-
-	@EditableProperty
-	public Orientation getOrientation() {
-		return orientation
 	}
 
 	public void setOrientation(Orientation orientation) {
@@ -77,15 +73,6 @@ public class TubeSocket extends AbstractTransparentComponent<String> implements 
 		// Reset body shape
 		body = null
 	}
-
-	// @EditableProperty
-	// public Mount getMount() {
-	// return mount;
-	// }
-	//
-	// public void setMount(Mount mount) {
-	// this.mount = mount;
-	// }
 
 	private void updateControlPoints() {
 		Point firstPoint = controlPoints[0]
@@ -202,9 +189,8 @@ public class TubeSocket extends AbstractTransparentComponent<String> implements 
 		// Draw body
 		Shape body = getBody()
 		Composite oldComposite = graphicsContext.getComposite()
-		if (alpha < MAX_ALPHA) {
-			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha
-					/ MAX_ALPHA))
+		if (alpha < Colors.MAX_ALPHA) {
+			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
 		}
 		if (componentState != ComponentState.DRAGGING) {
 			graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR)
@@ -214,10 +200,10 @@ public class TubeSocket extends AbstractTransparentComponent<String> implements 
 		Color finalBorderColor
 		if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme()
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : theme
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : theme
 					.getOutlineColor()
 		} else {
-			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : BORDER_COLOR
+			finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : BORDER_COLOR
 		}
 		graphicsContext.setColor(finalBorderColor)
 		graphicsContext.draw(body)
@@ -269,17 +255,6 @@ public class TubeSocket extends AbstractTransparentComponent<String> implements 
 	@Override
 	public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
 		return VisibilityPolicy.NEVER
-	}
-
-	@Override
-	@EditableProperty(name = "Type")
-	public String getValue() {
-		return type
-	}
-
-	@Override
-	public void setValue(String value) {
-		this.type = value
 	}
 
 	@Override

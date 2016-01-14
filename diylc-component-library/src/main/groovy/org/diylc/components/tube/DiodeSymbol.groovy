@@ -1,5 +1,7 @@
 package org.diylc.components.tube
 
+import org.diylc.components.Colors
+
 import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.Shape
@@ -9,7 +11,7 @@ import java.awt.geom.GeneralPath
 import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractTubeSymbol
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IPropertyValidator
 import org.diylc.core.ValidationException
@@ -22,10 +24,11 @@ public class DiodeSymbol extends AbstractTubeSymbol implements Geometry {
 
 	private static final long serialVersionUID = 1L
 
-	protected Point[] controlPoints = [ point(0, 0),
-			point(0, 0), point(0, 0), point(0, 0), point(0, 0) ] as Point[]
+	protected Point[] controlPoints = points(point(0, 0),
+			point(0, 0), point(0, 0), point(0, 0), point(0, 0))
 
-	protected boolean directlyHeated = false
+    @EditableProperty(name = "Directly heated")
+	boolean directlyHeated = false
 
 	public DiodeSymbol() {
 		super()
@@ -107,7 +110,7 @@ public class DiodeSymbol extends AbstractTubeSymbol implements Geometry {
 
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-		graphicsContext.setColor(COLOR)
+		graphicsContext.setColor(Colors.SCHEMATIC_COLOR)
 
 		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
 
@@ -119,8 +122,7 @@ public class DiodeSymbol extends AbstractTubeSymbol implements Geometry {
 		graphicsContext.drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width / 4 + 2
 				* width / 32, height - 1)
 
-		graphicsContext.drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width
-				/ 32)
+		graphicsContext.drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width / 32)
 	}
 
 	@Override
@@ -189,11 +191,6 @@ public class DiodeSymbol extends AbstractTubeSymbol implements Geometry {
 		int pinSpacing = (int) PIN_SPACING.convertToPixels()
 		return point(controlPoints[0].x + pinSpacing * 5,
 				controlPoints[0].y + pinSpacing * 2)
-	}
-
-	@EditableProperty(name = "Directly heated")
-	public boolean getDirectlyHeated() {
-		return this.@directlyHeated
 	}
 
 	public void setDirectlyHeated(boolean directlyHeated) {

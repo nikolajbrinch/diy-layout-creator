@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.Polygon
 import java.awt.Shape
 import java.awt.geom.GeneralPath
@@ -17,7 +19,8 @@ public class JFETSymbol extends AbstractTransistorSymbol {
 
     private static final long serialVersionUID = 1L
 
-    protected FETPolarity polarity = FETPolarity.NEGATIVE
+    @EditableProperty(name = "Channel")
+    FETPolarity polarity = FETPolarity.NEGATIVE
 
     public Shape[] getBody() {
         if (this.@body == null) {
@@ -58,7 +61,7 @@ public class JFETSymbol extends AbstractTransistorSymbol {
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        graphicsContext.setColor(COLOR)
+        graphicsContext.setColor(Colors.SCHEMATIC_COLOR)
 
         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(2))
         graphicsContext.drawLine(width / 2, height / 5, width / 2, height * 4 / 5)
@@ -71,11 +74,6 @@ public class JFETSymbol extends AbstractTransistorSymbol {
 
         graphicsContext.drawLine(width * 3 / 4, height - 1, width * 3 / 4, height * 3 / 4)
         graphicsContext.drawLine(width / 2, height * 3 / 4, width * 3 / 4, height * 3 / 4)
-    }
-
-    @EditableProperty(name = "Channel")
-    public FETPolarity getPolarity() {
-        return this.@polarity
     }
 
     public void setPolarity(FETPolarity polarity) {

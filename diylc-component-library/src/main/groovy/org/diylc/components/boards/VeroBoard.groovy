@@ -9,6 +9,7 @@ import java.awt.Point
 import java.awt.Shape
 
 import org.diylc.common.OrientationHV
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
@@ -27,16 +28,20 @@ public class VeroBoard extends AbstractBoard implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    public static Color STRIP_COLOR = Color.decode("#DA8A67")
-    public static Color BORDER_COLOR = BOARD_COLOR.darker()
-
     public static Size SPACING = new Size(0.1d, SizeUnit.in)
+
     public static Size STRIP_SIZE = new Size(0.07d, SizeUnit.in)
+
     public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm)
 
-    protected Size spacing = SPACING
-    protected Color stripColor = STRIP_COLOR
-    protected OrientationHV orientation = OrientationHV.HORIZONTAL
+    @EditableProperty
+    Size spacing = SPACING
+
+    @EditableProperty(name = "Strip color")
+    Color stripColor = Colors.PCB_STRIP_COLOR
+
+    @EditableProperty
+    OrientationHV orientation = OrientationHV.HORIZONTAL
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState,
@@ -52,9 +57,9 @@ public class VeroBoard extends AbstractBoard implements Geometry {
 
         if (componentState != ComponentState.DRAGGING) {
             Composite oldComposite = graphicsContext.getComposite()
-            if (alpha < MAX_ALPHA) {
+            if (alpha < Colors.MAX_ALPHA) {
                 graphicsContext.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                        AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
             }
             Point p = point(firstPoint)
             int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels())
@@ -93,42 +98,15 @@ public class VeroBoard extends AbstractBoard implements Geometry {
         }
     }
 
-    @EditableProperty(name = "Strip color")
-    public Color getStripColor() {
-        return stripColor
-    }
-
-    public void setStripColor(Color padColor) {
-        this.stripColor = padColor
-    }
-
-    @EditableProperty
-    public Size getSpacing() {
-        return spacing
-    }
-
-    public void setSpacing(Size spacing) {
-        this.spacing = spacing
-    }
-
-    @EditableProperty
-    public OrientationHV getOrientation() {
-        return orientation
-    }
-
-    public void setOrientation(OrientationHV orientation) {
-        this.orientation = orientation
-    }
-
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         int factor = 32 / width
-        graphicsContext.drawFilledRect(2 / factor, width - 4 / factor, BORDER_COLOR, BOARD_COLOR)
-        graphicsContext.drawFilledRect(4 / factor, width / 4, width - 8 / factor, width / 2, STRIP_COLOR.darker(), STRIP_COLOR)
+        graphicsContext.drawFilledRect(2 / factor, width - 4 / factor, Colors.PCB_BORDER_COLOR, Colors.PCB_BOARD_COLOR)
+        graphicsContext.drawFilledRect(4 / factor, width / 4, width - 8 / factor, width / 2, Colors.PCB_STRIP_COLOR.darker(), Colors.PCB_STRIP_COLOR)
         graphicsContext.setColor(Constants.CANVAS_COLOR)
         graphicsContext.fillOval(width / 3 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
         graphicsContext.fillOval(2 * width / 3 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
-        graphicsContext.setColor(STRIP_COLOR.darker())
+        graphicsContext.setColor(Colors.PCB_STRIP_COLOR.darker())
         graphicsContext.drawOval(width / 3 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
         graphicsContext.drawOval(2 * width / 3 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor), getClosestOdd(5.0 / factor))
     }

@@ -24,12 +24,10 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent<String>
 	private static final long serialVersionUID = 1L;
 
 	public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
-	public static Color COLOR = Color.black;
-	
 	protected String value = "";
 	protected Point[] controlPoints = new Point[] { new Point(0, 0), new Point(0, 0),
 			new Point(0, 0) };
-	protected Color color = COLOR;
+	protected Color color = Colors.TRANSISTOR_COLOR;
 	protected Display display = Display.NAME;
 	transient protected Shape[] body;
 
@@ -47,7 +45,7 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent<String>
 		int pinSpacing = (int) PIN_SPACING.convertToPixels();
 		Color finalColor;
 		if (componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING) {
-			finalColor = SELECTION_COLOR;
+			finalColor = Colors.SELECTION_COLOR;
 		} else if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme();
 			finalColor = theme.getOutlineColor();
@@ -77,12 +75,12 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent<String>
 		if (outlineMode) {
 			Theme theme = Configuration.INSTANCE.getTheme();
 			finalLabelColor = componentState == ComponentState.SELECTED
-					|| componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED : theme
+					|| componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED : theme
 					.getOutlineColor();
 		} else {
 			finalLabelColor = componentState == ComponentState.SELECTED
-					|| componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-					: LABEL_COLOR;
+					|| componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
+					: Colors.LABEL_COLOR;
 		}
 		graphicsContext.setColor(finalLabelColor);
 		drawCenteredText(graphicsContext, display == Display.VALUE ? getValue() : getName(),

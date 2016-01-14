@@ -1,5 +1,7 @@
 package org.diylc.components.connectivity
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Shape
@@ -25,7 +27,8 @@ public class Line extends AbstractLeadedComponent<Void> {
 
 	public static Color COLOR = Color.black
 
-	private Color color = COLOR
+    @EditableProperty
+	Color color = COLOR
 
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
@@ -45,21 +48,12 @@ public class Line extends AbstractLeadedComponent<Void> {
 
 	@Override
 	public Color getLeadColorForPainting(ComponentState componentState) {
-		return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR : color
+		return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : color
 	}
 
 	@Override
 	public Color getLeadColor() {
 		return super.getLeadColor()
-	}
-
-	@EditableProperty
-	public Color getColor() {
-		return color
-	}
-
-	public void setColor(Color color) {
-		this.color = color
 	}
 
 	public Color getBodyColor() {

@@ -5,21 +5,12 @@ import org.diylc.core.measures.Resistance
 
 public class PotentiometerValue {
 
-	private Resistance resistance
-	private Taper taper
+	Resistance resistance
+	Taper taper
 
 	public PotentiometerValue(Resistance resistance, Taper taper) {
-		super()
 		this.resistance = resistance
 		this.taper = taper
-	}
-
-	public Resistance getResistance() {
-		return this.@resistance
-	}
-
-	public Taper getTaper() {
-		return this.@taper
 	}
 
 	@Override

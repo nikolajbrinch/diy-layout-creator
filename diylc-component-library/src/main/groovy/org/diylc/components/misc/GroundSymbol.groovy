@@ -47,9 +47,17 @@ class GroundSymbol extends AbstractComponent<Void> {
     public static Size SIZE = new Size(0.15d, SizeUnit.in)
 
     private Point point = new Point(0, 0)
-    private Color color = COLOR
-    private Size size = SIZE
-    private GroundSymbolType type = GroundSymbolType.DEFAULT
+    
+    Void value = null
+    
+    @EditableProperty
+    Color color = COLOR
+    
+    @EditableProperty
+    Size size = SIZE
+
+    @EditableProperty(name = "Style")
+    GroundSymbolType type = GroundSymbolType.DEFAULT
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode,
@@ -84,36 +92,9 @@ class GroundSymbol extends AbstractComponent<Void> {
         }
     }
 
-    @EditableProperty(name = "Style")
-    public GroundSymbolType getType() {
-        return type
-    }
-
-    public void setType(GroundSymbolType type) {
-        this.type = type
-    }
-
     @Override
     public Point getControlPoint(int index) {
         return point
-    }
-
-    @EditableProperty
-    public Color getColor() {
-        return color
-    }
-
-    public void setColor(Color color) {
-        this.color = color
-    }
-
-    @EditableProperty
-    public Size getSize() {
-        return size
-    }
-
-    public void setSize(Size size) {
-        this.size = size
     }
 
     @Override
@@ -134,16 +115,5 @@ class GroundSymbol extends AbstractComponent<Void> {
     @Override
     public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
         return VisibilityPolicy.WHEN_SELECTED
-    }
-
-    @Deprecated
-    @Override
-    public Void getValue() {
-        return null
-    }
-
-    @Deprecated
-    @Override
-    public void setValue(Void value) {
     }
 }

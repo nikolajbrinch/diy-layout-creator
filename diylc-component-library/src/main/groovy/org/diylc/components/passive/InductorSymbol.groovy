@@ -1,5 +1,7 @@
 package org.diylc.components.passive
 
+import org.diylc.components.Colors
+
 import java.awt.Shape
 import java.awt.geom.GeneralPath
 
@@ -24,37 +26,17 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
     public static Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in)
     public static Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in)
 
-    private Inductance value = null
-    private Current current = null
-    private Resistance resistance = null
-    private boolean core = false
-
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-    public Inductance getValue() {
-        return this.@value
-    }
-
-    public void setValue(Inductance value) {
-        this.@value = value
-    }
-
+    Inductance value = null
+    
     @EditableProperty
-    public Current getCurrent() {
-        return this.@current
-    }
-
-    public void setCurrent(Current current) {
-        this.@current = current
-    }
-
+    Current current = null
+    
     @EditableProperty
-    public Resistance getResistance() {
-        return this.@resistance
-    }
-
-    public void setResistance(Resistance resistance) {
-        this.@resistance = resistance
-    }
+    Resistance resistance = null
+    
+    @EditableProperty
+    boolean core = false
 
     @Override
     public String getValueForDisplay() {
@@ -63,10 +45,10 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
 
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.rotate(-Math.PI / 4, width / 2, height / 2)
-        graphicsContext.setColor(LEAD_COLOR)
+        graphicsContext.setColor(Colors.SCHEMATIC_LEAD_COLOR)
         graphicsContext.drawLine(0, height / 2, width / 8, height / 2)
         graphicsContext.drawLine(width * 7 / 8, height / 2, width, height / 2)
-        graphicsContext.setColor(COLOR)
+        graphicsContext.setColor(Colors.SCHEMATIC_COLOR)
 
         GeneralPath polyline = new GeneralPath()
         polyline.moveTo(width / 8, height / 2)
@@ -118,14 +100,5 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
     @Override
     protected boolean useShapeRectAsPosition() {
         return false
-    }
-
-    @EditableProperty
-    public boolean getCore() {
-        return this.@core
-    }
-
-    public void setCore(boolean core) {
-        this.@core = core
     }
 }

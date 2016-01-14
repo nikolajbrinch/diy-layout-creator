@@ -1,5 +1,7 @@
 package org.diylc.components.misc
 
+import org.diylc.components.Colors
+
 import java.awt.Color
 import java.awt.Font
 import java.awt.FontMetrics
@@ -13,7 +15,7 @@ import org.diylc.common.Orientation
 import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -33,18 +35,32 @@ class PCBText extends AbstractComponent<Void> implements Geometry {
     private static final long serialVersionUID = 1L
 
     private Point point = new Point(0, 0)
-    private String text = DEFAULT_TEXT
-    private Font font = DEFAULT_FONT
-    private Color color = LABEL_COLOR
-    private HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER
-    private VerticalAlignment verticalAlignment = VerticalAlignment.CENTER
-    private Orientation orientation = Orientation.DEFAULT
+
+    Void value = null
+    
+    @EditableProperty(defaultable = false)
+    String text = DEFAULT_TEXT
+
+    @EditableProperty
+    Font font = DEFAULT_FONT
+
+    @EditableProperty
+    private Color color = Colors.LABEL_COLOR
+
+    @EditableProperty(name = "Horizontal alignment")
+    HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER
+
+    @EditableProperty(name = "Vertical alignment")
+    VerticalAlignment verticalAlignment = VerticalAlignment.CENTER
+
+    @EditableProperty
+    Orientation orientation = Orientation.DEFAULT
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState,
             boolean outlineMode, Project project,
             IDrawingObserver drawingObserver) {
-        graphicsContext.setColor(componentState == ComponentState.SELECTED ? LABEL_COLOR_SELECTED : color)
+        graphicsContext.setColor(componentState == ComponentState.SELECTED ? Colors.LABEL_COLOR_SELECTED : color)
         graphicsContext.setFont(font)
         FontMetrics fontMetrics = graphicsContext.getFontMetrics()
         Rectangle2D rect = fontMetrics.getStringBounds(text, graphicsContext.graphics2D)
@@ -105,7 +121,7 @@ class PCBText extends AbstractComponent<Void> implements Geometry {
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        graphicsContext.setColor(LABEL_COLOR)
+        graphicsContext.setColor(Colors.LABEL_COLOR)
         graphicsContext.setFont(DEFAULT_FONT.deriveFont(toFloat(15f * width / 32)).deriveFont(Font.BOLD))
 
         FontMetrics fontMetrics = graphicsContext.getFontMetrics()
@@ -121,15 +137,6 @@ class PCBText extends AbstractComponent<Void> implements Geometry {
         graphicsContext.translate(-width, 0)
 
         graphicsContext.drawString("Abc", x, y)
-    }
-
-    @EditableProperty
-    public Font getFont() {
-        return font
-    }
-
-    public void setFont(Font font) {
-        this.font = font
     }
 
     // Bold and italic fields are named to be alphabetically after Font. This is
@@ -177,18 +184,6 @@ class PCBText extends AbstractComponent<Void> implements Geometry {
         }
     }
 
-    @EditableProperty
-    public Orientation getOrientation() {
-        if (orientation == null) {
-            orientation = Orientation.DEFAULT
-        }
-        return orientation
-    }
-
-    public void setOrientation(Orientation orientation) {
-        this.orientation = orientation
-    }
-
     @EditableProperty(name = "Font Size")
     public int getFontSize() {
         return font.getSize()
@@ -223,59 +218,9 @@ class PCBText extends AbstractComponent<Void> implements Geometry {
         this.point.setLocation(point)
     }
 
-    @EditableProperty(defaultable = false)
-    public String getText() {
-        return text
-    }
-
-    public void setText(String text) {
-        this.text = text
-    }
-
-    @EditableProperty
-    public Color getColor() {
-        return color
-    }
-
-    public void setColor(Color color) {
-        this.color = color
-    }
-
-    @EditableProperty(name = "Vertical alignment")
-    public VerticalAlignment getVerticalAlignment() {
-        if (verticalAlignment == null) {
-            verticalAlignment = VerticalAlignment.CENTER
-        }
-        return verticalAlignment
-    }
-
-    public void setVerticalAlignment(VerticalAlignment verticalAlignment) {
-        this.verticalAlignment = verticalAlignment
-    }
-
-    @EditableProperty(name = "Horizontal alignment")
-    public HorizontalAlignment getHorizontalAlignment() {
-        if (horizontalAlignment == null) {
-            horizontalAlignment = HorizontalAlignment.CENTER
-        }
-        return horizontalAlignment
-    }
-
-    public void setHorizontalAlignment(HorizontalAlignment alignment) {
-        this.horizontalAlignment = alignment
-    }
-
     @Override
     public String getName() {
         return super.getName()
     }
 
-    @Override
-    public Void getValue() {
-        return null
-    }
-
-    @Override
-    public void setValue(Void value) {
-    }
 }

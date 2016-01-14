@@ -1,5 +1,7 @@
 package org.diylc.components.semiconductors
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -16,7 +18,7 @@ import org.diylc.common.ObjectCache
 import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
+import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -53,36 +55,41 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
     public static Size LEAD_LENGTH = new Size(3.5d, SizeUnit.mm)
     public static Size LEAD_THICKNESS = new Size(0.8d, SizeUnit.mm)
 
-    private String value = ""
-    private Orientation orientation = Orientation.DEFAULT
-    private Point[] controlPoints = points( point(0, 0),
-    point(0, 0), point(0, 0))
     transient private Shape[] body
-    private Color bodyColor = BODY_COLOR
-    private Color borderColor = BORDER_COLOR
-    private Color tabColor = TAB_COLOR
-    private Color tabBorderColor = TAB_BORDER_COLOR
-    private Display display = Display.NAME
-    private boolean folded = false
-    private Size leadLength = LEAD_LENGTH
+
+    private Point[] controlPoints = points( point(0, 0),
+            point(0, 0), point(0, 0))
+
+    @EditableProperty
+    String value = ""
+
+    @EditableProperty
+    Orientation orientation = Orientation.DEFAULT
+
+    @EditableProperty(name = "Body")
+    Color bodyColor = BODY_COLOR
+
+    @EditableProperty(name = "Border")
+    Color borderColor = BORDER_COLOR
+
+    @EditableProperty(name = "Tab")
+    Color tabColor = TAB_COLOR
+
+    @EditableProperty(name = "Tab border")
+    Color tabBorderColor = TAB_BORDER_COLOR
+
+    @EditableProperty
+    Display display = Display.NAME
+
+    @EditableProperty
+    boolean folded = false
+
+    @EditableProperty(name = "Lead length")
+    Size leadLength = LEAD_LENGTH
 
     public TransistorTO220() {
         super()
         updateControlPoints()
-    }
-
-    @EditableProperty
-    public String getValue() {
-        return value
-    }
-
-    public void setValue(String value) {
-        this.value = value
-    }
-
-    @EditableProperty
-    public Orientation getOrientation() {
-        return orientation
     }
 
     public void setOrientation(Orientation orientation) {
@@ -183,8 +190,7 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                     break
                 case Orientation._90:
                     if (folded) {
-                        body[0] = new Rectangle2D.Double(x - pinSpacing - bodyWidth
-                                / 2, y + leadLength, bodyWidth, bodyHeight)
+                        body[0] = new Rectangle2D.Double(x - pinSpacing - bodyWidth / 2, y + leadLength, bodyWidth, bodyHeight)
 					body[1] = new Area(new Rectangle2D.Double(x - pinSpacing
 							- bodyWidth / 2, y + leadLength + bodyHeight,
                         bodyWidth, tabHeight))
@@ -193,11 +199,9 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                                 + bodyHeight + tabHeight / 2 - tabHoleDiameter / 2,
                                 tabHoleDiameter, tabHoleDiameter)))
                     } else {
-                        body[0] = new Rectangle2D.Double(x - pinSpacing - bodyWidth
-                                / 2, y - bodyThickness / 2, bodyWidth,
+                        body[0] = new Rectangle2D.Double(x - pinSpacing - bodyWidth / 2, y - bodyThickness / 2, bodyWidth,
                                 bodyThickness)
-                        body[1] = new Rectangle2D.Double(x - pinSpacing - bodyWidth
-                                / 2, y + bodyThickness / 2 - tabThickness,
+                        body[1] = new Rectangle2D.Double(x - pinSpacing - bodyWidth / 2, y + bodyThickness / 2 - tabThickness,
                                 bodyWidth, tabThickness)
                     }
                     break
@@ -225,8 +229,7 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                     break
                 case Orientation._270:
                     if (folded) {
-                        body[0] = new Rectangle2D.Double(x + pinSpacing - bodyWidth
-                                / 2, y - leadLength - bodyHeight, bodyWidth,
+                        body[0] = new Rectangle2D.Double(x + pinSpacing - bodyWidth / 2, y - leadLength - bodyHeight, bodyWidth,
 							bodyHeight)
 					body[1] = new Area(new Rectangle2D.Double(x + pinSpacing
 							- bodyWidth / 2, y - leadLength - bodyHeight
@@ -236,11 +239,9 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                                 - bodyHeight - tabHeight / 2 - tabHoleDiameter / 2,
                                 tabHoleDiameter, tabHoleDiameter)))
                     } else {
-                        body[0] = new Rectangle2D.Double(x + pinSpacing - bodyWidth
-                                / 2, y - bodyThickness / 2, bodyWidth,
+                        body[0] = new Rectangle2D.Double(x + pinSpacing - bodyWidth / 2, y - bodyThickness / 2, bodyWidth,
                                 bodyThickness)
-                        body[1] = new Rectangle2D.Double(x + pinSpacing - bodyWidth
-                                / 2, y - bodyThickness / 2, bodyWidth, tabThickness)
+                        body[1] = new Rectangle2D.Double(x + pinSpacing - bodyWidth / 2, y - bodyThickness / 2, bodyWidth, tabThickness)
                     }
                     break
                 default:
@@ -262,9 +263,9 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
         Shape mainArea = getBody()[0]
         Shape tabArea = getBody()[1]
         Composite oldComposite = graphicsContext.getComposite()
-        if (alpha < MAX_ALPHA) {
+        if (alpha < Colors.MAX_ALPHA) {
             graphicsContext.setComposite(AlphaComposite.getInstance(
-                    AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                    AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
         }
         graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor)
         graphicsContext.fill(mainArea)
@@ -286,10 +287,10 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
         Color finalBorderColor
         Theme theme = Configuration.INSTANCE.getTheme()
         if (outlineMode) {
-            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                     : theme.getOutlineColor()
         } else {
-            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                     : borderColor
         }
         graphicsContext.setColor(finalBorderColor)
@@ -307,15 +308,15 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
             Color finalPinBorderColor
             if (outlineMode) {
                 finalPinColor = new Color(0, 0, 0, 0)
-                finalPinBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+                finalPinBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                         : theme.getOutlineColor()
             } else {
-                finalPinColor = METAL_COLOR
-                finalPinBorderColor = METAL_COLOR.darker()
+                finalPinColor = Colors.METAL_COLOR
+                finalPinBorderColor = Colors.METAL_COLOR.darker()
             }
             for (Point point : controlPoints) {
                 switch (orientation) {
-                    case DEFAULT:
+                    case Orientation.DEFAULT:
                         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(
                         leadThickness))
                         graphicsContext.setColor(finalPinBorderColor)
@@ -327,7 +328,7 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                         graphicsContext.drawLine(point.x, point.y, point.x + leadLength
                                 - leadThickness / 2, point.y)
                         break
-                    case _90:
+                    case Orientation._90:
                         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(
                         leadThickness))
                         graphicsContext.setColor(finalPinBorderColor)
@@ -339,7 +340,7 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                         graphicsContext.drawLine(point.x, point.y, point.x, point.y
                                 + leadLength - leadThickness / 2)
                         break
-                    case _180:
+                    case Orientation._180:
                         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(
                         leadThickness))
                         graphicsContext.setColor(finalPinBorderColor)
@@ -351,7 +352,7 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                         graphicsContext.drawLine(point.x, point.y, point.x - leadLength
                                 - leadThickness / 2, point.y)
                         break
-                    case _270:
+                    case Orientation._270:
                         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(
                         leadThickness))
                         graphicsContext.setColor(finalPinBorderColor)
@@ -384,10 +385,10 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
         graphicsContext.setFont(LABEL_FONT)
         Color finalLabelColor
         if (outlineMode) {
-            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
                     : theme.getOutlineColor()
         } else {
-            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
                     : LABEL_COLOR
         }
         graphicsContext.setColor(finalLabelColor)
@@ -424,7 +425,7 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
         graphicsContext.setColor(BORDER_COLOR)
         graphicsContext.drawRect((width - bodySize) / 2, margin + tabSize, bodySize,
                 bodySize)
-        graphicsContext.setColor(METAL_COLOR)
+        graphicsContext.setColor(Colors.METAL_COLOR)
         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(2))
         graphicsContext.drawLine(width / 2, margin + tabSize + bodySize, width / 2, height
                 - margin)
@@ -434,50 +435,10 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
                 width / 2 + bodySize / 3, height - margin)
     }
 
-    @EditableProperty(name = "Body")
-    public Color getBodyColor() {
-        return bodyColor
-    }
-
-    public void setBodyColor(Color bodyColor) {
-        this.bodyColor = bodyColor
-    }
-
-    @EditableProperty(name = "Border")
-    public Color getBorderColor() {
-        return borderColor
-    }
-
-    public void setBorderColor(Color borderColor) {
-        this.borderColor = borderColor
-    }
-
-    @EditableProperty(name = "Tab")
-    public Color getTabColor() {
-        return tabColor
-    }
-
-    public void setTabColor(Color tabColor) {
-        this.tabColor = tabColor
-    }
-
-    @EditableProperty
-    public boolean getFolded() {
-        return folded
-    }
-
     public void setFolded(boolean folded) {
         this.folded = folded
         // Invalidate the body
         this.body = null
-    }
-
-    @EditableProperty(name = "Lead length")
-    public Size getLeadLength() {
-        if (leadLength == null) {
-            leadLength = LEAD_LENGTH
-        }
-        return leadLength
     }
 
     public void setLeadLength(Size leadLength) {
@@ -486,24 +447,4 @@ public class TransistorTO220 extends AbstractTransparentComponent<String> implem
         this.body = null
     }
 
-    @EditableProperty(name = "Tab border")
-    public Color getTabBorderColor() {
-        return tabBorderColor
-    }
-
-    public void setTabBorderColor(Color tabBorderColor) {
-        this.tabBorderColor = tabBorderColor
-    }
-
-    @EditableProperty
-    public Display getDisplay() {
-        if (display == null) {
-            display = Display.NAME
-        }
-        return display
-    }
-
-    public void setDisplay(Display display) {
-        this.display = display
-    }
 }

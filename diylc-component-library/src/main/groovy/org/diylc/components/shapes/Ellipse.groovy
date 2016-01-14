@@ -1,5 +1,7 @@
 package org.diylc.components.shapes
 
+import org.diylc.components.Colors
+
 import java.awt.AlphaComposite
 import java.awt.Composite
 import java.awt.Graphics2D
@@ -27,9 +29,9 @@ public class Ellipse extends AbstractShape {
 
         if (componentState != ComponentState.DRAGGING) {
             Composite oldComposite = graphicsContext.getComposite()
-            if (alpha < MAX_ALPHA) {
+            if (alpha < Colors.MAX_ALPHA) {
                 graphicsContext.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA))
+                        AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
             }
             graphicsContext.setColor(color)
             graphicsContext.fillOval(firstPoint.x, firstPoint.y, secondPoint.x
@@ -43,7 +45,7 @@ public class Ellipse extends AbstractShape {
          */
         drawingObserver.stopTracking()
         graphicsContext.setColor(componentState == ComponentState.SELECTED
-                || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+                || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR
                 : borderColor)
         graphicsContext.drawOval(firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x,
                 secondPoint.y - firstPoint.y)
@@ -52,11 +54,9 @@ public class Ellipse extends AbstractShape {
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         int factor = 32 / width
-        graphicsContext.setColor(COLOR)
-        graphicsContext.fillOval(2 / factor, 2 / factor, width - 4 / factor, height - 4
-                / factor)
-		graphicsContext.setColor(BORDER_COLOR)
-		graphicsContext.drawOval(2 / factor, 2 / factor, width - 4 / factor, height - 4
-        				/ factor)
+        graphicsContext.setColor(Colors.SHAPE_FILL_COLOR)
+        graphicsContext.fillOval(2 / factor, 2 / factor, width - 4 / factor, height - 4  / factor)
+		graphicsContext.setColor(Colors.SHAPE_BORDER_COLOR)
+		graphicsContext.drawOval(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor)
 	}
 }

@@ -12,17 +12,14 @@ public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedCom
 
 	private static final long serialVersionUID = 1L;
 
-	public static Color COLOR = Color.blue;
-	public static Color LEAD_COLOR = Color.black;
-
 	protected LabelPosition labelPosition = LabelPosition.ABOVE;
 
 	public AbstractSchematicLeadedSymbol() {
 		super();
 		// We don't want to fill the body, so use null.
 		this.bodyColor = null;
-		this.leadColor = LEAD_COLOR;
-		this.borderColor = COLOR;
+		this.leadColor = Colors.SCHEMATIC_LEAD_COLOR;
+		this.borderColor = Colors.SCHEMATIC_COLOR;
 	}
 
 	@Override
@@ -68,6 +65,6 @@ public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedCom
 	@Override
 	protected Color getLeadColorForPainting(ComponentState componentState) {
 		return componentState == ComponentState.SELECTED
-				|| componentState == ComponentState.DRAGGING ? SELECTION_COLOR : getLeadColor();
+				|| componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : getLeadColor();
 	}
 }
