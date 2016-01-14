@@ -37,7 +37,7 @@ public class Label extends AbstractComponent<Void> implements Geometry {
     private boolean center
 
     Void value = null
-    
+
     @EditableProperty(defaultable = false)
     String text = DEFAULT_TEXT
 
@@ -49,7 +49,7 @@ public class Label extends AbstractComponent<Void> implements Geometry {
 
     @EditableProperty(name = "Horizontal alignment")
     HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER
-    
+
     @EditableProperty(name = "Vertical alignment")
     VerticalAlignment verticalAlignment = VerticalAlignment.CENTER
 

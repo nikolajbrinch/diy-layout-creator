@@ -6,22 +6,11 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
 
 	private static final long serialVersionUID = 1L;
 
-//	public Size() {
-//		super();
-//		// TODO Auto-generated constructor stub
-//	}
-
 	public Size(Double value, SizeUnit unit) {
 		super(value, unit);
-		// TODO Auto-generated constructor stub
 	}
 
 	public double convertToPixels() {
-//		double factor = getUnit().getFactor() / SizeUnit.in.getFactor();
-//		int grids = (int) (factor * getValue() * Constants.GRIDS_PER_INCH);
-//		double remainder = (factor * getValue() * Constants.GRIDS_PER_INCH) - grids;
-//		return (int) Math.round(Constants.PIXELS_PER_INCH / Constants.GRIDS_PER_INCH
-//				* (grids + remainder));
 		return getValue() * getUnit().getFactor() / SizeUnit.in.getFactor() * Constants.PIXELS_PER_INCH;
 	}
 

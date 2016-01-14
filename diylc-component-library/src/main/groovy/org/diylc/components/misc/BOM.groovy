@@ -30,8 +30,11 @@ import org.diylc.utils.BomMaker
 public class BOM extends AbstractComponent<Void> implements Geometry {
 
     public static Size DEFAULT_SIZE = new Size(10d, SizeUnit.cm)
+
     public static Size SPACING = new Size(0.1d, SizeUnit.in)
+
     public static Color COLOR = Color.black
+
     public static String DEFAULT_TEXT = "No components to show in the Bill of Materials"
 
     private static final long serialVersionUID = 1L
@@ -50,70 +53,94 @@ public class BOM extends AbstractComponent<Void> implements Geometry {
     @Override
     public void draw(GraphicsContext graphicContext, ComponentState componentState, boolean outlineMode,
             Project project, IDrawingObserver drawingObserver) {
-        List<BomEntry> bom = BomMaker.getInstance().createBom(project.getComponents())
-        // Cleanup entries that do not have a value set.
+        List<BomEntry> bom = BomMaker.getInstance().createBom(project.components)
+        
+        /*
+         * Cleanup entries that do not have a value set.
+         */
         Iterator<BomEntry> iterator = bom.iterator()
+        
         while (iterator.hasNext()) {
             BomEntry entry = iterator.next()
-            if (entry.getValue() == null || entry.getName().toLowerCase().contains("bom")) {
+
+            if (entry.getValue() == null || entry.name.toLowerCase().contains("bom")) {
                 iterator.remove()
             }
         }
-        graphicContext.setFont(LABEL_FONT)
-        graphicContext.setColor(componentState == ComponentState.DRAGGING
-                || componentState == ComponentState.SELECTED ? Colors.SELECTION_COLOR : getColor())
-        // Determine maximum name length and maximum value length to calculate
-        // number of columns.
-        FontMetrics fontMetrics = graphicContext.getFontMetrics()
+        
+        graphicContext.font = LABEL_FONT
+        graphicContext.color = (componentState == ComponentState.DRAGGING || componentState == ComponentState.SELECTED ? Colors.SELECTION_COLOR : getColor())
+        
+        /*
+         * Determine maximum name length and maximum value length to calculate
+         * number of columns.
+         */
+        FontMetrics fontMetrics = graphicContext.fontMetrics
+        
         int maxNameWidth = 0
         int maxValueWidth = 0
         int maxHeight = 0
+        
         for (BomEntry entry : bom) {
             String valueStr
-            if (entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+            
+            if (entry.value == null || entry.value.trim().isEmpty()) {
                 valueStr = "qty " + entry.getQuantity().toString()
             } else {
-                valueStr = entry.getValue().toString()
+                valueStr = entry.value.toString()
             }
+            
             Rectangle2D stringBounds = fontMetrics.getStringBounds(entry.getName(), graphicContext.graphics2D)
+            
             if (stringBounds.getWidth() > maxNameWidth) {
-                maxNameWidth = (int) stringBounds.getWidth()
+                maxNameWidth = (int) stringBounds.width
             }
             if (stringBounds.getHeight() > maxHeight) {
-                maxHeight = (int) stringBounds.getHeight()
+                maxHeight = (int) stringBounds.height
             }
+            
             stringBounds = fontMetrics.getStringBounds(valueStr, graphicContext.graphics2D)
             if (stringBounds.getWidth() > maxValueWidth) {
-                maxValueWidth = (int) stringBounds.getWidth()
+                maxValueWidth = (int) stringBounds.width
             }
+            
             if (stringBounds.getHeight() > maxHeight) {
-                maxHeight = (int) stringBounds.getHeight()
+                maxHeight = (int) stringBounds.height
             }
         }
-        // Calculate maximum entry size.
+        
+        /*
+         * Calculate maximum entry size.
+         */
         int maxEntrySize = maxNameWidth + maxValueWidth + 2 * (int) SPACING.convertToPixels()
         int columnCount = (int) size.convertToPixels() / maxEntrySize
-        if (columnCount == 0)
+        
+        if (columnCount == 0) {
             columnCount = 1
+        }
+        
         int columnWidth = (int) size.convertToPixels() / columnCount
         int entriesPerColumn = (int) Math.ceil(1d * bom.size() / columnCount)
         if (entriesPerColumn == 0) {
             graphicContext.drawString(DEFAULT_TEXT, point.x, point.y)
             return
         }
+        
         for (int i = 0; i < bom.size(); i++) {
             String valueStr
             BomEntry entry = bom.get(i)
-            if (entry.getValue() == null || entry.getValue().trim().isEmpty()) {
-                valueStr = "qty " + entry.getQuantity().toString()
+            
+            if (entry.value == null || entry.value.trim().isEmpty()) {
+                valueStr = "qty " + entry.quantity.toString()
             } else {
-                valueStr = entry.getValue().toString()
+                valueStr = entry.value.toString()
             }
+            
             int columnIndex = i / entriesPerColumn
             int rowIndex = i % entriesPerColumn
             int x = point.x + columnIndex * columnWidth
             int y = point.y + rowIndex * maxHeight
-            graphicContext.drawString(entry.getName(), x, y)
+            graphicContext.drawString(entry.name, x, y)
             x += maxNameWidth + SPACING.convertToPixels()
             graphicContext.drawString(valueStr, x, y)
         }
@@ -121,17 +148,17 @@ public class BOM extends AbstractComponent<Void> implements Geometry {
 
     @Override
     public void drawIcon(GraphicsContext graphicContext, int width, int height) {
-        graphicContext.setColor(Color.white)
+        graphicContext.color = Color.white
         graphicContext.fillRect(width / 8, 0, 6 * width / 8, height - 1)
         graphicContext.setColor(Color.black)
         graphicContext.drawRect(width / 8, 0, 6 * width / 8, height - 1)
-        graphicContext.setFont(LABEL_FONT.deriveFont(toFloat(9f * width / 32)).deriveFont(Font.PLAIN))
+        graphicContext.font = LABEL_FONT.deriveFont(toFloat(9f * width / 32)).deriveFont(Font.PLAIN)
 
-        FontMetrics fontMetrics = graphicContext.getFontMetrics()
+        FontMetrics fontMetrics = graphicContext.fontMetrics
         Rectangle2D rect = fontMetrics.getStringBounds("BOM", graphicContext.graphics2D)
 
-        int textHeight = (int) (rect.getHeight())
-        int textWidth = (int) (rect.getWidth())
+        int textHeight = (int) (rect.height)
+        int textWidth = (int) (rect.width)
 
         // Center text horizontally and vertically.
         int x = (width - textWidth) / 2 + 1
@@ -139,7 +166,7 @@ public class BOM extends AbstractComponent<Void> implements Geometry {
 
         graphicContext.drawString("BOM", x, y)
 
-        graphicContext.setFont(graphicContext.getFont().deriveFont(toFloat(1f * 5 * width / 32)))
+        graphicContext.setFont(graphicContext.font.deriveFont(toFloat(1f * 5 * width / 32)))
 
         fontMetrics = graphicContext.getFontMetrics()
         rect = fontMetrics.getStringBounds("resistors", graphicContext.graphics2D)
