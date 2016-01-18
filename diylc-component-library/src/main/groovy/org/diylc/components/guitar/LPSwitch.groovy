@@ -14,7 +14,7 @@
 //
 //import org.diylc.appframework.miscutils.ConfigurationManager;
 //import org.diylc.common.IPlugInPort;
-//import org.diylc.common.ObjectCache;
+//import org.diylc.core.ObjectCache;
 //import org.diylc.common.Orientation;
 //import org.diylc.components.AbstractTransparentComponent;
 //import org.diylc.core.ComponentState;

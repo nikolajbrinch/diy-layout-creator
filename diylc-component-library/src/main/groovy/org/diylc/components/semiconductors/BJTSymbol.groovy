@@ -8,11 +8,11 @@ import java.awt.geom.AffineTransform
 import java.awt.geom.Area
 import java.awt.geom.GeneralPath
 
-import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractTransistorSymbol
 import org.diylc.components.BJTPolarity
 import org.diylc.components.ComponentDescriptor
 import org.diylc.core.IDIYComponent
+import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 

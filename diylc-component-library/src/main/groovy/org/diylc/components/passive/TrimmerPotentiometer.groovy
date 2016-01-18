@@ -13,8 +13,6 @@ import java.awt.geom.Area
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
-import org.diylc.common.ObjectCache
-import org.diylc.common.Orientation
 import org.diylc.components.AbstractPotentiometer
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
@@ -22,6 +20,8 @@ import org.diylc.core.ComponentState
 import org.diylc.core.CreationMethod
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.ObjectCache;
+import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.annotations.EditableProperty

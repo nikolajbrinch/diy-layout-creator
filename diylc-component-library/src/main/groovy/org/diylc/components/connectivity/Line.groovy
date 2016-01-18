@@ -6,14 +6,14 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Shape
 
-import org.diylc.common.Display
-import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractLeadedComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.core.ComponentState
 import org.diylc.core.CreationMethod
+import org.diylc.core.Display;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty

@@ -6,13 +6,13 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.CubicCurve2D
 
-import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractCurvedComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry;
 import org.diylc.components.PCBLayer
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
+import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext

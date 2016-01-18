@@ -4,14 +4,14 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Shape;
 
-import org.diylc.common.Display;
-import org.diylc.common.HorizontalAlignment;
-import org.diylc.common.ObjectCache;
-import org.diylc.common.VerticalAlignment;
 import org.diylc.core.ComponentState;
+import org.diylc.core.Display;
+import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDrawingObserver;
+import org.diylc.core.ObjectCache;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
+import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.config.Configuration;

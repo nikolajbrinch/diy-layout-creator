@@ -3,10 +3,10 @@ package org.diylc.components.semiconductors
 import java.awt.Polygon
 import java.awt.geom.AffineTransform
 
-import org.diylc.common.ObjectCache
 import org.diylc.components.ComponentDescriptor
 import org.diylc.core.CreationMethod
 import org.diylc.core.IDIYComponent
+import org.diylc.core.ObjectCache;
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "LED (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Diode schematic symbol", zOrder = IDIYComponent.COMPONENT)

@@ -1,8 +1,8 @@
 package org.diylc.core.measures;
 
-import org.diylc.components.ResistorColorCode;
+import java.awt.Color;
 
-import java.awt.*;
+import org.diylc.components.ResistorColorCode;
 
 public class Resistance extends AbstractMeasure<ResistanceUnit> {
 

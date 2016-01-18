@@ -1,6 +1,6 @@
 package org.diylc.components
 
-import java.awt.Point
+import java.awt.Point;
 import java.awt.Rectangle;
 
 trait Geometry {

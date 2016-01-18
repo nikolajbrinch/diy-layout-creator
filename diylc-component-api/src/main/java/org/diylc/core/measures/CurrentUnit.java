@@ -1,6 +1,5 @@
 package org.diylc.core.measures;
 
-import org.diylc.core.measures.Unit;
 
 public enum CurrentUnit implements Unit {
 

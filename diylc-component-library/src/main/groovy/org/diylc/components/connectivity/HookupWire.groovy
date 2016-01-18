@@ -6,16 +6,16 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.CubicCurve2D
 
-import org.diylc.common.ObjectCache
 import org.diylc.components.AWG
 import org.diylc.components.AbstractCurvedComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
+import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
-import org.diylc.utils.Constants
+import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Hookup Wire", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "W", description = "Flexible wire with two control points", zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class HookupWire extends AbstractCurvedComponent<Void> {

@@ -1,12 +1,10 @@
 package org.diylc.components;
 
-import org.diylc.common.HorizontalAlignment;
-import org.diylc.common.VerticalAlignment;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.graphics.GraphicsContext;
-
-import java.awt.*;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
@@ -14,6 +12,12 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+
+import org.diylc.core.HorizontalAlignment;
+import org.diylc.core.IDIYComponent;
+import org.diylc.core.VerticalAlignment;
+import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.graphics.GraphicsContext;
 
 /**
  * Abstract implementation of {@link IDIYComponent} that contains component name

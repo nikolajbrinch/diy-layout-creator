@@ -1,6 +1,6 @@
 package org.diylc.core.measures;
 
-import org.diylc.utils.Constants;
+import org.diylc.core.utils.Constants;
 
 public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> {
 

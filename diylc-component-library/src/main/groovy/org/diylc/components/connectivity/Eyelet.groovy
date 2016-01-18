@@ -18,7 +18,7 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.utils.Constants
+import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Eyelet", category = "Connectivity", author = "Branislav Stojkovic", description = "Eyelet or turret terminal", instanceNamePrefix = "Eyelet", stretchable = false, zOrder = IDIYComponent.PAD, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public class Eyelet extends AbstractComponent<String> {

@@ -1,6 +1,5 @@
 package org.diylc.core.measures;
 
-import org.diylc.core.measures.AbstractMeasure;
 
 public class Voltage extends AbstractMeasure<VoltageUnit> {
 

@@ -11,11 +11,11 @@ import java.util.Map;
 
 import javax.swing.JFrame;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.LRU;
+import org.diylc.core.ConfigurationManager;
+import org.diylc.core.LRU;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
-import org.diylc.utils.Constants;
+import org.diylc.core.utils.Constants;
 
 public enum Configuration {
 

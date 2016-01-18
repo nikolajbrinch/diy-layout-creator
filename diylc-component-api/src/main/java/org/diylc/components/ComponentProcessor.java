@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.PropertyWrapper;
 
 /**
  * Utility class with component processing methods.

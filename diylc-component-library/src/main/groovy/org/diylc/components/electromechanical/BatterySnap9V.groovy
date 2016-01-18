@@ -14,13 +14,13 @@ import java.awt.geom.Area
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
-import org.diylc.common.ObjectCache
-import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.ObjectCache;
+import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VisibilityPolicy
@@ -29,7 +29,7 @@ import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.utils.Constants
+import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "9V Battery Snap", category = "Electromechanical", author = "Branislav Stojkovic", description = "", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "BTR", autoEdit = false)
 public class BatterySnap9V extends AbstractTransparentComponent<String> {

@@ -1,19 +1,20 @@
 package org.diylc.components.boards
 
-import org.diylc.common.OrientationHV
 import org.diylc.components.Colors
+
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.OrientationHV;
 import org.diylc.core.Project
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.utils.Constants
+import org.diylc.core.utils.Constants
 
 import java.awt.*
 

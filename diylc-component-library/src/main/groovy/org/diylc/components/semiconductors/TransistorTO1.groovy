@@ -13,15 +13,15 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 import java.awt.geom.RoundRectangle2D
 
-import org.diylc.common.Display
-import org.diylc.common.ObjectCache
-import org.diylc.common.Orientation
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
+import org.diylc.core.Display;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.ObjectCache;
+import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VisibilityPolicy
@@ -30,7 +30,7 @@ import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.utils.Constants
+import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Transistor (TO-1 package)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "Q", description = "Transistor with small metal body", stretchable = false, zOrder = IDIYComponent.COMPONENT)
 public class TransistorTO1 extends AbstractTransparentComponent<String> implements Geometry {

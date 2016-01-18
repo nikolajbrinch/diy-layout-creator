@@ -10,16 +10,16 @@ import java.awt.Point
 import java.awt.geom.AffineTransform
 import java.awt.geom.Rectangle2D
 
-import org.diylc.common.HorizontalAlignment
-import org.diylc.common.Orientation
-import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
+import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.Orientation;
 import org.diylc.core.Project
+import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty

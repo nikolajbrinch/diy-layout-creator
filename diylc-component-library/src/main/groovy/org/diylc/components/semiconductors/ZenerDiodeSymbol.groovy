@@ -1,12 +1,12 @@
 package org.diylc.components.semiconductors
 
-import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractDiodeSymbol
 import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.core.CreationMethod
 import org.diylc.core.IDIYComponent
+import org.diylc.core.ObjectCache;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit

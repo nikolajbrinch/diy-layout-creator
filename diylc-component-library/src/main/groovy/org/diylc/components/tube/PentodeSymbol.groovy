@@ -9,11 +9,11 @@ import java.awt.Shape
 import java.awt.geom.Ellipse2D
 import java.awt.geom.GeneralPath
 
-import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractTubeSymbol
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.core.IDIYComponent
+import org.diylc.core.ObjectCache;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext

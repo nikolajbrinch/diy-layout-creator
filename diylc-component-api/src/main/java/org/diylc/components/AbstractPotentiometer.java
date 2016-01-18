@@ -2,8 +2,7 @@ package org.diylc.components;
 
 import java.awt.Point;
 
-import org.diylc.common.Orientation;
-import org.diylc.components.Taper;
+import org.diylc.core.Orientation;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;

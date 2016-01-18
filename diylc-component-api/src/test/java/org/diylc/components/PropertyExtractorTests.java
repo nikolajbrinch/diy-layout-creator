@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.diylc.common.PropertyWrapper;
+import org.diylc.core.PropertyWrapper;
 import org.junit.Test;
 
 public class PropertyExtractorTests {

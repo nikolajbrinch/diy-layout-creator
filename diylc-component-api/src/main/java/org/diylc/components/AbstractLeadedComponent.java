@@ -11,10 +11,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.common.Display;
-import org.diylc.common.ObjectCache;
 import org.diylc.core.ComponentState;
+import org.diylc.core.Display;
 import org.diylc.core.IDrawingObserver;
+import org.diylc.core.ObjectCache;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
@@ -23,7 +23,7 @@ import org.diylc.core.config.Configuration;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
+import org.diylc.core.utils.Constants;
 
 /**
  * Base class for all leaded components such as resistors or capacitors. Has two

@@ -3,7 +3,6 @@ package org.diylc.core.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.diylc.core.AllowAllValidator;
 import org.diylc.core.IPropertyValidator;
 
 /**

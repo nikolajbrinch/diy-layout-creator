@@ -2,9 +2,8 @@ package org.diylc.components;
 
 import java.util.Comparator;
 
-import org.diylc.common.PropertyWrapper;
-import org.diylc.components.ComponentType;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.PropertyWrapper;
 
 public class ComparatorFactory {
 

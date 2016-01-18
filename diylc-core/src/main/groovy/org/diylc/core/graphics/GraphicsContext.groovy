@@ -1,9 +1,17 @@
 package org.diylc.core.graphics
 
-import java.awt.*
-import java.awt.font.FontRenderContext
-import java.awt.geom.AffineTransform
-import java.awt.image.ImageObserver
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Polygon;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.image.ImageObserver;
 
 class GraphicsContext {
 

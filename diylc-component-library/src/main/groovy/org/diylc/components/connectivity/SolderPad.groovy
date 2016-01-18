@@ -18,7 +18,7 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.utils.Constants
+import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Solder Pad", category = "Connectivity", author = "Branislav Stojkovic", description = "Copper solder pad, round or square", instanceNamePrefix = "Pad", stretchable = false, zOrder = IDIYComponent.PAD, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class SolderPad extends AbstractComponent<Void> {

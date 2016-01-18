@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.diylc.appframework.update.VersionNumber;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Size;

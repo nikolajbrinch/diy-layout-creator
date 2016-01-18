@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IPropertyValidator;
+import org.diylc.core.PropertyWrapper;
 import org.diylc.core.annotations.EditableProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

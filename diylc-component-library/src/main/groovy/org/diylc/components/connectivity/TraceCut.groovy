@@ -5,13 +5,13 @@ import org.diylc.components.Colors
 import java.awt.Color
 import java.awt.Point
 
-import org.diylc.common.ObjectCache
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.boards.VeroBoard
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy

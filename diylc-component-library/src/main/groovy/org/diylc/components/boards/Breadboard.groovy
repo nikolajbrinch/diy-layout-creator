@@ -8,17 +8,17 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Point
 
-import org.diylc.common.HorizontalAlignment
-import org.diylc.common.ObjectCache
-import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractComponent
 import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
+import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
+import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.measures.Size

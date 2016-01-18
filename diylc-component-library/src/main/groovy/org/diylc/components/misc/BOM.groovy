@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D
 import java.util.Iterator
 import java.util.List
 
+import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractComponent
 import org.diylc.components.Colors;
 import org.diylc.components.Geometry;
@@ -18,13 +19,12 @@ import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
-import org.diylc.components.ComponentDescriptor
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.utils.BomEntry
-import org.diylc.utils.BomMaker
+import org.diylc.core.BomEntry
+import org.diylc.core.BomMaker
 
 @ComponentDescriptor(name = "Bill of Materials", author = "Branislav Stojkovic", category = "Misc", description = "", instanceNamePrefix = "BOM", zOrder = IDIYComponent.TEXT, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class BOM extends AbstractComponent<Void> implements Geometry {

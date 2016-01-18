@@ -1,6 +1,6 @@
 package org.diylc.components.passive
 
-import org.diylc.core.measures.Resistance
+import org.diylc.core.measures.Resistance;
 
 public class ResistorValue {
 

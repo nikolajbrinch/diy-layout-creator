@@ -12,26 +12,26 @@ import java.awt.geom.Area
 import java.awt.geom.GeneralPath
 import java.awt.geom.Rectangle2D
 
-import org.diylc.common.Display
-import org.diylc.common.HorizontalAlignment
-import org.diylc.common.ObjectCache
-import org.diylc.common.VerticalAlignment
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.components.ICPointCount
 import org.diylc.core.ComponentState
+import org.diylc.core.Display;
+import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
+import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
 import org.diylc.core.Theme
+import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.utils.Constants
+import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "IC Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "IC", description = "IC symbol with 3 or 5 contacts", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
 public class ICSymbol extends AbstractTransparentComponent<String> implements Geometry {
