@@ -21,7 +21,7 @@ public class ComponentSlotRenderer extends AbstractBasicRenderer {
     private static final Composite slotComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 
     @Override
-    public  List<IDIYComponent<?>>  render(RenderingContext renderingContext) {
+    public List<IDIYComponent<?>> render(RenderingContext renderingContext) {
         Project project = renderingContext.getProject();
         Graphics2DWrapper graphics2dWrapper = renderingContext.getGraphics2dWrapper();
         Set<DrawingOption> drawingOptions = renderingContext.getDrawingOptions();
@@ -29,7 +29,7 @@ public class ComponentSlotRenderer extends AbstractBasicRenderer {
         List<Point> controlPointSlot = renderingContext.getControlPointSlot();
 
         List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
-        
+
         if (componentSlot != null) {
             /*
              * Draw component slot in a separate composite.
@@ -50,20 +50,22 @@ public class ComponentSlotRenderer extends AbstractBasicRenderer {
             }
 
             graphics2dWrapper.finishedDrawingComponent();
-
-            if (controlPointSlot != null) {
-                /*
-                 * Draw control points of the component in the slot.
-                 */
-                for (Point point : controlPointSlot) {
-                    if (point != null) {
-                        graphics2dWrapper.setColor(RenderingConstants.SELECTED_CONTROL_POINT_COLOR.darker());
-                        graphics2dWrapper.fillOval(point.x - RenderingConstants.CONTROL_POINT_SIZE / 2, point.y - RenderingConstants.CONTROL_POINT_SIZE / 2, RenderingConstants.CONTROL_POINT_SIZE,
-                                RenderingConstants.CONTROL_POINT_SIZE);
-                        graphics2dWrapper.setColor(RenderingConstants.SELECTED_CONTROL_POINT_COLOR);
-                        graphics2dWrapper.fillOval(point.x - RenderingConstants.CONTROL_POINT_SIZE / 2 + 1, point.y - RenderingConstants.CONTROL_POINT_SIZE / 2 + 1,
-                                RenderingConstants.CONTROL_POINT_SIZE - 2, RenderingConstants.CONTROL_POINT_SIZE - 2);
-                    }
+        }
+        
+        if (controlPointSlot != null) {
+            /*
+             * Draw control points of the component in the slot.
+             */
+            for (Point point : controlPointSlot) {
+                if (point != null) {
+                    graphics2dWrapper.setColor(RenderingConstants.SELECTED_CONTROL_POINT_COLOR.darker());
+                    graphics2dWrapper.fillOval(point.x - RenderingConstants.CONTROL_POINT_SIZE / 2, point.y
+                            - RenderingConstants.CONTROL_POINT_SIZE / 2, RenderingConstants.CONTROL_POINT_SIZE,
+                            RenderingConstants.CONTROL_POINT_SIZE);
+                    graphics2dWrapper.setColor(RenderingConstants.SELECTED_CONTROL_POINT_COLOR);
+                    graphics2dWrapper.fillOval(point.x - RenderingConstants.CONTROL_POINT_SIZE / 2 + 1, point.y
+                            - RenderingConstants.CONTROL_POINT_SIZE / 2 + 1, RenderingConstants.CONTROL_POINT_SIZE - 2,
+                            RenderingConstants.CONTROL_POINT_SIZE - 2);
                 }
             }
         }
