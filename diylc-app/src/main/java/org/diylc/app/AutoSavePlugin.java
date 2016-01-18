@@ -1,6 +1,7 @@
 package org.diylc.app;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.EnumSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,10 +9,14 @@ import java.util.concurrent.Executors;
 import javax.swing.SwingUtilities;
 
 import org.diylc.core.config.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AutoSavePlugin implements IPlugIn {
 
-	private static final String AUTO_SAVE_FILE_NAME = "autoSave.diy";
+    private static final Logger LOG = LoggerFactory.getLogger(AutoSavePlugin.class);
+
+    private static final String AUTO_SAVE_FILE_NAME = "autoSave.diy";
 
 	protected static final long autoSaveFrequency = 60 * 1000;
 
@@ -41,8 +46,12 @@ public class AutoSavePlugin implements IPlugIn {
 									"Auto-Save", IView.YES_NO_OPTION,
 									IView.QUESTION_MESSAGE);
 					if (decision == IView.YES_OPTION) {
-						AutoSavePlugin.this.plugInPort
-								.loadProjectFromFile(new File(AUTO_SAVE_FILE_NAME));
+						try {
+                            AutoSavePlugin.this.plugInPort
+                            		.loadProjectFromFile(Paths.get(AUTO_SAVE_FILE_NAME));
+                        } catch (Exception e) {
+                            LOG.warn("Error loading autoSave.diy file", e);
+                        }
 					}
 				}
 				/* 
@@ -70,7 +79,7 @@ public class AutoSavePlugin implements IPlugIn {
 						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
 						lastSave = System.currentTimeMillis();
-						plugInPort.saveProjectToFile(new File(AUTO_SAVE_FILE_NAME), true);
+						plugInPort.saveProjectToFile(Paths.get(AUTO_SAVE_FILE_NAME), true);
 					}
 				});
 			}

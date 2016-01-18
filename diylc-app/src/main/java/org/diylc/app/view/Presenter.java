@@ -10,7 +10,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -248,6 +247,12 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
+    public void removeLruPath(Path path) {
+        lru.removeItem(path);
+        messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru);
+    }
+
+    @Override
     public void loadProject(Project project, boolean freshStart) {
         LOG.info(String.format("loadProject(%s, %s)", project.getTitle(), freshStart));
         this.currentProject = project;
@@ -273,11 +278,11 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void loadProjectFromFile(File file) {
-        LOG.info(String.format("loadProjectFromFile(%s)", file.getAbsolutePath()));
-        try {
+    public void loadProjectFromFile(Path path) throws Exception {
+        LOG.info(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
+//        try {
             List<String> warnings = new ArrayList<String>();
-            Project project = (Project) projectFileManager.deserializeProjectFromFile(file, warnings);
+            Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
             loadProject(project, true);
             projectFileManager.fireFileStatusChanged();
             if (!warnings.isEmpty()) {
@@ -289,10 +294,11 @@ public class Presenter implements IPlugInPort {
                 builder.append("</html");
                 view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
             }
-        } catch (Exception ex) {
-            LOG.error("Could not load file", ex);
-            view.showMessage("Could not open file " + file.getAbsolutePath() + ". Check the log for details.", "Error", IView.ERROR_MESSAGE);
-        }
+//        } catch (Exception ex) {
+//            LOG.error("Could not load file", ex);
+//            view.showMessage("Could not open file " + file.getAbsolutePath() + ". Check the log for details.", "Error", IView.ERROR_MESSAGE);
+//            throw new RuntimeException(ex);
+//        }
     }
 
     @Override
@@ -302,11 +308,11 @@ public class Presenter implements IPlugInPort {
                     IView.YES_NO_CANCEL_OPTION, IView.WARNING_MESSAGE);
             if (response == IView.YES_OPTION) {
                 if (this.getCurrentFile() == null) {
-                    File file = view.promptFileSave();
-                    if (file == null) {
+                    Path path = view.promptFileSave();
+                    if (path == null) {
                         return false;
                     }
-                    saveProjectToFile(file, false);
+                    saveProjectToFile(path, false);
                 } else {
                     saveProjectToFile(this.getCurrentFile(), false);
                 }
@@ -319,25 +325,25 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void saveProjectToFile(File file, boolean isBackup) {
-        LOG.info(String.format("saveProjectToFile(%s)", file.getAbsolutePath()));
+    public void saveProjectToFile(Path path, boolean isBackup) {
+        LOG.info(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
         try {
             currentProject.setFileVersion(CURRENT_VERSION);
-            projectFileManager.serializeProjectToFile(currentProject, file, isBackup);
+            projectFileManager.serializeProjectToFile(currentProject, path, isBackup);
             if (!isBackup) {
-                Configuration.INSTANCE.setLastPath(file.getParentFile().getAbsolutePath());
+                Configuration.INSTANCE.setLastPath(path.getParent());
             }
         } catch (Exception ex) {
             LOG.error("Could not save file", ex);
             if (!isBackup) {
-                view.showMessage("Could not save file " + file.getAbsolutePath() + ". Check the log for details.", "Error",
+                view.showMessage("Could not save file " + path.toAbsolutePath() + ". Check the log for details.", "Error",
                         IView.ERROR_MESSAGE);
             }
         }
     }
 
     @Override
-    public File getCurrentFile() {
+    public Path getCurrentFile() {
         return projectFileManager.getCurrentFile();
     }
 

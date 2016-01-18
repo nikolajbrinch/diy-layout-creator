@@ -9,6 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +64,7 @@ public class ProjectPreview extends JPanel implements PropertyChangeListener, IF
 			}
 			
 			@Override
-			public File promptFileSave() {
+			public Path promptFileSave() {
 				return null;
 			}
 

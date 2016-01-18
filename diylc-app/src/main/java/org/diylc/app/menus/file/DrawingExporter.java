@@ -13,8 +13,9 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
@@ -126,12 +127,12 @@ public class DrawingExporter {
 	 * Creates a PDF in the same size as the project.
 	 * 
 	 * @param provider
-	 * @param file
+	 * @param path
 	 * @throws DocumentException
-	 * @throws FileNotFoundException
+	 * @throws IOException 
 	 */
-	public void exportPDF(IDrawingProvider provider, File file)
-			throws FileNotFoundException, DocumentException {
+	public void exportPDF(IDrawingProvider provider, Path path)
+			throws DocumentException, IOException {
 		Dimension d = provider.getSize();
 		// We have to scale everything down because PDF resolution is slightly
 		// lower.
@@ -141,7 +142,7 @@ public class DrawingExporter {
 		Document document = new Document(new com.lowagie.text.Rectangle(
 				totalWidth, totalHeight));
 		PdfWriter writer = PdfWriter.getInstance(document,
-				new FileOutputStream(file));
+				Files.newOutputStream(path));
 		document.open();
 		DefaultFontMapper mapper = new DefaultFontMapper() {
 			@Override
@@ -187,9 +188,9 @@ public class DrawingExporter {
 	 * Renders the project into a PNG file.
 	 * 
 	 * @param provider
-	 * @param file
+	 * @param path
 	 */
-	public void exportPNG(IDrawingProvider provider, File file) {
+	public void exportPNG(IDrawingProvider provider, Path path) {
 		try {
 			int pageCount = provider.getPageCount();
 			Dimension d = provider.getSize();
@@ -206,7 +207,7 @@ public class DrawingExporter {
 				provider.draw(0, g2d);
 				g2d.dispose();
 
-				ImageIO.write(image, "PNG", file);
+				ImageIO.write(image, "PNG", path.toFile());
 			} else {
 				for (int i = 0; i < pageCount; i++) {
 					BufferedImage image = new BufferedImage(
@@ -221,7 +222,7 @@ public class DrawingExporter {
 					// Move down
 					g2d.translate(0, (int) (d.getHeight() * factor));
 					g2d.dispose();
-					ImageIO.write(image, "PNG", new File(file.getAbsolutePath()
+					ImageIO.write(image, "PNG", new File(path.toFile().getAbsolutePath()
 							.replaceAll("\\.png", "_" + (i + 1) + ".png")));
 				}
 			}

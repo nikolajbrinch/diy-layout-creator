@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.diylc.app.AppIconLoader;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.menus.file.FileFilterEnum;
 import org.diylc.core.BomEntry;
+import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,12 +94,12 @@ public class BomDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = DialogFactory.getInstance().showSaveDialog(
-					FileFilterEnum.EXCEL.getFilter(), null,
+			Path path = DialogFactory.getInstance().showSaveDialog(
+					FileFilterEnum.EXCEL.getFilter(), Configuration.INSTANCE.getLastPath(), null,
 					FileFilterEnum.EXCEL.getExtensions()[0], null);
-			if (file != null) {
+			if (path != null) {
 				try {
-					TableExporter.getInstance().exportToExcel(getTable(), file);
+					TableExporter.getInstance().exportToExcel(getTable(), path);
 				} catch (IOException e1) {
 	                LOG.warn("Error exporting to Excel", e1);
 				}
@@ -117,11 +119,11 @@ public class BomDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.CSV.getFilter(),
-					null, FileFilterEnum.CSV.getExtensions()[0], null);
-			if (file != null) {
+			Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.CSV.getFilter(),
+			        Configuration.INSTANCE.getLastPath(), null, FileFilterEnum.CSV.getExtensions()[0], null);
+			if (path != null) {
 				try {
-					TableExporter.getInstance().exportToCSV(getTable(), file);
+					TableExporter.getInstance().exportToCSV(getTable(), path);
 				} catch (IOException e1) {
 				    LOG.warn("Error exporting to CSV", e1);
 				}
@@ -141,11 +143,11 @@ public class BomDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.HTML.getFilter(),
-					null, FileFilterEnum.HTML.getExtensions()[0], null);
-			if (file != null) {
+			Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.HTML.getFilter(),
+			        Configuration.INSTANCE.getLastPath(), null, FileFilterEnum.HTML.getExtensions()[0], null);
+			if (path != null) {
 				try {
-					TableExporter.getInstance().exportToHTML(getTable(), file);
+					TableExporter.getInstance().exportToHTML(getTable(), path);
 				} catch (IOException e1) {
 				    LOG.warn("Error exporting to HTML", e1);
 				}
@@ -165,11 +167,11 @@ public class BomDialog extends JDialog {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			File file = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.PNG.getFilter(),
-					null, FileFilterEnum.PNG.getExtensions()[0], null);
-			if (file != null) {
+			Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.PNG.getFilter(),
+			        Configuration.INSTANCE.getLastPath(), null, FileFilterEnum.PNG.getExtensions()[0], null);
+			if (path != null) {
 				try {
-					TableExporter.getInstance().exportToPNG(getTable(), file);
+					TableExporter.getInstance().exportToPNG(getTable(), path);
 				} catch (IOException e1) {
 				    LOG.warn("Error exporting to PNG", e1);
 				}

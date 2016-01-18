@@ -6,9 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -36,11 +36,11 @@ public class ComponentTypeLoader {
 
     private ComponentTypeFactory componentTypeFactory = new ComponentTypeFactory();
 
-    Map<String, List<ComponentType>> loadComponentTypes(File[] directories) {
+    Map<String, List<ComponentType>> loadComponentTypes(Path[] directories) {
         return loadComponentTypes(Thread.currentThread().getContextClassLoader(), directories);
     }
 
-    private Map<String, List<ComponentType>> loadComponentTypes(ClassLoader classLoader, File[] directories) {
+    private Map<String, List<ComponentType>> loadComponentTypes(ClassLoader classLoader, Path[] directories) {
         LOG.info("Loading component types.");
 
         Set<Class<? extends IDIYComponent<?>>> componentClasses = new TreeSet<Class<? extends IDIYComponent<?>>>(
@@ -106,7 +106,7 @@ public class ComponentTypeLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private Collection<? extends Class<? extends IDIYComponent<?>>> loadGroovyClasses(ClassLoader classLoader, File[] directories) {
+    private Collection<? extends Class<? extends IDIYComponent<?>>> loadGroovyClasses(ClassLoader classLoader, Path[] directories) {
         Set<Class<? extends IDIYComponent<?>>> componentClasses = new HashSet<Class<? extends IDIYComponent<?>>>();
 
         GroovyClassLoader groovyClassLoader = null;
@@ -114,7 +114,7 @@ public class ComponentTypeLoader {
         try {
             groovyClassLoader = new GroovyClassLoader(classLoader);
 
-            Set<File> componentTypeFiles = null;
+            Set<Path> componentTypeFiles = null;
 
             try {
                 componentTypeFiles = componentScanner.getGroovyFiles(directories);
@@ -122,9 +122,10 @@ public class ComponentTypeLoader {
                 e.printStackTrace();
             }
 
-            for (File file : componentTypeFiles) {
+            for (Path path : componentTypeFiles) {
+                LOG.debug("Loading groovy file \"" + path.toAbsolutePath() +  "\"");
                 try {
-                    Class<?> clazz = groovyClassLoader.parseClass(file);
+                    Class<?> clazz = groovyClassLoader.parseClass(path.toFile());
 
                     if (!Modifier.isAbstract(clazz.getModifiers())) {
                         if (IDIYComponent.class.isAssignableFrom(clazz)) {

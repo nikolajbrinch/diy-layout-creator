@@ -1,6 +1,6 @@
 package org.diylc.app;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -37,5 +37,5 @@ public interface IView {
 	
 	boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties);
 	
-	File promptFileSave();
+	Path promptFileSave();
 }

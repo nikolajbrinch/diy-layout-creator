@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,34 +48,20 @@ public class ComponentScanner {
         return classNames;
     }
 
-    public Set<File> getGroovyFiles(File[] directories) throws IOException {
-        Set<File> files = new HashSet<File>();
+    public Set<Path> getGroovyFiles(Path[] directories) throws IOException {
+        Set<Path> files = new HashSet<Path>();
 
-        for (File directory : directories) {
-            if (directory.exists() && directory.isDirectory()) {
-                files.addAll(getGroovyFilesInDirectory(directory));
-            }
-        }
-
-        return files;
-    }
-
-    private Set<File> getGroovyFilesInDirectory(File directory) {
-        Set<File> files = new HashSet<File>();
-
-        for (File file : directory.listFiles()) {
-            if (file.isDirectory()) {
-                files.addAll(getGroovyFilesInDirectory(file));
-            } else {
-                if (file.getName().endsWith(".groovy")) {
-                    LOG.debug("Found groovy file \"" + file.getAbsolutePath() +  "\"");
-                    files.add(file);
+        for (Path directory : directories) {
+            if (Files.exists(directory) && Files.isDirectory(directory)) {
+                try (Stream<Path> stream = Files.walk(directory)) {
+                    files.addAll(stream
+                    .filter(path -> Files.isRegularFile(path) && path.toString().endsWith(".groovy"))
+                    .collect(Collectors.toList()));
                 }
             }
         }
 
         return files;
-
     }
 
     private List<String> getResources(ClassLoader loader, String packageName) throws IOException {

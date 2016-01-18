@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -385,9 +387,9 @@ public class MainFrame extends JFrame implements ISwingUI {
     }
 
     @Override
-    public File promptFileSave() {
+    public Path promptFileSave() {
         return DialogFactory.getInstance()
-                .showSaveDialog(FileFilterEnum.DIY.getFilter(), null, FileFilterEnum.DIY.getExtensions()[0], null);
+                .showSaveDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(), null, FileFilterEnum.DIY.getExtensions()[0], null);
     }
 
     private void exit() {
@@ -416,12 +418,12 @@ public class MainFrame extends JFrame implements ISwingUI {
         @Override
         public void processMessage(EventType eventType, Object... params) {
             if (eventType == EventType.FILE_STATUS_CHANGED) {
-                String fileName = (String) params[0];
-                if (fileName == null) {
-                    fileName = "Untitled";
+                Path path = (Path) params[0];
+                if (path == null) {
+                    path = Paths.get("Untitled");
                 }
                 String modified = (Boolean) params[1] ? " (modified)" : "";
-                setTitle(String.format("DIYLC %s - %s %s", plugInPort.getCurrentVersionNumber(), fileName, modified));
+                setTitle(String.format("DIYLC %s - %s %s", plugInPort.getCurrentVersionNumber(), path.getFileName().toString(), modified));
             }
         }
     }

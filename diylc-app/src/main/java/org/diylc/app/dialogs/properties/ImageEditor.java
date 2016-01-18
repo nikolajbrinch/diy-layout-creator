@@ -1,7 +1,7 @@
 package org.diylc.app.dialogs.properties;
 
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.menus.file.FileFilterEnum;
 import org.diylc.core.PropertyWrapper;
+import org.diylc.core.config.Configuration;
 
 public class ImageEditor extends JButton {
 
@@ -22,12 +23,12 @@ public class ImageEditor extends JButton {
 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				File file = DialogFactory.getInstance().showOpenDialog(
-						FileFilterEnum.IMAGES.getFilter(), null,
+				Path path = DialogFactory.getInstance().showOpenDialog(
+						FileFilterEnum.IMAGES.getFilter(), Configuration.INSTANCE.getLastPath(), null,
 						FileFilterEnum.IMAGES.getExtensions()[0], null);
-				if (file != null) {
+				if (path != null) {
 					property.setChanged(true);
-					ImageIcon image = new ImageIcon(file.getAbsolutePath());
+					ImageIcon image = new ImageIcon(path.toFile().getAbsolutePath());
 					property.setValue(image);
 				}
 			}

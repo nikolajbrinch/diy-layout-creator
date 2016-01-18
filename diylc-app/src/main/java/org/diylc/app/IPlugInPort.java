@@ -85,8 +85,9 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	 * Loads a project from the specified file.
 	 * 
 	 * @param fileName
+	 * @throws Exception 
 	 */
-	void loadProjectFromFile(File file);
+	void loadProjectFromFile(Path path) throws Exception;
 
 	/**
 	 * Saves the current project into the specified file.
@@ -94,12 +95,12 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	 * @param fileName
 	 * @param isBackup
 	 */
-	void saveProjectToFile(File file, boolean isBackup);
+	void saveProjectToFile(Path path, boolean isBackup);
 
 	/**
 	 * @return the current file name.
 	 */
-	File getCurrentFile();
+	Path getCurrentFile();
 
 	/**
 	 * @return true if the current project is modified.
@@ -295,4 +296,10 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	 * @param file
 	 */
 	void addLruPath(Path path);
+
+    /**
+     * Remove recent file from LRU list
+     * @param file
+     */
+    void removeLruPath(Path path);
 }

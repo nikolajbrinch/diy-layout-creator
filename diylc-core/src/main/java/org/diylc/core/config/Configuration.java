@@ -72,12 +72,12 @@ public enum Configuration {
 		setObjectProperty(Key.THEME, theme);
 	}
 
-	public String getLastPath() {
-		return getStringProperty(Key.LAST_PATH, null);
+	public Path getLastPath() {
+		return Paths.get(getStringProperty(Key.LAST_PATH, null));
 	}
 
-	public void setLastPath(String value) {
-		setStringProperty(Key.LAST_PATH, value);
+	public void setLastPath(Path path) {
+		setStringProperty(Key.LAST_PATH, path.toAbsolutePath().toString());
 	}
 
 	public boolean getAbnormalExit() {
@@ -237,9 +237,9 @@ public enum Configuration {
 		setObjectProperty(Key.OBJECT_PROPERTIES, objectProperties);
 	}
 
-    public File[] getComponentDirectories() {
-        return getObjectProperty(Key.COMPONENT_DIRECTORIES, new File[] {
-                new File(new File(System.getProperty("user.home")), ".diylc/lib/components")
+    public Path[] getComponentDirectories() {
+        return getObjectProperty(Key.COMPONENT_DIRECTORIES, new Path[] {
+                Paths.get(System.getProperty("user.home"), ".diylc/lib/components")
         });
     }
 

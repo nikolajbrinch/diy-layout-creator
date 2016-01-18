@@ -1,5 +1,6 @@
 package org.diylc.core;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,10 @@ public class LRU<T> {
 			lru.removeLast();
 		}
 	}
+
+    public void removeItem(Path path) {
+        lru.remove(path);
+    }
 
 	public List<T> getItems() {
 		return Collections.unmodifiableList(lru);

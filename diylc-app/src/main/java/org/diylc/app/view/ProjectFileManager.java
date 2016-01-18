@@ -2,15 +2,16 @@ package org.diylc.app.view;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +89,8 @@ public class ProjectFileManager {
     // pixels.
     private XStream xStreamOld;
 
-    private File currentFile = null;
+    private Path currentFile = null;
+    
     private boolean modified = false;
 
     private MessageDispatcher<EventType> messageDispatcher;
@@ -109,33 +111,34 @@ public class ProjectFileManager {
         fireFileStatusChanged();
     }
 
-    public synchronized void serializeProjectToFile(Project project, File file, boolean isBackup) throws IOException {
+    public synchronized void serializeProjectToFile(Project project, Path path, boolean isBackup) throws IOException {
         if (!isBackup) {
-            LOG.info(String.format("saveProjectToFile(%s)", file.getAbsolutePath()));
+            LOG.info(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
         }
-        FileOutputStream fos;
-        fos = new FileOutputStream(file);
+        OutputStream fos;
+        
+        fos = Files.newOutputStream(path);
         Writer writer = new OutputStreamWriter(fos, "UTF-8");
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
         xStream.toXML(project, writer);
         fos.close();
         if (!isBackup) {
-            this.currentFile = file;
+            this.currentFile = path;
             this.modified = false;
             fireFileStatusChanged();
         }
     }
 
-    public Project deserializeProjectFromFile(File file, List<String> warnings) throws SAXException, IOException,
+    public Project deserializeProjectFromFile(Path path, List<String> warnings) throws SAXException, IOException,
             ParserConfigurationException {
-        LOG.info(String.format("loadProjectFromFile(%s)", file));
+        LOG.info(String.format("loadProjectFromFile(%s)", path));
         Project project;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new InputSource(new InputStreamReader(new FileInputStream(file))));
+        Document doc = db.parse(new InputSource(new InputStreamReader(Files.newInputStream(path))));
         doc.getDocumentElement().normalize();
         if (doc.getDocumentElement().getNodeName().equalsIgnoreCase(Project.class.getName())) {
-            project = parseV3File(file);
+            project = parseV3File(path);
         } else {
             if (!doc.getDocumentElement().getNodeName().equalsIgnoreCase("layout")) {
                 throw new IllegalArgumentException("Could not open DIY file. Root node is not named 'Layout'.");
@@ -152,7 +155,7 @@ public class ProjectFileManager {
             }
         }
         Collections.sort(warnings);
-        this.currentFile = file;
+        this.currentFile = path;
         this.modified = false;
         return project;
     }
@@ -162,7 +165,7 @@ public class ProjectFileManager {
         fireFileStatusChanged();
     }
 
-    public File getCurrentFile() {
+    public Path getCurrentFile() {
         return currentFile;
     }
 
@@ -528,16 +531,16 @@ public class ProjectFileManager {
         return project;
     }
 
-    private Project parseV3File(File file) throws IOException {
+    private Project parseV3File(Path path) throws IOException {
         Project project;
-        FileInputStream fis = new FileInputStream(file);
+        InputStream fis = Files.newInputStream(path);
         try {
             Reader reader = new InputStreamReader(fis, "UTF-8");
             project = (Project) xStream.fromXML(reader);
         } catch (Exception e) {
             LOG.warn("Could not open with the new xStream, trying the old one");
             fis.close();
-            fis = new FileInputStream(file);
+            fis = Files.newInputStream(path);
             project = (Project) xStreamOld.fromXML(fis);
         }
         fis.close();

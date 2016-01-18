@@ -1,8 +1,9 @@
 package org.diylc.app.menus.file;
 
 import java.awt.FileDialog;
-import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JFrame;
 
@@ -12,15 +13,15 @@ public class MacSaveDialog implements SaveDialog {
 
     private String defaultExtension;
     
-    public MacSaveDialog(JFrame parent, File directory, File file, FilenameFilter filter, String defaultExtension) {
+    public MacSaveDialog(JFrame parent, Path lastDirectory, Path initialFile, FilenameFilter filter, String defaultExtension) {
         this.defaultExtension = defaultExtension;
         fileDialog = new FileDialog(parent);
 
-        if (directory != null) {
-            fileDialog.setDirectory(directory.getAbsolutePath());
+        if (lastDirectory != null) {
+            fileDialog.setDirectory(lastDirectory.toAbsolutePath().toString());
         }
-        if (file != null) {
-            fileDialog.setFile(file.getName());
+        if (initialFile != null) {
+            fileDialog.setFile(initialFile.getFileName().toString());
         }
         if (filter != null) {
             fileDialog.setFilenameFilter(filter);
@@ -29,22 +30,22 @@ public class MacSaveDialog implements SaveDialog {
         fileDialog.setMode(FileDialog.SAVE);
     }
     
-    public File show() {
+    public Path show() {
         fileDialog.setVisible(true);
 
         String directory = fileDialog.getDirectory();
         String filename = fileDialog.getFile();
 
-        File file = null;
+        Path path = null;
         
         if (directory != null && filename != null) {
             if (filename.indexOf('.') < 0) {
                 filename += "." + defaultExtension;
             }
             
-            file = new File(new File(directory), filename);
+            path = Paths.get(directory, filename);
         }
         
-        return file;
+        return path;
     }
 }

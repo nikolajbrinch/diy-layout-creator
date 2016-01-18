@@ -7,6 +7,16 @@ import org.diylc.app.EventType;
 import org.diylc.app.IPlugIn;
 import org.diylc.app.IPlugInPort;
 import org.diylc.app.ISwingUI;
+import org.diylc.app.actions.ExportPDFAction;
+import org.diylc.app.actions.ExportPNGAction;
+import org.diylc.app.actions.PrintAction;
+import org.diylc.app.menus.file.actions.ExitAction;
+import org.diylc.app.menus.file.actions.ImportAction;
+import org.diylc.app.menus.file.actions.NewAction;
+import org.diylc.app.menus.file.actions.OpenAction;
+import org.diylc.app.menus.file.actions.OpenRecentAction;
+import org.diylc.app.menus.file.actions.SaveAction;
+import org.diylc.app.menus.file.actions.SaveAsAction;
 import org.diylc.core.LRU;
 import org.diylc.core.config.Configuration;
 
@@ -37,22 +47,21 @@ public class FileMenuPlugin implements IPlugIn {
 		this.plugInPort = plugInPort;
 		this.drawingProvider = new ProjectDrawingProvider(plugInPort, false, true);
 
-		FileActionFactory actionFactory = FileActionFactory.INSTANCE;
-		swingUI.injectMenuAction(actionFactory.createNewAction(plugInPort), FILE_TITLE);
-		swingUI.injectMenuAction(actionFactory.createOpenAction(plugInPort, swingUI), FILE_TITLE);
+		swingUI.injectMenuAction(new NewAction(plugInPort), FILE_TITLE);
+		swingUI.injectMenuAction(new OpenAction(plugInPort, swingUI), FILE_TITLE);
 		swingUI.injectSubmenu(OPEN_RECENT_TITLE, null, FILE_TITLE);
-		swingUI.injectMenuAction(actionFactory.createImportAction(plugInPort, swingUI), FILE_TITLE);
-		swingUI.injectMenuAction(actionFactory.createSaveAction(plugInPort, swingUI), FILE_TITLE);
-		swingUI.injectMenuAction(actionFactory.createSaveAsAction(plugInPort, swingUI), FILE_TITLE);
+		swingUI.injectMenuAction(new ImportAction(plugInPort, swingUI), FILE_TITLE);
+		swingUI.injectMenuAction(new SaveAction(plugInPort, swingUI), FILE_TITLE);
+		swingUI.injectMenuAction(new SaveAsAction(plugInPort, swingUI), FILE_TITLE);
 		swingUI.injectMenuAction(null, FILE_TITLE);
-		swingUI.injectMenuAction(actionFactory.createExportPDFAction(drawingProvider, swingUI), FILE_TITLE);
-		swingUI.injectMenuAction(actionFactory.createExportPNGAction(drawingProvider, swingUI), FILE_TITLE);
+		swingUI.injectMenuAction(new ExportPDFAction(drawingProvider, swingUI), FILE_TITLE);
+		swingUI.injectMenuAction(new ExportPNGAction(drawingProvider, swingUI), FILE_TITLE);
 		swingUI.injectMenuAction(null, FILE_TITLE);
-		swingUI.injectMenuAction(actionFactory.createPrintAction(drawingProvider), FILE_TITLE);
+		swingUI.injectMenuAction(new PrintAction(drawingProvider), FILE_TITLE);
 		
 		if (!Utils.isMac()) {
 			swingUI.injectMenuAction(null, FILE_TITLE);
-			swingUI.injectMenuAction(actionFactory.createExitAction(plugInPort), FILE_TITLE);
+			swingUI.injectMenuAction(new ExitAction(plugInPort), FILE_TITLE);
 		}
 	}
 
@@ -71,10 +80,9 @@ public class FileMenuPlugin implements IPlugIn {
 	
 	private void updateLru(LRU<Path> lru) {
 		swingUI.clearMenuItems(OPEN_RECENT_TITLE);
-		FileActionFactory actionFactory = FileActionFactory.INSTANCE;
 		
 		for (Path path : lru.getItems()) {
-			swingUI.injectMenuAction(actionFactory.createOpenRecentAction(plugInPort, swingUI, path), OPEN_RECENT_TITLE);
+			swingUI.injectMenuAction(new OpenRecentAction(plugInPort, swingUI, path), OPEN_RECENT_TITLE);
 		}
 		
 		Configuration.INSTANCE.setLru(lru);

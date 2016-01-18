@@ -1,6 +1,6 @@
 package org.diylc.app.menus.file;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
@@ -10,14 +10,14 @@ import org.diylc.core.SystemUtils;
 
 public interface OpenDialog {
 
-    public static OpenDialog newInstance(JFrame mainFrame, File directory, File file, FileFilter filter, String defaultExtension, IFileChooserAccessory accessory) {
+    public static OpenDialog newInstance(JFrame mainFrame, Path lastDirectory, Path initialFile, FileFilter filter, String defaultExtension, IFileChooserAccessory accessory) {
         if (SystemUtils.isMac()) {
-            return new MacOpenDialog(mainFrame, directory, file, new FilenameFilterAdapter(filter), defaultExtension);
+            return new MacOpenDialog(mainFrame, lastDirectory, initialFile, new FilenameFilterAdapter(filter), defaultExtension);
         }
         
-        return new DefaultOpenDialog(mainFrame, directory, file, filter, defaultExtension, accessory);
+        return new DefaultOpenDialog(mainFrame, lastDirectory, initialFile, filter, defaultExtension, accessory);
     }
     
-    public File show();
+    public Path show();
 
 }

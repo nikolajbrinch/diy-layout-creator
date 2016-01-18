@@ -11,11 +11,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -52,7 +57,7 @@ public class TemplateDialog extends JDialog {
 	private JList fileList;
 	private JPanel canvasPanel;
 	private Presenter presenter;
-	private List<File> files;
+	private List<Path> files;
 	private JCheckBox showTemplatesBox;
 	private JPanel mainPanel;
 	private JButton loadButton;
@@ -78,7 +83,7 @@ public class TemplateDialog extends JDialog {
 			}
 			
 			@Override
-			public File promptFileSave() {
+			public Path promptFileSave() {
 				return null;
 			}
 			
@@ -200,8 +205,8 @@ public class TemplateDialog extends JDialog {
 						boolean isSelected, boolean cellHasFocus) {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index,
 							isSelected, cellHasFocus);
-					if (value instanceof File) {
-						label.setText(((File) value).getName());
+					if (value instanceof Path) {
+						label.setText(((Path) value).getFileName().toString());
 					}
 					return label;
 				}
@@ -211,9 +216,13 @@ public class TemplateDialog extends JDialog {
 
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					File file = (File) fileList.getSelectedValue();
-					if (file != null) {
-						presenter.loadProjectFromFile(file);
+					Path path = (Path) fileList.getSelectedValue();
+					if (path != null) {
+						try {
+                            presenter.loadProjectFromFile(path);
+                        } catch (Exception e1) {
+                            throw new RuntimeException(e1);
+                        }
 						Dimension dim = presenter.getCanvasDimensions(true);
 						double xFactor = panelSize.getWidth() / dim.getWidth();
 						double yFactor = panelSize.getHeight() / dim.getHeight();
@@ -242,16 +251,18 @@ public class TemplateDialog extends JDialog {
 		return showTemplatesBox;
 	}
 
-	public List<File> getFiles() {
+	public List<Path> getFiles() {
 		if (files == null) {
-			files = new ArrayList<File>();
-			File dir = new File("templates");
-			if (dir.exists()) {
-				for (File f : dir.listFiles()) {
-					if (f.isFile() && f.getName().toLowerCase().endsWith(".diy")) {
-						files.add(f);
-					}
-				}
+			files = new ArrayList<Path>();
+			Path dir = Paths.get("templates");
+			if (Files.exists(dir)) {
+			    try (Stream<Path> stream = Files.list(dir)) {
+			    files.addAll(stream
+			            .filter(path -> Files.isRegularFile(path) && path.getFileName().toString().toLowerCase().endsWith(".diy"))
+			            .collect(Collectors.toList()));
+			    } catch (IOException e) {
+                    LOG.warn("Error getting template files", e);
+                }
 			}
 			LOG.debug("Found " + files.size() + " templates");
 		}

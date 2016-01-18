@@ -1,58 +1,59 @@
 package org.diylc.app.menus.file;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 
 import org.diylc.app.dialogs.OverwritePromptFileChooser;
-import org.diylc.core.config.Configuration;
 
 public class DefaultSaveDialog implements SaveDialog {
 
     private final JFileChooser fileChooser;
+
     private JFrame parent;
+
     private String defaultExtension;
-    private File directory;
-    
-    public DefaultSaveDialog(JFrame parent, File directory, File file, FileFilter filter, String defaultExtension) {
+
+    public DefaultSaveDialog(JFrame parent, Path lastDirectory, Path initialFile, FileFilter filter, String defaultExtension) {
         this.parent = parent;
-        this.directory = directory;
         this.defaultExtension = defaultExtension;
         fileChooser = new OverwritePromptFileChooser();
 
         for (javax.swing.filechooser.FileFilter fileFilter : fileChooser.getChoosableFileFilters()) {
             fileChooser.removeChoosableFileFilter(fileFilter);
         }
-        
+
         if (fileChooser instanceof OverwritePromptFileChooser) {
             ((OverwritePromptFileChooser) fileChooser).setFileFilter(filter, defaultExtension);
         } else {
             fileChooser.setFileFilter(filter);
         }
-        
-        if (directory != null) {
-            fileChooser.setCurrentDirectory(directory);
+
+        if (lastDirectory != null) {
+            fileChooser.setCurrentDirectory(lastDirectory.toFile());
         }
-        
-        fileChooser.setSelectedFile(file);
+
+        fileChooser.setSelectedFile(initialFile.toFile());
     }
-    
-    public File show() {
+
+    public Path show() {
+        Path path = null;
+
         int result = fileChooser.showSaveDialog(parent);
 
+        fileChooser.setAccessory(null);
+
         if (result == JFileChooser.APPROVE_OPTION) {
-            directory = fileChooser.getCurrentDirectory();
-            Configuration.INSTANCE.setLastPath(directory.getAbsolutePath());
-            
-            if (fileChooser.getSelectedFile().getAbsolutePath().contains(".")) {
-                return fileChooser.getSelectedFile();
-            } else {
-                return new File(fileChooser.getSelectedFile().getAbsoluteFile() + "." + defaultExtension);
+            path = fileChooser.getSelectedFile().toPath();
+
+            if (!fileChooser.getSelectedFile().getAbsolutePath().contains(".")) {
+                return Paths.get(path.toString(), "." + defaultExtension);
             }
-        } else {
-            return null;
         }
+
+        return path;
     }
 }

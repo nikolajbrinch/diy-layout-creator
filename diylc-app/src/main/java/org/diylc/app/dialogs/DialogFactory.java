@@ -1,6 +1,6 @@
 package org.diylc.app.dialogs;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -15,9 +15,8 @@ import org.diylc.app.menus.tools.BomDialog;
 import org.diylc.app.online.view.LoginDialog;
 import org.diylc.app.online.view.NewUserDialog;
 import org.diylc.app.online.view.UploadDialog;
-import org.diylc.core.PropertyWrapper;
-import org.diylc.core.config.Configuration;
 import org.diylc.core.BomEntry;
+import org.diylc.core.PropertyWrapper;
 
 public class DialogFactory {
 
@@ -31,7 +30,6 @@ public class DialogFactory {
     }
 
     private JFrame mainFrame;
-    private File lastDirectory;
 
     private DialogFactory() {
     }
@@ -44,11 +42,6 @@ public class DialogFactory {
      */
     public void initialize(JFrame mainFrame) {
         this.mainFrame = mainFrame;
-        String lastDirectoryPath = Configuration.INSTANCE.getLastPath();
-
-        if (lastDirectoryPath != null) {
-            lastDirectory = new File(lastDirectoryPath);
-        }
     }
 
     public PropertyEditorDialog createPropertyEditorDialog(List<PropertyWrapper> properties, String title) {
@@ -59,12 +52,12 @@ public class DialogFactory {
         return new BomDialog(mainFrame, bom);
     }
 
-    public File showOpenDialog(FileFilter fileFilter, File initialFile, String defaultExtension, IFileChooserAccessory accessory) {
-        return OpenDialog.newInstance(mainFrame, lastDirectory, initialFile, fileFilter, defaultExtension, accessory).show();
+    public Path showOpenDialog(FileFilter fileFilter, Path lastPath, Path initialFile, String defaultExtension, IFileChooserAccessory accessory) {
+        return OpenDialog.newInstance(mainFrame, lastPath, initialFile, fileFilter, defaultExtension, accessory).show();
     }
 
-    public File showSaveDialog(FileFilter fileFilter, File initialFile, String defaultExtension, IFileChooserAccessory accessory) {
-        return SaveDialog.newInstance(mainFrame, lastDirectory, initialFile, fileFilter, defaultExtension).show();
+    public Path showSaveDialog(FileFilter fileFilter, Path lastPath, Path initialFile, String defaultExtension, IFileChooserAccessory accessory) {
+        return SaveDialog.newInstance(mainFrame, lastPath, initialFile, fileFilter, defaultExtension).show();
     }
 
     public AboutDialog createAboutDialog(String appName, Icon icon, String version, String author, String url, String mail,

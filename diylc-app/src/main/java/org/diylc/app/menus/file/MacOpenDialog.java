@@ -1,8 +1,9 @@
 package org.diylc.app.menus.file;
 
 import java.awt.FileDialog;
-import java.io.File;
 import java.io.FilenameFilter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JFrame;
 
@@ -10,14 +11,14 @@ public class MacOpenDialog implements OpenDialog {
 
     private FileDialog fileDialog;
 
-    public MacOpenDialog(JFrame parent, File directory, File file, FilenameFilter filter, String defaultExtension) {
+    public MacOpenDialog(JFrame parent, Path lastDirectory, Path initialFile, FilenameFilter filter, String defaultExtension) {
         fileDialog = new FileDialog(parent);
 
-        if (directory != null) {
-            fileDialog.setDirectory(directory.getAbsolutePath());
+        if (lastDirectory != null) {
+            fileDialog.setDirectory(lastDirectory.toAbsolutePath().toString());
         }
-        if (file != null) {
-            fileDialog.setFile(file.getName());
+        if (initialFile != null) {
+            fileDialog.setFile(initialFile.getFileName().toString());
         }
         if (filter != null) {
             fileDialog.setFilenameFilter(filter);
@@ -27,13 +28,13 @@ public class MacOpenDialog implements OpenDialog {
     }
 
     @Override
-    public File show() {
+    public Path show() {
         fileDialog.setVisible(true);
 
         String directory = fileDialog.getDirectory();
         String filename = fileDialog.getFile();
 
-        return directory != null && filename != null ? new File(new File(directory), filename) : null;
+        return directory != null && filename != null ? Paths.get(directory,  filename) : null;
     }
 
 }

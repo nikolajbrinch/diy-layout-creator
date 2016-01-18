@@ -1,6 +1,6 @@
 package org.diylc.app;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -80,7 +80,11 @@ public class DIYLCStarter {
 
 		if (mainFrame != null) {
 			if (args.length > 0) {
-				mainFrame.getPresenter().loadProjectFromFile(new File(args[0]));
+				try {
+                    mainFrame.getPresenter().loadProjectFromFile(Paths.get(args[0]));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
 			} else {
 				boolean showTemplates = Configuration.INSTANCE.getShowTemplates();
 				if (showTemplates) {

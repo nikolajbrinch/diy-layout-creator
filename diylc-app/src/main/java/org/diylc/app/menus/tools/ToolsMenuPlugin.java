@@ -7,7 +7,10 @@ import org.diylc.app.EventType;
 import org.diylc.app.IPlugIn;
 import org.diylc.app.IPlugInPort;
 import org.diylc.app.ISwingUI;
-import org.diylc.app.menus.file.FileActionFactory;
+import org.diylc.app.actions.ExportPDFAction;
+import org.diylc.app.actions.ExportPNGAction;
+import org.diylc.app.actions.PrintAction;
+import org.diylc.app.menus.tools.actions.CreateBomAction;
 
 /**
  * Entry point class for File management utilities.
@@ -32,12 +35,11 @@ public class ToolsMenuPlugin implements IPlugIn {
 	public void connect(IPlugInPort plugInPort) {
 		this.traceMaskDrawingProvider = new TraceMaskDrawingProvider(plugInPort);
 
-		FileActionFactory actionFactory = FileActionFactory.INSTANCE;
 		swingUI.injectSubmenu(TRACE_MASK_TITLE, AppIconLoader.TraceMask.getIcon(), TOOLS_TITLE);
-		swingUI.injectMenuAction(actionFactory.createExportPDFAction(traceMaskDrawingProvider, swingUI), TRACE_MASK_TITLE);
-		swingUI.injectMenuAction(actionFactory.createExportPNGAction(traceMaskDrawingProvider, swingUI), TRACE_MASK_TITLE); 
-		swingUI.injectMenuAction(actionFactory.createPrintAction(traceMaskDrawingProvider), TRACE_MASK_TITLE);
-		swingUI.injectMenuAction(actionFactory.createBomAction(plugInPort), TOOLS_TITLE);
+		swingUI.injectMenuAction(new ExportPDFAction(traceMaskDrawingProvider, swingUI), TRACE_MASK_TITLE);
+		swingUI.injectMenuAction(new ExportPNGAction(traceMaskDrawingProvider, swingUI), TRACE_MASK_TITLE); 
+		swingUI.injectMenuAction(new PrintAction(traceMaskDrawingProvider), TRACE_MASK_TITLE);
+		swingUI.injectMenuAction(new CreateBomAction(plugInPort), TOOLS_TITLE);
 	}
 
 	@Override

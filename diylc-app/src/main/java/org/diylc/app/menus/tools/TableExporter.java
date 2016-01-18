@@ -4,11 +4,13 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 import javax.swing.JTable;
@@ -52,11 +54,11 @@ public class TableExporter {
 	private TableExporter() {
 	}
 
-	public void exportToExcel(JTable table, File file) throws IOException {
-		LOG.info("Exporting table to Excel file: " + file.getAbsolutePath());
+	public void exportToExcel(JTable table, Path path) throws IOException {
+		LOG.info("Exporting table to Excel file: " + path.toAbsolutePath());
 		LOG.debug("Creating workbook");
 		HSSFWorkbook wb = new HSSFWorkbook();
-		FileOutputStream fileOut = new FileOutputStream(file);
+		OutputStream fileOut = Files.newOutputStream(path);
 
 		LOG.debug("Creating sheet");
 		HSSFSheet bomSheet = wb.createSheet("B.O.M.");
@@ -138,10 +140,10 @@ public class TableExporter {
 		LOG.debug("Done");
 	}
 
-	public void exportToHTML(JTable table, File file) throws IOException {
-		LOG.info("Exporting table to HTML file: " + file.getAbsolutePath());
-		FileWriter fstream = new FileWriter(file);
-		BufferedWriter out = new BufferedWriter(fstream);
+	public void exportToHTML(JTable table, Path path) throws IOException {
+		LOG.info("Exporting table to HTML file: " + path.toAbsolutePath());
+		Writer writer = new OutputStreamWriter(Files.newOutputStream(path));
+		BufferedWriter out = new BufferedWriter(writer);
 		out.write("<html><body><font face=\"Tahoma\"><table cellspacing=\"0\" border=\"1\">\n");
 
 		LOG.debug("Writing header row");
@@ -179,10 +181,10 @@ public class TableExporter {
 		out.close();
 	}
 
-	public void exportToCSV(JTable table, File file) throws IOException {
-		LOG.info("Exporting table to CSV file: " + file.getAbsolutePath());
-		FileWriter fstream = new FileWriter(file);
-		BufferedWriter out = new BufferedWriter(fstream);
+	public void exportToCSV(JTable table, Path path) throws IOException {
+		LOG.info("Exporting table to CSV file: " + path.toAbsolutePath());
+		Writer writer = new OutputStreamWriter(Files.newOutputStream(path));
+		BufferedWriter out = new BufferedWriter(writer);
 
 		LOG.debug("Writing header row");
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
@@ -218,8 +220,8 @@ public class TableExporter {
 		out.close();
 	}
 
-	public void exportToPNG(JTable table, File file) throws IOException {
-		LOG.info("Exporting table to PNG file: " + file.getAbsolutePath());
+	public void exportToPNG(JTable table, Path path) throws IOException {
+		LOG.info("Exporting table to PNG file: " + path.toAbsolutePath());
 		table.clearSelection();
 		LOG.debug("Creating image");
 		BufferedImage image = new BufferedImage(table.getWidth(), table.getHeight()
@@ -231,7 +233,7 @@ public class TableExporter {
 		g2d.translate(0, table.getTableHeader().getHeight());
 		table.paint(g2d);
 		LOG.debug("Writing image to file");
-		ImageIO.write(image, "png", file);
+		ImageIO.write(image, "png", path.toFile());
 		g2d.dispose();
 	}
 }
