@@ -1,4 +1,4 @@
-package org.diylc.appframework.miscutils;
+package org.diylc.core;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -75,12 +75,6 @@ if (JavaVersion.current().isJava8Compatible()) {
 	}
 }
 
-project(':diylc-core') {
-	dependencies { 
-		compile project(':app-framework') 
-	}
-}
-
 project(':diylc-component-api') {
 	dependencies { 
 		compile project(':diylc-core') 
@@ -99,22 +93,14 @@ project(':diylc-serialization') {
 	}
 }
 
-project(':swing-framework') {
-	dependencies { 
-		compile project(':app-framework') 
-	}
-}
-
-project(':diylc-swing') {
+project(':diylc-app') {
 	dependencies {
 		compile project(':diylc-component-library')
-		compile project(':diylc-serialization')
-		compile project(':swing-framework')
 	}
 }
 
 project(':diylc') {
 	dependencies {
-		compile project(':diylc-swing')
+		compile project(':diylc-app')
 	}
 }
