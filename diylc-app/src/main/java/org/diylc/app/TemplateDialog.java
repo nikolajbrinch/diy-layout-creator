@@ -54,14 +54,22 @@ public class TemplateDialog extends JDialog {
 
 	private IPlugInPort plugInPort;
 
-	private JList fileList;
+	private JList<Path> fileList;
+	
 	private JPanel canvasPanel;
+	
 	private Presenter presenter;
+	
 	private List<Path> files;
+	
 	private JCheckBox showTemplatesBox;
+	
 	private JPanel mainPanel;
+	
 	private JButton loadButton;
+	
 	private JPanel infoPanel;
+	
 
 	public TemplateDialog(JFrame owner, IPlugInPort plugInPort) {
 		super(owner, "Templates");
@@ -192,22 +200,23 @@ public class TemplateDialog extends JDialog {
 		return infoPanel;
 	}
 
-	public JList getFileList() {
+	public JList<Path> getFileList() {
 		if (fileList == null) {
-			fileList = new JList(getFiles().toArray());
+			fileList = new JList<Path>(getFiles().toArray(new Path[0]));
 			fileList.setPreferredSize(new Dimension(128, -1));
 			fileList.setCellRenderer(new DefaultListCellRenderer() {
 
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				public Component getListCellRendererComponent(JList list, Object value, int index,
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
 						boolean isSelected, boolean cellHasFocus) {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index,
 							isSelected, cellHasFocus);
 					if (value instanceof Path) {
 						label.setText(((Path) value).getFileName().toString());
 					}
+					
 					return label;
 				}
 

@@ -19,7 +19,7 @@ import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-public abstract class AbstractTransistorSymbol extends AbstractComponent<String> {
+public abstract class AbstractTransistorSymbol extends AbstractComponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -116,12 +116,10 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent<String>
 	}
 
 	@EditableProperty
-	@Override
 	public String getValue() {
 		return this.value;
 	}
 
-	@Override
 	public void setValue(String value) {
 		this.value = value;
 	}

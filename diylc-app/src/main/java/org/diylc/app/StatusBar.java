@@ -41,22 +41,32 @@ public class StatusBar extends JPanel implements IPlugIn {
     private static final Logger LOG = LoggerFactory.getLogger(StatusBar.class);
 
     public static String UPDATE_URL = "http://www.diy-fever.com/update.xml";
+    
     private static final Format sizeFormat = new DecimalFormat("0.##");
 
-    private JComboBox zoomBox;
+    private JComboBox<Double> zoomBox;
+    
     private UpdateLabel updateLabel;
+    
     private MemoryBar memoryPanel;
+    
     private JLabel statusLabel;
+    
     private JLabel sizeLabel;
 
     private IPlugInPort plugInPort;
 
     // State variables
     private ComponentType componentSlot;
+    
     private Point controlPointSlot;
+    
     private List<String> componentNamesUnderCursor;
+    
     private List<String> selectedComponentNames;
+    
     private List<String> stuckComponentNames;
+    
     private String statusMessage;
 
     public StatusBar(ISwingUI swingUI) {
@@ -71,9 +81,134 @@ public class StatusBar extends JPanel implements IPlugIn {
         }
     }
 
-    private JComboBox getZoomBox() {
+
+    public JLabel getSizeLabel() {
+        if (sizeLabel == null) {
+            sizeLabel = new JLabel(AppIconLoader.Size.getIcon());
+            sizeLabel.setFocusable(true);
+            sizeLabel.setToolTipText("Click to calculate selection size");
+            sizeLabel.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    Point2D size = plugInPort.calculateSelectionDimension();
+                    boolean metric = Configuration.INSTANCE.getMetric();
+                    String text;
+                    if (size == null) {
+                        text = "Selection is empty.";
+                    } else {
+                        text = "Selection size: " + sizeFormat.format(size.getX()) + " x " + sizeFormat.format(size.getY())
+                                + (metric ? " cm" : " in");
+                    }
+                    JOptionPane.showMessageDialog(SwingUtilities.getRootPane(StatusBar.this), text, "Information",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            });
+        }
+        return sizeLabel;
+    }
+
+    @Override
+    public void connect(IPlugInPort plugInPort) {
+        this.plugInPort = plugInPort;
+
+        layoutComponents();
+    }
+
+    @Override
+    public EnumSet<EventType> getSubscribedEventTypes() {
+        return EnumSet.of(EventType.ZOOM_CHANGED, EventType.SLOT_CHANGED, EventType.AVAILABLE_CTRL_POINTS_CHANGED,
+                EventType.SELECTION_CHANGED, EventType.STATUS_MESSAGE_CHANGED);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void processMessage(EventType eventType, Object... params) {
+        switch (eventType) {
+        case ZOOM_CHANGED:
+            if (!params[0].equals(getZoomBox().getSelectedItem())) {
+                final Double zoom = (Double) params[0];
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        getZoomBox().setSelectedItem(zoom);
+                    }
+                });
+            }
+            break;
+        case SELECTION_CHANGED:
+            List<IDIYComponent> selection = (List<IDIYComponent>) params[0];
+            Collection<IDIYComponent> stuckComponents = (Collection<IDIYComponent>) params[1];
+            Collection<String> componentNames = new HashSet<String>();
+            for (IDIYComponent component : selection) {
+                componentNames.add("<font color='blue'>" + component.getName() + "</font>");
+            }
+            this.selectedComponentNames = new ArrayList<String>(componentNames);
+            Collections.sort(this.selectedComponentNames);
+            this.stuckComponentNames = new ArrayList<String>();
+            for (IDIYComponent component : stuckComponents) {
+                this.stuckComponentNames.add("<font color='blue'>" + component.getName() + "</font>");
+            }
+            this.stuckComponentNames.removeAll(this.selectedComponentNames);
+            Collections.sort(this.stuckComponentNames);
+            refreshStatusText();
+            break;
+        case SLOT_CHANGED:
+            componentSlot = (ComponentType) params[0];
+            controlPointSlot = (Point) params[1];
+            refreshStatusText();
+            break;
+        case AVAILABLE_CTRL_POINTS_CHANGED:
+            componentNamesUnderCursor = new ArrayList<String>();
+            for (IDIYComponent component : ((Map<IDIYComponent, Integer>) params[0]).keySet()) {
+                componentNamesUnderCursor.add("<font color='blue'>" + component.getName() + "</font>");
+            }
+            Collections.sort(componentNamesUnderCursor);
+            refreshStatusText();
+            break;
+        case STATUS_MESSAGE_CHANGED:
+            statusMessage = (String) params[0];
+        default:
+            break;
+        }
+    }
+
+    private void layoutComponents() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        add(getStatusLabel(), gbc);
+
+        JPanel zoomPanel = new JPanel(new BorderLayout());
+        zoomPanel.add(new JLabel("Zoom: "), BorderLayout.WEST);
+        zoomPanel.add(getZoomBox(), BorderLayout.CENTER);
+        zoomPanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 0;
+        add(zoomPanel, gbc);
+
+        gbc.gridx = 2;
+        add(getSizeLabel(), gbc);
+
+        gbc.gridx = 3;
+        add(getUpdateLabel(), gbc);
+
+        gbc.gridx = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        add(getMemoryPanel(), gbc);
+
+        gbc.gridx = 5;
+        add(new JPanel(), gbc);
+    }
+
+    private JComboBox<Double> getZoomBox() {
         if (zoomBox == null) {
-            zoomBox = new JComboBox(plugInPort.getAvailableZoomLevels());
+            zoomBox = new JComboBox<Double>(plugInPort.getAvailableZoomLevels());
             zoomBox.setSelectedItem(plugInPort.getZoomLevel());
             zoomBox.setFocusable(false);
             zoomBox.setRenderer(new PercentageListCellRenderer());
@@ -109,135 +244,6 @@ public class StatusBar extends JPanel implements IPlugIn {
             statusLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
         }
         return statusLabel;
-    }
-
-    public JLabel getSizeLabel() {
-        if (sizeLabel == null) {
-            sizeLabel = new JLabel(AppIconLoader.Size.getIcon());
-            sizeLabel.setFocusable(true);
-            sizeLabel.setToolTipText("Click to calculate selection size");
-            sizeLabel.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    Point2D size = plugInPort.calculateSelectionDimension();
-                    boolean metric = Configuration.INSTANCE.getMetric();
-                    String text;
-                    if (size == null) {
-                        text = "Selection is empty.";
-                    } else {
-                        text = "Selection size: " + sizeFormat.format(size.getX()) + " x " + sizeFormat.format(size.getY())
-                                + (metric ? " cm" : " in");
-                    }
-                    JOptionPane.showMessageDialog(SwingUtilities.getRootPane(StatusBar.this), text, "Information",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            });
-        }
-        return sizeLabel;
-    }
-
-    private void layoutComponents() {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        add(getStatusLabel(), gbc);
-
-        JPanel zoomPanel = new JPanel(new BorderLayout());
-        zoomPanel.add(new JLabel("Zoom: "), BorderLayout.WEST);
-        zoomPanel.add(getZoomBox(), BorderLayout.CENTER);
-        // zoomPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-        // .createEtchedBorder(), BorderFactory.createEmptyBorder(2, 4, 2,
-        // 4)));
-        zoomPanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
-
-        gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0;
-        add(zoomPanel, gbc);
-
-        gbc.gridx = 2;
-        add(getSizeLabel(), gbc);
-
-        gbc.gridx = 3;
-        add(getUpdateLabel(), gbc);
-
-        gbc.gridx = 4;
-        gbc.fill = GridBagConstraints.NONE;
-        add(getMemoryPanel(), gbc);
-
-        gbc.gridx = 5;
-        add(new JPanel(), gbc);
-    }
-
-    // IPlugIn
-
-    @Override
-    public void connect(IPlugInPort plugInPort) {
-        this.plugInPort = plugInPort;
-
-        layoutComponents();
-    }
-
-    @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-        return EnumSet.of(EventType.ZOOM_CHANGED, EventType.SLOT_CHANGED, EventType.AVAILABLE_CTRL_POINTS_CHANGED,
-                EventType.SELECTION_CHANGED, EventType.STATUS_MESSAGE_CHANGED);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void processMessage(EventType eventType, Object... params) {
-        switch (eventType) {
-        case ZOOM_CHANGED:
-            if (!params[0].equals(getZoomBox().getSelectedItem())) {
-                final Double zoom = (Double) params[0];
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        getZoomBox().setSelectedItem(zoom);
-                    }
-                });
-            }
-            break;
-        case SELECTION_CHANGED:
-            List<IDIYComponent<?>> selection = (List<IDIYComponent<?>>) params[0];
-            Collection<IDIYComponent<?>> stuckComponents = (Collection<IDIYComponent<?>>) params[1];
-            Collection<String> componentNames = new HashSet<String>();
-            for (IDIYComponent<?> component : selection) {
-                componentNames.add("<font color='blue'>" + component.getName() + "</font>");
-            }
-            this.selectedComponentNames = new ArrayList<String>(componentNames);
-            Collections.sort(this.selectedComponentNames);
-            this.stuckComponentNames = new ArrayList<String>();
-            for (IDIYComponent<?> component : stuckComponents) {
-                this.stuckComponentNames.add("<font color='blue'>" + component.getName() + "</font>");
-            }
-            this.stuckComponentNames.removeAll(this.selectedComponentNames);
-            Collections.sort(this.stuckComponentNames);
-            refreshStatusText();
-            break;
-        case SLOT_CHANGED:
-            componentSlot = (ComponentType) params[0];
-            controlPointSlot = (Point) params[1];
-            refreshStatusText();
-            break;
-        case AVAILABLE_CTRL_POINTS_CHANGED:
-            componentNamesUnderCursor = new ArrayList<String>();
-            for (IDIYComponent<?> component : ((Map<IDIYComponent<?>, Integer>) params[0]).keySet()) {
-                componentNamesUnderCursor.add("<font color='blue'>" + component.getName() + "</font>");
-            }
-            Collections.sort(componentNamesUnderCursor);
-            refreshStatusText();
-            break;
-        case STATUS_MESSAGE_CHANGED:
-            statusMessage = (String) params[0];
-        default:
-            break;
-        }
     }
 
     private void refreshStatusText() {

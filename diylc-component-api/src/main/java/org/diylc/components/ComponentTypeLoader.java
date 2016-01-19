@@ -43,11 +43,11 @@ public class ComponentTypeLoader {
     private Map<String, List<ComponentType>> loadComponentTypes(ClassLoader classLoader, Path[] directories) {
         LOG.info("Loading component types.");
 
-        Set<Class<? extends IDIYComponent<?>>> componentClasses = new TreeSet<Class<? extends IDIYComponent<?>>>(
-                new Comparator<Class<? extends IDIYComponent<?>>>() {
+        Set<Class<? extends IDIYComponent>> componentClasses = new TreeSet<Class<? extends IDIYComponent>>(
+                new Comparator<Class<? extends IDIYComponent>>() {
 
                     @Override
-                    public int compare(Class<? extends IDIYComponent<?>> o1, Class<? extends IDIYComponent<?>> o2) {
+                    public int compare(Class<? extends IDIYComponent> o1, Class<? extends IDIYComponent> o2) {
                         return o1.getName().compareTo(o2.getName());
                     }
 
@@ -58,8 +58,8 @@ public class ComponentTypeLoader {
 
         Map<String, List<ComponentType>> componentTypes = new HashMap<String, List<ComponentType>>();
 
-        for (Class<? extends IDIYComponent<?>> componentClass : componentClasses) {
-            ComponentType componentType = loadComponentType((Class<? extends IDIYComponent<?>>) componentClass);
+        for (Class<? extends IDIYComponent> componentClass : componentClasses) {
+            ComponentType componentType = loadComponentType((Class<? extends IDIYComponent>) componentClass);
 
             if (componentType != null) {
                 List<ComponentType> components = componentTypes.get(componentType.getCategory());
@@ -77,8 +77,8 @@ public class ComponentTypeLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private Collection<? extends Class<? extends IDIYComponent<?>>> loadCompiledClasses(ClassLoader classLoader) {
-        Set<Class<? extends IDIYComponent<?>>> componentClasses = new HashSet<Class<? extends IDIYComponent<?>>>();
+    private Collection<? extends Class<? extends IDIYComponent>> loadCompiledClasses(ClassLoader classLoader) {
+        Set<Class<? extends IDIYComponent>> componentClasses = new HashSet<Class<? extends IDIYComponent>>();
 
         Set<String> componentTypeClasses = null;
 
@@ -94,7 +94,7 @@ public class ComponentTypeLoader {
 
                 if (!Modifier.isAbstract(clazz.getModifiers())) {
                     if (IDIYComponent.class.isAssignableFrom(clazz)) {
-                        componentClasses.add((Class<? extends IDIYComponent<?>>) clazz);
+                        componentClasses.add((Class<? extends IDIYComponent>) clazz);
                     }
                 }
             } catch (ClassNotFoundException e) {
@@ -106,8 +106,8 @@ public class ComponentTypeLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private Collection<? extends Class<? extends IDIYComponent<?>>> loadGroovyClasses(ClassLoader classLoader, Path[] directories) {
-        Set<Class<? extends IDIYComponent<?>>> componentClasses = new HashSet<Class<? extends IDIYComponent<?>>>();
+    private Collection<? extends Class<? extends IDIYComponent>> loadGroovyClasses(ClassLoader classLoader, Path[] directories) {
+        Set<Class<? extends IDIYComponent>> componentClasses = new HashSet<Class<? extends IDIYComponent>>();
 
         GroovyClassLoader groovyClassLoader = null;
 
@@ -129,7 +129,7 @@ public class ComponentTypeLoader {
 
                     if (!Modifier.isAbstract(clazz.getModifiers())) {
                         if (IDIYComponent.class.isAssignableFrom(clazz)) {
-                            componentClasses.add((Class<? extends IDIYComponent<?>>) clazz);
+                            componentClasses.add((Class<? extends IDIYComponent>) clazz);
                         }
                     }
                 } catch (CompilationFailedException e) {
@@ -149,13 +149,13 @@ public class ComponentTypeLoader {
         return componentClasses;
     }
 
-    private ComponentType loadComponentType(Class<? extends IDIYComponent<?>> clazz) {
+    private ComponentType loadComponentType(Class<? extends IDIYComponent> clazz) {
         ComponentType componentType = null;
 
         try {
             LOG.debug("Loading \"" + clazz.getName() + "\"");
 
-            IDIYComponent<?> component = (IDIYComponent<?>) clazz.newInstance();
+            IDIYComponent component = (IDIYComponent) clazz.newInstance();
 
             componentType = componentTypeFactory.newComponentType(component);
 
@@ -170,11 +170,11 @@ public class ComponentTypeLoader {
 
     @SuppressWarnings("unchecked")
     ComponentType loadComponentType(String className) throws ClassNotFoundException {
-        return loadComponentType((Class<? extends IDIYComponent<?>>) Class.forName(className));
+        return loadComponentType((Class<? extends IDIYComponent>) Class.forName(className));
 
     }
 
-    private Icon loadIcon(IDIYComponent<?> component) {
+    private Icon loadIcon(IDIYComponent component) {
         Icon icon = null;
 
         try {

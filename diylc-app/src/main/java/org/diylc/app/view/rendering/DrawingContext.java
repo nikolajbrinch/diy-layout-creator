@@ -22,21 +22,21 @@ public class DrawingContext {
     
     private final Rectangle selectionRect;
     
-    private final List<IDIYComponent<?>> selectedComponents;
+    private final List<IDIYComponent> selectedComponents;
     
-    private final Set<IDIYComponent<?>> lockedComponents;
+    private final Set<IDIYComponent> lockedComponents;
     
-    private final Set<IDIYComponent<?>> groupedComponents;
+    private final Set<IDIYComponent> groupedComponents;
     
     private final List<Point> controlPointSlot;
     
-    private final List<IDIYComponent<?>> componentSlot;
+    private final List<IDIYComponent> componentSlot;
     
     private final boolean dragInProgress;
 
     public DrawingContext(Graphics2D graphics2d, Project project, Set<DrawingOption> drawOptions, IComponentFilter filter, Rectangle selectionRect,
-            List<IDIYComponent<?>> selectedComponents, Set<IDIYComponent<?>> lockedComponents, Set<IDIYComponent<?>> groupedComponents,
-            List<Point> controlPointSlot, List<IDIYComponent<?>> componentSlot, boolean dragInProgress) {
+            List<IDIYComponent> selectedComponents, Set<IDIYComponent> lockedComponents, Set<IDIYComponent> groupedComponents,
+            List<Point> controlPointSlot, List<IDIYComponent> componentSlot, boolean dragInProgress) {
         this.graphics2d = graphics2d;
         this.project = project;
         this.drawOptions = drawOptions;
@@ -77,15 +77,15 @@ public class DrawingContext {
         return selectionRect;
     }
 
-    public List<IDIYComponent<?>> getSelectedComponents() {
+    public List<IDIYComponent> getSelectedComponents() {
         return selectedComponents;
     }
 
-    public Set<IDIYComponent<?>> getLockedComponents() {
+    public Set<IDIYComponent> getLockedComponents() {
         return lockedComponents;
     }
 
-    public Set<IDIYComponent<?>> getGroupedComponents() {
+    public Set<IDIYComponent> getGroupedComponents() {
         return groupedComponents;
     }
 
@@ -93,7 +93,7 @@ public class DrawingContext {
         return controlPointSlot;
     }
 
-    public List<IDIYComponent<?>> getComponentSlot() {
+    public List<IDIYComponent> getComponentSlot() {
         return componentSlot;
     }
 

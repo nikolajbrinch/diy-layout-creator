@@ -21,7 +21,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Copper Trace", author = "Branislav Stojkovic", category = "Connectivity", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "Trace", description = "Straight copper trace", zOrder = IDIYComponent.TRACE, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class CopperTrace extends AbstractLeadedComponent<Void> {
+public class CopperTrace extends AbstractLeadedComponent {
 
 	private static final long serialVersionUID = 1L
 
@@ -94,15 +94,6 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
 	@Override
 	public Size getWidth() {
 		return super.getWidth()
-	}
-
-	@Override
-	public Void getValue() {
-		return null
-	}
-
-	@Override
-	public void setValue(Void value) {
 	}
 
 	@Override

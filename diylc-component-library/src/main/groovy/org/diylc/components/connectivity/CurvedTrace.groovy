@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @ComponentDescriptor(name = "Curved Trace", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "Trace", description = "Curved copper trace with two control points", zOrder = IDIYComponent.TRACE, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class CurvedTrace extends AbstractCurvedComponent<Void> implements Geometry {
+public class CurvedTrace extends AbstractCurvedComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 

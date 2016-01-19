@@ -45,7 +45,7 @@ public class AutoFitTable extends JTable {
 		super(dm);
 	}
 
-	public AutoFitTable(Vector rowData, Vector columnNames) {
+	public AutoFitTable(Vector<?> rowData, Vector<?> columnNames) {
 		super(rowData, columnNames);
 	}
 

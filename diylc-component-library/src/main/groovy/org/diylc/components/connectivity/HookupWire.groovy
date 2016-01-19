@@ -18,7 +18,7 @@ import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Hookup Wire", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "W", description = "Flexible wire with two control points", zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class HookupWire extends AbstractCurvedComponent<Void> {
+public class HookupWire extends AbstractCurvedComponent {
 
 	private static final long serialVersionUID = 1L
 
@@ -50,12 +50,4 @@ public class HookupWire extends AbstractCurvedComponent<Void> {
 		}
 	}
 
-	@Override
-	public Void getValue() {
-		return null
-	}
-
-	@Override
-	public void setValue(Void value) {
-	}
 }

@@ -12,7 +12,7 @@ public interface ISelectionProcessor {
 	 * 
 	 * @return
 	 */
-	List<IDIYComponent<?>> getSelectedComponents();
+	List<IDIYComponent> getSelectedComponents();
 
 	/**
 	 * Updates the selection with the specified list of component. Also, updates
@@ -21,7 +21,7 @@ public interface ISelectionProcessor {
 	 * 
 	 * @param newSelection
 	 */
-	void updateSelection(List<IDIYComponent<?>> newSelection);
+	void updateSelection(List<IDIYComponent> newSelection);
 
 	/**
 	 * Finds all components at the specified location, sorted by z-index from
@@ -30,7 +30,7 @@ public interface ISelectionProcessor {
 	 * @param point
 	 * @return
 	 */
-	List<IDIYComponent<?>> findComponentsAt(Point point);
+	List<IDIYComponent> findComponentsAt(Point point);
 
 	/**
 	 * Expands the current selection to include surrounding components. Options

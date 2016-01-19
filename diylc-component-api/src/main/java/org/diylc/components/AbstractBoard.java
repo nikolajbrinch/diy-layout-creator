@@ -17,7 +17,7 @@ import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-public abstract class AbstractBoard extends AbstractTransparentComponent<String> {
+public abstract class AbstractBoard extends AbstractTransparentComponent {
 
     private static final long serialVersionUID = 1L;
 
@@ -172,12 +172,10 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     }
 
     @EditableProperty
-    @Override
     public String getValue() {
         return value;
     }
 
-    @Override
     public void setValue(String value) {
         this.value = value;
     }

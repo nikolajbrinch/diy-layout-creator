@@ -49,7 +49,7 @@ public class TraceMaskDrawingProvider implements IDrawingProvider {
 
 	private PCBLayer[] getUsedLayers() {
 		Set<PCBLayer> layers = EnumSet.noneOf(PCBLayer.class);
-		for (IDIYComponent<?> c : plugInPort.getCurrentProject()
+		for (IDIYComponent c : plugInPort.getCurrentProject()
 				.getComponents()) {
 			Class<?> clazz = c.getClass();
 			try {

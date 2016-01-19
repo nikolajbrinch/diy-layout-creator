@@ -18,7 +18,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Film Capacitor (radial)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Radial film capacitor, similar to Sprague Orange Drop", zOrder = IDIYComponent.COMPONENT)
-public class RadialFilmCapacitor extends AbstractRadialComponent<Capacitance> {
+public class RadialFilmCapacitor extends AbstractRadialComponent {
 
 	private static final long serialVersionUID = 1L
 

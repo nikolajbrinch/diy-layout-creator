@@ -16,7 +16,7 @@ public class PCBLayerFilter implements IComponentFilter {
 	}
 
 	@Override
-	public boolean testComponent(IDIYComponent<?> component) {
+	public boolean testComponent(IDIYComponent component) {
 		Class<?> clazz = component.getClass();
 		
 		try {

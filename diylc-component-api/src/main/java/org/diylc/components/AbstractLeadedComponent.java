@@ -32,8 +32,8 @@ import org.diylc.core.utils.Constants;
  * 
  * @author Branislav Stojkovic
  */
-public abstract class AbstractLeadedComponent<T> extends
-		AbstractTransparentComponent<T> {
+public abstract class AbstractLeadedComponent extends
+		AbstractTransparentComponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -279,8 +279,10 @@ public abstract class AbstractLeadedComponent<T> extends
 			}
 			graphicsContext.setColor(finalLabelColor);
 			FontMetrics fontMetrics = graphicsContext.getFontMetrics();
-			String label = display == Display.NAME ? getName()
-					: (getValue() == null ? "" : getValue().toString());
+			
+			String label = getName();
+//			String label = display == Display.NAME ? getName()
+//					: (getValue() == null ? "" : getValue().toString());
 			Rectangle2D textRect = fontMetrics.getStringBounds(label, graphicsContext.graphics2D);
 			// Don't offset in outline mode.
 			int offset = outlineMode ? 0 : getLabelOffset((int) length,

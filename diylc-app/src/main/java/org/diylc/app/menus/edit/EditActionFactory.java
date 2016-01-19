@@ -144,7 +144,7 @@ public enum EditActionFactory {
         public void actionPerformed(ActionEvent e) {
             LOG.info("Paste triggered");
             try {
-                List<IDIYComponent<?>> components = (List<IDIYComponent<?>>) clipboard.getData(ComponentTransferable.listFlavor);
+                List<IDIYComponent> components = (List<IDIYComponent>) clipboard.getData(ComponentTransferable.listFlavor);
                 plugInPort.pasteComponents(cloneComponents(components));
             } catch (Exception ex) {
                 LOG.error("Coule not paste.", ex);
@@ -333,9 +333,9 @@ public enum EditActionFactory {
         }
     }
 
-    private static List<IDIYComponent<?>> cloneComponents(List<IDIYComponent<?>> components) {
-        List<IDIYComponent<?>> result = new ArrayList<IDIYComponent<?>>(components.size());
-        for (IDIYComponent<?> component : components) {
+    private static List<IDIYComponent> cloneComponents(List<IDIYComponent> components) {
+        List<IDIYComponent> result = new ArrayList<IDIYComponent>(components.size());
+        for (IDIYComponent component : components) {
             try {
                 result.add(component.clone());
             } catch (CloneNotSupportedException e) {

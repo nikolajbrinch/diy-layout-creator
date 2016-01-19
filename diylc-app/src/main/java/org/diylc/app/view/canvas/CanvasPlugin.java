@@ -288,14 +288,14 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
     private void updateSelectionMenu(int x, int y) {
         getSelectionMenu().removeAll();
-        for (IDIYComponent<?> component : plugInPort.findComponentsAt(new Point(x, y))) {
+        for (IDIYComponent component : plugInPort.findComponentsAt(new Point(x, y))) {
             JMenuItem item = new JMenuItem(component.getName());
-            final IDIYComponent<?> finalComponent = component;
+            final IDIYComponent finalComponent = component;
             item.addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
+                    List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
                     newSelection.add(finalComponent);
                     plugInPort.updateSelection(newSelection);
                     plugInPort.refresh();

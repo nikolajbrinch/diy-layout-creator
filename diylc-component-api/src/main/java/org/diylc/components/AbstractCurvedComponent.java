@@ -17,7 +17,7 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.core.utils.Constants;
 
-public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComponent<T> {
+public abstract class AbstractCurvedComponent extends AbstractTransparentComponent {
 
 	private static final long serialVersionUID = 1L;
 

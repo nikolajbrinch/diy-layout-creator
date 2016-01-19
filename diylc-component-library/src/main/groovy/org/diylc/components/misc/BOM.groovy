@@ -27,7 +27,7 @@ import org.diylc.core.BomEntry
 import org.diylc.core.BomMaker
 
 @ComponentDescriptor(name = "Bill of Materials", author = "Branislav Stojkovic", category = "Misc", description = "", instanceNamePrefix = "BOM", zOrder = IDIYComponent.TEXT, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class BOM extends AbstractComponent<Void> implements Geometry {
+public class BOM extends AbstractComponent implements Geometry {
 
     public static Size DEFAULT_SIZE = new Size(10d, SizeUnit.cm)
 

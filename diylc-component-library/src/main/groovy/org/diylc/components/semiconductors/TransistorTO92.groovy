@@ -32,7 +32,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Transistor (TO-92 package)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "Q", description = "Transistor with small plastic or epoxy body", stretchable = false, zOrder = IDIYComponent.COMPONENT)
-public class TransistorTO92 extends AbstractTransparentComponent<String> implements Geometry {
+public class TransistorTO92 extends AbstractTransparentComponent implements Geometry {
 
 	private static final long serialVersionUID = 1L
 

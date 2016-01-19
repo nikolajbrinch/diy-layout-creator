@@ -20,7 +20,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Ground Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "GND", description = "Ground schematic symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-class GroundSymbol extends AbstractComponent<Void> {
+class GroundSymbol extends AbstractComponent {
 
     public static enum GroundSymbolType {
         DEFAULT("Default"), TRIANGLE("Triangle")

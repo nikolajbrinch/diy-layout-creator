@@ -36,7 +36,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Strat Single Coil Pickup", category = "Guitar", author = "Branislav Stojkovic", description = "Strat-style single coil guitar pickup", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false)
-public class SingleCoilPickup extends AbstractTransparentComponent<String> implements Geometry {
+public class SingleCoilPickup extends AbstractTransparentComponent implements Geometry {
 
 	private static final long serialVersionUID = 1L
 
@@ -223,7 +223,6 @@ public class SingleCoilPickup extends AbstractTransparentComponent<String> imple
 		body = null
 	}
 
-	@Override
 	public void setValue(String value) {
 		this.value = value
 	}

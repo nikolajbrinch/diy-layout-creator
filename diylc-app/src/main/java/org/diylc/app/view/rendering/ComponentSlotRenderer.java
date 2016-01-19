@@ -21,14 +21,14 @@ public class ComponentSlotRenderer extends AbstractBasicRenderer {
     private static final Composite slotComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 
     @Override
-    public List<IDIYComponent<?>> render(RenderingContext renderingContext) {
+    public List<IDIYComponent> render(RenderingContext renderingContext) {
         Project project = renderingContext.getProject();
         Graphics2DWrapper graphics2dWrapper = renderingContext.getGraphics2dWrapper();
         Set<DrawingOption> drawingOptions = renderingContext.getDrawingOptions();
-        List<IDIYComponent<?>> componentSlot = renderingContext.getComponentSlot();
+        List<IDIYComponent> componentSlot = renderingContext.getComponentSlot();
         List<Point> controlPointSlot = renderingContext.getControlPointSlot();
 
-        List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
+        List<IDIYComponent> failedComponents = new ArrayList<IDIYComponent>();
 
         if (componentSlot != null) {
             /*
@@ -37,7 +37,7 @@ public class ComponentSlotRenderer extends AbstractBasicRenderer {
             graphics2dWrapper.startedDrawingComponent();
             graphics2dWrapper.setComposite(slotComposite);
 
-            for (IDIYComponent<?> component : componentSlot) {
+            for (IDIYComponent component : componentSlot) {
                 try {
 
                     component.draw(new GraphicsContext(graphics2dWrapper), ComponentState.NORMAL,

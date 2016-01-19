@@ -2,7 +2,7 @@ package org.diylc.components;
 
 import org.diylc.core.annotations.EditableProperty;
 
-public abstract class AbstractTransparentComponent<T> extends AbstractComponent<T> {
+public abstract class AbstractTransparentComponent extends AbstractComponent {
 
 	private static final long serialVersionUID = 1L;
 

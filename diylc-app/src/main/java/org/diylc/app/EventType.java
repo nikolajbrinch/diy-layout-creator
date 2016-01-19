@@ -64,7 +64,7 @@ public enum EventType {
 	/**
 	 * Called when control points under the cursor are changed. A single
 	 * parameter is passed, an instance of
-	 * <code>Map<IDIYComponent<?>, Set<Integer>></code> containing all the
+	 * <code>Map<IDIYComponent, Set<Integer>></code> containing all the
 	 * components and indices of their control points that are under the cursor.
 	 */
 	AVAILABLE_CTRL_POINTS_CHANGED,

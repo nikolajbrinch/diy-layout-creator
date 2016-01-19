@@ -26,7 +26,7 @@ import org.diylc.core.measures.SizeUnit
 
 
 @ComponentDescriptor(name = "Breadboard", category = "Boards", author = "Branislav Stojkovic", description = "Prototyping solderless breadboard", instanceNamePrefix = "BB", stretchable = false, zOrder = IDIYComponent.BOARD, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
-public class Breadboard extends AbstractComponent<Void> implements Geometry {
+public class Breadboard extends AbstractComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 
@@ -188,15 +188,6 @@ public class Breadboard extends AbstractComponent<Void> implements Geometry {
     @Override
     public void setControlPoint(Point point, int index) {
         this.point.setLocation(point)
-    }
-
-    @Override
-    public Void getValue() {
-        return null
-    }
-
-    @Override
-    public void setValue(Void value) {
     }
 
     @Deprecated

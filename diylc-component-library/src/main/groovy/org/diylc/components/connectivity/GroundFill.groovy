@@ -24,7 +24,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Ground Fill", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "GF", description = "Polygonal ground fill area", zOrder = IDIYComponent.TRACE, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class GroundFill extends AbstractComponent<Void> implements Geometry {
+public class GroundFill extends AbstractComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 
@@ -108,17 +108,6 @@ public class GroundFill extends AbstractComponent<Void> implements Geometry {
             }
         }
         this.pointCount = pointCount
-    }
-
-    @Deprecated
-    @Override
-    public Void getValue() {
-        return null
-    }
-
-    @Deprecated
-    @Override
-    public void setValue(Void value) {
     }
 
     @Override

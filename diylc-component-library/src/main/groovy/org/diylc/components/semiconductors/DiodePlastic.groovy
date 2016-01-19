@@ -18,7 +18,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Diode (plastic)", author = "Branislav Stojkovic", category = "Semiconductors", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Plastic diode, like most rectifier, zener, schottky, etc.", zOrder = IDIYComponent.COMPONENT)
-public class DiodePlastic extends AbstractLeadedComponent<String> {
+public class DiodePlastic extends AbstractLeadedComponent {
 
 	private static final long serialVersionUID = 1L
 

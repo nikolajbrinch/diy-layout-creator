@@ -19,7 +19,7 @@ import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 
 @ComponentDescriptor(name = "Jumper", author = "Branislav Stojkovic", category = "Connectivity", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "J", description = "", zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class Jumper extends AbstractLeadedComponent<Void> {
+public class Jumper extends AbstractLeadedComponent {
 
 	private static final long serialVersionUID = 1L
 
@@ -79,15 +79,6 @@ public class Jumper extends AbstractLeadedComponent<Void> {
 	@Override
 	public Size getWidth() {
 		return super.getWidth()
-	}
-
-	@Override
-	public Void getValue() {
-		return null
-	}
-
-	@Override
-	public void setValue(Void value) {
 	}
 
 	@Override

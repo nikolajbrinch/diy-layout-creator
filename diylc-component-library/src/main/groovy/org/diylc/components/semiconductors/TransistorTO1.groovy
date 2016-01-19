@@ -33,7 +33,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Transistor (TO-1 package)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "Q", description = "Transistor with small metal body", stretchable = false, zOrder = IDIYComponent.COMPONENT)
-public class TransistorTO1 extends AbstractTransparentComponent<String> implements Geometry {
+public class TransistorTO1 extends AbstractTransparentComponent implements Geometry {
 
 	private static final long serialVersionUID = 1L
 

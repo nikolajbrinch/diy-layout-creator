@@ -20,7 +20,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Resistor", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "R", description = "Resistor layout symbol", zOrder = IDIYComponent.COMPONENT)
-public class Resistor extends AbstractLeadedComponent<Resistance> {
+public class Resistor extends AbstractLeadedComponent {
 
     private static final long serialVersionUID = 1L
 

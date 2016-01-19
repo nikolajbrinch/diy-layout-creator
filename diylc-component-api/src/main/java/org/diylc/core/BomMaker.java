@@ -28,14 +28,14 @@ public class BomMaker {
 	private BomMaker() {
 	}
 
-	public List<BomEntry> createBom(List<IDIYComponent<?>> components) {
+	public List<BomEntry> createBom(List<IDIYComponent> components) {
 		Map<String, BomEntry> entryMap = new LinkedHashMap<String, BomEntry>();
-		List<IDIYComponent<?>> sortedComponents = new ArrayList<IDIYComponent<?>>(
+		List<IDIYComponent> sortedComponents = new ArrayList<IDIYComponent>(
 				components);
-		Collections.sort(sortedComponents, new Comparator<IDIYComponent<?>>() {
+		Collections.sort(sortedComponents, new Comparator<IDIYComponent>() {
 
 			@Override
-			public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+			public int compare(IDIYComponent o1, IDIYComponent o2) {
 				String name1 = o1.getName();
 				String name2 = o2.getName();
 				Pattern p = Pattern.compile("(\\D+)(\\d+)");
@@ -55,7 +55,7 @@ public class BomMaker {
 				return name1.compareToIgnoreCase(name2);
 			}			
 		});
-		for (IDIYComponent<?> component : sortedComponents) {
+		for (IDIYComponent component : sortedComponents) {
 			ComponentType type = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
 			if (type.getBomPolicy() == BomPolicy.NEVER_SHOW)
 				continue;

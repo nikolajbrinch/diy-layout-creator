@@ -1,7 +1,6 @@
 package org.diylc.app.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.nio.file.Path;
 
 import javax.swing.AbstractAction;

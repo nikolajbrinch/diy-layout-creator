@@ -16,7 +16,7 @@ import org.diylc.core.measures.Size;
 public class GridRenderer extends AbstractBasicRenderer {
 
     @Override
-    public List<IDIYComponent<?>> render(RenderingContext renderingContext) {
+    public List<IDIYComponent> render(RenderingContext renderingContext) {
         Project project = renderingContext.getProject();
         Graphics2D graphics2d = renderingContext.getGraphics2d();
         Graphics2DWrapper graphics2dWrapper = renderingContext.getGraphics2dWrapper();

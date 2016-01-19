@@ -13,7 +13,7 @@ import org.diylc.core.Theme;
 public class CanvasRenderer extends AbstractBasicRenderer {
 
     @Override
-    public List<IDIYComponent<?>> render(RenderingContext renderingContext) {
+    public List<IDIYComponent> render(RenderingContext renderingContext) {
         Dimension canvasDimensions = renderingContext.getCanvasDimensions();
         Theme theme = renderingContext.getTheme();
         Graphics2DWrapper graphics2dWrapper = renderingContext.getGraphics2dWrapper();

@@ -21,7 +21,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Trace Cut", category = "Connectivity", author = "Branislav Stojkovic", description = "Designates the place where a trace on the vero board needs to be cut", instanceNamePrefix = "Cut", stretchable = false, zOrder = IDIYComponent.TRACE_CUT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class TraceCut extends AbstractComponent<Void> {
+public class TraceCut extends AbstractComponent {
 
 	private static final long serialVersionUID = 1L
 
@@ -121,16 +121,6 @@ public class TraceCut extends AbstractComponent<Void> {
 		this.point.setLocation(point)
 	}
 
-	@Override
-	public Void getValue() {
-		return null
-	}
-
-	@Override
-	public void setValue(Void value) {
-	}
-	
-	
 	@Deprecated
 	@Override
 	public String getName() {

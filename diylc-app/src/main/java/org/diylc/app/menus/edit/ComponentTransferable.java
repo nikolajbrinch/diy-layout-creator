@@ -17,7 +17,7 @@ import org.diylc.core.IDIYComponent;
  * 
  * @author Branislav Stojkovic
  */
-public class ComponentTransferable extends ArrayList<IDIYComponent<?>> implements Transferable {
+public class ComponentTransferable extends ArrayList<IDIYComponent> implements Transferable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -27,7 +27,7 @@ public class ComponentTransferable extends ArrayList<IDIYComponent<?>> implement
 		super();
 	}
 
-	public ComponentTransferable(Collection<IDIYComponent<?>> selectedComponents) {
+	public ComponentTransferable(Collection<IDIYComponent> selectedComponents) {
 		super(selectedComponents);
 	}
 

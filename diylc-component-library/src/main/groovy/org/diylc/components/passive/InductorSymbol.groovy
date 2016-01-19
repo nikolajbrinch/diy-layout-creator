@@ -19,7 +19,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Inductor (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "L", description = "Inductor schematic symbol", zOrder = IDIYComponent.COMPONENT)
-public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
+public class InductorSymbol extends AbstractSchematicLeadedSymbol {
 
     private static final long serialVersionUID = 1L
 

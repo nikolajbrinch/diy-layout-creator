@@ -36,7 +36,7 @@ public class InstantiationManager {
 
 	private ComponentType componentTypeSlot;
 	private Template template;
-	private List<IDIYComponent<?>> componentSlot;
+	private List<IDIYComponent> componentSlot;
 	private Point firstControlPoint;
 	private Point potentialControlPoint;
 
@@ -56,7 +56,7 @@ public class InstantiationManager {
 		return template;
 	}
 
-	public List<IDIYComponent<?>> getComponentSlot() {
+	public List<IDIYComponent> getComponentSlot() {
 		return componentSlot;
 	}
 
@@ -116,7 +116,7 @@ public class InstantiationManager {
 		return changeMade;
 	}
 
-	public void pasteComponents(List<IDIYComponent<?>> components,
+	public void pasteComponents(List<IDIYComponent> components,
 			Point scaledPoint, boolean snapToGrid, Size gridSpacing) {
 		// Adjust location of components so they are centered under the mouse
 		// cursor
@@ -124,7 +124,7 @@ public class InstantiationManager {
 		int maxX = Integer.MIN_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxY = Integer.MIN_VALUE;
-		for (IDIYComponent<?> component : components) {
+		for (IDIYComponent component : components) {
 			for (int i = 0; i < component.getControlPointCount(); i++) {
 				Point p = component.getControlPoint(i);
 				if (p.x > maxX) {
@@ -147,7 +147,7 @@ public class InstantiationManager {
 			x = CalcUtils.roundToGrid(x, gridSpacing);
 			x = CalcUtils.roundToGrid(x, gridSpacing);
 		}
-		for (IDIYComponent<?> component : components) {
+		for (IDIYComponent component : components) {
 			for (int i = 0; i < component.getControlPointCount(); i++) {
 				Point p = component.getControlPoint(i);
 				p.translate(-x, -y);
@@ -156,7 +156,7 @@ public class InstantiationManager {
 		}
 
 		// Update component slot
-		this.componentSlot = new ArrayList<IDIYComponent<?>>(components);
+		this.componentSlot = new ArrayList<IDIYComponent>(components);
 
 		// Update the component type slot so the app knows that something's
 		// being instantiated.
@@ -201,7 +201,7 @@ public class InstantiationManager {
 			LOG.error("Component slot should not be null!");
 		} else {
 			Point p = new Point();
-			for (IDIYComponent<?> component : componentSlot) {
+			for (IDIYComponent component : componentSlot) {
 				for (int i = 0; i < component.getControlPointCount(); i++) {
 					p.setLocation(component.getControlPoint(i));
 					p.translate(dx, dy);
@@ -212,14 +212,14 @@ public class InstantiationManager {
 		return true;
 	}
 
-	public List<IDIYComponent<?>> instantiateComponent(
+	public List<IDIYComponent> instantiateComponent(
 			ComponentType componentType, Template template, Point point,
 			Project currentProject) throws Exception {
 		LOG.info("Instatiating component of type: "
 				+ componentType.getInstanceClass().getName());
 
 		// Instantiate the component.
-		IDIYComponent<?> component = componentType.getInstanceClass()
+		IDIYComponent component = componentType.getInstanceClass()
 				.newInstance();
 
 		component.setName(createUniqueName(componentType, currentProject));
@@ -254,7 +254,7 @@ public class InstantiationManager {
 			Configuration.INSTANCE.setRecentComponents(recentComponentTypes);
 		}
 
-		List<IDIYComponent<?>> list = new ArrayList<IDIYComponent<?>>();
+		List<IDIYComponent> list = new ArrayList<IDIYComponent>();
 		list.add(component);
 		return list;
 	}
@@ -262,7 +262,7 @@ public class InstantiationManager {
 	public String createUniqueName(ComponentType componentType,
 			Project currentProject) {
 		boolean exists = true;
-		List<IDIYComponent<?>> components = currentProject.getComponents();
+		List<IDIYComponent> components = currentProject.getComponents();
 		String[] takenNames = new String[components.size()];
 		for (int j = 0; j < currentProject.getComponents().size(); j++) {
 			takenNames[j] = components.get(j).getName();
@@ -336,7 +336,7 @@ public class InstantiationManager {
 	 * @param component
 	 * @param template
 	 */
-	public void loadComponentShapeFromTemplate(IDIYComponent<?> component,
+	public void loadComponentShapeFromTemplate(IDIYComponent component,
 			Template template) {
 		if (template != null
 				&& template.getPoints() != null
@@ -374,7 +374,7 @@ public class InstantiationManager {
 			return;
 		}
 		try {
-			for (IDIYComponent<?> component : this.componentSlot) {
+			for (IDIYComponent component : this.componentSlot) {
 				angleProperty.readFrom(component);
 				Object value = angleProperty.getValue();
 				if (value instanceof Orientation) {

@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
@@ -156,7 +155,7 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	 * 
 	 * @param components
 	 */
-	void pasteComponents(List<IDIYComponent<?>> components);
+	void pasteComponents(List<IDIYComponent> components);
 
 	/**
 	 * Deletes all the selected components from the project.

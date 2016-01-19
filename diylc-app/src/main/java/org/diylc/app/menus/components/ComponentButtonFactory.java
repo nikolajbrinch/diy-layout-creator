@@ -68,10 +68,10 @@ class ComponentButtonFactory {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON3) {
-					List<IDIYComponent<?>> components = plugInPort
+					List<IDIYComponent> components = plugInPort
 							.getCurrentProject().getComponents();
-					List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
-					for (IDIYComponent<?> component : components) {
+					List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
+					for (IDIYComponent component : components) {
 						if (componentType.getInstanceClass().equals(
 								component.getClass())) {
 							newSelection.add(component);

@@ -32,11 +32,11 @@ public enum ComponentRegistry {
         return Collections.unmodifiableMap(componentTypes);
     }
 
-    public ComponentType getComponentType(Class<? extends IDIYComponent<?>> clazz) {
+    public ComponentType getComponentType(Class<? extends IDIYComponent> clazz) {
         return getComponentType(clazz.getName());
     }
 
-    public ComponentType getComponentType(IDIYComponent<?> component) {
+    public ComponentType getComponentType(IDIYComponent component) {
         return getComponentType(component.getClass().getName());
     }
 

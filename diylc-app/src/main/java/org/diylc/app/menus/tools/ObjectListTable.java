@@ -84,9 +84,9 @@ public class ObjectListTable<T> extends AutoFitTable {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int columnIndex = columnAtPoint(e.getPoint());
-				if (((ObjectListTableModel) getModel()).getActionColumns().contains(columnIndex)) {
+				if (((ObjectListTableModel<T>) getModel()).getActionColumns().contains(columnIndex)) {
 					int rowIndex = rowAtPoint(e.getPoint());
-					Object value = ((ObjectListTableModel) getModel()).getData().get(rowIndex);
+					Object value = ((ObjectListTableModel<T>) getModel()).getData().get(rowIndex);
 					ObjectListTable.this.clickListener.actionExecuted((T) value, getModel()
 							.getColumnName(columnIndex));
 				}
@@ -98,7 +98,7 @@ public class ObjectListTable<T> extends AutoFitTable {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				int columnIndex = columnAtPoint(e.getPoint());
-				if (((ObjectListTableModel) getModel()).getActionColumns().contains(columnIndex)) {
+				if (((ObjectListTableModel<T>) getModel()).getActionColumns().contains(columnIndex)) {
 					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				} else {
 					setCursor(Cursor.getDefaultCursor());
@@ -124,23 +124,6 @@ public class ObjectListTable<T> extends AutoFitTable {
 	public void paint(Graphics g) {
 		super.paint(g);
 	}
-
-	// /**
-	// * Changes the behavior of a table in a JScrollPane to be more like the
-	// behavior of JList,
-	// which
-	// * expands to fill the available space. JTable normally restricts its size
-	// to just what's
-	// needed
-	// * by its model.
-	// */
-	// public boolean getScrollableTracksViewportHeight() {
-	// if (getParent() instanceof JViewport) {
-	// JViewport parent = (JViewport) getParent();
-	// return (parent.getHeight() > getPreferredSize().height);
-	// }
-	// return false;
-	// }
 
 	/**
 	 * Returns the appropriate background color for the given row.

@@ -27,7 +27,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Image", author = "Branislav Stojkovic", category = "Misc", description = "User defined image", instanceNamePrefix = "Img", zOrder = IDIYComponent.COMPONENT, flexibleZOrder = true, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
-class Image extends AbstractTransparentComponent<Void> {
+class Image extends AbstractTransparentComponent {
 
     public static String DEFAULT_TEXT = "Double click to edit text"
 

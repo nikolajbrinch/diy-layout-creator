@@ -36,7 +36,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Closed 1/4\" Jack", category = "Electromechanical", author = "Branislav Stojkovic", description = "Enclosed panel mount 1/4\" phono jack", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "J", autoEdit = false)
-class ClosedJack1_4 extends AbstractTransparentComponent<String> implements Geometry {
+class ClosedJack1_4 extends AbstractTransparentComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 

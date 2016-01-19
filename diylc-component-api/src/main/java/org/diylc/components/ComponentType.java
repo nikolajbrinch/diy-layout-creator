@@ -22,7 +22,7 @@ public class ComponentType {
 	private String namePrefix;
 	private String author;
 	private Icon icon;
-	private Class<? extends IDIYComponent<?>> instanceClass;
+	private Class<? extends IDIYComponent> instanceClass;
 	private double zOrder;
 	private boolean flexibleZOrder;
 	private boolean stretchable;
@@ -32,7 +32,7 @@ public class ComponentType {
 
 	public ComponentType(String name, String description, CreationMethod creationMethod,
 			String category, String namePrefix, String author, Icon icon,
-			Class<? extends IDIYComponent<?>> instanceClass, double zOrder, boolean flexibleZOrder,
+			Class<? extends IDIYComponent> instanceClass, double zOrder, boolean flexibleZOrder,
 					boolean stretchable, BomPolicy bomPolicy, boolean autoEdit, boolean rotatable) {
 		super();
 		this.name = name;
@@ -83,7 +83,7 @@ public class ComponentType {
 	    this.icon = icon;
     }
 
-	public Class<? extends IDIYComponent<?>> getInstanceClass() {
+	public Class<? extends IDIYComponent> getInstanceClass() {
 		return instanceClass;
 	}
 

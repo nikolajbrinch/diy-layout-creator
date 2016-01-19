@@ -9,7 +9,7 @@ import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Resistance;
 
 public abstract class AbstractPotentiometer extends
-		AbstractTransparentComponent<Resistance> {
+		AbstractTransparentComponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -50,13 +50,11 @@ public abstract class AbstractPotentiometer extends
 				+ taper.toString();
 	}
 
-	@Override
 	@EditableProperty(validatorClass = PositiveMeasureValidator.class)	
 	public Resistance getValue() {
 		return resistance;
 	}
 
-	@Override
 	public void setValue(Resistance value) {
 		this.resistance = value;
 	}

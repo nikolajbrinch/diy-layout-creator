@@ -12,12 +12,12 @@ import org.diylc.core.VisibilityPolicy;
 public class ControlPointsRenderer extends AbstractBasicRenderer {
 
     @Override
-    public List<IDIYComponent<?>> render(RenderingContext renderingContext) {
+    public List<IDIYComponent> render(RenderingContext renderingContext) {
         Project project = renderingContext.getProject();
         Graphics2DWrapper graphics2dWrapper = renderingContext.getGraphics2dWrapper();
-        List<IDIYComponent<?>> components = project.getComponents();
-        List<IDIYComponent<?>> selectedComponents = renderingContext.getSelectedComponents();
-        Set<IDIYComponent<?>> groupedComponents = renderingContext.getGroupedComponents();
+        List<IDIYComponent> components = project.getComponents();
+        List<IDIYComponent> selectedComponents = renderingContext.getSelectedComponents();
+        Set<IDIYComponent> groupedComponents = renderingContext.getGroupedComponents();
         boolean isDragInProgress = renderingContext.isDragInProgress();
         Set<DrawingOption> drawingOptions = renderingContext.getDrawingOptions();
 
@@ -30,7 +30,7 @@ public class ControlPointsRenderer extends AbstractBasicRenderer {
              * Draw unselected points first to make sure they are below.
              */
             if (isDragInProgress || drawingOptions.contains(DrawingOption.OUTLINE_MODE)) {
-                for (IDIYComponent<?> component : components) {
+                for (IDIYComponent component : components) {
                     for (int i = 0; i < component.getControlPointCount(); i++) {
                         VisibilityPolicy visibilityPolicy = component.getControlPointVisibilityPolicy(i);
                         if ((groupedComponents.contains(component)
@@ -50,7 +50,7 @@ public class ControlPointsRenderer extends AbstractBasicRenderer {
             /*
              * Then draw the selected ones.
              */
-            for (IDIYComponent<?> component : selectedComponents) {
+            for (IDIYComponent component : selectedComponents) {
                 for (int i = 0; i < component.getControlPointCount(); i++) {
                     if (!groupedComponents.contains(component)
                             && (component.getControlPointVisibilityPolicy(i) == VisibilityPolicy.WHEN_SELECTED || component

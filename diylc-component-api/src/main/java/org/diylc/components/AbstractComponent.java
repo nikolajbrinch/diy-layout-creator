@@ -31,7 +31,7 @@ import org.diylc.core.graphics.GraphicsContext;
  * 
  * @param <T>
  */
-public abstract class AbstractComponent<T> implements IDIYComponent<T> {
+public abstract class AbstractComponent implements IDIYComponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,9 +60,8 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 		return name;
 	}
 	
-	@Override
 	public String getValueForDisplay() {
-		return getValue() == null ? "" : getValue().toString();
+		return "";
 	}
 
 	/**
@@ -148,13 +147,12 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 		graphicsContext.drawString(text, textX, textY);
 	}
 
-	@SuppressWarnings("unchecked")
-	public IDIYComponent<T> clone() throws CloneNotSupportedException {
+	public IDIYComponent clone() throws CloneNotSupportedException {
 		try {
 			/*
 			 * Instantiate object of the same type
 			 */
-			AbstractComponent<T> newInstance = (AbstractComponent<T>) this.getClass()
+			AbstractComponent newInstance = (AbstractComponent) this.getClass()
 					.getConstructors()[0].newInstance();
 			Class<?> clazz = this.getClass();
 			while (AbstractComponent.class.isAssignableFrom(clazz)) {
@@ -209,7 +207,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 	}
 
 	@Override
-	public boolean equalsTo(IDIYComponent<?> other) {
+	public boolean equalsTo(IDIYComponent other) {
 		if (other == null)
 			return false;
 		if (!other.getClass().equals(this.getClass()))

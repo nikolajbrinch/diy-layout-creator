@@ -27,7 +27,7 @@ import org.diylc.core.graphics.GraphicsContext;
  *            type of component values, e.g. Resistance for resistors or String
  *            for transistors.
  */
-public interface IDIYComponent<T> extends Serializable {
+public interface IDIYComponent extends Serializable {
 
 	public static final double CHASSIS = 1.0;
 	public static final double BOARD = 2.0;
@@ -46,16 +46,6 @@ public interface IDIYComponent<T> extends Serializable {
 	 * Updates component instance name.
 	 */
 	void setName(String name);
-
-	/**
-	 * @return component value.
-	 */
-	T getValue();
-
-	/**
-	 * Updates component value.
-	 */
-	void setValue(T value);
 
 	/**
 	 * @return number of control points for this component instance. May vary
@@ -105,7 +95,7 @@ public interface IDIYComponent<T> extends Serializable {
 	/**
 	 * Clones the component.
 	 */
-	IDIYComponent<T> clone() throws CloneNotSupportedException;
+	IDIYComponent clone() throws CloneNotSupportedException;
 
 	/**
 	 * @return full value for BOM.
@@ -115,5 +105,5 @@ public interface IDIYComponent<T> extends Serializable {
 	/**
 	 * Checks if two components are equal.
 	 */
-	boolean equalsTo(IDIYComponent<?> other);
+	boolean equalsTo(IDIYComponent other);
 }

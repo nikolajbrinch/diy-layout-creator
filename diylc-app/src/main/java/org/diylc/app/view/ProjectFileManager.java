@@ -237,7 +237,7 @@ public class ProjectFileManager {
                     y2Attr = Integer.parseInt(node.getAttributes().getNamedItem("Y2").getNodeValue());
                     point2 = convertV1CoordinatesToV3Point(referencePoint, x2Attr, y2Attr);
                 }
-                IDIYComponent<?> component = null;
+                IDIYComponent component = null;
                 if (nodeName.equalsIgnoreCase("text")) {
                     LOG.debug("Recognized " + nodeName);
                     Label label = new Label();
@@ -482,11 +482,11 @@ public class ProjectFileManager {
                     }
                 }
                 if (component != null) {
-                    if (component instanceof AbstractLeadedComponent<?>) {
-                        ((AbstractLeadedComponent<?>) component).setDisplay(Display.NAME);
+                    if (component instanceof AbstractLeadedComponent) {
+                        ((AbstractLeadedComponent) component).setDisplay(Display.NAME);
                     }
-                    if (component instanceof AbstractTransparentComponent<?>) {
-                        ((AbstractTransparentComponent<?>) component).setAlpha((byte) 100);
+                    if (component instanceof AbstractTransparentComponent) {
+                        ((AbstractTransparentComponent) component).setAlpha((byte) 100);
                     }
                     project.getComponents().add(component);
                 }

@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.utils.Constants;
 
-public class EnumEditor extends JComboBox {
+public class EnumEditor extends JComboBox<Object> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,7 @@ public class EnumEditor extends JComboBox {
 	public EnumEditor(final PropertyWrapper property) {
 		this.property = property;
 		Object[] values = property.getType().getEnumConstants();
-		setModel(new DefaultComboBoxModel(values));
+		setModel(new DefaultComboBoxModel<Object>(values));
 		setSelectedItem(property.getValue());
 		addItemListener(new ItemListener() {
 

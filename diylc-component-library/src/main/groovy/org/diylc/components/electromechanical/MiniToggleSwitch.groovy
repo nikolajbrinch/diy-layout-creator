@@ -34,8 +34,7 @@ import org.diylc.core.utils.Constants
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @ComponentDescriptor(name = "Mini Toggle Switch", category = "Electromechanical", author = "Branislav Stojkovic", description = "Panel mounted mini toggle switch", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "SW", autoEdit = false)
-public class MiniToggleSwitch extends
-AbstractTransparentComponent<ToggleSwitchType> implements Geometry {
+public class MiniToggleSwitch extends AbstractTransparentComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 
@@ -167,7 +166,6 @@ AbstractTransparentComponent<ToggleSwitchType> implements Geometry {
         body = null
     }
 
-    @Override
     public void setValue(ToggleSwitchType value) {
         this.value = value
         updateControlPoints()

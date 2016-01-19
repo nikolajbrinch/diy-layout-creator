@@ -33,7 +33,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Plastic DC Jack", category = "Electromechanical", author = "Branislav Stojkovic", description = "Panel mount plastic DC jack", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "J", autoEdit = false, rotatable = false)
-public class PlasticDCJack extends AbstractTransparentComponent<String> implements Geometry {
+public class PlasticDCJack extends AbstractTransparentComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 

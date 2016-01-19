@@ -17,7 +17,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Resistor (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "R", description = "Resistor schematic symbol", zOrder = IDIYComponent.COMPONENT)
-public class ResistorSymbol extends AbstractSchematicLeadedSymbol<Resistance> {
+public class ResistorSymbol extends AbstractSchematicLeadedSymbol {
 
     private static final long serialVersionUID = 1L
 

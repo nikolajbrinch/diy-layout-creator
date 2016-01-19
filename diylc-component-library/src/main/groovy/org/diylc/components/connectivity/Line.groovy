@@ -21,7 +21,7 @@ import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 
 @ComponentDescriptor(name = "Line", author = "Branislav Stojkovic", category = "Shapes", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "LN", description = "", zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class Line extends AbstractLeadedComponent<Void> {
+public class Line extends AbstractLeadedComponent {
 
 	private static final long serialVersionUID = 1L
 
@@ -78,15 +78,6 @@ public class Line extends AbstractLeadedComponent<Void> {
 	@Override
 	public Size getWidth() {
 		return super.getWidth()
-	}
-
-	@Override
-	public Void getValue() {
-		return null
-	}
-
-	@Override
-	public void setValue(Void value) {
 	}
 
 	@Override

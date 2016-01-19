@@ -3,7 +3,6 @@ package org.diylc.app.menus.arrange;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -16,7 +15,6 @@ import org.diylc.app.IPlugInPort;
 import org.diylc.app.dialogs.ButtonDialog;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.dialogs.properties.PropertyEditorDialog;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.PropertyWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -371,16 +369,16 @@ public enum ArrangeActionFactory {
         }
     }
 
-    private static List<IDIYComponent<?>> cloneComponents(List<IDIYComponent<?>> components) {
-        List<IDIYComponent<?>> result = new ArrayList<IDIYComponent<?>>(components.size());
-        for (IDIYComponent<?> component : components) {
-            try {
-                result.add(component.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return result;
-    }
+//    private static List<IDIYComponent> cloneComponents(List<IDIYComponent> components) {
+//        List<IDIYComponent> result = new ArrayList<IDIYComponent>(components.size());
+//        for (IDIYComponent component : components) {
+//            try {
+//                result.add(component.clone());
+//            } catch (CloneNotSupportedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//        return result;
+//    }
 
 }

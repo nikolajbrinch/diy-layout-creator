@@ -9,22 +9,26 @@ public class ComparatorFactory {
 
     private static ComparatorFactory instance = new ComparatorFactory();
 
-    private Comparator<IDIYComponent<?>> componentNameComparator;
+    private Comparator<IDIYComponent> componentNameComparator;
+    
     private Comparator<ComponentType> componentTypeComparator;
+    
     private Comparator<PropertyWrapper> propertyNameComparator;
-    private Comparator<IDIYComponent<?>> componentZOrderComparator;
+    
+    private Comparator<IDIYComponent> componentZOrderComparator;
+    
     private ComponentTypeFactory componentTypeFactory = new ComponentTypeFactory();
 
     public static ComparatorFactory getInstance() {
         return instance;
     }
 
-    public Comparator<IDIYComponent<?>> getComponentNameComparator() {
+    public Comparator<IDIYComponent> getComponentNameComparator() {
         if (componentNameComparator == null) {
-            componentNameComparator = new Comparator<IDIYComponent<?>>() {
+            componentNameComparator = new Comparator<IDIYComponent>() {
 
                 @Override
-                public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+                public int compare(IDIYComponent o1, IDIYComponent o2) {
                     String name1 = o1.getName();
                     String name2 = o2.getName();
                     if (name1 == null || name2 == null) {
@@ -64,12 +68,12 @@ public class ComparatorFactory {
         return propertyNameComparator;
     }
 
-    public Comparator<IDIYComponent<?>> getComponentZOrderComparator() {
+    public Comparator<IDIYComponent> getComponentZOrderComparator() {
         if (componentZOrderComparator == null) {
-            componentZOrderComparator = new Comparator<IDIYComponent<?>>() {
+            componentZOrderComparator = new Comparator<IDIYComponent>() {
 
                 @Override
-                public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+                public int compare(IDIYComponent o1, IDIYComponent o2) {
                     ComponentType type1 = componentTypeFactory.newComponentType(o1);
                     ComponentType type2 = componentTypeFactory.newComponentType(o2);
 

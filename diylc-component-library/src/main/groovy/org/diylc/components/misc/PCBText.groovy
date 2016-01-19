@@ -26,7 +26,7 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "PCB Text", author = "Branislav Stojkovic", category = "Misc", description = "Mirrored text for PCB artwork", instanceNamePrefix = "L", zOrder = IDIYComponent.TRACE, flexibleZOrder = false, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
-class PCBText extends AbstractComponent<Void> implements Geometry {
+class PCBText extends AbstractComponent implements Geometry {
 
     public static String DEFAULT_TEXT = "Double click to edit text"
 

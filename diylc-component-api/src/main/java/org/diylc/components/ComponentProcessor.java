@@ -33,19 +33,19 @@ public class ComponentProcessor {
      * @param selectedComponents
      * @return
      */
-    public List<PropertyWrapper> getMutualSelectionProperties(List<IDIYComponent<?>> selectedComponents) throws Exception {
+    public List<PropertyWrapper> getMutualSelectionProperties(List<IDIYComponent> selectedComponents) throws Exception {
         if (selectedComponents.isEmpty()) {
             return null;
         }
         List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
-        IDIYComponent<?> firstComponent = selectedComponents.get(0);
+        IDIYComponent firstComponent = selectedComponents.get(0);
         properties.addAll(extractProperties(firstComponent.getClass()));
 
         for (PropertyWrapper property : properties) {
             property.readFrom(firstComponent);
         }
 
-        for (IDIYComponent<?> component : selectedComponents) {
+        for (IDIYComponent component : selectedComponents) {
             List<PropertyWrapper> newProperties = extractProperties(component.getClass());
 
             for (PropertyWrapper property : newProperties) {

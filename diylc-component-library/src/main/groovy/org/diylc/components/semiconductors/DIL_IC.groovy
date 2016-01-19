@@ -33,7 +33,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "DIP IC", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "IC", description = "Dual-in-line package IC", stretchable = false, zOrder = IDIYComponent.COMPONENT)
-public class DIL_IC extends AbstractTransparentComponent<String> implements Geometry {
+public class DIL_IC extends AbstractTransparentComponent implements Geometry {
 
 	private static final long serialVersionUID = 1L
 

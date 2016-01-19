@@ -8,7 +8,7 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-public abstract class AbstractShape  extends AbstractTransparentComponent<Void> {
+public abstract class AbstractShape  extends AbstractTransparentComponent {
 
 	private static final long serialVersionUID = 1L;
 
@@ -86,13 +86,11 @@ public abstract class AbstractShape  extends AbstractTransparentComponent<Void> 
 	}
 
 	@Deprecated
-	@Override
 	public Void getValue() {
 		return null;
 	}
 
 	@Deprecated
-	@Override
 	public void setValue(Void value) {
 	}
 }

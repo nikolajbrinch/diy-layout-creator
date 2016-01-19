@@ -9,7 +9,7 @@ import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-public abstract class AbstractDiodeSymbol extends AbstractSchematicLeadedSymbol<String> {
+public abstract class AbstractDiodeSymbol extends AbstractSchematicLeadedSymbol {
 
 	private static final long serialVersionUID = 1L;
 

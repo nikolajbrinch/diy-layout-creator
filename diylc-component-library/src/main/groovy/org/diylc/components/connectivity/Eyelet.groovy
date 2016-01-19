@@ -21,7 +21,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Eyelet", category = "Connectivity", author = "Branislav Stojkovic", description = "Eyelet or turret terminal", instanceNamePrefix = "Eyelet", stretchable = false, zOrder = IDIYComponent.PAD, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
-public class Eyelet extends AbstractComponent<String> {
+public class Eyelet extends AbstractComponent {
 
     private static final long serialVersionUID = 1L
 
@@ -111,13 +111,4 @@ public class Eyelet extends AbstractComponent<String> {
         this.point.setLocation(point)
     }
 
-    @Override
-    public String getValue() {
-        return this.@value
-    }
-
-    @Override
-    public void setValue(String value) {
-        this.@value = value
-    }
 }

@@ -35,7 +35,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Humbucker Pickup", category = "Guitar", author = "Branislav Stojkovic", description = "PAF-style humbucker guitar pickup", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false)
-public class HumbuckerPickup extends AbstractTransparentComponent<String> implements Geometry {
+public class HumbuckerPickup extends AbstractTransparentComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 

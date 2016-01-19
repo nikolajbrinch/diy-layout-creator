@@ -19,7 +19,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "LED", author = "Branislav Stojkovic", category = "Semiconductors", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Light Emitting Diode", zOrder = IDIYComponent.COMPONENT)
-public class LED extends AbstractLeadedComponent<String> {
+public class LED extends AbstractLeadedComponent {
 
 	private static final long serialVersionUID = 1L
 

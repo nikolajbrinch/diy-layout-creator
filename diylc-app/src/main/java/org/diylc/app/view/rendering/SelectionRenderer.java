@@ -13,7 +13,7 @@ import org.diylc.core.utils.Constants;
 public class SelectionRenderer extends AbstractBasicRenderer {
 
     @Override
-    public List<IDIYComponent<?>> render(RenderingContext renderingContext) {
+    public List<IDIYComponent> render(RenderingContext renderingContext) {
         Graphics2D graphics2d = renderingContext.getGraphics2d();
         Set<DrawingOption> drawingOptions = renderingContext.getDrawingOptions();
         Rectangle selectionRectangle = renderingContext.getSelectionRect();

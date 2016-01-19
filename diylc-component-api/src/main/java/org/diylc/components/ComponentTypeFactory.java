@@ -6,7 +6,7 @@ import org.diylc.core.annotations.BomPolicy;
 
 public class ComponentTypeFactory {
 
-    public ComponentType newComponentType(IDIYComponent<?> componentInstance) {
+    public ComponentType newComponentType(IDIYComponent componentInstance) {
         String name;
         String description;
         CreationMethod creationMethod;
@@ -21,7 +21,7 @@ public class ComponentTypeFactory {
         boolean rotatable;
         
         @SuppressWarnings("unchecked")
-        Class<IDIYComponent<?>> clazz = (Class<IDIYComponent<?>>) componentInstance.getClass();
+        Class<IDIYComponent> clazz = (Class<IDIYComponent>) componentInstance.getClass();
         
         if (clazz.isAnnotationPresent(ComponentDescriptor.class)) {
             ComponentDescriptor annotation = clazz.getAnnotation(ComponentDescriptor.class);

@@ -51,13 +51,13 @@ public class Project implements Serializable {
 	@EditableProperty(name = "Grid spacing", validatorClass = SpacingValidator.class)
 	private Size gridSpacing;
 
-    private List<IDIYComponent<?>> components;
-	private Set<Set<IDIYComponent<?>>> groups;
+    private List<IDIYComponent> components;
+	private Set<Set<IDIYComponent>> groups;
 	private Set<Double> lockedLayers;
 
 	public Project() {
-		components = new ArrayList<IDIYComponent<?>>();
-		groups = new HashSet<Set<IDIYComponent<?>>>();
+		components = new ArrayList<IDIYComponent>();
+		groups = new HashSet<Set<IDIYComponent>>();
 		lockedLayers = new HashSet<Double>();
 		title = DEFAULT_TITLE;
 		author = System.getProperty("user.name");
@@ -119,7 +119,7 @@ public class Project implements Serializable {
 	 * 
 	 * @return
 	 */
-	public List<IDIYComponent<?>> getComponents() {
+	public List<IDIYComponent> getComponents() {
 		return components;
 	}
 
@@ -128,7 +128,7 @@ public class Project implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Set<Set<IDIYComponent<?>>> getGroups() {
+	public Set<Set<IDIYComponent>> getGroups() {
 		return groups;
 	}
 
@@ -177,11 +177,11 @@ public class Project implements Serializable {
 		} else if (components.size() != other.components.size()) {
 			return false;
 		} else {
-			Iterator<IDIYComponent<?>> i1 = components.iterator();
-			Iterator<IDIYComponent<?>> i2 = other.components.iterator();
+			Iterator<IDIYComponent> i1 = components.iterator();
+			Iterator<IDIYComponent> i2 = other.components.iterator();
 			while (i1.hasNext()) {
-				IDIYComponent<?> c1 = i1.next();
-				IDIYComponent<?> c2 = i2.next();
+				IDIYComponent c1 = i1.next();
+				IDIYComponent c2 = i2.next();
 				if (!c1.equalsTo(c2))
 					return false;
 			}
@@ -241,11 +241,11 @@ public class Project implements Serializable {
 		project.setWidth(this.getWidth());
 		project.getLockedLayers().addAll(this.getLockedLayers());
 
-		Map<IDIYComponent<?>, IDIYComponent<?>> cloneMap = new HashMap<IDIYComponent<?>, IDIYComponent<?>>();
+		Map<IDIYComponent, IDIYComponent> cloneMap = new HashMap<IDIYComponent, IDIYComponent>();
 
-		for (IDIYComponent<?> component : this.components) {
+		for (IDIYComponent component : this.components) {
 			try {
-				IDIYComponent<?> clone = component.clone();
+				IDIYComponent clone = component.clone();
 				project.getComponents().add(clone);
 				cloneMap.put(component, clone);
 			} catch (CloneNotSupportedException e) {
@@ -253,9 +253,9 @@ public class Project implements Serializable {
 			}
 		}
 
-		for (Set<IDIYComponent<?>> group : this.groups) {
-			Set<IDIYComponent<?>> cloneGroup = new HashSet<IDIYComponent<?>>();
-			for (IDIYComponent<?> component : group) {
+		for (Set<IDIYComponent> group : this.groups) {
+			Set<IDIYComponent> cloneGroup = new HashSet<IDIYComponent>();
+			for (IDIYComponent component : group) {
 				cloneGroup.add(cloneMap.get(component));
 			}
 			project.groups.add(cloneGroup);

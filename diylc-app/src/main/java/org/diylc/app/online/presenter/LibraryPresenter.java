@@ -28,8 +28,12 @@ public class LibraryPresenter {
 	private static final String CREATE_USER_SQL = "INSERT INTO diylc.user (name, password, email) VALUES (\"%s\", \"%s\", \"%s\")";
 	private static final String MY_PROJECTS_SQL = "SELECT project_id, name, category_id, description FROM diylc.project WHERE owner_user_id = %s";
 	private static final String PROJECT_SQL = "SELECT content FROM diylc.project WHERE project_id = %s";
-	private static final String UPLOAD_PROJECT_SQL = "INSERT INTO diylc.project (name, description, content, category_id, owner_user_id) VALUES (\"%s\", \"%s\", \"%s\", %s, %s)";
-	private static final String UPDATE_PROJECT_SQL = "UPDATE diylc.project SET name = \"%s\", description = \"%s\", content = \"%s\", category_id = %s WHERE project_id = %s";
+	
+	@SuppressWarnings("unused")
+    private static final String UPLOAD_PROJECT_SQL = "INSERT INTO diylc.project (name, description, content, category_id, owner_user_id) VALUES (\"%s\", \"%s\", \"%s\", %s, %s)";
+
+	@SuppressWarnings("unused")
+    private static final String UPDATE_PROJECT_SQL = "UPDATE diylc.project SET name = \"%s\", description = \"%s\", content = \"%s\", category_id = %s WHERE project_id = %s";
 
 	private MySqlDBManager dbManager;
 	private MessageDigest messageDigest;

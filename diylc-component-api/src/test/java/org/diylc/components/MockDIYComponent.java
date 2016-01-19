@@ -18,7 +18,7 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(name = "Mock", author = "bancika", category = "Sample", instanceNamePrefix = "M", description = "test", zOrder = IDIYComponent.COMPONENT)
-public class MockDIYComponent extends AbstractComponent<Capacitance> {
+public class MockDIYComponent extends AbstractComponent {
 
 	private static final long serialVersionUID = 1L;
 

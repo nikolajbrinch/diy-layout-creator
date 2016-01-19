@@ -30,7 +30,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Tube Socket", author = "Branislav Stojkovic", category = "Tubes", instanceNamePrefix = "V", description = "Various types of tube/valve sockets", stretchable = false, zOrder = IDIYComponent.COMPONENT)
-public class TubeSocket extends AbstractTransparentComponent<String> implements Geometry {
+public class TubeSocket extends AbstractTransparentComponent implements Geometry {
 
 	private static final long serialVersionUID = 1L
 

@@ -17,7 +17,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Capacitor (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Capacitor schematic symbol with an optional polarity sign", zOrder = IDIYComponent.COMPONENT)
-public class CapacitorSymbol extends AbstractSchematicLeadedSymbol<Capacitance> {
+public class CapacitorSymbol extends AbstractSchematicLeadedSymbol {
 
     private static final long serialVersionUID = 1L
 

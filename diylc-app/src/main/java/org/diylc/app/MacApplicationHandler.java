@@ -7,7 +7,6 @@ import java.lang.reflect.Proxy;
 
 public class MacApplicationHandler {
 
-    @SuppressWarnings("deprecation")
     public static void setupMacApplication() {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");

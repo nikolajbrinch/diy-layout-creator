@@ -46,9 +46,11 @@ import javax.swing.text.PlainDocument;
  * 
  * @author Andreas Wenger
  */
-public class FontChooserComboBox extends JComboBox implements ItemListener {
+public class FontChooserComboBox extends JComboBox<FontChooserComboBox.Item> implements ItemListener {
 
-	private int previewFontSize;
+    private static final long serialVersionUID = 1L;
+    
+    private int previewFontSize;
 	private String previewString = "AaBbCc";
 	private int recentFontsCount = 5;
 
@@ -193,7 +195,7 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
 	public Dimension getPreferredSize() {
 		// default height: like a normal combo box
 		return new Dimension(super.getPreferredSize().width,
-				new JComboBox().getPreferredSize().height);
+				new JComboBox<FontChooserComboBox.Item>().getPreferredSize().height);
 	}
 
 	/**
@@ -228,7 +230,9 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
 		 */
 		class AutoCompletionDocument extends PlainDocument {
 
-			private JTextField textField = FontChooserComboBoxEditor.this.editor;
+            private static final long serialVersionUID = 1L;
+            
+            private JTextField textField = FontChooserComboBoxEditor.this.editor;
 
 			@Override
 			public void replace(int i, int j, String s, AttributeSet attributeset)
@@ -310,10 +314,11 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
 	 * 
 	 * @author Andreas Wenger
 	 */
-	class FontChooserComboBoxRenderer implements ListCellRenderer {
+	class FontChooserComboBoxRenderer implements ListCellRenderer<FontChooserComboBox.Item> {
 
-		public Component getListCellRendererComponent(JList list, Object value, int index,
-				boolean isSelected, boolean cellHasFocus) {
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Item> list, Item value, int index, boolean isSelected,
+                boolean cellHasFocus) {
 			// extract the component from the item's value
 			Item item = (Item) value;
 			boolean s = (isSelected && !item.isSeparator);
@@ -330,8 +335,11 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
 	 */
 	class Item extends JPanel {
 
-		private final Font font;
-		private final boolean isSeparator;
+        private static final long serialVersionUID = 1L;
+        
+        private final Font font;
+		
+        private final boolean isSeparator;
 
 		private Item(String fontName) {
 			if (fontName != null) {

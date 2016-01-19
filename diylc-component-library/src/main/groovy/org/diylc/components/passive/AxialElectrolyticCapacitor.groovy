@@ -21,8 +21,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Electrolytic Capacitor (axial)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Axial electrolytic capacitor, similar to Sprague Atom, F&T, etc", zOrder = IDIYComponent.COMPONENT)
-public class AxialElectrolyticCapacitor extends
-AbstractLeadedComponent<Capacitance> {
+public class AxialElectrolyticCapacitor extends AbstractLeadedComponent {
 
     private static final long serialVersionUID = 1L
 

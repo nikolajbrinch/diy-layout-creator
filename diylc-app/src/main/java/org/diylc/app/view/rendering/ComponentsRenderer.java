@@ -28,29 +28,29 @@ public class ComponentsRenderer implements Renderer {
     /*
      * Keeps Area object of each drawn component.
      */
-    private Map<IDIYComponent<?>, Area> componentAreaMap = new HashMap<IDIYComponent<?>, Area>();
+    private Map<IDIYComponent, Area> componentAreaMap = new HashMap<IDIYComponent, Area>();
 
     /*
      * Maps components to the last state they are drawn in. Also, used to
      * determine which components are invalidated when they are not in the map.
      */
-    private Map<IDIYComponent<?>, ComponentState> lastDrawnStateMap = new HashMap<IDIYComponent<?>, ComponentState>();
+    private Map<IDIYComponent, ComponentState> lastDrawnStateMap = new HashMap<IDIYComponent, ComponentState>();
 
     @Override
-    public List<IDIYComponent<?>> render(RenderingContext renderingContext) {
+    public List<IDIYComponent> render(RenderingContext renderingContext) {
         Graphics2D graphics2d = renderingContext.getGraphics2d();
         Graphics2DWrapper graphics2dWrapper = renderingContext.getGraphics2dWrapper();
         Project project = renderingContext.getProject();
-        List<IDIYComponent<?>> components = project.getComponents();
-        List<IDIYComponent<?>> selectedComponents = renderingContext.getSelectedComponents();
-        Set<IDIYComponent<?>> lockedComponents = renderingContext.getLockedComponents();
+        List<IDIYComponent> components = project.getComponents();
+        List<IDIYComponent> selectedComponents = renderingContext.getSelectedComponents();
+        Set<IDIYComponent> lockedComponents = renderingContext.getLockedComponents();
         IComponentFilter componentFilter = renderingContext.getFilter();
         boolean isDragInProgress = renderingContext.isDragInProgress();
         Set<DrawingOption> drawingOptions = renderingContext.getDrawingOptions();
         
-        List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
+        List<IDIYComponent> failedComponents = new ArrayList<IDIYComponent>();
         
-        for (IDIYComponent<?> component : components) {
+        for (IDIYComponent component : components) {
 
             /*
              * Do not draw the component if it's filtered out.
@@ -114,14 +114,14 @@ public class ComponentsRenderer implements Renderer {
     }
 
     @Override
-    public void invalidateComponent(IDIYComponent<?> component) {
+    public void invalidateComponent(IDIYComponent component) {
         componentAreaMap.remove(component);
         lastDrawnStateMap.remove(component);
     }
 
     @Override
-    public List<IDIYComponent<?>> findComponentsAt(Point point, Project project) {
-        List<IDIYComponent<?>> components = new ArrayList<IDIYComponent<?>>();
+    public List<IDIYComponent> findComponentsAt(Point point, Project project) {
+        List<IDIYComponent> components = new ArrayList<IDIYComponent>();
         
         for (int i = 0; i < project.getComponents().size(); i++) {
             Area area = componentAreaMap.get(project.getComponents().get(i));
@@ -135,7 +135,7 @@ public class ComponentsRenderer implements Renderer {
     }
 
     @Override
-    public Area getComponentArea(IDIYComponent<?> component) {
+    public Area getComponentArea(IDIYComponent component) {
         return componentAreaMap.get(component);
     }
 
@@ -146,7 +146,7 @@ public class ComponentsRenderer implements Renderer {
     }
     
     @Override
-    public Map<IDIYComponent<?>, Area> getComponentAreaMap() {
+    public Map<IDIYComponent, Area> getComponentAreaMap() {
         return componentAreaMap;
     }
 

@@ -8,7 +8,7 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.LabelPosition;
 import org.diylc.core.annotations.EditableProperty;
 
-public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedComponent<T> {
+public abstract class AbstractSchematicLeadedSymbol extends AbstractLeadedComponent {
 
 	private static final long serialVersionUID = 1L;
 

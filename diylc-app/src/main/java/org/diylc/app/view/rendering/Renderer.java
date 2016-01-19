@@ -10,16 +10,16 @@ import org.diylc.core.Project;
 
 public interface Renderer {
 
-    public List<IDIYComponent<?>> render(RenderingContext renderingContext);
+    public List<IDIYComponent> render(RenderingContext renderingContext);
 
-    public void invalidateComponent(IDIYComponent<?> component);
+    public void invalidateComponent(IDIYComponent component);
 
-    public List<IDIYComponent<?>> findComponentsAt(Point point, Project project);
+    public List<IDIYComponent> findComponentsAt(Point point, Project project);
 
-    public Area getComponentArea(IDIYComponent<?> component);
+    public Area getComponentArea(IDIYComponent component);
 
     public void clearComponentAreaMap();
 
-    public Map<IDIYComponent<?>, Area> getComponentAreaMap();
+    public Map<IDIYComponent, Area> getComponentAreaMap();
 
 }

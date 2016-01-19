@@ -55,20 +55,19 @@ public class PropertyExtractor {
         return fields;
     }
 
-    private List<Method> getAllMethods(Class<?> clazz) {
-        List<Method> methodss = new ArrayList<Method>();
-
-        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
-            methodss.addAll(Arrays.asList(c.getDeclaredMethods()));
-        }
-
-        return methodss;
-    }
+//    private List<Method> getAllMethods(Class<?> clazz) {
+//        List<Method> methodss = new ArrayList<Method>();
+//
+//        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
+//            methodss.addAll(Arrays.asList(c.getDeclaredMethods()));
+//        }
+//
+//        return methodss;
+//    }
 
     private Collection<? extends PropertyWrapper> findOnFields(Class<?> clazz) {
         List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
         
-        List<Method> methods = getAllMethods(clazz);
         List<Field> fields = getAllFields(clazz);
         
         for (Field field : fields) {

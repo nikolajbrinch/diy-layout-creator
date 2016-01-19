@@ -14,8 +14,8 @@ import org.diylc.core.measures.SizeUnit;
  * 
  * @param <T>
  */
-public abstract class AbstractRadialComponent<T> extends
-		AbstractLeadedComponent<T> {
+public abstract class AbstractRadialComponent extends
+		AbstractLeadedComponent {
 
 	private static final long serialVersionUID = 1L;
 

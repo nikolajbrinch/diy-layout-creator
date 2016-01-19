@@ -67,8 +67,8 @@ public class DrawingManager {
      * 
      * @return
      */
-    public List<IDIYComponent<?>> drawProject(DrawingContext drawingContext) {
-        List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
+    public List<IDIYComponent> drawProject(DrawingContext drawingContext) {
+        List<IDIYComponent> failedComponents = new ArrayList<IDIYComponent>();
 
         Project project = drawingContext.getProject();
 
@@ -166,11 +166,11 @@ public class DrawingManager {
         fireZoomChanged();
     }
 
-    public void invalidateComponent(IDIYComponent<?> component) {
+    public void invalidateComponent(IDIYComponent component) {
         componentsRenderer.invalidateComponent(component);
     }
 
-    public Area getComponentArea(IDIYComponent<?> component) {
+    public Area getComponentArea(IDIYComponent component) {
         return componentsRenderer.getComponentArea(component);
     }
 
@@ -178,7 +178,7 @@ public class DrawingManager {
         componentsRenderer.clearComponentAreaMap();
     }
 
-    public List<IDIYComponent<?>> findComponentsAt(Point point, Project project) {
+    public List<IDIYComponent> findComponentsAt(Point point, Project project) {
         return componentsRenderer.findComponentsAt(point, project);
     }
 

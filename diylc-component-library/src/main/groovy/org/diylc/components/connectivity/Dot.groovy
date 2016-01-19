@@ -20,7 +20,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Dot", category = "Connectivity", author = "Branislav Stojkovic", description = "Connector dot", instanceNamePrefix = "Dot", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class Dot extends AbstractComponent<Void> {
+public class Dot extends AbstractComponent {
 
     private static final long serialVersionUID = 1L
 
@@ -86,14 +86,5 @@ public class Dot extends AbstractComponent<Void> {
     @Override
     public void setControlPoint(Point point, int index) {
         this.point.setLocation(point)
-    }
-
-    @Override
-    public Void getValue() {
-        return null
-    }
-
-    @Override
-    public void setValue(Void value) {
     }
 }

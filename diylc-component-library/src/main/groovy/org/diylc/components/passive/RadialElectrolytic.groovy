@@ -22,7 +22,7 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 @ComponentDescriptor(name = "Electrolytic Capacitor", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Vertical mounted electrolytic capacitor, polarized or bipolar", zOrder = IDIYComponent.COMPONENT)
-public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
+public class RadialElectrolytic extends AbstractRadialComponent {
 
     private static final long serialVersionUID = 1L
 

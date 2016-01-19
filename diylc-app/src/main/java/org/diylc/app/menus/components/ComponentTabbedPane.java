@@ -23,7 +23,6 @@ import org.diylc.app.IPlugInPort;
 import org.diylc.components.ComparatorFactory;
 import org.diylc.components.ComponentRegistry;
 import org.diylc.components.ComponentType;
-import org.diylc.components.ComponentTypeLoader;
 import org.diylc.components.Constants;
 import org.diylc.core.Template;
 import org.diylc.core.config.Configuration;
@@ -45,9 +44,10 @@ class ComponentTabbedPane extends JTabbedPane {
     public static int SCROLL_STEP = Constants.ICON_SIZE + ComponentButtonFactory.MARGIN * 2 + 2;
 
     private final IPlugInPort plugInPort;
+    
     private Container recentToolbar;
+    
     private List<String> pendingRecentComponents = null;
-    private ComponentTypeLoader componentTypeLoader = new ComponentTypeLoader();
 
     public ComponentTabbedPane(IPlugInPort plugInPort) {
         super();
@@ -56,17 +56,23 @@ class ComponentTabbedPane extends JTabbedPane {
         addTab("Recently Used", createRecentComponentsPanel());
         List<String> categories = new ArrayList<String>(componentTypes.keySet());
         Collections.sort(categories);
+        
         for (String category : categories) {
             JPanel panel = createTab((componentTypes.get(category)));
             addTab(category, panel);
         }
+        
         addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
                 ComponentTabbedPane.this.plugInPort.setNewComponentTypeSlot(null, null);
-                // Refresh recent components if needed
+                /* 
+                 * Refresh recent components if needed
+                 */
                 if (pendingRecentComponents != null) {
+                    refreshRecentComponentsToolbar(getRecentToolbar(),
+                            pendingRecentComponents);
                     getRecentToolbar().invalidate();
                     pendingRecentComponents = null;
                 }
@@ -76,58 +82,13 @@ class ComponentTabbedPane extends JTabbedPane {
 
     private JPanel createTab(List<ComponentType> componentTypes) {
         JPanel panel = new JPanel(new BorderLayout());
-        // final JScrollPane scrollPane =
-        // createComponentScrollBar(componentTypes);
         panel.setOpaque(false);
         panel.add(createComponentPanel(componentTypes), BorderLayout.CENTER);
-        // JButton leftButton = new JButton("<");
-        // leftButton.addActionListener(new ActionListener() {
-        //
-        // @Override
-        // public void actionPerformed(ActionEvent e) {
-        // Rectangle rect = scrollPane.getVisibleRect();
-        // if (rect.x > SCROLL_STEP) {
-        // rect.translate(-SCROLL_STEP, 0);
-        // } else {
-        // rect.translate(-rect.x, 0);
-        // }
-        // }
-        // });
-        // leftButton.setMargin(new Insets(0, 2, 0, 2));
-        // JButton rightButton = new JButton(">");
-        // rightButton.addActionListener(new ActionListener() {
-        //
-        // @Override
-        // public void actionPerformed(ActionEvent e) {
-        // Rectangle rect = scrollPane.getVisibleRect();
-        // if (rect.x + rect.width < scrollPane.getViewport().getSize().width -
-        // SCROLL_STEP) {
-        // rect.translate(SCROLL_STEP, 0);
-        // } else {
-        // rect.translate(scrollPane.getViewport().getSize().width - rect.x -
-        // rect.width,
-        // 0);
-        // }
-        // }
-        // });
-        // rightButton.setMargin(new Insets(0, 2, 0, 2));
-        // panel.add(leftButton, BorderLayout.WEST);
-        // panel.add(scrollPane);
-        // panel.add(rightButton, BorderLayout.EAST);
+
         return panel;
     }
 
-    // private JScrollPane createComponentScrollBar(List<ComponentType>
-    // componentTypes) {
-    // JScrollPane scrollPane = new
-    // JScrollPane(createComponentPanel(componentTypes));
-    // scrollPane.setOpaque(false);
-    // scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    // scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-    // return scrollPane;
-    // }
-
-    public Container getRecentToolbar() {
+    private Container getRecentToolbar() {
         if (recentToolbar == null) {
             recentToolbar = new Container();
             recentToolbar.setLayout(new BoxLayout(recentToolbar, BoxLayout.X_AXIS));
@@ -137,8 +98,11 @@ class ComponentTabbedPane extends JTabbedPane {
 
     private Component createComponentPanel(List<ComponentType> componentTypes) {
         Container toolbar = new Container();
+        
         Collections.sort(componentTypes, ComparatorFactory.getInstance().getComponentTypeComparator());
+        
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.X_AXIS));
+        
         for (ComponentType componentType : componentTypes) {
             Component button = ComponentButtonFactory.create(plugInPort, componentType, createTemplatePopup(componentType));
             toolbar.add(button);
@@ -219,6 +183,7 @@ class ComponentTabbedPane extends JTabbedPane {
             public void popupMenuCanceled(PopupMenuEvent e) {
             }
         });
+        
         return templatePopup;
     }
 }

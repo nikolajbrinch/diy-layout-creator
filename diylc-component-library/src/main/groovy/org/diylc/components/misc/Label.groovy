@@ -25,7 +25,7 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Label", author = "Branislav Stojkovic", category = "Misc", description = "User defined label", instanceNamePrefix = "L", zOrder = IDIYComponent.TEXT, flexibleZOrder = true, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
-public class Label extends AbstractComponent<Void> implements Geometry {
+public class Label extends AbstractComponent implements Geometry {
 
     public static String DEFAULT_TEXT = "Double click to edit text"
 

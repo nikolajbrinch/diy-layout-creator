@@ -21,7 +21,7 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 @ComponentDescriptor(name = "Solder Pad", category = "Connectivity", author = "Branislav Stojkovic", description = "Copper solder pad, round or square", instanceNamePrefix = "Pad", stretchable = false, zOrder = IDIYComponent.PAD, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class SolderPad extends AbstractComponent<Void> {
+public class SolderPad extends AbstractComponent {
 
     private static final long serialVersionUID = 1L
 
@@ -112,15 +112,6 @@ public class SolderPad extends AbstractComponent<Void> {
     @Override
     public void setControlPoint(Point point, int index) {
         this.point.setLocation(point)
-    }
-
-    @Override
-    public Void getValue() {
-        return null
-    }
-
-    @Override
-    public void setValue(Void value) {
     }
 
     static enum Type {
