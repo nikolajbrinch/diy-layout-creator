@@ -6,6 +6,7 @@ public class PlatformStrategy {
 
     private static Platform platform;
     
+    @SuppressWarnings("unused")
     private static PlatformStrategy platformStrategy = new PlatformStrategy();
     
     private PlatformStrategy() {

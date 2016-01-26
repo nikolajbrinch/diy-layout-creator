@@ -8,12 +8,12 @@ import java.nio.file.Path;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
-import org.diylc.app.AppIconLoader;
 import org.diylc.app.IPlugInPort;
 import org.diylc.app.ISwingUI;
 import org.diylc.app.ITask;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.menus.file.FileFilterEnum;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

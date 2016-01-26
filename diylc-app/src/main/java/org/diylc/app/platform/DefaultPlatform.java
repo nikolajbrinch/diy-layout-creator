@@ -21,14 +21,14 @@ public class DefaultPlatform implements Platform {
 
     @Override
     public void setAbouthandler(AboutHandler aboutHandler) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setPreferencesHandler(PreferencesHandler preferencesHandler) {
-        // TODO Auto-generated method stub
-        
+    }
+
+    @Override
+    public void setQuitHandler(QuitHandler quitHandler) {
     }
 
 }

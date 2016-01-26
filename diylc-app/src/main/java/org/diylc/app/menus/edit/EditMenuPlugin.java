@@ -8,12 +8,11 @@ import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.Transferable;
 import java.util.EnumSet;
 
-import org.diylc.app.AppIconLoader;
 import org.diylc.app.EventType;
-import org.diylc.app.ExpansionMode;
 import org.diylc.app.IPlugIn;
 import org.diylc.app.IPlugInPort;
 import org.diylc.app.ISwingUI;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.core.Project;
 
 public class EditMenuPlugin implements IPlugIn, ClipboardOwner {

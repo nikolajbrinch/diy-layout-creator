@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.diylc.app.AppIconLoader;
 import org.diylc.app.IPlugInPort;
+import org.diylc.app.utils.AppIconLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

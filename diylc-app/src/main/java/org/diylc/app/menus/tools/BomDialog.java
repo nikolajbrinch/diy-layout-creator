@@ -15,9 +15,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.diylc.app.AppIconLoader;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.menus.file.FileFilterEnum;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.core.BomEntry;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;

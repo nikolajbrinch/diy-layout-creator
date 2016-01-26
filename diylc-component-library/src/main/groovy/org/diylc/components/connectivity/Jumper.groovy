@@ -67,11 +67,6 @@ public class Jumper extends AbstractLeadedComponent {
 	}
 
 	@Override
-	public Byte getAlpha() {
-		return super.getAlpha()
-	}
-
-	@Override
 	public Size getLength() {
 		return super.getLength()
 	}

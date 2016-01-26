@@ -1,20 +1,22 @@
 package org.diylc.app.menus.help;
 
-import org.diylc.app.AppIconLoader;
+import java.awt.event.ActionEvent;
+import java.util.EnumSet;
+
+import javax.swing.AbstractAction;
+import javax.swing.Icon;
+
 import org.diylc.app.EventType;
 import org.diylc.app.IPlugIn;
 import org.diylc.app.IPlugInPort;
 import org.diylc.app.ISwingUI;
-import org.diylc.app.MacApplicationHandler;
-import org.diylc.app.MacMenuHandler;
 import org.diylc.app.dialogs.DialogFactory;
+import org.diylc.app.platform.AboutEvent;
+import org.diylc.app.platform.Platform;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.BrowserUtils;
 import org.diylc.core.SystemUtils;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.util.EnumSet;
 
 /**
  * Entry point class for help-related utilities.
@@ -52,12 +54,7 @@ public class HelpMenuPlugin implements IPlugIn {
         if (!SystemUtils.isMac()) {
             swingUI.injectMenuAction(new AboutAction(), HELP_TITLE);
         }
-        MacApplicationHandler.setAbouthandler(new MacMenuHandler() {
-            @Override
-            public void handleMenuActivation() {
-                getAboutDialog().setVisible(true);
-            }
-        });
+        Platform.getPlatform().setAbouthandler((AboutEvent e) -> getAboutDialog().setVisible(true));
     }
 
     @Override

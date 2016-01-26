@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.utils;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;

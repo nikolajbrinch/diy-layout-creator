@@ -1,6 +1,5 @@
 ext {
-	frameworkVersion = '1.0.0-SNAPSHOT'
-	mainClass = 'org.diylc.DIYLCStarter'
+	mainClass = 'org.diylc.app.DIYLCStarter'
 	minMemory = '512M'
 	maxMemory = '2048M'
 	scriptRun = 'true'

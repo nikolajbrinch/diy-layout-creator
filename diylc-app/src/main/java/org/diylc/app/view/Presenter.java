@@ -28,13 +28,13 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.diylc.app.EventType;
-import org.diylc.app.ExpansionMode;
 import org.diylc.app.IKeyProcessor;
 import org.diylc.app.IPlugIn;
 import org.diylc.app.IPlugInPort;
 import org.diylc.app.IView;
 import org.diylc.app.MessageDispatcher;
 import org.diylc.app.MouseButton;
+import org.diylc.app.menus.edit.ExpansionMode;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.utils.StringUtils;
 import org.diylc.app.view.rendering.DrawingContext;

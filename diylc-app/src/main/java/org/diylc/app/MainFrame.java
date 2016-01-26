@@ -53,8 +53,10 @@ import org.diylc.app.menus.file.FileMenuPlugin;
 import org.diylc.app.menus.help.HelpMenuPlugin;
 import org.diylc.app.menus.layers.LayersMenuPlugin;
 import org.diylc.app.menus.tools.ToolsMenuPlugin;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.canvas.CanvasPlugin;
+import org.diylc.app.view.properties.PropertyPlugin;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.WindowBounds;
@@ -73,20 +75,18 @@ public class MainFrame extends JFrame implements ISwingUI {
     private JPanel topPanel;
     private JPanel bottomPanel;
 
-    private Presenter presenter;
+    private final Presenter presenter;
 
     private JMenuBar mainMenuBar;
     private Map<String, JMenu> menuMap;
     private Map<String, ButtonGroup> buttonGroupMap;
 
-    private CanvasPlugin canvasPlugin;
+    private final CanvasPlugin canvasPlugin;
+    
+    private PropertyPlugin propertyPlugin;
 
     public MainFrame() {
         super("DIYLC 4");
-        initComponent();
-    }
-
-    private void initComponent() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -114,6 +114,8 @@ public class MainFrame extends JFrame implements ISwingUI {
         presenter.installPlugin(new StatusBar(this));
         canvasPlugin = new CanvasPlugin(this);
         presenter.installPlugin(canvasPlugin);
+        propertyPlugin = new PropertyPlugin(this);
+        presenter.installPlugin(propertyPlugin);
         presenter.installPlugin(new FramePlugin());
         presenter.configure();
 
@@ -246,7 +248,7 @@ public class MainFrame extends JFrame implements ISwingUI {
         PropertyEditorDialog editor = DialogFactory.getInstance().createPropertyEditorDialog(properties, "Edit Selection");
         editor.setVisible(true);
         defaultedProperties.addAll(editor.getDefaultedProperties());
-        
+
         return ButtonDialog.OK.equals(editor.getSelectedButtonCaption());
     }
 
@@ -275,7 +277,7 @@ public class MainFrame extends JFrame implements ISwingUI {
     @Override
     public void injectGUIComponent(JComponent component, int position) throws BadPositionException {
         LOG.info(String.format("injectGUIComponent(%s, %s)", component.getClass().getName(), position));
-        
+
         switch (position) {
         case SwingConstants.TOP:
             topPanel.add(component);
@@ -295,7 +297,7 @@ public class MainFrame extends JFrame implements ISwingUI {
         default:
             throw new BadPositionException();
         }
-        
+
         pack();
     }
 
@@ -388,11 +390,11 @@ public class MainFrame extends JFrame implements ISwingUI {
 
     @Override
     public Path promptFileSave() {
-        return DialogFactory.getInstance()
-                .showSaveDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(), null, FileFilterEnum.DIY.getExtensions()[0], null);
+        return DialogFactory.getInstance().showSaveDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(), null,
+                FileFilterEnum.DIY.getExtensions()[0], null);
     }
 
-    private void exit() {
+    void exit() {
         if (presenter.allowFileAction()) {
             Configuration.INSTANCE.setAbnormalExit(false);
             dispose();
@@ -426,6 +428,10 @@ public class MainFrame extends JFrame implements ISwingUI {
                 setTitle(String.format("DIYLC %s - %s %s", plugInPort.getCurrentVersionNumber(), path.getFileName().toString(), modified));
             }
         }
+    }
+
+    public void openProject(Path path) throws Exception {
+        getPresenter().loadProjectFromFile(path);
     }
 
 }

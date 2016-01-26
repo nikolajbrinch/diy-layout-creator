@@ -9,7 +9,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import org.diylc.app.AppIconLoader;
+import org.diylc.app.utils.AppIconLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

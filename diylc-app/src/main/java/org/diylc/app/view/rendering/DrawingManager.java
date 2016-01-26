@@ -83,7 +83,7 @@ public class DrawingManager {
             if (drawingOptions.contains(DrawingOption.ZOOM)) {
                 zoom = zoomLevel;
             } else {
-                zoom = 1 / Constants.PIXEL_SIZE;
+                zoom = 1d / Constants.PIXEL_SIZE;
             }
 
             Graphics2D graphics2d = drawingContext.getGraphics2d();

@@ -12,4 +12,6 @@ public interface Platform {
 
     public void setPreferencesHandler(PreferencesHandler preferencesHandler);
     
+    public void setQuitHandler(QuitHandler quitHandler);
+    
 }

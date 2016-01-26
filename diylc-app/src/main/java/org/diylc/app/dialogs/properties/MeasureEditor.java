@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 
 import javax.swing.JComboBox;
 
-import org.diylc.app.AppIconLoader;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.measures.AbstractMeasure;
 import org.diylc.core.measures.Unit;

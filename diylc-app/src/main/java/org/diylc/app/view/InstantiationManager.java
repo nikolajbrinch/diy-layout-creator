@@ -205,6 +205,9 @@ public class InstantiationManager {
 				for (int i = 0; i < component.getControlPointCount(); i++) {
 					p.setLocation(component.getControlPoint(i));
 					p.translate(dx, dy);
+					if (snapToGrid) {
+					    CalcUtils.snapPointToGrid(p, gridSpacing);
+					}
 					component.setControlPoint(p, i);
 				}
 			}

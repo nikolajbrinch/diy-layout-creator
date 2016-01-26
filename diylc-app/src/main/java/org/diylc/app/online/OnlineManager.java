@@ -6,7 +6,6 @@ import java.util.EnumSet;
 import javax.swing.AbstractAction;
 import javax.swing.SwingWorker;
 
-import org.diylc.app.AppIconLoader;
 import org.diylc.app.EventType;
 import org.diylc.app.IPlugIn;
 import org.diylc.app.IPlugInPort;
@@ -16,6 +15,7 @@ import org.diylc.app.online.presenter.LibraryPresenter;
 import org.diylc.app.online.view.LoginDialog;
 import org.diylc.app.online.view.NewUserDialog;
 import org.diylc.app.online.view.UploadDialog;
+import org.diylc.app.utils.AppIconLoader;
 
 public class OnlineManager implements IPlugIn {
 

@@ -20,8 +20,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.diylc.app.AppIconLoader;
 import org.diylc.app.IPlugInPort;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.components.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;

@@ -5,12 +5,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.EnumSet;
 
-import org.diylc.app.AppIconLoader;
 import org.diylc.app.EventType;
 import org.diylc.app.IPlugIn;
 import org.diylc.app.IPlugInPort;
 import org.diylc.app.ISwingUI;
 import org.diylc.app.actions.ActionFactory;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;

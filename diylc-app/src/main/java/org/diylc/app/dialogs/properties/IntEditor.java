@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.diylc.app.AppIconLoader;
+import org.diylc.app.utils.AppIconLoader;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.utils.Constants;
 

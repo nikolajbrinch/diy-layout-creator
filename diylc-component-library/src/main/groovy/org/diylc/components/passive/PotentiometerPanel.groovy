@@ -210,7 +210,7 @@ public class PotentiometerPanel extends AbstractPotentiometer implements Geometr
             finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
                     : theme.getOutlineColor()
         } else {
-            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
                     : Colors.LABEL_COLOR
         }
         graphicsContext.setColor(finalLabelColor)

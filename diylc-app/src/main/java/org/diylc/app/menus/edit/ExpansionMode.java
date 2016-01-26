@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.menus.edit;
 
 public enum ExpansionMode {
 

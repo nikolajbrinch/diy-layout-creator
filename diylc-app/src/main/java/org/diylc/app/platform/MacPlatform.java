@@ -51,7 +51,13 @@ public class MacPlatform extends DefaultPlatform {
     }
 
     public void setQuitHandler(QuitHandler quitHandler) {
-        setHandler("com.apple.eawt.PreferencesHandler", "setPreferencesHandler", new MacAppEventHandlerAdapter(quitHandler));
+        if (quitHandler == null) {
+            System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
+        } else {
+            System.setProperty("apple.eawt.quitStrategy", "SYSTEM_EXIT_0");
+        }
+        
+        setHandler("com.apple.eawt.QuitHandler", "setQuitHandler", new MacAppEventHandlerAdapter(quitHandler));
     }
 
     public void setAbouthandler(AboutHandler aboutHandler) {
