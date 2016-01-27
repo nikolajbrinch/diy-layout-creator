@@ -76,7 +76,7 @@ public class ICSymbol extends AbstractTransparentComponent implements Geometry {
 		}
 		int pinSpacing = (int) PIN_SPACING.convertToPixels()
 		Composite oldComposite = graphicsContext.getComposite()
-		if (alpha < Colors..MAX_ALPHA) {
+		if (alpha < Colors.MAX_ALPHA) {
 			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
 		}
 

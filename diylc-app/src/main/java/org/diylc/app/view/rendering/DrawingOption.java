@@ -2,7 +2,7 @@ package org.diylc.app.view.rendering;
 
 import java.awt.Graphics;
 
-import org.diylc.app.IPlugInPort;
+import org.diylc.app.view.IPlugInPort;
 
 /**
  * Enumerates all options that can be used when drawing a project.

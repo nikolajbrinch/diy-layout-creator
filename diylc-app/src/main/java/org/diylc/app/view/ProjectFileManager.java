@@ -21,8 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.diylc.app.EventType;
-import org.diylc.app.MessageDispatcher;
+import org.diylc.app.events.MessageDispatcher;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.components.AbstractBoard;
 import org.diylc.components.AbstractLeadedComponent;

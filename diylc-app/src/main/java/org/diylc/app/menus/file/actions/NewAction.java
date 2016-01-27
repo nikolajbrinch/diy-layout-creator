@@ -8,11 +8,11 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
-import org.diylc.app.IPlugInPort;
 import org.diylc.app.dialogs.ButtonDialog;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.dialogs.properties.PropertyEditorDialog;
 import org.diylc.app.utils.AppIconLoader;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.core.PropertyWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

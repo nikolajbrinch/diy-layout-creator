@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.diylc.app.IPlugInPort;
-import org.diylc.app.IView;
+import org.diylc.app.view.IPlugInPort;
+import org.diylc.app.window.IView;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
@@ -26,6 +26,10 @@ public enum ActionFactory {
         return new ConfigAction(plugInPort, title, key, defaultValue);
     }
 
+    public ViewAction createViewAction(IPlugInPort plugInPort, String title, Configuration.Key key, boolean defaultValue) {
+        return new ViewAction(plugInPort, title, key, defaultValue);
+    }
+    
     public ThemeAction createThemeAction(IPlugInPort plugInPort, Theme theme) {
         return new ThemeAction(plugInPort, theme);
     }
@@ -54,6 +58,29 @@ public enum ActionFactory {
         }
     }
 
+    public static class ViewAction extends AbstractAction {
+
+        private static final long serialVersionUID = 1L;
+
+        private IPlugInPort plugInPort;
+        private Configuration.Key key;
+
+        public ViewAction(IPlugInPort plugInPort, String title, Configuration.Key key, boolean defaultValue) {
+            super();
+            this.plugInPort = plugInPort;
+            this.key = key;
+            putValue(AbstractAction.NAME, title);
+            putValue(IView.CHECK_BOX_MENU_ITEM, true);
+            putValue(AbstractAction.SELECTED_KEY, Configuration.INSTANCE.getProperty(key, defaultValue));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LOG.info(getValue(AbstractAction.NAME) + " triggered");
+            Configuration.INSTANCE.setProperty(key, getValue(AbstractAction.SELECTED_KEY));
+            plugInPort.refresh();
+        }
+    }
     public static class ThemeAction extends AbstractAction {
 
         private static final long serialVersionUID = 1L;

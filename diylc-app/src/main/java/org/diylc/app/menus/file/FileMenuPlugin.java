@@ -3,10 +3,6 @@ package org.diylc.app.menus.file;
 import java.nio.file.Path;
 import java.util.EnumSet;
 
-import org.diylc.app.EventType;
-import org.diylc.app.IPlugIn;
-import org.diylc.app.IPlugInPort;
-import org.diylc.app.ISwingUI;
 import org.diylc.app.actions.ExportPDFAction;
 import org.diylc.app.actions.ExportPNGAction;
 import org.diylc.app.actions.PrintAction;
@@ -17,6 +13,10 @@ import org.diylc.app.menus.file.actions.OpenAction;
 import org.diylc.app.menus.file.actions.OpenRecentAction;
 import org.diylc.app.menus.file.actions.SaveAction;
 import org.diylc.app.menus.file.actions.SaveAsAction;
+import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugInPort;
+import org.diylc.app.window.IPlugIn;
+import org.diylc.app.window.ISwingUI;
 import org.diylc.core.LRU;
 import org.diylc.core.config.Configuration;
 

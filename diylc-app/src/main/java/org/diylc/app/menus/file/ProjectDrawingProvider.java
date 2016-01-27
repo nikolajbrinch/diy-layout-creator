@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
 
-import org.diylc.app.IPlugInPort;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.canvas.IDrawingProvider;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.core.config.Configuration;

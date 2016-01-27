@@ -11,14 +11,14 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.diylc.app.IPlugInPort;
-import org.diylc.app.ISwingUI;
 import org.diylc.app.ITask;
-import org.diylc.app.IView;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.menus.file.FileFilterEnum;
 import org.diylc.app.utils.AppIconLoader;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.Presenter;
+import org.diylc.app.window.ISwingUI;
+import org.diylc.app.window.IView;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;

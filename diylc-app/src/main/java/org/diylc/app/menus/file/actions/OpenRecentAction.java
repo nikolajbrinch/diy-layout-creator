@@ -5,9 +5,9 @@ import java.nio.file.Path;
 
 import javax.swing.AbstractAction;
 
-import org.diylc.app.IPlugInPort;
-import org.diylc.app.ISwingUI;
 import org.diylc.app.ITask;
+import org.diylc.app.view.IPlugInPort;
+import org.diylc.app.window.ISwingUI;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

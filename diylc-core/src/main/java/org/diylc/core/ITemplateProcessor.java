@@ -19,4 +19,5 @@ public interface ITemplateProcessor {
 		private static final long serialVersionUID = 1L;
 
 	}
+
 }

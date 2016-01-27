@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.window;
 
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;

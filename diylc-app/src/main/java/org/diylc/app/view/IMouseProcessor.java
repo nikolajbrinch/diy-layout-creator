@@ -1,6 +1,8 @@
-package org.diylc.app;
+package org.diylc.app.view;
 
 import java.awt.Point;
+
+import org.diylc.app.MouseButton;
 
 
 public interface IMouseProcessor {

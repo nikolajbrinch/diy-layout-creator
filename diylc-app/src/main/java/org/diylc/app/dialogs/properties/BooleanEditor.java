@@ -25,6 +25,7 @@ public class BooleanEditor extends JCheckBox {
 				property.setChanged(true);
 				setBackground(oldBg);
 				property.setValue(isSelected());
+				firePropertyChange(property.getName(), !isSelected(), isSelected());
 			}
 		});
 		if (!property.isUnique()) {

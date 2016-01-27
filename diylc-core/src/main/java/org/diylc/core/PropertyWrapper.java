@@ -37,15 +37,6 @@ public class PropertyWrapper implements Cloneable {
 		this.value = object.getClass().getMethod(getter).invoke(object);
 	}
 
-	// public void readUniqueFrom(IDIYComponent component)
-	// throws IllegalArgumentException, IllegalAccessException,
-	// InvocationTargetException {
-	// Object newValue = getter.invoke(component);
-	// if (!newValue.equals(value)) {
-	// this.value = null;
-	// }
-	// }
-
 	public void writeTo(Object object) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException,
 			SecurityException, NoSuchMethodException {
@@ -92,16 +83,6 @@ public class PropertyWrapper implements Cloneable {
 		this.changed = changed;
 	}
 
-	// @Override
-	// public Object clone() throws CloneNotSupportedException {
-	// // Try to invoke clone method on value if possible.
-	// try {
-	// Method cloneMethod = value.getClass().getMethod("clone");
-	// return new Property(name, type, cloneMethod.invoke(value));
-	// } catch (Exception e) {
-	// }
-	// return new Property(name, type, value);
-	// }
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		PropertyWrapper clone = new PropertyWrapper(this.name, this.type, this.getter,

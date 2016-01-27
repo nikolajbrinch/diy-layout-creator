@@ -23,6 +23,7 @@ public class ImageEditor extends JButton {
 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
+			    ImageIcon oldValue = (ImageIcon) property.getValue();
 				Path path = DialogFactory.getInstance().showOpenDialog(
 						FileFilterEnum.IMAGES.getFilter(), Configuration.INSTANCE.getLastPath(), null,
 						FileFilterEnum.IMAGES.getExtensions()[0], null);
@@ -30,6 +31,7 @@ public class ImageEditor extends JButton {
 					property.setChanged(true);
 					ImageIcon image = new ImageIcon(path.toFile().getAbsolutePath());
 					property.setValue(image);
+					firePropertyChange(property.getName(), oldValue, image);
 				}
 			}
 		});

@@ -10,7 +10,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.diylc.app.IPlugInPort;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.canvas.IDrawingProvider;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.components.PCBLayer;

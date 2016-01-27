@@ -36,4 +36,8 @@ public class SystemUtils {
         return new File(getConfigDirectory(), filename);
     }
 
+    public static String getDefaultFontName() {
+        return isMac() ? "Helvetica Neue" : "Tahoma";
+    }
+
 }

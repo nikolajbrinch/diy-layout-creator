@@ -29,12 +29,14 @@ public class ColorEditor extends JLabel  {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+			    Color oldColor = (Color) property.getValue();
 				Color newColor = JColorChooser.showDialog(ColorEditor.this, "Choose Color",
 						getBackground());
 				if (newColor != null) {
 					property.setChanged(true);
 					property.setValue(newColor);
 					setBackground(newColor);
+					firePropertyChange(property.getName(), oldColor, newColor);
 				}
 			}
 		});

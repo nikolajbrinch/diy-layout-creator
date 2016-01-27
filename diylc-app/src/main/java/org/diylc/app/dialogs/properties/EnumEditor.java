@@ -27,10 +27,12 @@ public class EnumEditor extends JComboBox<Object> {
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+			    Object oldValue = property.getValue();
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					property.setChanged(true);
 					setBackground(oldBg);
-					EnumEditor.this.property.setValue(e.getItem());
+					property.setValue(e.getItem());
+					firePropertyChange(property.getName(), oldValue, property.getValue());
 				}
 			}
 		});

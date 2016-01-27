@@ -56,7 +56,7 @@ public class DIL_IC extends AbstractTransparentComponent implements Geometry {
 	Orientation orientation = Orientation.DEFAULT
 
 	@EditableProperty(name = "Pins")
-	SIL_IC.PinCount pinCount = SIL_IC.PinCount._8
+	PinCount pinCount = PinCount._8
 
 	@EditableProperty(name = "Pin spacing")
 	Size pinSpacing = new Size(0.1d, SizeUnit.in)

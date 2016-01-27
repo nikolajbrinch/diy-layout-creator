@@ -3,7 +3,7 @@ package org.diylc.app.view.canvas;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 
-import org.diylc.app.IPlugInPort;
+import org.diylc.app.view.IPlugInPort;
 
 /**
  * {@link DragGestureListener} for {@link CanvasPanel}.

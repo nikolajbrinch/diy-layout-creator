@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.SystemUtils;
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext;
@@ -38,7 +39,7 @@ public abstract class AbstractComponent implements IDIYComponent {
     @EditableProperty(defaultable = false)
 	protected String name = "";
 
-	public static Font LABEL_FONT = new Font("Tahoma", Font.PLAIN, 14);
+	public static Font LABEL_FONT = new Font(SystemUtils.getDefaultFontName(), Font.PLAIN, 14);
 	
 	@Override
 	public String getName() {

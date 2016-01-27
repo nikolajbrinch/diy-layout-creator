@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.diylc.app.EventType;
-import org.diylc.app.MessageDispatcher;
+import org.diylc.app.events.MessageDispatcher;
+import org.diylc.app.view.EventType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project;

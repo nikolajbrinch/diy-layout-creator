@@ -1,5 +1,6 @@
 package org.diylc.app.view.canvas;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -16,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -63,7 +65,7 @@ public class RulerScrollPane extends JScrollPane {
 
 	public RulerScrollPane(Component view, final IDrawingProvider provider, double cmSpacing, double inSpacing) {
 		super(view);
-
+        setBorder(BorderFactory.createStrokeBorder(new BasicStroke(0.2f), Color.gray.darker()));
 		horizontalRuler = new Ruler(Ruler.HORIZONTAL, true, cmSpacing, inSpacing);
 		setColumnHeaderView(horizontalRuler);
 		verticalRuler = new Ruler(Ruler.VERTICAL, true, cmSpacing, inSpacing);

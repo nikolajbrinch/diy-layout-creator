@@ -27,13 +27,8 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.diylc.app.EventType;
-import org.diylc.app.IKeyProcessor;
-import org.diylc.app.IPlugIn;
-import org.diylc.app.IPlugInPort;
-import org.diylc.app.IView;
-import org.diylc.app.MessageDispatcher;
 import org.diylc.app.MouseButton;
+import org.diylc.app.events.MessageDispatcher;
 import org.diylc.app.menus.edit.ExpansionMode;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.utils.StringUtils;
@@ -41,6 +36,8 @@ import org.diylc.app.view.rendering.DrawingContext;
 import org.diylc.app.view.rendering.DrawingManager;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.app.view.rendering.RenderingConstants;
+import org.diylc.app.window.IPlugIn;
+import org.diylc.app.window.IView;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.ComparatorFactory;
@@ -114,16 +111,14 @@ public class Presenter implements IPlugInPort {
      * that designate which of their control points are being dragged.
      */
     private Map<IDIYComponent, Set<Integer>> controlPointMap;
-    
-    private Set<IDIYComponent> lockedComponents;
 
     /*
      * Utilities
      */
     private DrawingManager drawingManager;
-    
+
     private ProjectFileManager projectFileManager;
-    
+
     private InstantiationManager instantiationManager;
 
     private Rectangle selectionRect;
@@ -135,15 +130,15 @@ public class Presenter implements IPlugInPort {
     // D&D
     private boolean dragInProgress = false;
 
-    /* 
+    /*
      * Previous mouse location, not scaled for zoom factor.
      */
     private Point previousDragPoint = null;
-    
+
     private Project preDragProject = null;
-    
+
     private int dragAction;
-    
+
     private Point previousScaledPoint;
 
     private LRU<Path> lru = new LRU<Path>(15);
@@ -154,7 +149,6 @@ public class Presenter implements IPlugInPort {
         plugIns = new ArrayList<IPlugIn>();
         messageDispatcher = new MessageDispatcher<EventType>(true);
         selectedComponents = new ArrayList<IDIYComponent>();
-        lockedComponents = new HashSet<IDIYComponent>();
         currentProject = new Project();
         // cloner = new Cloner();
         drawingManager = new DrawingManager(messageDispatcher);
@@ -280,25 +274,26 @@ public class Presenter implements IPlugInPort {
     @Override
     public void loadProjectFromFile(Path path) throws Exception {
         LOG.info(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
-//        try {
-            List<String> warnings = new ArrayList<String>();
-            Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
-            loadProject(project, true);
-            projectFileManager.fireFileStatusChanged();
-            if (!warnings.isEmpty()) {
-                StringBuilder builder = new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
-                for (String warning : warnings) {
-                    builder.append(warning);
-                    builder.append("<br>");
-                }
-                builder.append("</html");
-                view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
+        // try {
+        List<String> warnings = new ArrayList<String>();
+        Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
+        loadProject(project, true);
+        projectFileManager.fireFileStatusChanged();
+        if (!warnings.isEmpty()) {
+            StringBuilder builder = new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
+            for (String warning : warnings) {
+                builder.append(warning);
+                builder.append("<br>");
             }
-//        } catch (Exception ex) {
-//            LOG.error("Could not load file", ex);
-//            view.showMessage("Could not open file " + file.getAbsolutePath() + ". Check the log for details.", "Error", IView.ERROR_MESSAGE);
-//            throw new RuntimeException(ex);
-//        }
+            builder.append("</html");
+            view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
+        }
+        // } catch (Exception ex) {
+        // LOG.error("Could not load file", ex);
+        // view.showMessage("Could not open file " + file.getAbsolutePath() +
+        // ". Check the log for details.", "Error", IView.ERROR_MESSAGE);
+        // throw new RuntimeException(ex);
+        // }
     }
 
     @Override
@@ -379,11 +374,13 @@ public class Presenter implements IPlugInPort {
         } else {
             componentSlotToDraw = instantiationManager.getComponentSlot();
         }
-        
+
         List<IDIYComponent> failedComponents = new ArrayList<IDIYComponent>();
-        
+
         if (currentProject != null) {
-            DrawingContext drawingContext = new DrawingContext(g2d, currentProject, drawOptions, filter, selectionRect, selectedComponents, getLockedComponents(), groupedComponents, Arrays.asList(instantiationManager.getFirstControlPoint(), instantiationManager.getPotentialControlPoint()), componentSlotToDraw, dragInProgress);
+            DrawingContext drawingContext = new DrawingContext(g2d, currentProject, drawOptions, filter, selectionRect, selectedComponents,
+                    getLockedComponents(), groupedComponents, Arrays.asList(instantiationManager.getFirstControlPoint(),
+                            instantiationManager.getPotentialControlPoint()), componentSlotToDraw, dragInProgress);
 
             failedComponents = drawingManager.drawProject(drawingContext);
         }
@@ -790,8 +787,8 @@ public class Presenter implements IPlugInPort {
 
         if (!components.equals(controlPointMap)) {
             controlPointMap = components;
-            messageDispatcher.dispatchMessage(EventType.AVAILABLE_CTRL_POINTS_CHANGED, new HashMap<IDIYComponent, Set<Integer>>(
-                    components));
+            messageDispatcher
+                    .dispatchMessage(EventType.AVAILABLE_CTRL_POINTS_CHANGED, new HashMap<IDIYComponent, Set<Integer>>(components));
         }
     }
 
@@ -1685,7 +1682,8 @@ public class Presenter implements IPlugInPort {
         }
     }
 
-    private void applyPropertiesToSelection(List<PropertyWrapper> properties) {
+    @Override
+    public void applyPropertiesToSelection(List<PropertyWrapper> properties) {
         LOG.debug(String.format("applyPropertiesToSelection(%s)", properties));
         Project oldProject = currentProject.clone();
         try {
@@ -1706,8 +1704,13 @@ public class Presenter implements IPlugInPort {
                 messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Edit Selection");
                 projectFileManager.notifyFileChange();
             }
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
         }
+        messageDispatcher.dispatchMessage(EventType.REPAINT);
+    }
+
+    @Override
+    public void applyPropertyToSelection(PropertyWrapper property) {
+        applyPropertiesToSelection(Arrays.asList(new PropertyWrapper [] { property }));
     }
 
     @Override
@@ -1852,11 +1855,11 @@ public class Presenter implements IPlugInPort {
     @Override
     public List<Template> getTemplatesFor(String categoryName, String componentTypeName) {
         Map<String, List<Template>> templateMap = Configuration.INSTANCE.getTemplates();
-        
+
         if (templateMap != null) {
             return templateMap.get(categoryName + "." + componentTypeName);
         }
-        
+
         return null;
     }
 
@@ -1865,16 +1868,16 @@ public class Presenter implements IPlugInPort {
         if (this.selectedComponents.isEmpty()) {
             throw new RuntimeException("No components selected");
         }
-        
+
         ComponentType selectedType = ComponentRegistry.INSTANCE.getComponentType(this.selectedComponents.get(0));
-        
+
         for (int i = 1; i < this.selectedComponents.size(); i++) {
             ComponentType newType = ComponentRegistry.INSTANCE.getComponentType(this.selectedComponents.get(i));
             if (newType.getInstanceClass() != selectedType.getInstanceClass()) {
                 throw new RuntimeException("Template can be applied on multiple components of the same type only");
             }
         }
-        
+
         return getTemplatesFor(selectedType.getCategory(), selectedType.getName());
     }
 
@@ -1920,19 +1923,21 @@ public class Presenter implements IPlugInPort {
     }
 
     private Set<IDIYComponent> getLockedComponents() {
-        lockedComponents.clear();
+        Set<IDIYComponent> lockedComponents = new HashSet<IDIYComponent>();
+
         for (IDIYComponent component : currentProject.getComponents()) {
             if (isComponentLocked(component)) {
                 lockedComponents.add(component);
             }
         }
+
         return lockedComponents;
     }
 
     private boolean isComponentLocked(IDIYComponent component) {
         ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
 
-        return currentProject.getLockedLayers().contains((int) Math.round(componentType.getZOrder()));
+        return currentProject.getLockedLayers().contains((double) Math.round(componentType.getZOrder()));
     }
 
     /**

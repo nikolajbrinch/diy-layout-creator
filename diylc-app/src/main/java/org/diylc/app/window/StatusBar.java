@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.window;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -26,9 +26,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.diylc.app.PercentageListCellRenderer;
 import org.diylc.app.update.UpdateLabel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.StringUtils;
+import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.components.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.config.Configuration;

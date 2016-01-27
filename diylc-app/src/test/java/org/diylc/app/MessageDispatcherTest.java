@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 
 import java.util.EnumSet;
 
+import org.diylc.app.events.IMessageListener;
+import org.diylc.app.events.MessageDispatcher;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.window;
 
 import java.nio.file.Path;
 import java.util.List;

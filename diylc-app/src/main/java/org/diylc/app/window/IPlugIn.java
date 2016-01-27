@@ -1,4 +1,8 @@
-package org.diylc.app;
+package org.diylc.app.window;
+
+import org.diylc.app.events.IMessageListener;
+import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugInPort;
 
 
 /**

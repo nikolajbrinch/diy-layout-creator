@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.view;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -9,7 +9,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import org.diylc.app.events.IMessageListener;
+import org.diylc.app.events.MessageDispatcher;
 import org.diylc.app.view.rendering.DrawingOption;
+import org.diylc.app.window.IPlugIn;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.ComponentType;
 import org.diylc.components.IComponentFilter;
@@ -205,6 +208,20 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
 	 */
 	void applyPropertiesToProject(List<PropertyWrapper> properties);
 	
+    /**
+     * Applies specified properties to the current selection.
+     * 
+     * @param properties
+     */
+    void applyPropertiesToSelection(List<PropertyWrapper> properties);
+	
+    /**
+     * Applies specified property to the current selection.
+     * 
+     * @param property
+     */
+    void applyPropertyToSelection(PropertyWrapper property);
+
 	/**
 	 * Gets the current new component slot.
 	 */
@@ -301,4 +318,5 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
      * @param file
      */
     void removeLruPath(Path path);
+
 }

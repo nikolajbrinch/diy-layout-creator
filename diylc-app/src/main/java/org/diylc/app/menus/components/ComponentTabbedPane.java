@@ -19,7 +19,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.diylc.app.IPlugInPort;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.components.ComparatorFactory;
 import org.diylc.components.ComponentRegistry;
 import org.diylc.components.ComponentType;

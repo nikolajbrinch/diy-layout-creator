@@ -1,11 +1,10 @@
-package org.diylc.app;
+package org.diylc.app.window;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -41,6 +40,8 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
+import org.diylc.app.AutoSavePlugin;
+import org.diylc.app.ITask;
 import org.diylc.app.dialogs.ButtonDialog;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.dialogs.properties.PropertyEditorDialog;
@@ -53,7 +54,10 @@ import org.diylc.app.menus.file.FileMenuPlugin;
 import org.diylc.app.menus.help.HelpMenuPlugin;
 import org.diylc.app.menus.layers.LayersMenuPlugin;
 import org.diylc.app.menus.tools.ToolsMenuPlugin;
+import org.diylc.app.menus.view.ViewMenuPlugin;
 import org.diylc.app.utils.AppIconLoader;
+import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.canvas.CanvasPlugin;
 import org.diylc.app.view.properties.PropertyPlugin;
@@ -71,7 +75,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 
     private JPanel centerPanel;
     private JPanel leftPanel;
-    private JPanel rightPanel;
+    public JPanel rightPanel;
     private JPanel topPanel;
     private JPanel bottomPanel;
 
@@ -82,7 +86,7 @@ public class MainFrame extends JFrame implements ISwingUI {
     private Map<String, ButtonGroup> buttonGroupMap;
 
     private final CanvasPlugin canvasPlugin;
-    
+
     private PropertyPlugin propertyPlugin;
 
     public MainFrame() {
@@ -104,6 +108,7 @@ public class MainFrame extends JFrame implements ISwingUI {
         presenter.installPlugin(new ToolBox(this));
         presenter.installPlugin(new FileMenuPlugin(this));
         presenter.installPlugin(new EditMenuPlugin(this));
+        presenter.installPlugin(new ViewMenuPlugin(this));
         presenter.installPlugin(new ArrangeMenuPlugin(this));
         presenter.installPlugin(new ConfigMenuPlugin(this));
         presenter.installPlugin(new LayersMenuPlugin(this));
@@ -153,19 +158,21 @@ public class MainFrame extends JFrame implements ISwingUI {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                JFrame frame = (JFrame) e.getComponent();
-                Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
+                storeWindowBounds((JFrame) e.getComponent());
             }
 
             @Override
             public void componentMoved(ComponentEvent e) {
-                JFrame frame = (JFrame) e.getComponent();
-                Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
+                storeWindowBounds((JFrame) e.getComponent());
             }
 
         });
 
         setGlassPane(new CustomGlassPane());
+    }
+
+    protected void storeWindowBounds(JFrame frame) {
+        Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
     }
 
     public Presenter getPresenter() {
@@ -175,26 +182,13 @@ public class MainFrame extends JFrame implements ISwingUI {
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        // TODO: hack to prevent painting issues in the scroll bar rulers. Find
-        // a better fix if possible.
-        Timer timer = new Timer(500, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvasPlugin.refresh();
-            }
-
-        });
+        /*
+         * FIXME: hack to prevent painting issues in the scroll bar rulers. Find
+         * a better fix if possible.
+         */
+        Timer timer = new Timer(500, (ActionEvent e) -> canvasPlugin.refresh());
         timer.setRepeats(false);
         timer.start();
-        // if (b) {
-        // SwingUtilities.invokeLater(new Runnable() {
-        // @Override
-        // public void run() {
-        //
-        // }
-        // });
-        // }
     }
 
     private void createBasePanels() {
@@ -302,6 +296,30 @@ public class MainFrame extends JFrame implements ISwingUI {
     }
 
     @Override
+    public void removeGUIComponent(int position) throws BadPositionException {
+        LOG.info(String.format("removeGUIComponent(%s)", position));
+
+        switch (position) {
+        case SwingConstants.TOP:
+            topPanel.removeAll();
+            break;
+        case SwingConstants.LEFT:
+            leftPanel.removeAll();
+            break;
+        case SwingConstants.BOTTOM:
+            bottomPanel.removeAll();
+            break;
+        case SwingConstants.RIGHT:
+            rightPanel.removeAll();
+            break;
+        default:
+            throw new BadPositionException();
+        }
+
+        pack();
+    }
+
+    @Override
     public void injectMenuAction(Action action, String menuName) {
         LOG.info(String.format("injectMenuAction(%s, %s)", action == null ? "Separator" : action.getValue(Action.NAME), menuName));
         JMenu menu = findOrCreateMenu(menuName);
@@ -394,7 +412,7 @@ public class MainFrame extends JFrame implements ISwingUI {
                 FileFilterEnum.DIY.getExtensions()[0], null);
     }
 
-    void exit() {
+    public void exit() {
         if (presenter.allowFileAction()) {
             Configuration.INSTANCE.setAbnormalExit(false);
             dispose();
@@ -433,5 +451,4 @@ public class MainFrame extends JFrame implements ISwingUI {
     public void openProject(Path path) throws Exception {
         getPresenter().loadProjectFromFile(path);
     }
-
 }

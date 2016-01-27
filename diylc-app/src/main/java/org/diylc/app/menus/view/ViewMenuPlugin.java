@@ -1,4 +1,4 @@
-package org.diylc.app.menus.config;
+package org.diylc.app.menus.view;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,39 +24,37 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * 
  * @author Branislav Stojkovic
  */
-public class ConfigMenuPlugin implements IPlugIn {
+public class ViewMenuPlugin implements IPlugIn {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ConfigMenuPlugin.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ViewMenuPlugin.class);
 
-	private static final String CONFIG_MENU = "Config";
+	private static final String VIEW_MENU = "View";
 	private static final String THEME_MENU = "Theme";
 
 	private ISwingUI swingUI;
 
-	public ConfigMenuPlugin(ISwingUI swingUI) {
+	public ViewMenuPlugin(ISwingUI swingUI) {
 		super();
 		this.swingUI = swingUI;
 	}
 
 	@Override
 	public void connect(IPlugInPort plugInPort) {
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createConfigAction(plugInPort,
-				"Auto-Create Pads", Configuration.Key.AUTO_CREATE_PADS, false), CONFIG_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createConfigAction(plugInPort,
-				"Auto-Edit Mode", Configuration.Key.AUTO_EDIT, true), CONFIG_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createConfigAction(plugInPort,
-				"Continuous Creation", Configuration.Key.CONTINUOUS_CREATION, false), CONFIG_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createConfigAction(plugInPort,
-				"Export Grid", Configuration.Key.EXPORT_GRID, false), CONFIG_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createConfigAction(plugInPort,
-				"Snap to Grid", Configuration.Key.SNAP_TO_GRID, true), CONFIG_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createConfigAction(plugInPort,
-				"Sticky Points", Configuration.Key.STICKY_POINTS, true), CONFIG_MENU);
+		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+				"Anti-Aliasing", Configuration.Key.ANTI_ALIASING, true), VIEW_MENU);
+		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+				"Hi-Quality Rendering", Configuration.Key.HI_QUALITY_RENDER, false), VIEW_MENU);
+		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+				"Mouse Wheel Zoom", Configuration.Key.WHEEL_ZOOM, false), VIEW_MENU);
+		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+				"Outline Mode", Configuration.Key.OUTLINE, false), VIEW_MENU);
+        swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+                "Property Panel", Configuration.Key.PROPERTY_PANEL, false), VIEW_MENU);
 
 		File themeDir = new File("themes");
 		if (themeDir.exists()) {
 			XStream xStream = new XStream(new DomDriver());
-			swingUI.injectSubmenu(THEME_MENU, AppIconLoader.Pens.getIcon(), CONFIG_MENU);
+			swingUI.injectSubmenu(THEME_MENU, AppIconLoader.Pens.getIcon(), VIEW_MENU);
 			for (File file : themeDir.listFiles()) {
 				if (file.getName().toLowerCase().endsWith(".xml")) {
 					try {

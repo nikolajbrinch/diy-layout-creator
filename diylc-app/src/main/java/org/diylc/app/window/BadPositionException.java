@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.window;
 
 public class BadPositionException extends Exception {
 

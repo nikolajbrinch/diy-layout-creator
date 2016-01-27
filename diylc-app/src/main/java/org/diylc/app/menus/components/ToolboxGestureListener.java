@@ -5,7 +5,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 
-import org.diylc.app.IPlugInPort;
+import org.diylc.app.view.IPlugInPort;
 
 
 /**

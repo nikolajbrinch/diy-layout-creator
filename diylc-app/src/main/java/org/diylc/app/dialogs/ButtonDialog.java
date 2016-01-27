@@ -17,9 +17,11 @@ public abstract class ButtonDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	public static final String OK = "OK";
+	
 	public static final String CANCEL = "Cancel";
 
 	private JPanel containerPanel;
+	
 	private JPanel buttonPanel;
 
 	private String[] buttonCaptions;

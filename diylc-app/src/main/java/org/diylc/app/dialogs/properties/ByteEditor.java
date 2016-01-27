@@ -15,8 +15,11 @@ public class ByteEditor extends JSlider {
 
 	private Color oldBg = getBackground();
 
+    private PropertyWrapper property;
+
 	public ByteEditor(final PropertyWrapper property) {
 		super();
+        this.property = property;
 		setMinimum(0);
 		setMaximum(127);
 		setValue((Byte) property.getValue());
@@ -26,7 +29,10 @@ public class ByteEditor extends JSlider {
 			public void stateChanged(ChangeEvent e) {
 				property.setChanged(true);
 				setBackground(oldBg);
-				property.setValue(new Integer(getValue()).byteValue());
+				byte newValue = new Integer(getValue()).byteValue();
+				byte oldValue = (byte) property.getValue();
+				property.setValue(newValue);
+				firePropertyChange(property.getName(), oldValue, newValue);
 			}
 		});
 		if (!property.isUnique()) {

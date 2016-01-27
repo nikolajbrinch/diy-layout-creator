@@ -25,7 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import org.diylc.app.IPlugInPort;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.core.config.Configuration;
 

@@ -1,10 +1,10 @@
 package org.diylc.app.dialogs.properties;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.diylc.core.PropertyWrapper;
@@ -16,7 +16,7 @@ public class FieldEditorFactory {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FieldEditorFactory.class);
 
-	public static Component createFieldEditor(PropertyWrapper property) {
+	public static JComponent createFieldEditor(PropertyWrapper property) {
 		if (property.getType().equals(String.class)) {
 			StringEditor editor = new StringEditor(property);
 			return editor;

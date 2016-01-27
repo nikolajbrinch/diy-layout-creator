@@ -30,6 +30,7 @@ public class FontEditor extends FontChooserComboBox {
 					Font newFont = new Font(getSelectedItem().toString(), oldFont.getStyle(),
 							oldFont.getSize());
 					FontEditor.this.property.setValue(newFont);
+					firePropertyChange(property.getName(), oldFont, newFont);
 				}
 			}
 		});

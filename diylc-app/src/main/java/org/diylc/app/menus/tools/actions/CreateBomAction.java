@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 
-import org.diylc.app.IPlugInPort;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.menus.tools.BomDialog;
 import org.diylc.app.utils.AppIconLoader;
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.core.BomEntry;
 import org.diylc.core.BomMaker;
 import org.slf4j.Logger;

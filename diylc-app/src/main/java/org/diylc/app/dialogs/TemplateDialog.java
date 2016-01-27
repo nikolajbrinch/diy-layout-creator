@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,8 +37,10 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.rendering.DrawingOption;
+import org.diylc.app.window.IView;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;

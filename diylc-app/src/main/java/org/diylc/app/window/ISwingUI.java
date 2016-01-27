@@ -1,10 +1,12 @@
-package org.diylc.app;
+package org.diylc.app.window;
 
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu.Separator;
 import javax.swing.SwingConstants;
+
+import org.diylc.app.ITask;
 
 /**
  * Interface for plugin access to the swing front end.
@@ -32,6 +34,8 @@ public interface ISwingUI extends IView {
 	 *             in case invalid position is specified
 	 */
 	void injectGUIComponent(JComponent component, int position) throws BadPositionException;
+
+    void removeGUIComponent(int position) throws BadPositionException;
 
 	/**
 	 * Injects a custom menu action into application's main menu. If
@@ -72,4 +76,5 @@ public interface ISwingUI extends IView {
 	 * @param menuName
 	 */
 	void clearMenuItems(String menuName);
+
 }

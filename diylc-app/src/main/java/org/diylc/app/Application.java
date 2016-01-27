@@ -5,11 +5,12 @@ import java.nio.file.Paths;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
+import org.diylc.app.dialogs.TemplateDialog;
 import org.diylc.app.platform.Platform;
 import org.diylc.app.platform.PreferencesEvent;
 import org.diylc.app.platform.QuitEvent;
+import org.diylc.app.window.MainFrame;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,6 @@ public class Application {
 
         LOG.info("Starting DIYLC with working directory " + System.getProperty("user.dir"));
 
-        setLookAndFeel();
 
         setUncaughtExceptionHandler();
 
@@ -39,7 +39,7 @@ public class Application {
             } else {
                 showTemplates();
             }
-            
+
             Platform.getPlatform().setPreferencesHandler((PreferencesEvent e) -> LOG.debug("Show preferences dialog"));
             Platform.getPlatform().setQuitHandler((QuitEvent e) -> mainFrame.exit());
         }
@@ -111,15 +111,7 @@ public class Application {
                 mainFrame.setVisible(true);
             }
         });
-        
-        return mainFrame != null;
-    }
 
-    private void setLookAndFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            LOG.error("Could not set Look&Feel", e);
-        }
+        return mainFrame != null;
     }
 }
