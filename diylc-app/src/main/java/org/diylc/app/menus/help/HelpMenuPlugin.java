@@ -12,9 +12,9 @@ import org.diylc.app.platform.Platform;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.BrowserUtils;
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.ISwingUI;
+import org.diylc.app.view.ISwingUI;
 import org.diylc.core.SystemUtils;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +28,19 @@ public class HelpMenuPlugin implements IPlugIn {
     private static final String HELP_TITLE = "Help";
 
     public static String MANUAL_URL = "http://code.google.com/p/diy-layout-creator/wiki/Manual";
+    
     public static String FAQ_URL = "http://code.google.com/p/diy-layout-creator/wiki/FAQ";
+    
     public static String COMPONENT_URL = "http://code.google.com/p/diy-layout-creator/wiki/ComponentAPI";
+    
     public static String PLUGIN_URL = "http://code.google.com/p/diy-layout-creator/wiki/PluginAPI";
+    
     public static String BUG_URL = "http://code.google.com/p/diy-layout-creator/issues/entry";
+    
     public static String DONATE_URL = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=25161";
 
     private IPlugInPort plugInPort;
+    
     private AboutDialog aboutDialog;
 
     public HelpMenuPlugin(ISwingUI swingUI) {

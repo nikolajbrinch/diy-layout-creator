@@ -10,23 +10,25 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.ISwingUI;
-import org.diylc.app.window.IView;
+import org.diylc.app.view.ISwingUI;
+import org.diylc.app.view.IView;
 import org.diylc.core.IDIYComponent;
 
 public class LayersMenuPlugin implements IPlugIn {
 
 	private static final String LOCK_LAYERS_TITLE = "Layers";
 
-	private IPlugInPort plugInPort;
-	private Map<Layer, Action> lockActionMap;
-	private Map<Double, Action> selectAllActionMap;
+	private final Map<Layer, Action> lockActionMap;
+	
+	private final Map<Double, Action> selectAllActionMap;
 
-	public LayersMenuPlugin(ISwingUI swingUI) {
-		lockActionMap = new HashMap<Layer, Action>();
-		selectAllActionMap = new HashMap<Double, Action>();
+    private IPlugInPort plugInPort;
+
+    public LayersMenuPlugin(ISwingUI swingUI) {
+		this.lockActionMap = new HashMap<Layer, Action>();
+		this.selectAllActionMap = new HashMap<Double, Action>();
 		for (Layer layer : Layer.values()) {
 			final double zOrder = layer.getZOrder();
 			AbstractAction lockAction = new AbstractAction("Lock") {

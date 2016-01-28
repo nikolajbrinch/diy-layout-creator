@@ -36,8 +36,16 @@ public class SystemUtils {
         return new File(getConfigDirectory(), filename);
     }
 
-    public static String getDefaultFontName() {
+    public static String getDefaultDisplayFontName() {
         return isMac() ? "Helvetica Neue" : "Tahoma";
+    }
+
+    public static String getDefaultMonospacedFontName() {
+        return isMac() ? "Monaco" : "Courier New";
+    }
+
+    public static String getDefaultTextFontName() {
+        return isMac() ? "Arial" : "Calibri";
     }
 
 }

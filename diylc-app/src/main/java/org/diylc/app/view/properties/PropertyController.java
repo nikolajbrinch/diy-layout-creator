@@ -18,8 +18,10 @@ public class PropertyController {
         
         try {
             validator.validate(newValue);
+            property.setValue(newValue);
             plugInPort.applyPropertyToSelection(property);
         } catch (ValidationException e) {
+            property.setValue(oldValue);
             /*
              * Ignore
              */

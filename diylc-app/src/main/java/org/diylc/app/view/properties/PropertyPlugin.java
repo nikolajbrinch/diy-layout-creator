@@ -1,20 +1,18 @@
 package org.diylc.app.view.properties;
 
-import java.util.EnumSet;
-import java.util.List;
-
-import javax.swing.SwingConstants;
-
+import org.diylc.app.view.BadPositionException;
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.BadPositionException;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.ISwingUI;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.app.view.ISwingUI;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+
+import java.util.EnumSet;
 
 public class PropertyPlugin implements IPlugIn {
 
@@ -24,7 +22,7 @@ public class PropertyPlugin implements IPlugIn {
 
     private IPlugInPort plugInPort;
 
-    private PropertyPanel propertyPanel;
+    private PropertyView propertyView;
 
     public PropertyPlugin(ISwingUI swingUI) {
         this.swingUI = swingUI;
@@ -33,11 +31,11 @@ public class PropertyPlugin implements IPlugIn {
     @Override
     public void connect(IPlugInPort plugInPort) {
         this.plugInPort = plugInPort;
-        this.propertyPanel = new PropertyPanel(new PropertyController(plugInPort));
+        this.propertyView = new PropertyView(new PropertyController(plugInPort));
         
         try {
             if (Configuration.INSTANCE.getPropertyPanel()) {
-                swingUI.injectGUIComponent(getPropertyPanel(), SwingConstants.RIGHT);
+                swingUI.injectGUIComponent(getPropertyView(), SwingConstants.RIGHT);
             }
         } catch (BadPositionException e) {
             LOG.error("Could not install property plugin", e);
@@ -49,7 +47,7 @@ public class PropertyPlugin implements IPlugIn {
             public void onValueChanged(Object oldValue, Object newValue) {
                 try {
                     if ((boolean) newValue) {
-                        swingUI.injectGUIComponent(getPropertyPanel(), SwingConstants.RIGHT);
+                        swingUI.injectGUIComponent(getPropertyView(), SwingConstants.RIGHT);
                     } else {
                         swingUI.removeGUIComponent(SwingConstants.RIGHT);
                     }
@@ -60,8 +58,8 @@ public class PropertyPlugin implements IPlugIn {
         });
     }
 
-    private PropertyPanel getPropertyPanel() {
-        return propertyPanel;
+    private PropertyView getPropertyView() {
+        return propertyView;
     }
 
     @Override
@@ -72,8 +70,7 @@ public class PropertyPlugin implements IPlugIn {
     @Override
     public void processMessage(EventType eventType, Object... params) {
         if (eventType == EventType.SELECTION_CHANGED) {
-            List<PropertyWrapper> properties = plugInPort.getMutualSelectionProperties();
-            getPropertyPanel().displayProperties(properties);
+            getPropertyView().displayProperties(plugInPort.getMutualSelectionProperties());
         }
     }
 

@@ -3,7 +3,6 @@ package org.diylc.app.view;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
-import org.diylc.app.window.IPlugIn;
 import org.diylc.components.ComponentType;
 import org.diylc.core.Project;
 

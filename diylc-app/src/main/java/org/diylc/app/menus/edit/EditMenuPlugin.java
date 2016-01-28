@@ -10,46 +10,51 @@ import java.util.EnumSet;
 
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.ISwingUI;
+import org.diylc.app.view.ISwingUI;
 import org.diylc.core.Project;
 
 public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
     private static final String EDIT_TITLE = "Edit";
+    
     private static final String RENUMBER_TITLE = "Renumber Selection";
+    
     private static final String EXPAND_TITLE = "Expand Selection";
 
+    private final ISwingUI swingUI;
+
     private IPlugInPort plugInPort;
-    private ISwingUI swingUI;
 
     private Clipboard clipboard;
 
     private EditActionFactory.CutAction cutAction;
+    
     private EditActionFactory.CopyAction copyAction;
+    
     private EditActionFactory.PasteAction pasteAction;
+    
     private EditActionFactory.EditSelectionAction editSelectionAction;
+    
     private EditActionFactory.DeleteSelectionAction deleteSelectionAction;
+    
     private EditActionFactory.RenumberAction renumberXAxisAction;
+    
     private EditActionFactory.RenumberAction renumberYAxisAction;
+    
     private EditActionFactory.ExpandSelectionAction expandSelectionAllAction;
+    
     private EditActionFactory.ExpandSelectionAction expandSelectionImmediateAction;
+    
     private EditActionFactory.ExpandSelectionAction expandSelectionSameTypeAction;
+    
     private EditActionFactory.SaveAsTemplateAction saveAsTemplateAction;
 
     private UndoHandler<Project> undoHandler;
 
     public EditMenuPlugin(ISwingUI swingUI) {
         this.swingUI = swingUI;
-        // SecurityManager securityManager = System.getSecurityManager();
-        // if (securityManager != null) {
-        // try {
-        // securityManager.checkSystemClipboardAccess();
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // }
         clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         undoHandler = new UndoHandler<Project>(new IUndoListener<Project>() {
 

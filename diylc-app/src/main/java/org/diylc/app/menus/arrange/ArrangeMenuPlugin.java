@@ -6,22 +6,28 @@ import java.awt.datatransfer.Transferable;
 import java.util.EnumSet;
 
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.ISwingUI;
+import org.diylc.app.view.ISwingUI;
 
 public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 
 	private static final String ARRANGE_TITLE = "Arrange";
 
-	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
+    private final ISwingUI swingUI;
+
+    private IPlugInPort plugInPort;
 
 	private ArrangeActionFactory.GroupAction groupAction;
+	
 	private ArrangeActionFactory.UngroupAction ungroupAction;
+	
 	private ArrangeActionFactory.SendToBackAction sendToBackAction;
+	
 	private ArrangeActionFactory.BringToFrontAction bringToFrontAction;
+	
 	private ArrangeActionFactory.RotateSelectionAction rotateClockwiseAction;
+	
 	private ArrangeActionFactory.RotateSelectionAction rotateCounterClockwiseAction;
 
 	public ArrangeMenuPlugin(ISwingUI swingUI) {

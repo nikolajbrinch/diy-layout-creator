@@ -12,7 +12,6 @@ import java.util.Set;
 import org.diylc.app.events.IMessageListener;
 import org.diylc.app.events.MessageDispatcher;
 import org.diylc.app.view.rendering.DrawingOption;
-import org.diylc.app.window.IPlugIn;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.ComponentType;
 import org.diylc.components.IComponentFilter;

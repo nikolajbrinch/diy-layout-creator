@@ -19,6 +19,7 @@ import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Orientation;
 import org.diylc.core.Project
+import org.diylc.core.SystemUtils;
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
@@ -30,7 +31,7 @@ class PCBText extends AbstractComponent implements Geometry {
 
     public static String DEFAULT_TEXT = "Double click to edit text"
 
-    public static Font DEFAULT_FONT = new Font("Courier New", Font.BOLD, 15)
+    public static Font DEFAULT_FONT = new Font(SystemUtils.getDefaultMonospacedFontName(), Font.BOLD, 15)
 
     private static final long serialVersionUID = 1L
 

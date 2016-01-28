@@ -5,12 +5,11 @@ import java.util.EnumSet;
 import org.diylc.app.actions.ExportPDFAction;
 import org.diylc.app.actions.ExportPNGAction;
 import org.diylc.app.actions.PrintAction;
-import org.diylc.app.menus.tools.actions.CreateBomAction;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.ISwingUI;
+import org.diylc.app.view.ISwingUI;
 
 /**
  * Entry point class for File management utilities.
@@ -20,14 +19,14 @@ import org.diylc.app.window.ISwingUI;
 public class ToolsMenuPlugin implements IPlugIn {
 
 	private static final String TOOLS_TITLE = "Tools";
+	
 	private static final String TRACE_MASK_TITLE = "Trace Mask";
 
-	private TraceMaskDrawingProvider traceMaskDrawingProvider;
+    private final ISwingUI swingUI;
 
-	private ISwingUI swingUI;
+    private TraceMaskDrawingProvider traceMaskDrawingProvider;
 
 	public ToolsMenuPlugin(ISwingUI swingUI) {
-		super();
 		this.swingUI = swingUI;
 	}
 

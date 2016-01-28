@@ -39,7 +39,7 @@ public abstract class AbstractComponent implements IDIYComponent {
     @EditableProperty(defaultable = false)
 	protected String name = "";
 
-	public static Font LABEL_FONT = new Font(SystemUtils.getDefaultFontName(), Font.PLAIN, 14);
+	public static Font LABEL_FONT = new Font(SystemUtils.getDefaultTextFontName(), Font.PLAIN, 14);
 	
 	@Override
 	public String getName() {

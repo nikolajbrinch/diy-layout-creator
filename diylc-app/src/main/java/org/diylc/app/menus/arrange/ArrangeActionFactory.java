@@ -11,7 +11,7 @@ import javax.swing.KeyStroke;
 
 import org.diylc.app.dialogs.ButtonDialog;
 import org.diylc.app.dialogs.DialogFactory;
-import org.diylc.app.dialogs.properties.PropertyEditorDialog;
+import org.diylc.app.dialogs.PropertyEditorDialog;
 import org.diylc.app.menus.edit.ExpansionMode;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;

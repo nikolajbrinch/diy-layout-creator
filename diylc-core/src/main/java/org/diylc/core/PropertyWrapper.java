@@ -11,13 +11,21 @@ import java.lang.reflect.InvocationTargetException;
 public class PropertyWrapper implements Cloneable {
 
 	private String name;
+
 	private Class<?> type;
+
 	private Object value;
+
 	private String setter;
+
 	private String getter;
+
 	private boolean defaultable;
+
 	private IPropertyValidator validator;
+
 	private boolean unique = true;
+
 	private boolean changed = false;
 
 	public PropertyWrapper(String name, Class<?> type, String getter,

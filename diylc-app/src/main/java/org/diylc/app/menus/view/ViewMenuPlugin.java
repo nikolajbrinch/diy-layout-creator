@@ -5,12 +5,11 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.EnumSet;
 
-import org.diylc.app.actions.ActionFactory;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.ISwingUI;
+import org.diylc.app.view.ISwingUI;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
@@ -29,26 +28,26 @@ public class ViewMenuPlugin implements IPlugIn {
 	private static final Logger LOG = LoggerFactory.getLogger(ViewMenuPlugin.class);
 
 	private static final String VIEW_MENU = "View";
+	
 	private static final String THEME_MENU = "Theme";
 
-	private ISwingUI swingUI;
+	private final ISwingUI swingUI;
 
 	public ViewMenuPlugin(ISwingUI swingUI) {
-		super();
 		this.swingUI = swingUI;
 	}
 
 	@Override
 	public void connect(IPlugInPort plugInPort) {
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+		swingUI.injectMenuAction(new ViewAction(plugInPort,
 				"Anti-Aliasing", Configuration.Key.ANTI_ALIASING, true), VIEW_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+		swingUI.injectMenuAction(new ViewAction(plugInPort,
 				"Hi-Quality Rendering", Configuration.Key.HI_QUALITY_RENDER, false), VIEW_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+		swingUI.injectMenuAction(new ViewAction(plugInPort,
 				"Mouse Wheel Zoom", Configuration.Key.WHEEL_ZOOM, false), VIEW_MENU);
-		swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+		swingUI.injectMenuAction(new ViewAction(plugInPort,
 				"Outline Mode", Configuration.Key.OUTLINE, false), VIEW_MENU);
-        swingUI.injectMenuAction(ActionFactory.INSTANCE.createViewAction(plugInPort,
+        swingUI.injectMenuAction(new ViewAction(plugInPort,
                 "Property Panel", Configuration.Key.PROPERTY_PANEL, false), VIEW_MENU);
 
 		File themeDir = new File("themes");
@@ -61,7 +60,7 @@ public class ViewMenuPlugin implements IPlugIn {
 						InputStream in = new FileInputStream(file);
 						Theme theme = (Theme) xStream.fromXML(in);
 						LOG.debug("Found theme: " + theme.getName());
-						swingUI.injectMenuAction(ActionFactory.INSTANCE.createThemeAction(
+						swingUI.injectMenuAction(new ThemeAction(
 								plugInPort, theme), THEME_MENU);
 					} catch (Exception e) {
 						LOG.error("Could not load theme file " + file.getName(), e);

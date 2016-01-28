@@ -7,7 +7,6 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 
-import org.diylc.app.dialogs.properties.PropertyEditorDialog;
 import org.diylc.app.menus.file.OpenDialog;
 import org.diylc.app.menus.file.SaveDialog;
 import org.diylc.app.menus.help.AboutDialog;

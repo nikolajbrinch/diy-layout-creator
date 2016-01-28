@@ -21,9 +21,9 @@ import javax.swing.JPanel;
 
 import org.diylc.app.dialogs.IFileChooserAccessory;
 import org.diylc.app.view.IPlugInPort;
+import org.diylc.app.view.IView;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.rendering.DrawingOption;
-import org.diylc.app.window.IView;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
 

@@ -1,21 +1,12 @@
 package org.diylc.app.platform;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.io.IOException;
-import java.io.InputStream;
+import org.diylc.app.utils.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URL;
-
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import org.diylc.app.utils.ReflectionUtils;
-import org.diylc.core.SystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MacPlatform extends DefaultPlatform {
 

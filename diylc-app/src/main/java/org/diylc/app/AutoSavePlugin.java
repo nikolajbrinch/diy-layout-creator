@@ -9,9 +9,9 @@ import java.util.concurrent.Executors;
 import javax.swing.SwingUtilities;
 
 import org.diylc.app.view.EventType;
+import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.IView;
+import org.diylc.app.view.IView;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

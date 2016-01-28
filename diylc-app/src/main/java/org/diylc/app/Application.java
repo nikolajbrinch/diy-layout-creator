@@ -10,7 +10,7 @@ import org.diylc.app.dialogs.TemplateDialog;
 import org.diylc.app.platform.Platform;
 import org.diylc.app.platform.PreferencesEvent;
 import org.diylc.app.platform.QuitEvent;
-import org.diylc.app.window.MainFrame;
+import org.diylc.app.view.MainFrame;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

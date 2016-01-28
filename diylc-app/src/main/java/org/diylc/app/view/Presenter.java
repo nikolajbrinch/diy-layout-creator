@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 
 import org.diylc.app.MouseButton;
 import org.diylc.app.events.MessageDispatcher;
+import org.diylc.app.io.ProjectFileManager;
 import org.diylc.app.menus.edit.ExpansionMode;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.utils.StringUtils;
@@ -36,8 +37,6 @@ import org.diylc.app.view.rendering.DrawingContext;
 import org.diylc.app.view.rendering.DrawingManager;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.app.view.rendering.RenderingConstants;
-import org.diylc.app.window.IPlugIn;
-import org.diylc.app.window.IView;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.ComparatorFactory;

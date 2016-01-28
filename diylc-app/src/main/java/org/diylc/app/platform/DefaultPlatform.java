@@ -9,6 +9,8 @@ import org.diylc.core.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.seaglasslookandfeel.SeaGlassLookAndFeel;
+
 public class DefaultPlatform implements Platform {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultPlatform.class);
@@ -40,7 +42,7 @@ public class DefaultPlatform implements Platform {
     }
 
     protected Font getSystemFont() {
-        return new Font(SystemUtils.getDefaultFontName(), Font.PLAIN, (int) javafx.scene.text.Font.getDefault().getSize());
+        return new Font(SystemUtils.getDefaultDisplayFontName(), Font.PLAIN, (int) javafx.scene.text.Font.getDefault().getSize());
     }
 
     protected Font getDerivedInterfaceFont(Font originalFont) {
@@ -65,10 +67,13 @@ public class DefaultPlatform implements Platform {
             Object value = UIManager.get(key);
 
             if (value instanceof Font) {
-                Font derivedInterfaceFont = getDerivedInterfaceFont((Font) value);
+                Font font = (Font) value;
+                if (font.getName().startsWith("Lucida")) {
+                    Font derivedInterfaceFont = getDerivedInterfaceFont(font);
 
-                if (derivedInterfaceFont != null) {
-                    UIManager.put(key, derivedInterfaceFont);
+                    if (derivedInterfaceFont != null) {
+                        UIManager.put(key, derivedInterfaceFont);
+                    }
                 }
             }
         }
