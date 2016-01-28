@@ -29,48 +29,9 @@ public class MacPlatform extends DefaultPlatform {
 
     private final Object application;
 
-    private String defaultFontName = SystemUtils.getDefaultFontName();
-
-    private Font systemFont;
-
     private MacPlatform() {
         this.applicationClass = ReflectionUtils.findRequiredClass("com.apple.eawt.Application");
         this.application = findApplication();
-        registerSystemFont();
-    }
-
-    private void registerSystemFont() {
-        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-        URL url = this.getClass().getResource("/fonts/System San Francisco Display Regular.ttf");
-
-        Font font = null;
-
-        if (url != null) {
-            InputStream inputStream = null;
-            try {
-                inputStream = url.openStream();
-                font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-                graphicsEnvironment.registerFont(font);
-            } catch (Exception e) {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e1) {
-                        /*
-                         * Ignore
-                         */
-                    }
-                }
-            }
-        }
-
-        if (font != null) {
-            this.systemFont = font;
-        }
-//        this.systemFont = new Font("Helvetica Neue", Font.PLAIN, 12);
-        
-        LOG.debug("System font: " + systemFont.getName() + " registered.");
     }
 
     public static Platform getInstance() {
@@ -90,16 +51,6 @@ public class MacPlatform extends DefaultPlatform {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.macos.smallTabs", "true");
         System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
-    }
-
-    @Override
-    public String getDefaultFontName() {
-        return defaultFontName;
-    }
-
-    @Override
-    public Font getSystemFont() {
-        return systemFont;
     }
 
     public void setPreferencesHandler(PreferencesHandler preferencesHandler) {
