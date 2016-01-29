@@ -1,4 +1,4 @@
-package org.diylc.app.events;
+package org.diylc.core.events;
 
 import java.util.EnumSet;
 

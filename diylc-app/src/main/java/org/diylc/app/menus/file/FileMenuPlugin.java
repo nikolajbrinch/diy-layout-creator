@@ -6,10 +6,10 @@ import java.util.EnumSet;
 import org.diylc.app.actions.ExportPDFAction;
 import org.diylc.app.actions.ExportPNGAction;
 import org.diylc.app.actions.PrintAction;
-import org.diylc.app.view.EventType;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
+import org.diylc.core.EventType;
 import org.diylc.core.LRU;
 import org.diylc.core.config.Configuration;
 

@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.app.view;
 
 import java.awt.event.MouseEvent;
 

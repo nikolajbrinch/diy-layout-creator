@@ -6,6 +6,16 @@ ext {
 }
 
 allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "http://bits.netbeans.org/maven2/" }
+    }
+}
+
+configure(subprojects.findAll {it.name != 'diylc'}) {
+    println "Configured sbproject for Java/Groovy"
+    
 	apply plugin: 'java'
 	apply plugin: 'groovy'
 	apply plugin: 'maven'
@@ -36,12 +46,6 @@ allprojects {
 	compileTestGroovy {
 		options.debug = true
 		options.debugOptions.debugLevel = "source,lines,vars"
-	}
-
-	repositories {
-		mavenLocal()
-		mavenCentral()
-		maven { url "http://bits.netbeans.org/maven2/" }
 	}
 
 	dependencies {
@@ -95,11 +99,5 @@ project(':diylc-serialization') {
 project(':diylc-app') {
 	dependencies {
 		compile project(':diylc-component-library')
-	}
-}
-
-project(':diylc') {
-	dependencies {
-		compile project(':diylc-app')
 	}
 }

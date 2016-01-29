@@ -51,6 +51,8 @@ public class Accelerators {
 
     public static final KeyStroke EDIT_SELECTION = KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
+    public static final KeyStroke SHOW_PROPERTY_PANEL = KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | ActionEvent.SHIFT_MASK);
+
     static {
         if (Utils.isMac()) {
             SEND_TO_BACK = KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()

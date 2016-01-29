@@ -9,7 +9,7 @@ public class MacAppEventHandlerAdapter implements AppEventHandler {
         this.appEventHandler = appEventHandler;
     }
 
-    public void handleEvent(AbstractAppEvent event) {
+    public void handleEvent(AbstractAppEvent event, AbstractAppResponse response) {
         switch (event.getType()) {
         case ABOUT:
             handleAbout((AboutEvent) event);
@@ -18,22 +18,22 @@ public class MacAppEventHandlerAdapter implements AppEventHandler {
             handlePreferences((PreferencesEvent) event);
             break;
         case QUIT:
-            handleQuit((QuitEvent) event);
+            handleQuit((QuitEvent) event, (MacQuitResponse) response);
             break;
         default:
             break;
         }
     }
 
-    private void handlePreferences(PreferencesEvent e) {
-        ((PreferencesHandler) appEventHandler).handlePreferences(e);
+    private void handlePreferences(PreferencesEvent event) {
+        ((PreferencesHandler) appEventHandler).handlePreferences(event);
     }
 
-    private void handleQuit(QuitEvent e) {
-        ((QuitHandler) appEventHandler).handleQuit(e);
+    private void handleQuit(QuitEvent event, MacQuitResponse response) {
+        ((QuitHandler) appEventHandler).handleQuit(event, response);
     }
 
-    private void handleAbout(AboutEvent e) {
-        ((AboutHandler) appEventHandler).handleAbout(e);
+    private void handleAbout(AboutEvent event) {
+        ((AboutHandler) appEventHandler).handleAbout(event);
     }
 }

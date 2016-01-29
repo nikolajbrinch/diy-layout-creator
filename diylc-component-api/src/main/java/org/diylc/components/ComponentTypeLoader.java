@@ -23,7 +23,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.events.EventDispatcher;
 import org.diylc.core.graphics.GraphicsContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,8 @@ public class ComponentTypeLoader {
     private ComponentScanner componentScanner = new ComponentScanner();
 
     private ComponentTypeFactory componentTypeFactory = new ComponentTypeFactory();
+    
+    private EventDispatcher<EventType> eventDispatcher = new EventDispatcher<>();
 
     Map<String, List<ComponentType>> loadComponentTypes(Path[] directories) {
         return loadComponentTypes(Thread.currentThread().getContextClassLoader(), directories);
@@ -53,9 +57,12 @@ public class ComponentTypeLoader {
 
                 });
 
-        componentClasses.addAll(loadCompiledClasses(classLoader));
-//        componentClasses.addAll(loadGroovyClasses(classLoader, directories));
-
+        if (directories.length > 0) {
+            componentClasses.addAll(loadGroovyClasses(classLoader, directories));
+        } else {
+            componentClasses.addAll(loadCompiledClasses(classLoader));
+        }
+        
         Map<String, List<ComponentType>> componentTypes = new HashMap<String, List<ComponentType>>();
 
         for (Class<? extends IDIYComponent> componentClass : componentClasses) {
@@ -123,7 +130,9 @@ public class ComponentTypeLoader {
             }
 
             for (Path path : componentTypeFiles) {
-                LOG.debug("Loading groovy file \"" + path.toAbsolutePath() +  "\"");
+                String message = "Loading groovy file: \"" + path.toAbsolutePath() +  "\"";
+                eventDispatcher.sendEvent(EventType.SPLASH_UPDATE, message);
+                LOG.debug(message);
                 try {
                     Class<?> clazz = groovyClassLoader.parseClass(path.toFile());
 
@@ -153,7 +162,9 @@ public class ComponentTypeLoader {
         ComponentType componentType = null;
 
         try {
-            LOG.debug("Loading \"" + clazz.getName() + "\"");
+            String message = "Loading component: \"" + clazz.getName() + "\"";
+            LOG.debug(message);
+            eventDispatcher.sendEvent(EventType.SPLASH_UPDATE, message);
 
             IDIYComponent component = (IDIYComponent) clazz.newInstance();
 

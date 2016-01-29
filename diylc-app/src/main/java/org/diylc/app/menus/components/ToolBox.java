@@ -5,11 +5,11 @@ import java.util.EnumSet;
 import javax.swing.SwingConstants;
 
 import org.diylc.app.view.BadPositionException;
-import org.diylc.app.view.EventType;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
 import org.diylc.app.view.StatusBar;
+import org.diylc.core.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

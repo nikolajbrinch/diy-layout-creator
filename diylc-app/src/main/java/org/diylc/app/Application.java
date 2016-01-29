@@ -10,7 +10,10 @@ import org.diylc.app.dialogs.TemplateDialog;
 import org.diylc.app.platform.Platform;
 import org.diylc.app.platform.PreferencesEvent;
 import org.diylc.app.platform.QuitEvent;
+import org.diylc.app.platform.QuitHandler;
+import org.diylc.app.platform.QuitResponse;
 import org.diylc.app.view.MainFrame;
+import org.diylc.core.DiylcSplashScreen;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +28,11 @@ public class Application {
 
     public void run(String[] args) {
         Platform.getPlatform().setup();
-
+        
+        new DiylcSplashScreen();
+        
         LOG.info("Starting DIYLC with working directory " + System.getProperty("user.dir"));
-
+        LOG.info("Component directories: " + Configuration.INSTANCE.getComponentDirectories());
 
         setUncaughtExceptionHandler();
 
@@ -41,7 +46,14 @@ public class Application {
             }
 
             Platform.getPlatform().setPreferencesHandler((PreferencesEvent e) -> LOG.debug("Show preferences dialog"));
-            Platform.getPlatform().setQuitHandler((QuitEvent e) -> mainFrame.exit());
+            Platform.getPlatform().setQuitHandler(new QuitHandler() {
+
+                @Override
+                public void handleQuit(QuitEvent event, QuitResponse response) {
+                    mainFrame.exit(response);
+                }
+
+            });
         }
 
         /*

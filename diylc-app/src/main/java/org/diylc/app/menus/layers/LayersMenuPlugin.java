@@ -9,11 +9,11 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.diylc.app.view.EventType;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
 import org.diylc.app.view.IView;
+import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
 
 public class LayersMenuPlugin implements IPlugIn {

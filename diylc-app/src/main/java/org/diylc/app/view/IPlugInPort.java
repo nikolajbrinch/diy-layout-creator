@@ -9,18 +9,19 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-import org.diylc.app.events.IMessageListener;
-import org.diylc.app.events.MessageDispatcher;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.ComponentType;
 import org.diylc.components.IComponentFilter;
+import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ITemplateProcessor;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
+import org.diylc.core.events.IMessageListener;
+import org.diylc.core.events.MessageDispatcher;
 
 /**
  * Interface for communication between plug-ins and the application. Plug-ins
@@ -317,5 +318,12 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
      * @param file
      */
     void removeLruPath(Path path);
+
+    /**
+     * Dispatches an event
+     * @param eventType
+     * @param params
+     */
+    void sendEvent(EventType eventType, Object... params);
 
 }

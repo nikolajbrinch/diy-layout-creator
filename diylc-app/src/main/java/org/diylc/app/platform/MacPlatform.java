@@ -1,17 +1,13 @@
 package org.diylc.app.platform;
 
-import org.diylc.app.utils.ReflectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.diylc.app.utils.ReflectionUtils;
+
 public class MacPlatform extends DefaultPlatform {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MacPlatform.class);
-    
     private static MacPlatform macPlatform = new MacPlatform();
 
     private MacAppEventMapper appEventMapper = new MacAppEventMapper();
@@ -78,8 +74,12 @@ public class MacPlatform extends DefaultPlatform {
 
                         @Override
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            handler.handleEvent(appEventMapper.mapEvent(args[0]));
-
+                            if (args.length > 1) {
+                                handler.handleEvent(appEventMapper.mapEvent(args[0]), appEventMapper.mapRespone(args[1]));
+                            } else {
+                                handler.handleEvent(appEventMapper.mapEvent(args[0]), null);
+                            }
+                            
                             return Void.class;
                         }
                     });

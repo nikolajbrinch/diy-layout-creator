@@ -1,17 +1,15 @@
 package org.diylc.app.menus.edit;
 
-import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 
+import org.diylc.app.Accelerators;
 import org.diylc.app.dialogs.ButtonDialog;
 import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.dialogs.PropertyEditorDialog;
@@ -82,8 +80,7 @@ public enum EditActionFactory {
             this.clipboard = clipboard;
             this.clipboardOwner = clipboardOwner;
             putValue(AbstractAction.NAME, "Cut");
-            putValue(AbstractAction.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            putValue(AbstractAction.ACCELERATOR_KEY, Accelerators.CUT);
             putValue(AbstractAction.SMALL_ICON, AppIconLoader.Cut.getIcon());
         }
 
@@ -109,8 +106,7 @@ public enum EditActionFactory {
             this.clipboard = clipboard;
             this.clipboardOwner = clipboardOwner;
             putValue(AbstractAction.NAME, "Copy");
-            putValue(AbstractAction.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            putValue(AbstractAction.ACCELERATOR_KEY, Accelerators.COPY);
             putValue(AbstractAction.SMALL_ICON, AppIconLoader.Copy.getIcon());
         }
 
@@ -133,8 +129,7 @@ public enum EditActionFactory {
             this.plugInPort = plugInPort;
             this.clipboard = clipboard;
             putValue(AbstractAction.NAME, "Paste");
-            putValue(AbstractAction.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            putValue(AbstractAction.ACCELERATOR_KEY, Accelerators.PASTE);
             putValue(AbstractAction.SMALL_ICON, AppIconLoader.Paste.getIcon());
         }
 
@@ -161,8 +156,7 @@ public enum EditActionFactory {
             super();
             this.plugInPort = plugInPort;
             putValue(AbstractAction.NAME, "Select All");
-            putValue(AbstractAction.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            putValue(AbstractAction.ACCELERATOR_KEY, Accelerators.SELECT_ALL);
             putValue(AbstractAction.SMALL_ICON, AppIconLoader.Selection.getIcon());
         }
 
@@ -216,8 +210,7 @@ public enum EditActionFactory {
             super();
             this.plugInPort = plugInPort;
             putValue(AbstractAction.NAME, "Edit Selection");
-            putValue(AbstractAction.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            putValue(AbstractAction.ACCELERATOR_KEY, Accelerators.EDIT_SELECTION);
             putValue(AbstractAction.SMALL_ICON, AppIconLoader.EditComponent.getIcon());
         }
 
@@ -243,7 +236,7 @@ public enum EditActionFactory {
             super();
             this.plugInPort = plugInPort;
             putValue(AbstractAction.NAME, "Delete Selection");
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+            putValue(AbstractAction.ACCELERATOR_KEY, Accelerators.DELETE);
             putValue(AbstractAction.SMALL_ICON, AppIconLoader.Delete.getIcon());
         }
 

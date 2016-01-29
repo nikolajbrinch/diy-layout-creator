@@ -1,10 +1,7 @@
-package org.diylc.app.view;
+package org.diylc.core;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-
-import org.diylc.components.ComponentType;
-import org.diylc.core.Project;
 
 /**
  * Enumerates all possible events between {@link IPlugInPort} and
@@ -85,5 +82,10 @@ public enum EventType {
 	/**
 	 * Called when the LRU file list is updated.
 	 */
-	LRU_UPDATED;
+	LRU_UPDATED, 
+	
+	/**
+	 * Called when Splash screen needs to update.
+	 */
+	SPLASH_UPDATE;
 }

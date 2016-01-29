@@ -31,7 +31,9 @@ import org.diylc.app.update.UpdateLabel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.StringUtils;
 import org.diylc.components.ComponentType;
+import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.SystemUtils;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,7 +263,8 @@ public class StatusBar extends JPanel implements IPlugIn {
                     builder.append(" and " + (selectedComponentNames.size() - 15) + " more");
                 }
                 if (!stuckComponentNames.isEmpty()) {
-                    builder.append(" (hold <b>Ctrl</b> and drag to unstuck from ");
+                    String key = SystemUtils.isMac() ? "⌘ Cmd" : "Ctrl";
+                    builder.append(" (hold <b>" + key + "</b> and drag to unstuck from ");
                     builder.append(StringUtils.toCommaString(stuckComponentNames.subList(0, Math.min(5, stuckComponentNames.size()))));
                     if (stuckComponentNames.size() > 5) {
                         builder.append(" and " + (stuckComponentNames.size() - 5) + " more");

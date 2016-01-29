@@ -27,8 +27,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.diylc.app.MouseButton;
-import org.diylc.app.events.MessageDispatcher;
 import org.diylc.app.io.ProjectFileManager;
 import org.diylc.app.menus.edit.ExpansionMode;
 import org.diylc.app.utils.CalcUtils;
@@ -45,6 +43,7 @@ import org.diylc.components.ComponentRegistry;
 import org.diylc.components.ComponentType;
 import org.diylc.components.IComponentFilter;
 import org.diylc.components.connectivity.SolderPad;
+import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.LRU;
 import org.diylc.core.Orientation;
@@ -55,6 +54,7 @@ import org.diylc.core.SystemUtils;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
+import org.diylc.core.events.MessageDispatcher;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.core.utils.Constants;
 import org.slf4j.Logger;
@@ -168,6 +168,7 @@ public class Presenter implements IPlugInPort {
         plugIns.add(plugIn);
         plugIn.connect(this);
         messageDispatcher.registerListener(plugIn);
+        messageDispatcher.dispatchMessage(EventType.SPLASH_UPDATE, "Installing plugin " + plugIn.getClass().getName());
     }
 
     public void dispose() {
@@ -297,25 +298,30 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public boolean allowFileAction() {
+        boolean response = true;
+        
         if (projectFileManager.isModified()) {
-            int response = view.showConfirmDialog("There are unsaved changes. Would you like to save them?", "Warning",
+            int dialogResponse = view.showConfirmDialog("There are unsaved changes. Would you like to save them?", "Warning",
                     IView.YES_NO_CANCEL_OPTION, IView.WARNING_MESSAGE);
-            if (response == IView.YES_OPTION) {
+
+            if (dialogResponse == IView.YES_OPTION) {
                 if (this.getCurrentFile() == null) {
                     Path path = view.promptFileSave();
+                    
                     if (path == null) {
-                        return false;
+                        response = false;
+                    } else {
+                        saveProjectToFile(path, false);
                     }
-                    saveProjectToFile(path, false);
                 } else {
                     saveProjectToFile(this.getCurrentFile(), false);
                 }
+            } else {
+                response = dialogResponse != IView.CANCEL_OPTION && dialogResponse != IView.CLOSED_OPTION;
             }
-
-            return response != IView.CANCEL_OPTION;
         }
 
-        return true;
+        return response;
     }
 
     @Override
@@ -647,7 +653,7 @@ public class Presenter implements IPlugInPort {
          */
         boolean sticky = Configuration.INSTANCE.getStickyPoints();
 
-        if (ctrlDown) {
+        if (ctrlDown && !SystemUtils.isMac() || metaDown && SystemUtils.isMac()) {
             sticky = !sticky;
         }
 
@@ -1965,6 +1971,11 @@ public class Presenter implements IPlugInPort {
         int height = Math.abs(p1.y - p2.y);
 
         return new Rectangle(minX, minY, width, height);
+    }
+
+    @Override
+    public void sendEvent(EventType eventType, Object... params) {
+        messageDispatcher.dispatchMessage(eventType, params);
     }
 
 }

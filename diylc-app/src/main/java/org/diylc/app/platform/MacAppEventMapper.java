@@ -12,10 +12,23 @@ public class MacAppEventMapper {
 
     private final Class<?> quitHandlerClass;
 
+    private final Class<?> quitResponseClass;
+
     public MacAppEventMapper() {
         aboutHandlerClass = ReflectionUtils.findRequiredClass("com.apple.eawt.AppEvent$AboutEvent");
         preferencesHandlerClass = ReflectionUtils.findRequiredClass("com.apple.eawt.AppEvent$PreferencesEvent");
         quitHandlerClass = ReflectionUtils.findRequiredClass("com.apple.eawt.AppEvent$QuitEvent");
+        quitResponseClass = ReflectionUtils.findRequiredClass("com.apple.eawt.QuitResponse");
+    }
+
+    public AbstractAppResponse mapRespone(Object response) {
+        AbstractAppResponse appResponse = null;
+        
+        if (quitResponseClass.isAssignableFrom(response.getClass())) {
+            appResponse = new MacQuitResponse(response);
+        }
+        
+        return appResponse;
     }
 
     public AbstractAppEvent mapEvent(Object event) {
@@ -47,5 +60,6 @@ public class MacAppEventMapper {
 
         return eventSource;
     }
+
 
 }

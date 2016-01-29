@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.diylc.app.events.MessageDispatcher;
-import org.diylc.app.view.EventType;
+import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
+import org.diylc.core.events.MessageDispatcher;
 import org.diylc.core.utils.Constants;
 
 /**

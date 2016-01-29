@@ -9,8 +9,6 @@ import org.diylc.core.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seaglasslookandfeel.SeaGlassLookAndFeel;
-
 public class DefaultPlatform implements Platform {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultPlatform.class);

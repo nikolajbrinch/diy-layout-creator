@@ -4,6 +4,7 @@ import org.diylc.app.view.IPlugInPort;
 import org.diylc.core.IPropertyValidator;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.ValidationException;
+import org.diylc.core.config.Configuration;
 
 public class PropertyController {
 
@@ -26,6 +27,11 @@ public class PropertyController {
              * Ignore
              */
         }
+    }
+
+    public void closePanel() {
+        Configuration.INSTANCE.setProperty(Configuration.Key.PROPERTY_PANEL, false);
+        plugInPort.refresh();
     }
 
 }

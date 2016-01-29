@@ -11,10 +11,10 @@ import org.diylc.app.platform.AboutEvent;
 import org.diylc.app.platform.Platform;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.BrowserUtils;
-import org.diylc.app.view.EventType;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
+import org.diylc.core.EventType;
 import org.diylc.core.SystemUtils;
 import org.slf4j.LoggerFactory;
 

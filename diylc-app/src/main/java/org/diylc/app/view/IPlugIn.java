@@ -1,6 +1,7 @@
 package org.diylc.app.view;
 
-import org.diylc.app.events.IMessageListener;
+import org.diylc.core.EventType;
+import org.diylc.core.events.IMessageListener;
 
 
 /**

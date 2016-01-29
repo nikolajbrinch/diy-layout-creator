@@ -5,9 +5,9 @@ import java.util.EnumSet;
 import javax.swing.SwingWorker;
 
 import org.diylc.app.online.presenter.LibraryPresenter;
-import org.diylc.app.view.EventType;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
+import org.diylc.core.EventType;
 
 public class OnlineManager implements IPlugIn {
 

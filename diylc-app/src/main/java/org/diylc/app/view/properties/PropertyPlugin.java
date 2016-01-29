@@ -1,10 +1,10 @@
 package org.diylc.app.view.properties;
 
 import org.diylc.app.view.BadPositionException;
-import org.diylc.app.view.EventType;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
+import org.diylc.core.EventType;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
 import org.slf4j.Logger;

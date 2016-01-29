@@ -5,10 +5,10 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.util.EnumSet;
 
-import org.diylc.app.view.EventType;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
+import org.diylc.core.EventType;
 
 public class ArrangeMenuPlugin implements IPlugIn, ClipboardOwner {
 

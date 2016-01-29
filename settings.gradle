@@ -1,1 +1,1 @@
-include 'diylc-core', 'diylc-component-api', 'diylc-component-library', 'diylc-serialization', 'diylc-app', 'diylc'
+include 'diylc-core', 'diylc-component-api', 'diylc-component-library', 'diylc-serialization', 'diylc-app'

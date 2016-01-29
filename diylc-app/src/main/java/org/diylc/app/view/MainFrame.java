@@ -55,9 +55,12 @@ import org.diylc.app.menus.help.HelpMenuPlugin;
 import org.diylc.app.menus.layers.LayersMenuPlugin;
 import org.diylc.app.menus.tools.ToolsMenuPlugin;
 import org.diylc.app.menus.view.ViewMenuPlugin;
+import org.diylc.app.platform.DefaultQuitResponse;
+import org.diylc.app.platform.QuitResponse;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.canvas.CanvasPlugin;
 import org.diylc.app.view.properties.PropertyPlugin;
+import org.diylc.core.EventType;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.WindowBounds;
@@ -101,7 +104,7 @@ public class MainFrame extends JFrame implements ISwingUI {
         DialogFactory.getInstance().initialize(this);
 
         this.presenter = new Presenter(this);
-
+        
         presenter.installPlugin(new ToolBox(this));
         presenter.installPlugin(new FileMenuPlugin(this));
         presenter.installPlugin(new EditMenuPlugin(this));
@@ -139,12 +142,12 @@ public class MainFrame extends JFrame implements ISwingUI {
 
             @Override
             public void windowClosed(WindowEvent e) {
-                exit();
+                exit(new DefaultQuitResponse());
             }
 
             @Override
             public void windowClosing(WindowEvent e) {
-                exit();
+                exit(new DefaultQuitResponse());
 
             }
         });
@@ -409,12 +412,14 @@ public class MainFrame extends JFrame implements ISwingUI {
                 FileFilterEnum.DIY.getExtensions()[0], null);
     }
 
-    public void exit() {
+    public void exit(QuitResponse response) {
         if (presenter.allowFileAction()) {
             Configuration.INSTANCE.setAbnormalExit(false);
             dispose();
             presenter.dispose();
-            System.exit(0);
+            response.performQuit();
+        } else  {
+            response.cancelQuit();
         }
     }
 

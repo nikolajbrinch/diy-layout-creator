@@ -24,6 +24,7 @@ import org.diylc.components.ComparatorFactory;
 import org.diylc.components.ComponentRegistry;
 import org.diylc.components.ComponentType;
 import org.diylc.components.Constants;
+import org.diylc.core.EventType;
 import org.diylc.core.Template;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
@@ -52,6 +53,7 @@ class ComponentTabbedPane extends JTabbedPane {
     public ComponentTabbedPane(IPlugInPort plugInPort) {
         super();
         this.plugInPort = plugInPort;
+        plugInPort.sendEvent(EventType.SPLASH_UPDATE, "Loading components...");
         Map<String, List<ComponentType>> componentTypes = ComponentRegistry.INSTANCE.getComponentTypes();
         addTab("Recently Used", createRecentComponentsPanel());
         List<String> categories = new ArrayList<String>(componentTypes.keySet());

@@ -4,14 +4,18 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Paint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,9 +48,31 @@ public class PropertyView extends JComponent {
         setBorder(createDefaultBorder());
         setLayout(new BorderLayout());
 
-        LabelPanel labelPanel = new LabelPanel();
-        Label label = new Label("PROPERTIES");
-        labelPanel.add(label, BorderLayout.WEST);
+        JPanel labelPanel = new JPanel();
+        labelPanel.setLayout(new BorderLayout());
+        labelPanel.setBackground(getLabelBackgroundColor());
+        labelPanel.setBorder(createDefaultBorder());
+
+        JPanel toolbar = new JPanel();
+        toolbar.setLayout(new BorderLayout());
+        toolbar.setBackground(getLabelBackgroundColor());
+        toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        labelPanel.add(toolbar, BorderLayout.WEST);
+
+        JLabel label = new JLabel("Properties");
+        label.setFont(getLabelFont().deriveFont(getLabelFont().getSize2D() - 2f));
+
+        label.setBorder(BorderFactory.createEmptyBorder());
+        label.setHorizontalAlignment(SwingConstants.LEFT);
+        label.setHorizontalTextPosition(SwingConstants.LEFT);
+
+        JButton button = new JButton(Character.toString((char) 9654));
+        button.setFont(getLabelFont().deriveFont(getLabelFont().getSize2D() - 3f));
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.addActionListener((ActionEvent e) -> getController().closePanel());
+        toolbar.add(button);
+        toolbar.add(label);
+
         add(labelPanel, BorderLayout.NORTH);
 
         propertyContainer = new JPanel();
@@ -89,39 +115,8 @@ public class PropertyView extends JComponent {
         return controller;
     }
 
-    class Label extends JLabel {
-
-        private static final long serialVersionUID = 1L;
-
-        private Font labelFont = null;
-
-        public Label(String text) {
-            setText(text);
-            setFont(getLabelFont());
-            setBorder(BorderFactory.createEmptyBorder());
-            setHorizontalAlignment(SwingConstants.LEFT);
-            setHorizontalTextPosition(SwingConstants.LEFT);
-        }
-
-        private Font getLabelFont() {
-            if (labelFont == null) {
-                Font font = UIManager.getFont("Label.font");
-                labelFont = font.deriveFont(font.getSize2D() - 3);
-            }
-
-            return labelFont;
-        }
-    }
-
-    class LabelPanel extends JPanel {
-
-        private static final long serialVersionUID = 1L;
-
-        public LabelPanel() {
-            setLayout(new BorderLayout());
-            setBackground(getLabelBackgroundColor());
-            setBorder(createDefaultBorder());
-        }
+    private Font getLabelFont() {
+        return UIManager.getFont("Label.font");
     }
 
     public void displayProperties(List<PropertyWrapper> properties) {
@@ -134,23 +129,8 @@ public class PropertyView extends JComponent {
                 editor.addPropertyChangeListener((PropertyChangeEvent event) -> {
                     PropertyWrapper property = findProperty(properties, event.getPropertyName());
                     if (property != null) {
-                        Object newValue = event.getNewValue();
+                        Object newValue = translateValue(event.getNewValue(), property, properties);
 
-                        if (property.getName().equals("Font")) {
-                            Font newFont = (Font) newValue;
-                            PropertyWrapper sizeProperty = findProperty(properties, "Font Size");
-                            PropertyWrapper boldProperty = findProperty(properties, "Font Bold");
-                            PropertyWrapper italicProperty = findProperty(properties, "Font Italic");
-
-                            float size = ((Integer) sizeProperty.getValue()).floatValue();
-                            boolean bold = (boolean) boldProperty.getValue();
-                            boolean italic = (boolean) italicProperty.getValue();
-                            int style = bold ? Font.BOLD : Font.PLAIN;
-                            style += italic ? Font.ITALIC : Font.PLAIN;
-
-                            newValue = newFont.deriveFont(style, size);
-                        }
-                        
                         getController().updateProperty(property, event.getOldValue(), newValue);
                     }
                 });
@@ -162,6 +142,26 @@ public class PropertyView extends JComponent {
 
         revalidate();
         repaint();
+    }
+
+    private Object translateValue(Object value, PropertyWrapper property, List<PropertyWrapper> properties) {
+        if (property.getName().equals("Font")) {
+            Font newFont = (Font) value;
+            PropertyWrapper sizeProperty = findProperty(properties, "Font Size");
+            PropertyWrapper boldProperty = findProperty(properties, "Font Bold");
+            PropertyWrapper italicProperty = findProperty(properties, "Font Italic");
+
+            float size = ((Integer) sizeProperty.getValue()).floatValue();
+            boolean bold = (boolean) boldProperty.getValue();
+            boolean italic = (boolean) italicProperty.getValue();
+            int style = bold ? Font.BOLD : Font.PLAIN;
+            style += italic ? Font.ITALIC : Font.PLAIN;
+
+            value = newFont.deriveFont(style, size);
+        }
+
+        return value;
+
     }
 
     private PropertyWrapper findProperty(List<PropertyWrapper> properties, String propertyName) {

@@ -29,7 +29,7 @@ public enum Configuration {
                 "outline"), HI_QUALITY_RENDER("hiQualityRender"), WHEEL_ZOOM("wheelZoom"), ANTI_ALIASING("antiAliasing"), AUTO_CREATE_PADS(
                 "autoCreatePads"), TEMPLATES("templates"), STICKY_POINTS("stickyPoints"), SNAP_TO_GRID("snapToGrid"), AUTO_EDIT("autoEdit"), CONTINUOUS_CREATION(
                 "continuousCreation"), OBJECT_PROPERTIES("objectProperties"), PROJECT_PROPERTIES("projectProperties"), COMPONENT_DIRECTORIES(
-                "componentDirectories"), PROPERTY_PANEL("propertyPanel");
+                "componentDirectories"), PROPERTY_PANEL("propertyPanel"), SYSTEM_COMPONENT_LIBRARY("componentLibrary");
 
         private String keyValue;
 
@@ -138,6 +138,10 @@ public enum Configuration {
         setObjectProperty(Key.TEMPLATES, templates);
     }
 
+    public String getSystemComponentLibrary() {
+        return getObjectProperty(Key.SYSTEM_COMPONENT_LIBRARY, System.getProperty("org.diylc.componentLibrary"));
+    }
+
     public WindowBounds getWindowBounds() {
         Map<String, Integer> defaultWindowBounds = new HashMap<>();
         defaultWindowBounds.put("x", 100);
@@ -222,8 +226,19 @@ public enum Configuration {
     }
 
     public Path[] getComponentDirectories() {
-        return getObjectProperty(Key.COMPONENT_DIRECTORIES,
-                new Path[] { Paths.get(System.getProperty("user.home"), ".diylc/lib/components") });
+        Path[] componentDirectories = null;
+
+        if (getSystemComponentLibrary() != null) {
+            componentDirectories = getObjectProperty(Key.COMPONENT_DIRECTORIES,
+                    new Path[] { Paths.get(System.getProperty("user.home"), ".diylc/lib/components") });
+        } else {
+            componentDirectories = getObjectProperty(
+                    Key.COMPONENT_DIRECTORIES,
+                    new Path[] { Paths.get(getSystemComponentLibrary()),
+                            Paths.get(System.getProperty("user.home"), ".diylc/lib/components") });
+        }
+
+        return componentDirectories;
     }
 
     public <T> T getProperty(Key key, T defaultValue) {
