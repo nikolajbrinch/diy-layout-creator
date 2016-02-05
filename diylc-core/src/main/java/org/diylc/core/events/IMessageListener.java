@@ -22,7 +22,7 @@ public interface IMessageListener<E extends Enum<E>> {
 	 * 
 	 * @return
 	 */
-	EnumSet<E> getSubscribedEventTypes();
+	default EnumSet<E> getSubscribedEventTypes() { return null; };
 
 	/**
 	 * Called from the background thread when event is received. Use
@@ -32,5 +32,5 @@ public interface IMessageListener<E extends Enum<E>> {
 	 * @param eventType
 	 * @param params
 	 */
-	void processMessage(E eventType, Object... params);
+	default void processMessage(E eventType, Object... params) {};
 }

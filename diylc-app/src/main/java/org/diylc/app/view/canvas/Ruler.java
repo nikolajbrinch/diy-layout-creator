@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 
-import org.diylc.app.platform.Platform;
+import org.diylc.core.platform.Platform;
 
 /**
  * {@link JComponent} that renders ruler. It features configurable units (cm or

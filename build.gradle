@@ -6,16 +6,6 @@ ext {
 }
 
 allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url "http://bits.netbeans.org/maven2/" }
-    }
-}
-
-configure(subprojects.findAll {it.name != 'diylc'}) {
-    println "Configured sbproject for Java/Groovy"
-    
 	apply plugin: 'java'
 	apply plugin: 'groovy'
 	apply plugin: 'maven'
@@ -68,6 +58,12 @@ configure(subprojects.findAll {it.name != 'diylc'}) {
 		archives sourcesJar
 		archives javadocJar
 	}
+    
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "http://bits.netbeans.org/maven2/" }
+    }
 }
 
 if (JavaVersion.current().isJava8Compatible()) {

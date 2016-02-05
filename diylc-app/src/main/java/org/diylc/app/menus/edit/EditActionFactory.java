@@ -10,11 +10,13 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.diylc.app.Accelerators;
-import org.diylc.app.dialogs.ButtonDialog;
-import org.diylc.app.dialogs.DialogFactory;
-import org.diylc.app.dialogs.PropertyEditorDialog;
+import org.diylc.app.ComponentTransferable;
+import org.diylc.app.ExpansionMode;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
+import org.diylc.app.view.dialogs.ButtonDialog;
+import org.diylc.app.view.dialogs.DialogFactory;
+import org.diylc.app.view.dialogs.PropertyEditorDialog;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.PropertyWrapper;
 import org.slf4j.Logger;

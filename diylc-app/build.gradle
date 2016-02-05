@@ -1,13 +1,17 @@
 plugins {
     id 'application'
     id "edu.sc.seis.macAppBundle" version "2.1.3"
+    id 'edu.sc.seis.launch4j' version "1.6.1"
 }
 
 mainClassName = "${mainClass}"
 applicationDefaultJvmArgs = [
+    "-splash:etc/splash.png",
     "-Xms${minMemory}",
     "-Xmx${maxMemory}",
-    "-Dorg.diylc.scriptRun=${scriptRun}"
+    "-Dorg.diylc.scriptRun=${scriptRun}",
+    "-Dorg.diylc.componentLibrary=etc/components",
+    "-Dorg.diylc.splashImageLocation=etc/splash.png"
 ]
 
 macAppBundle {
@@ -15,32 +19,106 @@ macAppBundle {
     jvmVersion = '1.8+'
     mainClassName = "${mainClass}"
     bundleJRE = false
+    icon = '$APP_ROOT/diylc.icns'
+    bundleExtras.put("CFBundleShortVersionString", "4.0.0")
     javaProperties.put("org.diylc.scriptRun", "${scriptRun}")
-    javaProperties.put("org.diylc.componentLibrary", "\$APP_ROOT/Contents/Resources/components")
+    javaProperties.put("org.diylc.componentLibrary", '$APP_ROOT/Contents/Resources/components')
+    javaProperties.put("org.diylc.mainClass", "org.diylc.app.DIYStarter")
+    javaProperties.put("org.diylc.splashImageLocation", '$APP_ROOT/splash.png')
+    javaProperties.put("org.diylc.appIcon", '$APP_ROOT/diylc.icns')
+    javaProperties.put("org.diylc.appName", 'DIYLC4')
+    javaProperties.put("org.diylc.appMinMemory", "${minMemory}")
+    javaProperties.put("org.diylc.appMaxMemory", "${maxMemory}")
     javaExtras.put("-Xms${minMemory}", null)
     javaExtras.put("-Xmx${maxMemory}", null)
-    javaExtras.put("-splash:\$APP_ROOT/splash.png", null)
+    javaExtras.put('-splash:$APP_ROOT/splash.png', null)
+    javaExtras.put("-Xdock:name", 'DIY Layout Creator')
+    javaExtras.put("-Xdock:icon", '$APP_ROOT/diylc.icns')
 }
 
-
-task copySplashImage(type: Copy) {
-    from(file('src/main/resources/images'))
-    into(file("build/macApp/DIYLC4.app"))
-    include 'splash.png'
+launch4j {
+    mainClassName = "${mainClass}"
+    opt = "-splash:etc/splash.png -Xms${minMemory} -Xmx${maxMemory} -Dorg.diylc.scriptRun=${scriptRun} -Dorg.diylc.componentLibrary=etc/components -Dorg.diylc.componentLibrary=etc/components"
+//    icon = 'etc/diylc.icns'
 }
+  
 
-task copyComponents(type: Copy) {
-    from(project(':diylc-component-library').file('src/main/groovy'))
-    into(file("build/macApp/DIYLC4.app/Contents/Resources/components"))
-    include '**/*.groovy'
-}
-
-task addResources(dependsOn: [copySplashImage, copyComponents]) {
-    
+/*
+ * Copy files for Mac distribution
+ */
+task addResources {
+    doLast {
+        copy {
+            from(file('src/main/resources/images'))
+            into(file("build/macApp/DIYLC4.app"))
+            include 'splash.png'
+        }
+        copy {
+            from(file('src/main/resources/icons'))
+            into(file("build/macApp/DIYLC4.app"))
+            include 'diylc.icns'
+        }
+        copy {
+            from(project(':diylc-component-library').file('src/main/groovy'))
+            into(file("build/macApp/DIYLC4.app/Contents/Resources/components"))
+            include '**/*.groovy'
+        }
+    }
 }
 
 createApp.finalizedBy addResources
 
+/*
+ * Copy files for Script-run distribution
+ */
+task copyResources {
+    outputs.file new File("$buildDir/etc")
+    doLast {
+        copy {
+            from(file('src/main/resources/images'))
+            into(file("$buildDir/etc"))
+            include 'splash.png'
+        }
+        copy {
+            from(file('src/main/resources/icons'))
+            into(file("$buildDir/etc"))
+            include 'diylc.icns'
+        }
+        copy {
+            from(project(':diylc-component-library').file('src/main/groovy'))
+            into(file("$buildDir/etc/components"))
+            include '**/*.groovy'
+        }
+    }
+}
+
+applicationDistribution.from(copyResources) {
+    into "etc"
+}
+
+/*
+ * Copy files for Windows EXE
+ */
+task copyWindowsResources {
+    copy {
+        from(file('src/main/resources/images'))
+        into(file("$buildDir/launch4j/etc"))
+        include 'splash.png'
+    }
+    copy {
+        from(file('src/main/resources/icons'))
+        into(file("$buildDir/launch4j/etc"))
+        include 'diylc.icns'
+    }
+    copy {
+        from(project(':diylc-component-library').file('src/main/groovy'))
+        into(file("$buildDir/launch4j/etc/components"))
+        include '**/*.groovy'
+    }
+}
+
+
+jar.finalizedBy copyWindowsResources
 
 jar {
     manifest {

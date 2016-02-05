@@ -6,6 +6,9 @@ import org.diylc.core.PropertyWrapper;
 import org.diylc.core.ValidationException;
 import org.diylc.core.config.Configuration;
 
+/**
+ * @author nikolajbrinch@gmail.com
+ */
 public class PropertyController {
 
     private IPlugInPort plugInPort;

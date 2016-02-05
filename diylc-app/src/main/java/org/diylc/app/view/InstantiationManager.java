@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.diylc.app.utils.CalcUtils;
-import org.diylc.components.ComponentProcessor;
-import org.diylc.components.ComponentType;
+import org.diylc.components.registry.ComponentProcessor;
+import org.diylc.components.registry.ComponentType;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Orientation;
@@ -218,7 +218,7 @@ public class InstantiationManager {
 	public List<IDIYComponent> instantiateComponent(
 			ComponentType componentType, Template template, Point point,
 			Project currentProject) throws Exception {
-		LOG.info("Instatiating component of type: "
+		LOG.trace("Instatiating component of type: "
 				+ componentType.getInstanceClass().getName());
 
 		// Instantiate the component.

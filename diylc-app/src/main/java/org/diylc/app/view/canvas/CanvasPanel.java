@@ -34,7 +34,7 @@ import org.diylc.core.config.Configuration;
  * 
  * @author Branislav Stojkovic
  */
-class CanvasPanel extends JComponent implements Autoscroll {
+public class CanvasPanel extends JComponent implements Autoscroll {
 
 	private static final long serialVersionUID = 1L;
 

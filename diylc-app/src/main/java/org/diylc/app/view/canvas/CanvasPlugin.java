@@ -3,40 +3,36 @@ package org.diylc.app.view.canvas;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.MenuElement;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.diylc.app.menus.arrange.ArrangeActionFactory;
-import org.diylc.app.menus.edit.ComponentTransferable;
-import org.diylc.app.menus.edit.EditActionFactory;
-import org.diylc.app.menus.edit.ExpansionMode;
-import org.diylc.app.menus.file.ProjectDrawingProvider;
+import org.diylc.app.Accelerators;
+import org.diylc.app.ComponentTransferable;
+import org.diylc.app.ExpansionMode;
+import org.diylc.app.actions.GenericAction;
+import org.diylc.app.controllers.CanvasController;
+import org.diylc.app.model.DrawingModel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.BadPositionException;
-import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
+import org.diylc.app.view.MenuUtils;
 import org.diylc.app.view.MouseButton;
-import org.diylc.core.EventType;
+import org.diylc.app.view.ProjectDrawingProvider;
+import org.diylc.app.view.menus.AbstractPlugin;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
 import org.diylc.core.config.Configuration;
@@ -46,50 +42,42 @@ import org.diylc.core.measures.SizeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CanvasPlugin implements IPlugIn, ClipboardOwner {
+public class CanvasPlugin extends AbstractPlugin<CanvasController> implements Canvas {
 
     private static final Logger LOG = LoggerFactory.getLogger(CanvasPlugin.class);
 
     private RulerScrollPane scrollPane;
-    private CanvasPanel canvasPanel;
-    private JPopupMenu popupMenu;
-    private JMenu selectionMenu;
-    private JMenu expandMenu;
-    private JMenu applyTemplateMenu;
 
-    private EditActionFactory.CutAction cutAction;
-    private EditActionFactory.CopyAction copyAction;
-    private EditActionFactory.PasteAction pasteAction;
-    private EditActionFactory.EditSelectionAction editSelectionAction;
-    private EditActionFactory.DeleteSelectionAction deleteSelectionAction;
-    private EditActionFactory.SaveAsTemplateAction saveAsTemplateAction;
-    private ArrangeActionFactory.GroupAction groupAction;
-    private ArrangeActionFactory.UngroupAction ungroupAction;
-    private ArrangeActionFactory.SendToBackAction sendToBackAction;
-    private ArrangeActionFactory.BringToFrontAction bringToFrontAction;
-    private EditActionFactory.ExpandSelectionAction expandSelectionAllAction;
-    private EditActionFactory.ExpandSelectionAction expandSelectionImmediateAction;
-    private EditActionFactory.ExpandSelectionAction expandSelectionSameTypeAction;
-    private ArrangeActionFactory.RotateSelectionAction rotateClockwiseAction;
-    private ArrangeActionFactory.RotateSelectionAction rotateCounterclockwiseAction;
+    private CanvasPanel canvasPanel;
+
+    private JPopupMenu popupMenu;
 
     private IPlugInPort plugInPort;
-    private ISwingUI swingUI;
-
-    private Clipboard clipboard;
 
     private double zoomLevel = 1;
 
-    public CanvasPlugin(ISwingUI swingUI) {
-        this.swingUI = swingUI;
-        clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    public CanvasPlugin(CanvasController canvasController, ISwingUI swingUI, DrawingModel model) {
+        super(canvasController, swingUI, model);
+    }
+
+    public void setCanvasPanel(CanvasPanel canvasPanel) {
+        this.canvasPanel = canvasPanel;
+    }
+
+    public double getZoomLevel() {
+        return zoomLevel;
+    }
+
+    public void setZoomLevel(double zoomLevel) {
+        this.zoomLevel = zoomLevel;
     }
 
     @Override
     public void connect(IPlugInPort plugInPort) {
         this.plugInPort = plugInPort;
+
         try {
-            swingUI.injectGUIComponent(getScrollPane(), SwingConstants.CENTER);
+            getView().addPluginComponent(getScrollPane(), SwingConstants.CENTER);
         } catch (BadPositionException e) {
             LOG.error("Could not install canvas plugin", e);
         }
@@ -110,8 +98,10 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
                 public void mouseReleased(final MouseEvent e) {
                     canvasPanel.requestFocus();
 
-                    // Invoke the rest of the code later so we get the chance to
-                    // process selection messages.
+                    /*
+                     * Invoke the rest of the code later so we get the chance to
+                     * process selection messages.
+                     */
                     SwingUtilities.invokeLater(new Runnable() {
 
                         @Override
@@ -119,24 +109,24 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
                             if (plugInPort.getNewComponentTypeSlot() == null && e.isPopupTrigger()) {
                                 // Enable actions.
                                 boolean enabled = !plugInPort.getSelectedComponents().isEmpty();
-                                getCutAction().setEnabled(enabled);
-                                getCopyAction().setEnabled(enabled);
+                                findAction("Cut").setEnabled(enabled);
+                                findAction("Copy").setEnabled(enabled);
                                 try {
-                                    getPasteAction().setEnabled(clipboard.isDataFlavorAvailable(ComponentTransferable.listFlavor));
+                                    findAction("Paste").setEnabled(
+                                            getController().getClipboard().isDataFlavorAvailable(ComponentTransferable.listFlavor));
                                 } catch (Exception ex) {
-                                    getPasteAction().setEnabled(false);
+                                    findAction("Paste").setEnabled(false);
                                 }
-                                getEditSelectionAction().setEnabled(enabled);
-                                getDeleteSelectionAction().setEnabled(enabled);
-                                getExpandSelectionAllAction().setEnabled(enabled);
-                                getExpandSelectionImmediateAction().setEnabled(enabled);
-                                getExpandSelectionSameTypeAction().setEnabled(enabled);
-                                getGroupAction().setEnabled(enabled);
-                                getUngroupAction().setEnabled(enabled);
-                                getSendToBackAction().setEnabled(enabled);
-                                getBringToFrontAction().setEnabled(enabled);
-
-                                getSaveAsTemplateAction().setEnabled(plugInPort.getSelectedComponents().size() == 1);
+                                findAction("Edit Selection").setEnabled(enabled);
+                                findAction("Delete Selection").setEnabled(enabled);
+                                findAction("All Connected").setEnabled(enabled);
+                                findAction("Immediate Only").setEnabled(enabled);
+                                findAction("Same Type Only").setEnabled(enabled);
+                                findAction("Group Selection").setEnabled(enabled);
+                                findAction("Ungroup Selection").setEnabled(enabled);
+                                findAction("Send Backward").setEnabled(enabled);
+                                findAction("Bring Forward").setEnabled(enabled);
+                                findAction("Save as Template").setEnabled(plugInPort.getSelectedComponents().size() == 1);
 
                                 showPopupAt(e.getX(), e.getY());
                             }
@@ -168,12 +158,80 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    plugInPort.mouseClicked(e.getPoint(), MouseButton.getButton(e), e.isControlDown(), e.isShiftDown(), e.isAltDown(), e.isMetaDown(),
-                            e.getClickCount());
+                    plugInPort.mouseClicked(e.getPoint(), MouseButton.getButton(e), e.isControlDown(), e.isShiftDown(), e.isAltDown(),
+                            e.isMetaDown(), e.getClickCount());
                 }
             });
         }
         return canvasPanel;
+    }
+
+    public JPopupMenu getPopupMenu() {
+        if (popupMenu == null) {
+            popupMenu = new JPopupMenu();
+
+            JMenu selectionMenu = new JMenu("Select");
+            selectionMenu.setIcon(AppIconLoader.ElementsSelection.getIcon());
+            popupMenu.add(selectionMenu);
+
+            popupMenu.addSeparator();
+            popupMenu.add(new GenericAction("Cut", AppIconLoader.Cut.getIcon(), Accelerators.CUT, (event) -> getController().cut()));
+            popupMenu.add(new GenericAction("Copy", AppIconLoader.Copy.getIcon(), Accelerators.COPY, (event) -> getController().copy()));
+            popupMenu
+                    .add(new GenericAction("Paste", AppIconLoader.Paste.getIcon(), Accelerators.PASTE, (event) -> getController().paste()));
+            popupMenu.add(new GenericAction("Delete Selection", AppIconLoader.Delete.getIcon(), Accelerators.DELETE,
+                    (event) -> getController().delete()));
+            popupMenu.add(new GenericAction("Edit Selection", AppIconLoader.EditComponent.getIcon(), Accelerators.EDIT_SELECTION,
+                    (event) -> getController().edit()));
+            popupMenu.addSeparator();
+            popupMenu.add(new GenericAction("Rotate Clockwise", AppIconLoader.RotateCW.getIcon(), Accelerators.ROTATE_RIGHT,
+                    (event) -> getController().rotateSelection(1)));
+            popupMenu.add(new GenericAction("Rotate Counterclockwise", AppIconLoader.RotateCCW.getIcon(), Accelerators.ROTATE_LEFT,
+                    (event) -> getController().rotateSelection(-1)));
+            popupMenu.add(new GenericAction("Group Selection", AppIconLoader.Group.getIcon(), Accelerators.GROUP,
+                    (event) -> getController().group()));
+            popupMenu.add(new GenericAction("Ungroup Selection", AppIconLoader.Ungroup.getIcon(), Accelerators.UNGROUP,
+                    (event) -> getController().ungroup()));
+            popupMenu.add(new GenericAction("Send Backward", AppIconLoader.Back.getIcon(), Accelerators.SEND_TO_BACK,
+                    (event) -> getController().sendBackward()));
+            popupMenu.add(new GenericAction("Bring Forward", AppIconLoader.Front.getIcon(), Accelerators.BRING_TO_FRONT,
+                    (event) -> getController().bringForward()));
+            popupMenu.add(new GenericAction("Save as Template", AppIconLoader.BriefcaseAdd.getIcon(), (event) -> getController()
+                    .saveAsTemplate()));
+
+            JMenu applyTemplateMenu = new JMenu("Apply Template");
+            applyTemplateMenu.setIcon(AppIconLoader.BriefcaseInto.getIcon());
+            popupMenu.add(applyTemplateMenu);
+
+            JMenu expandMenu = new JMenu("Expand Selection");
+            expandMenu.setIcon(AppIconLoader.BranchAdd.getIcon());
+            expandMenu.add(new GenericAction("All Connected", (event) -> getController().expandSelection(ExpansionMode.ALL)));
+            expandMenu.add(new GenericAction("Immediate Only", (event) -> getController().expandSelection(ExpansionMode.IMMEDIATE)));
+            expandMenu.add(new GenericAction("Same Type Only", (event) -> getController().expandSelection(ExpansionMode.SAME_TYPE)));
+            popupMenu.add(expandMenu);
+
+            popupMenu.addSeparator();
+            popupMenu.add(new GenericAction("Edit Project", AppIconLoader.DocumentEdit.getIcon(), (event) -> getController().editProject()));
+        }
+
+        return popupMenu;
+    }
+
+    public void refreshSize() {
+        Dimension d = plugInPort.getCanvasDimensions(true);
+        getCanvasPanel().setSize(d);
+        getCanvasPanel().setPreferredSize(d);
+        getScrollPane().setZoomLevel(plugInPort.getZoomLevel());
+    }
+
+    /**
+     * Causes ruler scroll pane to refresh by sending a fake mouse moved message
+     * to the canvasPanel.
+     */
+    public void refresh() {
+        MouseEvent event = new MouseEvent(getCanvasPanel(), MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 1, 1, 0, false);
+
+        getCanvasPanel().dispatchEvent(event);
     }
 
     private RulerScrollPane getScrollPane() {
@@ -230,274 +288,84 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
     private void showPopupAt(int x, int y) {
         updateSelectionMenu(x, y);
         updateApplyTemplateMenu();
-        getPopupMenu().show(canvasPanel, x, y);
+        getPopupMenu().show(getCanvasPanel(), x, y);
     }
 
-    public JPopupMenu getPopupMenu() {
-        if (popupMenu == null) {
-            popupMenu = new JPopupMenu();
-            popupMenu.add(getSelectionMenu());
-            popupMenu.addSeparator();
-            popupMenu.add(getCutAction());
-            popupMenu.add(getCopyAction());
-            popupMenu.add(getPasteAction());
-            popupMenu.addSeparator();
-            popupMenu.add(getEditSelectionAction());
-            popupMenu.add(getDeleteSelectionAction());
-            popupMenu.add(getRotateClockwiseAction());
-            popupMenu.add(getRotateCounterclockwiseAction());
-            popupMenu.add(getGroupAction());
-            popupMenu.add(getUngroupAction());
-            popupMenu.add(getSendToBackAction());
-            popupMenu.add(getBringToFrontAction());
-            popupMenu.add(getSaveAsTemplateAction());
-            popupMenu.add(getApplyTemplateMenu());
-            popupMenu.add(getExpandMenu());
-            popupMenu.addSeparator();
-            popupMenu.add(EditActionFactory.INSTANCE.createEditProjectAction(plugInPort));
-        }
-        return popupMenu;
+    private MenuElement findMenu(String menuName) {
+        return MenuUtils.findMenu(getPopupMenu(), menuName);
     }
 
-    public JMenu getSelectionMenu() {
-        if (selectionMenu == null) {
-            selectionMenu = new JMenu("Select");
-            selectionMenu.setIcon(AppIconLoader.ElementsSelection.getIcon());
-        }
-        return selectionMenu;
-    }
-
-    public JMenu getExpandMenu() {
-        if (expandMenu == null) {
-            expandMenu = new JMenu("Expand Selection");
-            expandMenu.setIcon(AppIconLoader.BranchAdd.getIcon());
-            expandMenu.add(getExpandSelectionAllAction());
-            expandMenu.add(getExpandSelectionImmediateAction());
-            expandMenu.add(getExpandSelectionSameTypeAction());
-        }
-        return expandMenu;
-    }
-
-    public JMenu getApplyTemplateMenu() {
-        if (applyTemplateMenu == null) {
-            applyTemplateMenu = new JMenu("Apply Template");
-            applyTemplateMenu.setIcon(AppIconLoader.BriefcaseInto.getIcon());
-        }
-        return applyTemplateMenu;
+    private Action findAction(String actionName) {
+        return MenuUtils.findAction(getPopupMenu(), actionName);
     }
 
     private void updateSelectionMenu(int x, int y) {
-        getSelectionMenu().removeAll();
+        JMenu selectionMenu = (JMenu) findMenu("Select");
+        selectionMenu.removeAll();
+
         for (IDIYComponent component : plugInPort.findComponentsAt(new Point(x, y))) {
             JMenuItem item = new JMenuItem(component.getName());
             final IDIYComponent finalComponent = component;
-            item.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
-                    newSelection.add(finalComponent);
-                    plugInPort.updateSelection(newSelection);
-                    plugInPort.refresh();
-                }
-            });
-            getSelectionMenu().add(item);
+            item.addActionListener((event) -> getController().selectComponent(finalComponent));
+            selectionMenu.add(item);
         }
     }
 
     private void updateApplyTemplateMenu() {
-        getApplyTemplateMenu().removeAll();
+        JMenuItem applyTemplateAction = (JMenuItem) findMenu("Apply Template");
+        applyTemplateAction.removeAll();
+
         List<Template> templates = null;
 
         try {
             templates = plugInPort.getTemplatesForSelection();
         } catch (Exception e) {
             LOG.info("Could not get templates for selection");
-            getApplyTemplateMenu().setEnabled(false);
+            applyTemplateAction.setEnabled(false);
         }
 
-        if (templates == null)
+        if (templates == null) {
             return;
+        }
 
-        getApplyTemplateMenu().setEnabled(templates.size() > 0);
+        applyTemplateAction.setEnabled(templates.size() > 0);
 
         for (Template template : templates) {
             JMenuItem item = new JMenuItem(template.getName());
             final Template finalTemplate = template;
-            item.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    plugInPort.applyTemplateToSelection(finalTemplate);
-                }
-            });
-            getApplyTemplateMenu().add(item);
+            item.addActionListener((event) -> getController().applyTemplate(finalTemplate));
+            applyTemplateAction.add(item);
         }
-    }
-
-    public EditActionFactory.CutAction getCutAction() {
-        if (cutAction == null) {
-            cutAction = EditActionFactory.INSTANCE.createCutAction(plugInPort, clipboard, this);
-        }
-        return cutAction;
-    }
-
-    public EditActionFactory.CopyAction getCopyAction() {
-        if (copyAction == null) {
-            copyAction = EditActionFactory.INSTANCE.createCopyAction(plugInPort, clipboard, this);
-        }
-        return copyAction;
-    }
-
-    public EditActionFactory.PasteAction getPasteAction() {
-        if (pasteAction == null) {
-            pasteAction = EditActionFactory.INSTANCE.createPasteAction(plugInPort, clipboard);
-        }
-        return pasteAction;
-    }
-
-    public EditActionFactory.EditSelectionAction getEditSelectionAction() {
-        if (editSelectionAction == null) {
-            editSelectionAction = EditActionFactory.INSTANCE.createEditSelectionAction(plugInPort);
-        }
-        return editSelectionAction;
-    }
-
-    public EditActionFactory.DeleteSelectionAction getDeleteSelectionAction() {
-        if (deleteSelectionAction == null) {
-            deleteSelectionAction = EditActionFactory.INSTANCE.createDeleteSelectionAction(plugInPort);
-        }
-        return deleteSelectionAction;
-    }
-
-    public ArrangeActionFactory.RotateSelectionAction getRotateClockwiseAction() {
-        if (rotateClockwiseAction == null) {
-            rotateClockwiseAction = ArrangeActionFactory.INSTANCE.createRotateSelectionAction(plugInPort, 1);
-        }
-        return rotateClockwiseAction;
-    }
-
-    public ArrangeActionFactory.RotateSelectionAction getRotateCounterclockwiseAction() {
-        if (rotateCounterclockwiseAction == null) {
-            rotateCounterclockwiseAction = ArrangeActionFactory.INSTANCE.createRotateSelectionAction(plugInPort, -1);
-        }
-        return rotateCounterclockwiseAction;
-    }
-
-    public EditActionFactory.SaveAsTemplateAction getSaveAsTemplateAction() {
-        if (saveAsTemplateAction == null) {
-            saveAsTemplateAction = EditActionFactory.INSTANCE.createSaveAsTemplateAction(plugInPort);
-        }
-        return saveAsTemplateAction;
-    }
-
-    public ArrangeActionFactory.GroupAction getGroupAction() {
-        if (groupAction == null) {
-            groupAction = ArrangeActionFactory.INSTANCE.createGroupAction(plugInPort);
-        }
-        return groupAction;
-    }
-
-    public ArrangeActionFactory.UngroupAction getUngroupAction() {
-        if (ungroupAction == null) {
-            ungroupAction = ArrangeActionFactory.INSTANCE.createUngroupAction(plugInPort);
-        }
-        return ungroupAction;
-    }
-
-    public ArrangeActionFactory.SendToBackAction getSendToBackAction() {
-        if (sendToBackAction == null) {
-            sendToBackAction = ArrangeActionFactory.INSTANCE.createSendToBackAction(plugInPort);
-        }
-        return sendToBackAction;
-    }
-
-    public ArrangeActionFactory.BringToFrontAction getBringToFrontAction() {
-        if (bringToFrontAction == null) {
-            bringToFrontAction = ArrangeActionFactory.INSTANCE.createBringToFrontAction(plugInPort);
-        }
-        return bringToFrontAction;
-    }
-
-    public EditActionFactory.ExpandSelectionAction getExpandSelectionAllAction() {
-        if (expandSelectionAllAction == null) {
-            expandSelectionAllAction = EditActionFactory.INSTANCE.createExpandSelectionAction(plugInPort, ExpansionMode.ALL);
-        }
-        return expandSelectionAllAction;
-    }
-
-    public EditActionFactory.ExpandSelectionAction getExpandSelectionImmediateAction() {
-        if (expandSelectionImmediateAction == null) {
-            expandSelectionImmediateAction = EditActionFactory.INSTANCE.createExpandSelectionAction(plugInPort, ExpansionMode.IMMEDIATE);
-        }
-        return expandSelectionImmediateAction;
-    }
-
-    public EditActionFactory.ExpandSelectionAction getExpandSelectionSameTypeAction() {
-        if (expandSelectionSameTypeAction == null) {
-            expandSelectionSameTypeAction = EditActionFactory.INSTANCE.createExpandSelectionAction(plugInPort, ExpansionMode.SAME_TYPE);
-        }
-        return expandSelectionSameTypeAction;
     }
 
     @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-        return EnumSet.of(EventType.PROJECT_LOADED, EventType.ZOOM_CHANGED, EventType.REPAINT);
+    public Rectangle getVisibleRect() {
+        return getCanvasPanel().getVisibleRect();
     }
 
     @Override
-    public void processMessage(final EventType eventType, Object... params) {
-        switch (eventType) {
-            case PROJECT_LOADED:
-                refreshSize();
-                if ((Boolean) params[1]) {
-                    // Scroll to the center.
-                    Rectangle visibleRect = canvasPanel.getVisibleRect();
-                    visibleRect.setLocation((canvasPanel.getWidth() - visibleRect.width) / 2,
-                            (canvasPanel.getHeight() - visibleRect.height) / 2);
-                    canvasPanel.scrollRectToVisible(visibleRect);
-                    canvasPanel.revalidate();
-                }
-                break;
-            case ZOOM_CHANGED:
-                Rectangle visibleRect = canvasPanel.getVisibleRect();
-                refreshSize();
-                // Try to set the visible area to be centered with the previous
-                // one.
-                double zoomFactor = (Double) params[0] / zoomLevel;
-                visibleRect.setBounds((int) (visibleRect.x * zoomFactor), (int) (visibleRect.y * zoomFactor), visibleRect.width,
-                        visibleRect.height);
-                canvasPanel.scrollRectToVisible(visibleRect);
-                canvasPanel.revalidate();
-
-                zoomLevel = (Double) params[0];
-                break;
-            case REPAINT:
-                canvasPanel.repaint();
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void refreshSize() {
-        Dimension d = plugInPort.getCanvasDimensions(true);
-        canvasPanel.setSize(d);
-        canvasPanel.setPreferredSize(d);
-        getScrollPane().setZoomLevel(plugInPort.getZoomLevel());
-    }
-
-    /**
-     * Causes ruler scroll pane to refresh by sending a fake mouse moved message
-     * to the canvasPanel.
-     */
-    public void refresh() {
-        MouseEvent event = new MouseEvent(canvasPanel, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 1, 1, 0, false);
-
-        canvasPanel.dispatchEvent(event);
+    public int getWidth() {
+        return getCanvasPanel().getWidth();
     }
 
     @Override
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    public int getHeight() {
+        return getCanvasPanel().getHeight();
     }
+
+    @Override
+    public void scrollRectToVisible(Rectangle visibleRect) {
+        getCanvasPanel().scrollRectToVisible(visibleRect);
+    }
+
+    @Override
+    public void revalidate() {
+        getCanvasPanel().revalidate();
+    }
+
+    @Override
+    public void repaint() {
+        getCanvasPanel().repaint();
+    }
+
 }

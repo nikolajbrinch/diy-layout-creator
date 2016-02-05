@@ -8,6 +8,9 @@ import javax.swing.KeyStroke;
 
 import com.sun.javafx.util.Utils;
 
+/**
+ * @author nikolajbrinch@gmail.com
+ */
 public class Accelerators {
 
     public static final KeyStroke ROTATE_RIGHT = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, ActionEvent.ALT_MASK);
@@ -22,9 +25,11 @@ public class Accelerators {
 
     public static final KeyStroke UNGROUP;
 
+    public static final KeyStroke NEW = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+
     public static final KeyStroke OPEN = KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
-    public static final KeyStroke NEW = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    public static final KeyStroke CLOSE = KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
     public static final KeyStroke SAVE = KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
@@ -52,6 +57,8 @@ public class Accelerators {
     public static final KeyStroke EDIT_SELECTION = KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
     public static final KeyStroke SHOW_PROPERTY_PANEL = KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | ActionEvent.SHIFT_MASK);
+
+    public static final KeyStroke MINIMIZE = KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
     static {
         if (Utils.isMac()) {

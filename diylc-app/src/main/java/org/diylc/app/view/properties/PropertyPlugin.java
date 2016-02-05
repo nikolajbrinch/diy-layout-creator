@@ -14,6 +14,9 @@ import javax.swing.*;
 
 import java.util.EnumSet;
 
+/**
+ * @author nikolajbrinch@gmail.com
+ */
 public class PropertyPlugin implements IPlugIn {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyPlugin.class);

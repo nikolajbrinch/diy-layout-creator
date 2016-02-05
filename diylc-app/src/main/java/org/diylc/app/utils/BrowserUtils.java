@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import com.sun.javafx.util.Utils;
 
+/**
+ * @author nikolajbrinch@gmail.com
+ */
 public class BrowserUtils {
 
     static final String[] BROWSERS = { "google-chrome", "firefox", "opera", "epiphany", "konqueror", "conkeror", "midori", "kazehakase",

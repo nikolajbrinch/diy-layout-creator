@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +22,12 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import org.diylc.app.editors.PropertiesEditor;
+import org.diylc.app.view.editors.PropertiesEditor;
 import org.diylc.core.PropertyWrapper;
 
+/**
+ * @author nikolajbrinch@gmail.com
+ */
 public class PropertyView extends JComponent {
 
     private static final long serialVersionUID = 1L;

@@ -12,9 +12,12 @@ package org.diylc.core.events;
  */
 public class EventDispatcher<E extends Enum<E>> {
 
-    EventSystem<E> eventSystem = EventSystem.getInstance();
+    private EventSystem<E> eventSystem = EventSystem.getInstance();
 
+    private long id;
+    
     public EventDispatcher() {
+        id = Thread.currentThread().getId();
     }
 
     /**
@@ -24,11 +27,17 @@ public class EventDispatcher<E extends Enum<E>> {
      * @param params
      */
     public void sendEvent(E eventType, Object... params) {
-        eventSystem.sendEvent(eventType, params);
+        Object[] idParams = new Object[params.length + 1];
+        idParams[0] = id;
+        System.arraycopy(params, 0, idParams, 1, params.length);
+        eventSystem.sendEvent(eventType, idParams);
     }
 
     public void sendEventAsync(E eventType, Object... params) {
-        eventSystem.sendEventAsync(eventType, params);
+        Object[] idParams = new Object[params.length + 1];
+        idParams[0] = id;
+        System.arraycopy(params, 0, idParams, 1, params.length);
+        eventSystem.sendEventAsync(eventType, idParams);
     }
 
 }

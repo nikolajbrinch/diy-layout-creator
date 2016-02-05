@@ -3,7 +3,7 @@ package org.diylc.app.view;
 import java.awt.Point;
 import java.util.List;
 
-import org.diylc.app.menus.edit.ExpansionMode;
+import org.diylc.app.ExpansionMode;
 import org.diylc.core.IDIYComponent;
 
 public interface ISelectionProcessor {

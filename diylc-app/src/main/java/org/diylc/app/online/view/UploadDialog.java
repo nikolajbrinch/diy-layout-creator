@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.diylc.app.dialogs.ButtonDialog;
+import org.diylc.app.view.dialogs.ButtonDialog;
 
 public class UploadDialog extends ButtonDialog {
 

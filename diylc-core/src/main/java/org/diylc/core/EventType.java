@@ -80,11 +80,6 @@ public enum EventType {
 	STATUS_MESSAGE_CHANGED, 
 	
 	/**
-	 * Called when the LRU file list is updated.
-	 */
-	LRU_UPDATED, 
-	
-	/**
 	 * Called when Splash screen needs to update.
 	 */
 	SPLASH_UPDATE;

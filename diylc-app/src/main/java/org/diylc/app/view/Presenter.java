@@ -27,8 +27,8 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.diylc.app.ExpansionMode;
 import org.diylc.app.io.ProjectFileManager;
-import org.diylc.app.menus.edit.ExpansionMode;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.utils.StringUtils;
 import org.diylc.app.view.rendering.DrawingContext;
@@ -37,26 +37,25 @@ import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.app.view.rendering.RenderingConstants;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
-import org.diylc.components.ComparatorFactory;
-import org.diylc.components.ComponentProcessor;
-import org.diylc.components.ComponentRegistry;
-import org.diylc.components.ComponentType;
 import org.diylc.components.IComponentFilter;
 import org.diylc.components.connectivity.SolderPad;
+import org.diylc.components.registry.ComparatorFactory;
+import org.diylc.components.registry.ComponentProcessor;
+import org.diylc.components.registry.ComponentRegistry;
+import org.diylc.components.registry.ComponentType;
 import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
-import org.diylc.core.LRU;
 import org.diylc.core.Orientation;
 import org.diylc.core.OrientationHV;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
-import org.diylc.core.SystemUtils;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.events.MessageDispatcher;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.core.utils.Constants;
+import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,7 @@ public class Presenter implements IPlugInPort {
 
     private static final Logger LOG = LoggerFactory.getLogger(Presenter.class);
 
-    public static VersionNumber CURRENT_VERSION = new VersionNumber(3, 0, 0);
+    public static VersionNumber CURRENT_VERSION = new VersionNumber(4, 0, 0);
 
     /*
      * Read the latest version from the local update.xml file
@@ -140,8 +139,6 @@ public class Presenter implements IPlugInPort {
 
     private Point previousScaledPoint;
 
-    private LRU<Path> lru = new LRU<Path>(15);
-
     public Presenter(IView view) {
         super();
         this.view = view;
@@ -159,12 +156,11 @@ public class Presenter implements IPlugInPort {
     }
 
     public void configure() {
-        lru = Configuration.INSTANCE.getLru();
-        messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru);
+
     }
 
     public void installPlugin(IPlugIn plugIn) {
-        LOG.info(String.format("installPlugin(%s)", plugIn.getClass().getSimpleName()));
+        LOG.trace(String.format("installPlugin(%s)", plugIn.getClass().getSimpleName()));
         plugIns.add(plugIn);
         plugIn.connect(this);
         messageDispatcher.registerListener(plugIn);
@@ -191,7 +187,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setZoomLevel(double zoomLevel) {
-        LOG.info(String.format("setZoomLevel(%s)", zoomLevel));
+        LOG.trace(String.format("setZoomLevel(%s)", zoomLevel));
         if (drawingManager.getZoomLevel() == zoomLevel) {
             return;
         }
@@ -235,20 +231,8 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void addLruPath(Path path) {
-        lru.addItem(path);
-        messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru);
-    }
-
-    @Override
-    public void removeLruPath(Path path) {
-        lru.removeItem(path);
-        messageDispatcher.dispatchMessage(EventType.LRU_UPDATED, lru);
-    }
-
-    @Override
     public void loadProject(Project project, boolean freshStart) {
-        LOG.info(String.format("loadProject(%s, %s)", project.getTitle(), freshStart));
+        LOG.trace(String.format("loadProject(%s, %s)", project.getTitle(), freshStart));
         this.currentProject = project;
         drawingManager.clearComponentAreaMap();
         updateSelection(EMPTY_SELECTION);
@@ -259,7 +243,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void createNewProject() {
-        LOG.info("createNewFile()");
+        LOG.trace("createNewFile()");
         try {
             Project project = new Project();
             instantiationManager.fillWithDefaultProperties(project, null);
@@ -273,7 +257,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void loadProjectFromFile(Path path) throws Exception {
-        LOG.info(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
+        LOG.trace(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
         // try {
         List<String> warnings = new ArrayList<String>();
         Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
@@ -326,7 +310,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void saveProjectToFile(Path path, boolean isBackup) {
-        LOG.info(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
+        LOG.trace(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
         try {
             currentProject.setFileVersion(CURRENT_VERSION);
             projectFileManager.serializeProjectToFile(currentProject, path, isBackup);
@@ -437,7 +421,7 @@ public class Presenter implements IPlugInPort {
     @Override
     public void mouseClicked(Point point, MouseButton button, boolean ctrlDown, boolean shiftDown, boolean altDown, boolean metaDown,
             int clickCount) {
-        LOG.debug(String.format("mouseClicked(%s, %s, %s, %s, %s)", point, button, ctrlDown, shiftDown, altDown));
+        LOG.trace(String.format("mouseClicked(%s, %s, %s, %s, %s)", point, button, ctrlDown, shiftDown, altDown));
         Point scaledPoint = scalePoint(point);
 
         if (clickCount >= 2) {
@@ -602,7 +586,7 @@ public class Presenter implements IPlugInPort {
             return false;
         }
 
-        LOG.debug(String.format("keyPressed(%s, %s, %s, %s, %s)", key, ctrlDown, shiftDown, altDown, metaDown));
+        LOG.trace(String.format("keyPressed(%s, %s, %s, %s, %s)", key, ctrlDown, shiftDown, altDown, metaDown));
         Map<IDIYComponent, Set<Integer>> controlPointMap = new HashMap<IDIYComponent, Set<Integer>>();
 
         /*
@@ -804,7 +788,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void selectAll(double layer) {
-        LOG.info("selectAll()");
+        LOG.trace("selectAll()");
         List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(currentProject.getComponents());
         newSelection.removeAll(getLockedComponents());
         if (layer > 0) {
@@ -831,7 +815,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void dragStarted(Point point, int dragAction) {
-        LOG.debug(String.format("dragStarted(%s, %s)", point, dragAction));
+        LOG.trace(String.format("dragStarted(%s, %s)", point, dragAction));
         if (instantiationManager.getComponentTypeSlot() != null) {
             LOG.debug("Cannot start drag because a new component is being created.");
             mouseClicked(point, MouseButton.LEFT, dragAction == DnDConstants.ACTION_COPY, dragAction == DnDConstants.ACTION_LINK,
@@ -898,7 +882,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void dragActionChanged(int dragAction) {
-        LOG.debug("dragActionChanged(" + dragAction + ")");
+        LOG.trace("dragActionChanged(" + dragAction + ")");
         this.dragAction = dragAction;
     }
 
@@ -1201,7 +1185,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void dragEnded(Point point) {
-        LOG.debug(String.format("dragEnded(%s)", point));
+        LOG.trace(String.format("dragEnded(%s)", point));
         if (!dragInProgress) {
             return;
         }
@@ -1243,7 +1227,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void pasteComponents(List<IDIYComponent> components) {
-        LOG.info(String.format("pasteComponents(%s)", components));
+        LOG.trace(String.format("pasteComponents(%s)", components));
         instantiationManager.pasteComponents(components, this.previousScaledPoint, isSnapToGrid(), currentProject.getGridSpacing());
         messageDispatcher.dispatchMessage(EventType.REPAINT);
         messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, instantiationManager.getComponentTypeSlot(),
@@ -1252,7 +1236,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void deleteSelectedComponents() {
-        LOG.info("deleteSelectedComponents()");
+        LOG.trace("deleteSelectedComponents()");
         if (selectedComponents.isEmpty()) {
             LOG.debug("Nothing to delete");
             return;
@@ -1273,7 +1257,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setSelectionDefaultPropertyValue(String propertyName, Object value) {
-        LOG.info(String.format("setSelectionDefaultPropertyValue(%s, %s)", propertyName, value));
+        LOG.trace(String.format("setSelectionDefaultPropertyValue(%s, %s)", propertyName, value));
         Map<String, Map<String, Object>> objectProperties = Configuration.INSTANCE.getObjectProperties();
         for (IDIYComponent component : selectedComponents) {
             String className = component.getClass().getName();
@@ -1288,7 +1272,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setProjectDefaultPropertyValue(String propertyName, Object value) {
-        LOG.info(String.format("setProjectDefaultPropertyValue(%s, %s)", propertyName, value));
+        LOG.trace(String.format("setProjectDefaultPropertyValue(%s, %s)", propertyName, value));
         LOG.debug("Default property value set for " + Project.class.getName() + ":" + propertyName);
         Map<String, Object> projectProperties = Configuration.INSTANCE.getProjectProperties();
         projectProperties.put(propertyName, value);
@@ -1302,7 +1286,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void groupSelectedComponents() {
-        LOG.info("groupSelectedComponents()");
+        LOG.trace("groupSelectedComponents()");
         Project oldProject = currentProject.clone();
         // First remove the selected components from other groups.
         ungroupComponents(selectedComponents);
@@ -1318,7 +1302,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void ungroupSelectedComponents() {
-        LOG.info("ungroupSelectedComponents()");
+        LOG.trace("ungroupSelectedComponents()");
         Project oldProject = currentProject.clone();
         ungroupComponents(selectedComponents);
         // Notify the listeners.
@@ -1331,7 +1315,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setLayerLocked(double layerZOrder, boolean locked) {
-        LOG.info(String.format("setLayerLocked(%s, %s)", layerZOrder, locked));
+        LOG.trace(String.format("setLayerLocked(%s, %s)", layerZOrder, locked));
         if (locked) {
             currentProject.getLockedLayers().add(layerZOrder);
         } else {
@@ -1344,7 +1328,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void sendSelectionToBack() {
-        LOG.info("sendSelectionToBack()");
+        LOG.trace("sendSelectionToBack()");
         Project oldProject = currentProject.clone();
         for (IDIYComponent component : selectedComponents) {
             ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
@@ -1370,7 +1354,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void bringSelectionToFront() {
-        LOG.info("bringSelectionToFront()");
+        LOG.trace("bringSelectionToFront()");
         Project oldProject = currentProject.clone();
         for (IDIYComponent component : selectedComponents) {
             ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
@@ -1396,7 +1380,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void refresh() {
-        LOG.info("refresh()");
+        LOG.trace("refresh()");
         messageDispatcher.dispatchMessage(EventType.REPAINT);
     }
 
@@ -1412,7 +1396,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void renumberSelectedComponents(final boolean xAxisFirst) {
-        LOG.info("renumberSelectedComponents(" + xAxisFirst + ")");
+        LOG.trace("renumberSelectedComponents(" + xAxisFirst + ")");
         if (getSelectedComponents().isEmpty()) {
             return;
         }
@@ -1501,7 +1485,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void expandSelection(ExpansionMode expansionMode) {
-        LOG.info(String.format("expandSelection(%s)", expansionMode));
+        LOG.trace(String.format("expandSelection(%s)", expansionMode));
         List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(this.selectedComponents);
         // Find control points of all selected components and all types
         Set<String> selectedNamePrefixes = new HashSet<String>();
@@ -1680,7 +1664,7 @@ public class Presenter implements IPlugInPort {
     @Override
     public List<PropertyWrapper> getMutualSelectionProperties() {
         try {
-            return ComponentProcessor.getInstance().getMutualSelectionProperties(selectedComponents);
+            return ComponentProcessor.getInstance().getMutualProperties(selectedComponents);
         } catch (Exception e) {
             LOG.error("Could not get mutual selection properties", e);
             return null;
@@ -1689,7 +1673,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void applyPropertiesToSelection(List<PropertyWrapper> properties) {
-        LOG.debug(String.format("applyPropertiesToSelection(%s)", properties));
+        LOG.trace(String.format("applyPropertiesToSelection(%s)", properties));
         Project oldProject = currentProject.clone();
         try {
             for (IDIYComponent component : selectedComponents) {
@@ -1735,7 +1719,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void applyPropertiesToProject(List<PropertyWrapper> properties) {
-        LOG.debug(String.format("applyPropertiesToProject(%s)", properties));
+        LOG.trace(String.format("applyPropertiesToProject(%s)", properties));
         Project oldProject = currentProject.clone();
         try {
             for (PropertyWrapper property : properties) {
@@ -1761,9 +1745,9 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setNewComponentTypeSlot(ComponentType componentType, Template template) {
-        LOG.info(String.format("setNewComponentSlot(%s)", componentType == null ? null : componentType.getName()));
+        LOG.trace(String.format("setNewComponentSlot(%s)", componentType == null ? null : componentType.getName()));
         if (componentType != null && componentType.getInstanceClass() == null) {
-            LOG.info("Cannot set new component type slot for type " + componentType.getName());
+            LOG.debug("Cannot set new component type slot for type " + componentType.getName());
             setNewComponentTypeSlot(null, null);
             return;
         }
@@ -1787,7 +1771,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void saveSelectedComponentAsTemplate(String templateName) {
-        LOG.info(String.format("saveSelectedComponentAsTemplate(%s)", templateName));
+        LOG.trace(String.format("saveSelectedComponentAsTemplate(%s)", templateName));
         if (selectedComponents.size() != 1) {
             throw new RuntimeException("Can only save a single component as a template at once.");
         }
@@ -1888,7 +1872,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void applyTemplateToSelection(Template template) {
-        LOG.debug(String.format("applyTemplateToSelection(%s)", template.getName()));
+        LOG.trace(String.format("applyTemplateToSelection(%s)", template.getName()));
 
         Project oldProject = currentProject.clone();
 

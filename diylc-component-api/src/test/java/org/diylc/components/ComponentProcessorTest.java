@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
+import org.diylc.components.registry.ComponentProcessor;
 import org.diylc.core.PropertyWrapper;
 import org.junit.Test;
 

@@ -7,6 +7,9 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import org.diylc.app.view.bom.IActionProcessor;
+import org.diylc.app.view.bom.ObjectListTable;
+
 public class ObjectListTableTest {
 
 	/**

@@ -3,6 +3,9 @@ package org.diylc.app;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author nikolajbrinch@gmail.com
+ */
 public class DefaultUncaughtExceptionHandler implements
 		Thread.UncaughtExceptionHandler {
 

@@ -4,9 +4,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.diylc.app.dialogs.DialogFactory;
 import org.diylc.app.online.view.NewUserDialog;
 import org.diylc.app.utils.AppIconLoader;
+import org.diylc.app.view.dialogs.DialogFactory;
 
 class CreateAccountAction extends AbstractAction {
 

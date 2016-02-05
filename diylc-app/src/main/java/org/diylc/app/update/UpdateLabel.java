@@ -42,7 +42,7 @@ public class UpdateLabel extends JLabel {
 				}
 			}
 		});
-		checkForUpdates();
+//		checkForUpdates();
 	}
 
 	private void checkForUpdates() {

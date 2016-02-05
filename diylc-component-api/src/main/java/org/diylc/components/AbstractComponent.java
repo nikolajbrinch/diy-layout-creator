@@ -15,10 +15,10 @@ import java.util.Arrays;
 
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent;
-import org.diylc.core.SystemUtils;
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext;
+import org.diylc.core.platform.Platform;
 
 /**
  * Abstract implementation of {@link IDIYComponent} that contains component name
@@ -39,7 +39,7 @@ public abstract class AbstractComponent implements IDIYComponent {
     @EditableProperty(defaultable = false)
 	protected String name = "";
 
-	public static Font LABEL_FONT = new Font(SystemUtils.getDefaultTextFontName(), Font.PLAIN, 14);
+	public static Font LABEL_FONT = new Font(Platform.getPlatform().getDefaultTextFontName(), Font.PLAIN, 14);
 	
 	@Override
 	public String getName() {

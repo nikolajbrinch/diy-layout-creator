@@ -26,15 +26,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.diylc.app.PercentageListCellRenderer;
 import org.diylc.app.update.UpdateLabel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.StringUtils;
-import org.diylc.components.ComponentType;
+import org.diylc.components.registry.ComponentType;
 import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
-import org.diylc.core.SystemUtils;
 import org.diylc.core.config.Configuration;
+import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

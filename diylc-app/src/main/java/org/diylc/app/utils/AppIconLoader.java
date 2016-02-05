@@ -110,7 +110,6 @@ public enum AppIconLoader {
         BufferedImage img = null;
         try {
             URL imgURL = getClass().getResource("/icons/" + name);
-            System.out.println(imgURL.toString());
             InputStream imgStream = null;
             try {
                 imgStream = imgURL.openStream();

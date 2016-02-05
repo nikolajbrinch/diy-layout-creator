@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.diylc.components.ComponentRegistry;
-import org.diylc.components.ComponentType;
+import org.diylc.components.registry.ComponentRegistry;
+import org.diylc.components.registry.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
 

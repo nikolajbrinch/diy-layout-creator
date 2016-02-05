@@ -55,7 +55,7 @@ public enum Configuration {
     }
 
     public Path getLastPath() {
-        return Paths.get(getStringProperty(Key.LAST_PATH, null));
+        return Paths.get(getStringProperty(Key.LAST_PATH, System.getProperty("user.home")));
     }
 
     public void setLastPath(Path path) {
@@ -71,7 +71,7 @@ public enum Configuration {
     }
 
     public List<String> getRecentComponents() {
-        return getObjectProperty(Key.RECENT_COMPONENTS, Collections.emptyList());
+        return getObjectProperty(Key.RECENT_COMPONENTS, new ArrayList<String>());
     }
 
     public void setRecentComponents(List<String> recentComponents) {
@@ -139,7 +139,7 @@ public enum Configuration {
     }
 
     public String getSystemComponentLibrary() {
-        return getObjectProperty(Key.SYSTEM_COMPONENT_LIBRARY, System.getProperty("org.diylc.componentLibrary"));
+        return System.getProperty("org.diylc.componentLibrary");
     }
 
     public WindowBounds getWindowBounds() {
@@ -228,14 +228,16 @@ public enum Configuration {
     public Path[] getComponentDirectories() {
         Path[] componentDirectories = null;
 
-        if (getSystemComponentLibrary() != null) {
+        String systemComponentLibrary = getSystemComponentLibrary();
+        
+        if (systemComponentLibrary == null) {
             componentDirectories = getObjectProperty(Key.COMPONENT_DIRECTORIES,
-                    new Path[] { Paths.get(System.getProperty("user.home"), ".diylc/lib/components") });
+                    new Path[] { Paths.get(System.getProperty("user.home"), ".diylc/components") });
         } else {
             componentDirectories = getObjectProperty(
                     Key.COMPONENT_DIRECTORIES,
-                    new Path[] { Paths.get(getSystemComponentLibrary()),
-                            Paths.get(System.getProperty("user.home"), ".diylc/lib/components") });
+                    new Path[] { Paths.get(systemComponentLibrary),
+                            Paths.get(System.getProperty("user.home"), ".diylc/components") });
         }
 
         return componentDirectories;

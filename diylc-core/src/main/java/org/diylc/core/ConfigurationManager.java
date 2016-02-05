@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ public class ConfigurationManager {
 	private static ConfigurationManager instance;
 
 	private XStream xStream;
+	
 	private Map<String, Object> configuration;
 
 	public static ConfigurationManager getInstance() {
@@ -44,7 +46,7 @@ public class ConfigurationManager {
 
 	@SuppressWarnings("unchecked")
 	private void initializeConfiguration() {
-		LOG.info("Initializing configuration");
+		LOG.debug("Initializing configuration");
 		
 		File configFile = SystemUtils.getConfigFile("config.xml");
 		
@@ -59,7 +61,7 @@ public class ConfigurationManager {
 	}
 
 	public void saveConfigration() {
-		LOG.info("Saving configuration");
+		LOG.debug("Saving configuration");
 		File configFile = SystemUtils.getConfigFile("config.xml");
 		try {
 			FileOutputStream out = new FileOutputStream(configFile);

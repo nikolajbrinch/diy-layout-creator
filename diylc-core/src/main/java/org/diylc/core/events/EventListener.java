@@ -1,5 +1,6 @@
 package org.diylc.core.events;
 
+@FunctionalInterface
 public interface EventListener<E extends Enum<E>> {
 
     /**

@@ -17,5 +17,5 @@ public interface IPlugIn extends IMessageListener<EventType> {
 	 * 
 	 * @param plugInPort
 	 */
-	void connect(IPlugInPort plugInPort);
+	default void connect(IPlugInPort plugInPort) {};
 }
