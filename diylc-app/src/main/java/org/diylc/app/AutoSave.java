@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.diylc.app.controllers.ApplicationController;
-import org.diylc.app.view.IView;
+import org.diylc.app.view.View;
 import org.diylc.core.EventType;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.events.EventListener;
@@ -53,7 +53,7 @@ public class AutoSave implements EventListener<EventType> {
             Files.delete(testPath);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "The current user does not have permissions to access folder " + new File(".").getAbsolutePath()
-                    + ".\nAuto-save feature will not be available, contact your system administrator.", "Warning", IView.WARNING_MESSAGE);
+                    + ".\nAuto-save feature will not be available, contact your system administrator.", "Warning", View.WARNING_MESSAGE);
         }
 
         eventReciever.registerListener(EnumSet.of(EventType.PROJECT_MODIFIED), this);
@@ -73,8 +73,8 @@ public class AutoSave implements EventListener<EventType> {
                             .showConfirmDialog(
                                     null,
                                     "It appears that aplication was not closed normally in the previous session. Do you want to open the last auto-saved file?",
-                                    "Auto-Save", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE);
-                    if (decision == IView.YES_OPTION) {
+                                    "Auto-Save", View.YES_NO_OPTION, View.QUESTION_MESSAGE);
+                    if (decision == View.YES_OPTION) {
                         try {
                             applicationController.open(autoSaveFile);
                         } catch (Exception e) {
@@ -102,8 +102,12 @@ public class AutoSave implements EventListener<EventType> {
                         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
                         lastSave = System.currentTimeMillis();
+                        /*
+                         * FIXME: save project
+                         */
                         // applicationController.save(autoSaveFile, true);
-
+//                        plugInPort.saveProjectToFile(autoSaveFile, true);
+                        
                         return null;
                     }
 

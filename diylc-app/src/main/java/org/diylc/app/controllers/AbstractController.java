@@ -1,7 +1,7 @@
 package org.diylc.app.controllers;
 
 import org.diylc.app.Drawing;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 
@@ -11,14 +11,17 @@ public abstract class AbstractController implements MenuController {
 
     private final View view;
 
-    private final DrawingModel model;
+    private final Model model;
 
     private final ApplicationController applicationController;
 
-    public AbstractController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
+    private final DrawingController controller;
+
+    public AbstractController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort) {
         this.applicationController = applicationController;
         this.view = view;
         this.model = model;
+        this.controller = controller;
         this.plugInPort = plugInPort;
     }
 
@@ -26,7 +29,7 @@ public abstract class AbstractController implements MenuController {
         return plugInPort;
     }
 
-    public DrawingModel getModel() {
+    public Model getModel() {
         return model;
     }
 
@@ -40,5 +43,9 @@ public abstract class AbstractController implements MenuController {
 
     public Drawing getDrawing() {
         return getView().getDrawing();
+    }
+
+    public DrawingController getController() {
+        return controller;
     }
 }

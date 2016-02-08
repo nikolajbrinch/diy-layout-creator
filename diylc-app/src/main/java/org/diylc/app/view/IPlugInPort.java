@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.diylc.app.view.rendering.DrawingOption;
-import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.IComponentFilter;
 import org.diylc.components.registry.ComponentType;
 import org.diylc.core.EventType;
@@ -35,7 +34,7 @@ import org.diylc.core.events.MessageDispatcher;
  * @see IMessageListener
  * @see EventType
  */
-public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyProcessor, ITemplateProcessor {
+public interface IPlugInPort extends IMouseProcessor, IKeyProcessor, ITemplateProcessor {
 
     public static final int DND_TOGGLE_STICKY = 0x1;
     public static final int DND_TOGGLE_SNAP = 0x40000000;
@@ -64,13 +63,6 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     Cursor getCursorAt(Point point);
 
     /**
-     * Returns an instance of currently loaded project.
-     * 
-     * @return
-     */
-    Project getCurrentProject();
-
-    /**
      * Loads specified {@link Project}.
      * 
      * @param project
@@ -79,35 +71,12 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     void loadProject(Project project, boolean freshStart);
 
     /**
-     * Creates a new project.
-     */
-    void createNewProject();
-
-    /**
      * Loads a project from the specified file.
      * 
      * @param fileName
      * @throws Exception
      */
     void loadProjectFromFile(Path path) throws Exception;
-
-    /**
-     * Saves the current project into the specified file.
-     * 
-     * @param fileName
-     * @param isBackup
-     */
-    void saveProjectToFile(Path path, boolean isBackup);
-
-    /**
-     * @return the current file name.
-     */
-    Path getCurrentFile();
-
-    /**
-     * @return true if the current project is modified.
-     */
-    boolean isProjectModified();
 
     /**
      * Shows a user dialog if there are changes to confirm that it's safe to
@@ -145,13 +114,6 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
      *            new zoom leve
      */
     void setZoomLevel(double zoomLevel);
-
-    /**
-     * Returns current version number.
-     * 
-     * @return
-     */
-    VersionNumber getCurrentVersionNumber();
 
     /**
      * Adds a list of components to the project.
@@ -244,16 +206,6 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     void setMetric(boolean isMetric);
 
     /**
-     * Groups all selected components.
-     */
-    void groupSelectedComponents();
-
-    /**
-     * Ungroups all selected components.
-     */
-    void ungroupSelectedComponents();
-
-    /**
      * Locks or unlocks the specified layer. All components within +- 0.5 range
      * will be affected by the change as well.
      * 
@@ -272,16 +224,6 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     // * @return the smallest rectangle that encloses the selection
     // */
     // Rectangle2D getSelectedAreaRect();
-
-    /**
-     * Sends each of the selected components one step back.
-     */
-    void sendSelectionToBack();
-
-    /**
-     * Brings each of the selected components one step to front.
-     */
-    void bringSelectionToFront();
 
     /**
      * Causes the display to refresh.

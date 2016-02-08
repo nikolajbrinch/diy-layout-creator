@@ -19,7 +19,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
+import org.diylc.app.view.View;
 import org.diylc.components.registry.ComparatorFactory;
 import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.components.registry.ComponentType;
@@ -50,8 +52,14 @@ class ComponentTabbedPane extends JTabbedPane {
     
     private List<String> pendingRecentComponents = null;
 
-    public ComponentTabbedPane(IPlugInPort plugInPort) {
+    private Model drawingModel;
+
+    private View drawingView;
+
+    public ComponentTabbedPane(Model model, View view, IPlugInPort plugInPort) {
         super();
+        this.drawingModel = model;
+        this.setDrawingView(view);
         this.plugInPort = plugInPort;
         plugInPort.sendEvent(EventType.SPLASH_UPDATE, "Loading components...");
         Map<String, List<ComponentType>> componentTypes = ComponentRegistry.INSTANCE.getComponentTypes();
@@ -106,11 +114,15 @@ class ComponentTabbedPane extends JTabbedPane {
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.X_AXIS));
         
         for (ComponentType componentType : componentTypes) {
-            Component button = ComponentButtonFactory.create(plugInPort, componentType, createTemplatePopup(componentType));
+            Component button = ComponentButtonFactory.create(getDrawingModel(), getDrawingView(), plugInPort, componentType, createTemplatePopup(componentType));
             toolbar.add(button);
         }
 
         return toolbar;
+    }
+
+    private Model getDrawingModel() {
+        return drawingModel;
     }
 
     private Component createRecentComponentsPanel() {
@@ -144,7 +156,7 @@ class ComponentTabbedPane extends JTabbedPane {
             String componentClassName = (String) iterator.next();
             ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(componentClassName);
             if (componentType != null) {
-                Component button = ComponentButtonFactory.create(plugInPort, componentType, createTemplatePopup(componentType));
+                Component button = ComponentButtonFactory.create(getDrawingModel(), getDrawingView(), plugInPort, componentType, createTemplatePopup(componentType));
                 toolbar.add(button);
             } else {
                 LOG.warn("Could not create recent component button for " + componentClassName);
@@ -187,5 +199,13 @@ class ComponentTabbedPane extends JTabbedPane {
         });
         
         return templatePopup;
+    }
+
+    public View getDrawingView() {
+        return drawingView;
+    }
+
+    public void setDrawingView(View drawingView) {
+        this.drawingView = drawingView;
     }
 }

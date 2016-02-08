@@ -4,7 +4,7 @@ import org.diylc.app.Accelerators;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.controllers.FileController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
@@ -21,7 +21,7 @@ public class FileMenuPlugin extends AbstractMenuPlugin<FileController> {
 
 	private final ApplicationController applicationController;
 
-	public FileMenuPlugin(ApplicationController applicationController, FileController fileController, View view, DrawingModel model) {
+	public FileMenuPlugin(ApplicationController applicationController, FileController fileController, View view, Model model) {
 	    super(fileController, view, model);
         this.applicationController = applicationController;
 	}

@@ -18,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,18 +29,15 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.diylc.app.model.DrawingModel;
-import org.diylc.app.view.IView;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.rendering.DrawingOption;
-import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +50,7 @@ public class TemplateDialog extends JDialog {
 
 	private static final Dimension panelSize = new Dimension(400, 300);
 
-	private DrawingModel model;
+	private Model model;
 
 	private JList<Path> fileList;
 	
@@ -73,53 +69,12 @@ public class TemplateDialog extends JDialog {
 	private JPanel infoPanel;
 	
 
-	public TemplateDialog(JFrame owner, DrawingModel model) {
+	public TemplateDialog(JFrame owner, Model model) {
 		super(owner, "Templates");
 		setModal(true);
 		setResizable(false);
 		this.model = model;
-		this.presenter = new Presenter(new IView() {
-
-			@Override
-			public int showConfirmDialog(String message, String title, int optionType,
-					int messageType) {
-				return JOptionPane.showConfirmDialog(TemplateDialog.this, message, title,
-						optionType, messageType);
-			}
-
-			@Override
-			public void showMessage(String message, String title, int messageType) {
-				JOptionPane.showMessageDialog(TemplateDialog.this, message, title, messageType);
-			}
-			
-			@Override
-			public Path promptFileSave() {
-				return null;
-			}
-			
-			@Override
-			public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
-				return false;
-			}
-		});
-		// this.presenter.installPlugin(new IPlugIn() {
-		//
-		// @Override
-		// public void connect(IPlugInPort plugInPort) {
-		// }
-		//
-		// @Override
-		// public EnumSet<EventType> getSubscribedEventTypes() {
-		// return EnumSet.of(EventType.REPAINT);
-		// }
-		//
-		// @Override
-		// public void processMessage(EventType eventType, Object... params) {
-		// if (eventType == EventType.REPAINT) {
-		// getCanvasPanel().repaint();
-		// }
-		// }
-		// });
+		this.presenter = new Presenter();
 		setContentPane(getMainPanel());
 		pack();
 		setLocationRelativeTo(owner);
@@ -178,8 +133,12 @@ public class TemplateDialog extends JDialog {
 			loadButton.addActionListener(new ActionListener() {
 
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					model.loadProject(presenter.getCurrentProject(), true);
+				public void actionPerformed(ActionEvent event) {
+					try {
+                        model.loadProject(model.getProject(), true);
+                    } catch (Exception e) {
+                        throw new IllegalStateException(e);
+                    }
 					dispose();
 				}
 			});

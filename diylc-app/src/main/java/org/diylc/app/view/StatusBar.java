@@ -26,9 +26,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.diylc.app.update.UpdateLabel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.StringUtils;
+import org.diylc.app.utils.update.UpdateLabel;
 import org.diylc.components.registry.ComponentType;
 import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
@@ -72,8 +73,11 @@ public class StatusBar extends JPanel implements IPlugIn {
     
     private String statusMessage;
 
-    public StatusBar(ISwingUI swingUI) {
+    private final Model model;
+
+    public StatusBar(Model model, ISwingUI swingUI) {
         super();
+        this.model = model;
 
         setLayout(new GridBagLayout());
 
@@ -228,7 +232,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     private UpdateLabel getUpdateLabel() {
         if (updateLabel == null) {
-            updateLabel = new UpdateLabel(plugInPort.getCurrentVersionNumber(), UPDATE_URL, AppIconLoader.LightBulbOn.getIcon(), AppIconLoader.LightBulbOff.getIcon());
+            updateLabel = new UpdateLabel(getModel().getCurrentVersionNumber(), UPDATE_URL, AppIconLoader.LightBulbOn.getIcon(), AppIconLoader.LightBulbOff.getIcon());
             updateLabel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
         }
         return updateLabel;
@@ -298,5 +302,10 @@ public class StatusBar extends JPanel implements IPlugIn {
                 getStatusLabel().setText(finalStatus);
             }
         });
+    }
+
+
+    public Model getModel() {
+        return model;
     }
 }

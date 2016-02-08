@@ -10,7 +10,7 @@ import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 
 import org.diylc.app.Layer;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.core.EventType;
@@ -25,8 +25,8 @@ public class LayersController extends AbstractController {
     
     private final Map<Double, Action> selectAllActionMap = new HashMap<Double, Action>();
 
-    public LayersController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
+    public LayersController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort) {
+        super(applicationController, view, model, controller, plugInPort);
         
         eventReciever.registerListener(EnumSet.of(EventType.LAYER_STATE_CHANGED), new EventListener<EventType>() {
 
@@ -52,7 +52,7 @@ public class LayersController extends AbstractController {
     }
     
     public void selectAll(double zOrder) {
-        getPlugInPort().selectAll(zOrder);
+        getController().selectAll(zOrder);
     }
 
     public void addLockAction(Layer layer, Action lockAction) {

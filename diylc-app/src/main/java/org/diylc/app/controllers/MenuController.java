@@ -1,15 +1,17 @@
 package org.diylc.app.controllers;
 
 import org.diylc.app.Drawing;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 
 public interface MenuController extends Controller {
 
     public IPlugInPort getPlugInPort();
     
-    public DrawingModel getModel();
-    
+    public Model getModel();
+
+    public DrawingController getController();
+
     public ApplicationController getApplicationController();
     
     public Drawing getDrawing();

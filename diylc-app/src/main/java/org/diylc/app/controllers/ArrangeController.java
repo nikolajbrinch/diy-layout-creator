@@ -9,27 +9,27 @@ public interface ArrangeController extends MenuController {
 
     default void sendBackward() {
         LOG.info("Send to Back triggered");
-        getPlugInPort().sendSelectionToBack();
+        getController().sendSelectionToBack();
     }
     
     default void bringForward() {
         LOG.info("Bring to Front triggered");
-        getPlugInPort().bringSelectionToFront();
+        getController().bringSelectionToFront();
     }
 
     default void rotateSelection(int direction) {
         LOG.info("Rotate Selection triggered: " + direction);
-        getPlugInPort().rotateSelection(direction);
+        getController().rotateSelection(direction);
     }
 
     default void group() {
         LOG.info("Group Selection triggered");
-        getPlugInPort().groupSelectedComponents();
+        getController().groupSelectedComponents();
     }
 
     default void ungroup() {
         LOG.info("Ungroup Selection triggered");
-        getPlugInPort().ungroupSelectedComponents();
+        getController().ungroupSelectedComponents();
     }
     
 }

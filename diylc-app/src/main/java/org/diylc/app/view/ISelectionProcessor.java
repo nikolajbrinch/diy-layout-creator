@@ -1,37 +1,8 @@
 package org.diylc.app.view;
 
-import java.awt.Point;
-import java.util.List;
-
 import org.diylc.app.ExpansionMode;
-import org.diylc.core.IDIYComponent;
 
 public interface ISelectionProcessor {
-
-	/**
-	 * Returns the current {@link ComponentTransferable}.
-	 * 
-	 * @return
-	 */
-	List<IDIYComponent> getSelectedComponents();
-
-	/**
-	 * Updates the selection with the specified list of component. Also, updates
-	 * control point map with all components that are stuck to the newly
-	 * selected components.
-	 * 
-	 * @param newSelection
-	 */
-	void updateSelection(List<IDIYComponent> newSelection);
-
-	/**
-	 * Finds all components at the specified location, sorted by z-index from
-	 * top to bottom.
-	 * 
-	 * @param point
-	 * @return
-	 */
-	List<IDIYComponent> findComponentsAt(Point point);
 
 	/**
 	 * Expands the current selection to include surrounding components. Options
@@ -56,4 +27,5 @@ public interface ISelectionProcessor {
 	 *            1 for clockwise, -1 for counter-clockwise
 	 */
 	void rotateSelection(int direction);
+
 }

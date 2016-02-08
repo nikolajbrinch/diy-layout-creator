@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.core.EventType;
@@ -25,8 +25,8 @@ public class CanvasController extends AbstractController implements ArrangeContr
 
     private final Clipboard clipboard;
 
-    public CanvasController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
+    public CanvasController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort) {
+        super(applicationController, view, model, controller, plugInPort);
         this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
         eventReciever.registerListener(EnumSet.of(EventType.PROJECT_LOADED, EventType.ZOOM_CHANGED, EventType.REPAINT),
@@ -78,7 +78,7 @@ public class CanvasController extends AbstractController implements ArrangeContr
     public void selectComponent(IDIYComponent component) {
         List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
         newSelection.add(component);
-        getPlugInPort().updateSelection(newSelection);
+        getView().updateSelection(newSelection);
         getPlugInPort().refresh();
     }
 

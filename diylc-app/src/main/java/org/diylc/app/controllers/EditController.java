@@ -23,13 +23,13 @@ public interface EditController extends MenuController, ClipboardOwner {
 
     default void cut() {
         LOG.info("Cut triggered");
-        getClipboard().setContents(new ComponentTransferable(cloneComponents(getPlugInPort().getSelectedComponents())), this);
+        getClipboard().setContents(new ComponentTransferable(cloneComponents(getView().getSelectedComponents())), this);
         getPlugInPort().deleteSelectedComponents();
     }
 
     default void copy() {
         LOG.info("Copy triggered");
-        getClipboard().setContents(new ComponentTransferable(cloneComponents(getPlugInPort().getSelectedComponents())), this);
+        getClipboard().setContents(new ComponentTransferable(cloneComponents(getView().getSelectedComponents())), this);
     }
 
     @SuppressWarnings("unchecked")
@@ -88,7 +88,7 @@ public interface EditController extends MenuController, ClipboardOwner {
 
     default void expandSelection(ExpansionMode expansionMode) {
         LOG.info("Expand Selection triggered: " + expansionMode);
-        getPlugInPort().expandSelection(expansionMode);
+        getController().expandSelection(expansionMode);
     }
 
     default List<IDIYComponent> cloneComponents(List<IDIYComponent> components) {

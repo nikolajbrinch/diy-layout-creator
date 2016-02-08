@@ -3,6 +3,7 @@ package org.diylc.app.view;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -11,9 +12,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +39,7 @@ import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileFilter;
 
 import org.diylc.app.ComponentTransferable;
 import org.diylc.app.Drawing;
@@ -52,7 +57,9 @@ import org.diylc.app.controllers.LayersController;
 import org.diylc.app.controllers.ToolsController;
 import org.diylc.app.controllers.ViewController;
 import org.diylc.app.controllers.WindowController;
+import org.diylc.app.io.ProjectFileManager;
 import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.canvas.Canvas;
 import org.diylc.app.view.canvas.CanvasPlugin;
@@ -70,12 +77,20 @@ import org.diylc.app.view.menus.ToolsMenuPlugin;
 import org.diylc.app.view.menus.ViewMenuPlugin;
 import org.diylc.app.view.menus.WindowMenuPlugin;
 import org.diylc.app.view.properties.PropertyPlugin;
+import org.diylc.app.view.rendering.DrawingManager;
+import org.diylc.app.view.rendering.DrawingOption;
+import org.diylc.app.view.rendering.RenderingConstants;
 import org.diylc.app.view.toolbox.ToolBox;
+import org.diylc.components.IComponentFilter;
+import org.diylc.components.registry.ComponentRegistry;
+import org.diylc.components.registry.ComponentType;
 import org.diylc.core.EventType;
+import org.diylc.core.IDIYComponent;
 import org.diylc.core.LRU;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.WindowBounds;
+import org.diylc.core.platform.IFileChooserAccessory;
 import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,11 +101,13 @@ public class DrawingView extends JFrame implements ISwingUI, View {
 
     private static final long serialVersionUID = 1L;
 
+    public static final List<IDIYComponent> EMPTY_SELECTION = Collections.emptyList();
+
     private final ApplicationController applicationController;
 
     private DrawingController drawingController;
 
-    private DrawingModel model;
+    private Model model;
 
     private final Presenter presenter;
 
@@ -116,10 +133,13 @@ public class DrawingView extends JFrame implements ISwingUI, View {
 
     private Drawing drawing;
 
-    public DrawingView(ApplicationController applicationController, Drawing drawing) {
+    private List<IDIYComponent> selectedComponents = new ArrayList<IDIYComponent>();
+
+    public DrawingView(ApplicationController applicationController, Drawing drawing, DrawingModel model) {
         super("DIY Layout Creator");
         this.applicationController = applicationController;
         this.drawing = drawing;
+        this.model = model;
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -130,12 +150,11 @@ public class DrawingView extends JFrame implements ISwingUI, View {
                 AppIconLoader.IconLarge.getImage()));
         DialogFactory.getInstance().initialize(this);
 
-        this.presenter = new Presenter(this);
-        this.model = new DrawingModel(presenter);
+        this.presenter = new Presenter();
+        presenter.setView(this);
+        presenter.setModel(model);
 
         installPlugins();
-        presenter.configure();
-        presenter.createNewProject();
 
         addWindowListener(new WindowAdapter() {
 
@@ -172,25 +191,25 @@ public class DrawingView extends JFrame implements ISwingUI, View {
     }
 
     private void installPlugins() {
-        presenter.installPlugin(new ToolBox(this));
-        presenter.installPlugin(new FileMenuPlugin(getApplication(), new FileController(getApplication(), this, getModel(), presenter,
+        presenter.installPlugin(new ToolBox(getModel(), this, this));
+        presenter.installPlugin(new FileMenuPlugin(getApplication(), new FileController(getApplication(), this, getModel(), getController(), presenter,
                 new ProjectDrawingProvider(presenter, false, true)), this, getModel()));
         presenter
-                .installPlugin(new EditMenuPlugin(new EditMenuController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new ViewMenuPlugin(new ViewController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new ArrangeMenuPlugin(new ArrangeMenuController(getApplication(), this, getModel(), presenter), this,
+                .installPlugin(new EditMenuPlugin(new EditMenuController(getApplication(), this, getModel(), getController(), presenter), this, getModel()));
+        presenter.installPlugin(new ViewMenuPlugin(new ViewController(getApplication(), this, getModel(), getController(), presenter), this, getModel()));
+        presenter.installPlugin(new ArrangeMenuPlugin(new ArrangeMenuController(getApplication(), this, getModel(), getController(), presenter), this,
                 getModel()));
         presenter
-                .installPlugin(new ConfigMenuPlugin(new ConfigController(getApplication(), this, getModel(), presenter), this, getModel()));
+                .installPlugin(new ConfigMenuPlugin(new ConfigController(getApplication(), this, getModel(), getController(), presenter), this, getModel()));
         presenter
-                .installPlugin(new LayersMenuPlugin(new LayersController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new ToolsMenuPlugin(new ToolsController(getApplication(), this, getModel(), presenter,
-                new TraceMaskDrawingProvider(presenter)), this, getModel()));
+                .installPlugin(new LayersMenuPlugin(new LayersController(getApplication(), this, getModel(), getController(), presenter), this, getModel()));
+        presenter.installPlugin(new ToolsMenuPlugin(new ToolsController(getApplication(), this, getModel(), getController(), presenter,
+                new TraceMaskDrawingProvider(this, getModel())), this, getModel()));
         presenter
-                .installPlugin(new WindowMenuPlugin(new WindowController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new HelpMenuPlugin(new HelpController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new StatusBar(this));
-        canvasPlugin = new CanvasPlugin(new CanvasController(getApplication(), this, getModel(), presenter), this, getModel());
+                .installPlugin(new WindowMenuPlugin(new WindowController(getApplication(), this, getModel(), getController(), presenter), this, getModel()));
+        presenter.installPlugin(new HelpMenuPlugin(new HelpController(getApplication(), this, getModel(), getController(), presenter), this, getModel()));
+        presenter.installPlugin(new StatusBar(getModel(), this));
+        canvasPlugin = new CanvasPlugin(new CanvasController(getApplication(), this, getModel(), getController(), presenter), this, getModel());
         presenter.installPlugin(canvasPlugin);
         propertyPlugin = new PropertyPlugin(this);
         presenter.installPlugin(propertyPlugin);
@@ -352,8 +371,8 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         if (action == null) {
             menu.addSeparator();
         } else {
-            Boolean isCheckBox = (Boolean) action.getValue(IView.CHECK_BOX_MENU_ITEM);
-            String groupName = (String) action.getValue(IView.RADIO_BUTTON_GROUP_KEY);
+            Boolean isCheckBox = (Boolean) action.getValue(View.CHECK_BOX_MENU_ITEM);
+            String groupName = (String) action.getValue(View.RADIO_BUTTON_GROUP_KEY);
             if (isCheckBox != null && isCheckBox) {
                 menu.add(new JCheckBoxMenuItem(action));
             } else if (groupName != null) {
@@ -440,11 +459,8 @@ public class DrawingView extends JFrame implements ISwingUI, View {
 
     class FramePlugin implements IPlugIn {
 
-        private IPlugInPort plugInPort;
-
         @Override
         public void connect(IPlugInPort plugInPort) {
-            this.plugInPort = plugInPort;
         }
 
         @Override
@@ -461,7 +477,7 @@ public class DrawingView extends JFrame implements ISwingUI, View {
                 }
                 if (!SystemUtils.isMac()) {
                     String modified = (Boolean) params[1] ? " (modified)" : "";
-                    setTitle(String.format("DIYLC %s - %s %s", plugInPort.getCurrentVersionNumber(), path.getFileName().toString(),
+                    setTitle(String.format("DIYLC %s - %s %s", getModel().getCurrentVersionNumber(), path.getFileName().toString(),
                             modified));
                 } else {
                     setTitle(path.getFileName().toString());
@@ -484,7 +500,7 @@ public class DrawingView extends JFrame implements ISwingUI, View {
 
     @Override
     public void refreshActions() {
-        boolean enabled = !getModel().getSelectedComponents().isEmpty();
+        boolean enabled = !getSelectedComponents().isEmpty();
         enableMenuAction(MenuConstants.ARRANGE_MENU, "Group Selection", enabled);
         enableMenuAction(MenuConstants.ARRANGE_MENU, "Ungroup Selection", enabled);
         enableMenuAction(MenuConstants.ARRANGE_MENU, "Send Backward", enabled);
@@ -508,6 +524,11 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         enableMenuAction(MenuConstants.EDIT_RENUMBER_MENU, "Save as Template", enabled);
     }
 
+    @Override
+    public List<IDIYComponent> getSelectedComponents() {
+        return selectedComponents;
+    }
+
     private void enableMenuAction(String menuName, String actionName, boolean enabled) {
         Action action = findMenuAction(menuName, actionName);
 
@@ -516,11 +537,11 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         }
     }
 
-    public DrawingModel getModel() {
+    public Model getModel() {
         return model;
     }
 
-    public void setModel(DrawingModel model) {
+    public void setModel(Model model) {
         this.model = model;
     }
 
@@ -596,6 +617,145 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         }
 
         return displayName;
+    }
+
+    @Override
+    public Path showOpenDialog(FileFilter fileFilter, Path lastPath, Path initialFile, String defaultExtension,
+            IFileChooserAccessory accessory) {
+        return DialogFactory.getInstance().showOpenDialog(fileFilter, lastPath, initialFile, defaultExtension, accessory);
+    }
+
+    @Override
+    public Path showSaveDialog(FileFilter fileFilter, Path lastPath, Path initialFile, String defaultExtension,
+            IFileChooserAccessory accessory) {
+        return DialogFactory.getInstance().showSaveDialog(fileFilter, lastPath, initialFile, defaultExtension, accessory);
+    }
+
+    @Override
+    public Dimension getCanvasDimensions(boolean useZoom) {
+        return presenter.getCanvasDimensions(useZoom);
+    }
+
+    @Override
+    public void draw(Graphics2D graphics, EnumSet<DrawingOption> drawingOptions, IComponentFilter componentFilter) {
+        presenter.draw(graphics, drawingOptions, componentFilter);
+    }
+
+
+    @Override
+    public void setSelectedComponents(List<IDIYComponent> selection) {
+        this.selectedComponents = selection;
+    }
+
+    /**
+     * Scales point from display base to actual base.
+     *
+     * @param point
+     * @return
+     */
+    public Point scalePoint(Point point) {
+        return presenter.scalePoint(point);
+    }
+
+    @Override
+    public void clearSelection() {
+        updateSelection(EMPTY_SELECTION);
+    }
+
+    @Override
+    public void updateSelection(List<IDIYComponent> newSelection) {
+        setSelectedComponents(newSelection);
+        Map<IDIYComponent, Set<Integer>> controlPointMap = new HashMap<IDIYComponent, Set<Integer>>();
+        for (IDIYComponent component : getSelectedComponents()) {
+            Set<Integer> indices = new HashSet<Integer>();
+            for (int i = 0; i < component.getControlPointCount(); i++) {
+                indices.add(i);
+            }
+            controlPointMap.put(component, indices);
+        }
+        if (Configuration.INSTANCE.getStickyPoints()) {
+            includeStuckComponents(controlPointMap);
+        }
+        getController().sendEvent(EventType.SELECTION_CHANGED, getSelectedComponents(), controlPointMap.keySet());
+    }
+
+    public DrawingManager getDrawingManager() {
+        return presenter.getDrawingManager();
+    }
+
+    /**
+     * Finds any components that are stuck to one of the components already in
+     * the map.
+     *
+     * @param controlPointMap
+     */
+    public void includeStuckComponents(Map<IDIYComponent, Set<Integer>> controlPointMap) {
+        int oldSize = controlPointMap.size();
+        LOG.trace("Expanding selected component map");
+        for (IDIYComponent component : getModel().getProject().getComponents()) {
+            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
+
+            // Check if there's a control point in the current selection
+            // that matches with one of its control points.
+            for (int i = 0; i < component.getControlPointCount(); i++) {
+                // Do not process a control point if it's already in the map and
+                // if it's locked.
+                if ((!controlPointMap.containsKey(component) || !controlPointMap.get(component).contains(i))
+                        && !getModel().isComponentLocked(component)) {
+                    if (component.isControlPointSticky(i)) {
+                        boolean componentMatches = false;
+                        for (Map.Entry<IDIYComponent, Set<Integer>> entry : controlPointMap.entrySet()) {
+                            if (componentMatches) {
+                                break;
+                            }
+                            for (Integer j : entry.getValue()) {
+                                Point firstPoint = component.getControlPoint(i);
+                                if (entry.getKey().isControlPointSticky(j)) {
+                                    Point secondPoint = entry.getKey().getControlPoint(j);
+                                    // If they are close enough we can consider
+                                    // them matched.
+                                    if (firstPoint.distance(secondPoint) < RenderingConstants.CONTROL_POINT_SIZE) {
+                                        componentMatches = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (componentMatches) {
+                            LOG.trace("Including component: " + component);
+                            Set<Integer> indices = new HashSet<Integer>();
+                            // For stretchable components just add the
+                            // matching component. Otherwise, add all control
+                            // points.
+                            if (componentType.isStretchable()) {
+                                indices.add(i);
+                            } else {
+                                for (int k = 0; k < component.getControlPointCount(); k++) {
+                                    indices.add(k);
+                                }
+                            }
+                            if (controlPointMap.containsKey(component)) {
+                                controlPointMap.get(component).addAll(indices);
+                            } else {
+                                controlPointMap.put(component, indices);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        int newSize = controlPointMap.size();
+        // As long as we're adding new components, do another iteration.
+        if (newSize > oldSize) {
+            LOG.trace("Component count changed, trying one more time.");
+            includeStuckComponents(controlPointMap);
+        } else {
+            LOG.trace("Component count didn't change, done with expanding.");
+        }
+    }
+
+    public ProjectFileManager getProjectFileManager() {
+        return presenter.getProjectFileManager();
     }
 
 }

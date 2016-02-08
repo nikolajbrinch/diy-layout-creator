@@ -6,7 +6,7 @@ import java.util.EnumSet;
 
 import org.diylc.app.IUndoListener;
 import org.diylc.app.UndoHandler;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.core.EventType;
@@ -20,8 +20,8 @@ public class EditMenuController extends AbstractController implements EditContro
 
     private final UndoHandler<Project> undoHandler;
 
-    public EditMenuController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
+    public EditMenuController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort) {
+        super(applicationController, view, model, controller, plugInPort);
 
         this.undoHandler = new UndoHandler<Project>(new IUndoListener<Project>() {
 
@@ -52,7 +52,7 @@ public class EditMenuController extends AbstractController implements EditContro
     
     public void selectAll() {
         LOG.info("Select All triggered");
-        getPlugInPort().selectAll(0);
+        getController().selectAll(0);
     }
 
     public void renumber(boolean xAxisFirst) {

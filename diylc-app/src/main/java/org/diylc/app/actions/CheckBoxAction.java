@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 
-import org.diylc.app.view.IView;
+import org.diylc.app.view.View;
 
 public class CheckBoxAction extends GenericAction {
 
@@ -17,7 +17,7 @@ public class CheckBoxAction extends GenericAction {
 
     public CheckBoxAction(String name, KeyStroke accelerator, Object value, ActionListener actionListener) {
         super(name, null, accelerator, actionListener);
-        putValue(IView.CHECK_BOX_MENU_ITEM, true);
+        putValue(View.CHECK_BOX_MENU_ITEM, true);
         putValue(AbstractAction.SELECTED_KEY, value);
     }
 

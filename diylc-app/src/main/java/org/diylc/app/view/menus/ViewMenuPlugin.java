@@ -8,7 +8,7 @@ import org.diylc.app.Accelerators;
 import org.diylc.app.actions.CheckBoxAction;
 import org.diylc.app.actions.RadioButtonAction;
 import org.diylc.app.controllers.ViewController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
@@ -27,7 +27,7 @@ public class ViewMenuPlugin extends AbstractMenuPlugin<ViewController> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewMenuPlugin.class);
 
-    public ViewMenuPlugin(ViewController viewController, View view, DrawingModel model) {
+    public ViewMenuPlugin(ViewController viewController, View view, Model model) {
         super(viewController, view, model);
     }
 

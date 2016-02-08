@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.DnDConstants;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.io.BufferedInputStream;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,9 +25,10 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.diylc.app.ExpansionMode;
 import org.diylc.app.io.ProjectFileManager;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.CalcUtils;
+import org.diylc.app.utils.ModelUtils;
 import org.diylc.app.utils.StringUtils;
 import org.diylc.app.view.rendering.DrawingContext;
 import org.diylc.app.view.rendering.DrawingManager;
@@ -45,8 +44,6 @@ import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.components.registry.ComponentType;
 import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
-import org.diylc.core.Orientation;
-import org.diylc.core.OrientationHV;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.Template;
@@ -73,6 +70,10 @@ public class Presenter implements IPlugInPort {
 
     public static VersionNumber CURRENT_VERSION = new VersionNumber(4, 0, 0);
 
+    public static final String DEFAULTS_KEY_PREFIX = "default.";
+
+    public static final int ICON_SIZE = 32;
+
     /*
      * Read the latest version from the local update.xml file
      */
@@ -89,20 +90,10 @@ public class Presenter implements IPlugInPort {
         }
     }
 
-    public static final String DEFAULTS_KEY_PREFIX = "default.";
-
-    public static final List<IDIYComponent> EMPTY_SELECTION = Collections.emptyList();
-
-    public static final int ICON_SIZE = 32;
-
-    private Project currentProject;
-
     /*
      * Maps component class names to ComponentType objects.
      */
-    private List<IPlugIn> plugIns;
-
-    private List<IDIYComponent> selectedComponents;
+    private List<IPlugIn> plugIns = new ArrayList<IPlugIn>();
 
     /*
      * Maps components that have at least one dragged point to set of indices
@@ -110,20 +101,22 @@ public class Presenter implements IPlugInPort {
      */
     private Map<IDIYComponent, Set<Integer>> controlPointMap;
 
+    private Model model;
+
     /*
      * Utilities
      */
-    private DrawingManager drawingManager;
+    private final DrawingManager drawingManager;
 
-    private ProjectFileManager projectFileManager;
+    private final ProjectFileManager projectFileManager;
 
-    private InstantiationManager instantiationManager;
+    private final InstantiationManager instantiationManager;
 
     private Rectangle selectionRect;
 
-    private final IView view;
+    private View view;
 
-    private MessageDispatcher<EventType> messageDispatcher;
+    private final MessageDispatcher<EventType> messageDispatcher;
 
     // D&D
     private boolean dragInProgress = false;
@@ -139,41 +132,26 @@ public class Presenter implements IPlugInPort {
 
     private Point previousScaledPoint;
 
-    public Presenter(IView view) {
-        super();
-        this.view = view;
-        plugIns = new ArrayList<IPlugIn>();
+    public Presenter() {
         messageDispatcher = new MessageDispatcher<EventType>(true);
-        selectedComponents = new ArrayList<IDIYComponent>();
-        currentProject = new Project();
-        // cloner = new Cloner();
-        drawingManager = new DrawingManager(messageDispatcher);
-        projectFileManager = new ProjectFileManager(messageDispatcher);
+        drawingManager = new DrawingManager(getMessageDispatcher());
+        projectFileManager = new ProjectFileManager(getMessageDispatcher());
         instantiationManager = new InstantiationManager();
-
-        // lockedLayers = EnumSet.noneOf(ComponentLayer.class);
-        // visibleLayers = EnumSet.allOf(ComponentLayer.class);
-    }
-
-    public void configure() {
-
     }
 
     public void installPlugin(IPlugIn plugIn) {
         LOG.trace(String.format("installPlugin(%s)", plugIn.getClass().getSimpleName()));
         plugIns.add(plugIn);
         plugIn.connect(this);
-        messageDispatcher.registerListener(plugIn);
-        messageDispatcher.dispatchMessage(EventType.SPLASH_UPDATE, "Installing plugin " + plugIn.getClass().getName());
+        getMessageDispatcher().registerListener(plugIn);
+        getMessageDispatcher().dispatchMessage(EventType.SPLASH_UPDATE, "Installing plugin " + plugIn.getClass().getName());
     }
 
     public void dispose() {
         for (IPlugIn plugIn : plugIns) {
-            messageDispatcher.unregisterListener(plugIn);
+            getMessageDispatcher().unregisterListener(plugIn);
         }
     }
-
-    // IPlugInPort
 
     @Override
     public Double[] getAvailableZoomLevels() {
@@ -182,16 +160,16 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public double getZoomLevel() {
-        return drawingManager.getZoomLevel();
+        return getDrawingManager().getZoomLevel();
     }
 
     @Override
     public void setZoomLevel(double zoomLevel) {
         LOG.trace(String.format("setZoomLevel(%s)", zoomLevel));
-        if (drawingManager.getZoomLevel() == zoomLevel) {
+        if (getDrawingManager().getZoomLevel() == zoomLevel) {
             return;
         }
-        drawingManager.setZoomLevel(zoomLevel);
+        getDrawingManager().setZoomLevel(zoomLevel);
     }
 
     @Override
@@ -207,9 +185,9 @@ public class Presenter implements IPlugInPort {
             if (controlPointMap != null && !controlPointMap.isEmpty()) {
                 return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
             }
-            for (IDIYComponent component : currentProject.getComponents()) {
-                if (!isComponentLocked(component)) {
-                    Area area = drawingManager.getComponentArea(component);
+            for (IDIYComponent component : getModel().getProject().getComponents()) {
+                if (!getModel().isComponentLocked(component)) {
+                    Area area = getDrawingManager().getComponentArea(component);
                     if (area != null && area.contains(scaledPoint)) {
                         return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
                     }
@@ -222,47 +200,27 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public Dimension getCanvasDimensions(boolean useZoom) {
-        return drawingManager.calculateCanvasDimensions(currentProject, drawingManager.getZoomLevel(), useZoom);
-    }
-
-    @Override
-    public Project getCurrentProject() {
-        return currentProject;
+        return getDrawingManager().calculateCanvasDimensions(getModel().getProject(), getDrawingManager().getZoomLevel(), useZoom);
     }
 
     @Override
     public void loadProject(Project project, boolean freshStart) {
         LOG.trace(String.format("loadProject(%s, %s)", project.getTitle(), freshStart));
-        this.currentProject = project;
-        drawingManager.clearComponentAreaMap();
-        updateSelection(EMPTY_SELECTION);
-        messageDispatcher.dispatchMessage(EventType.PROJECT_LOADED, project, freshStart);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        messageDispatcher.dispatchMessage(EventType.LAYER_STATE_CHANGED, currentProject.getLockedLayers());
-    }
-
-    @Override
-    public void createNewProject() {
-        LOG.trace("createNewFile()");
-        try {
-            Project project = new Project();
-            instantiationManager.fillWithDefaultProperties(project, null);
-            loadProject(project, true);
-            projectFileManager.startNewFile();
-        } catch (Exception e) {
-            LOG.error("Could not create new file", e);
-            view.showMessage("Could not create a new file. Check the log for details.", "Error", IView.ERROR_MESSAGE);
-        }
+        getModel().setProject(project);
+        getDrawingManager().clearComponentAreaMap();
+        getView().clearSelection();
+        getMessageDispatcher().dispatchMessage(EventType.PROJECT_LOADED, project, freshStart);
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.LAYER_STATE_CHANGED, getModel().getProject().getLockedLayers());
     }
 
     @Override
     public void loadProjectFromFile(Path path) throws Exception {
         LOG.trace(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
-        // try {
         List<String> warnings = new ArrayList<String>();
-        Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
+        Project project = (Project) getProjectFileManager().deserializeProjectFromFile(path, warnings);
         loadProject(project, true);
-        projectFileManager.fireFileStatusChanged();
+        getProjectFileManager().fireFileStatusChanged();
         if (!warnings.isEmpty()) {
             StringBuilder builder = new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
             for (String warning : warnings) {
@@ -270,38 +228,32 @@ public class Presenter implements IPlugInPort {
                 builder.append("<br>");
             }
             builder.append("</html");
-            view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
+            getView().showMessage(builder.toString(), "Warning", View.WARNING_MESSAGE);
         }
-        // } catch (Exception ex) {
-        // LOG.error("Could not load file", ex);
-        // view.showMessage("Could not open file " + file.getAbsolutePath() +
-        // ". Check the log for details.", "Error", IView.ERROR_MESSAGE);
-        // throw new RuntimeException(ex);
-        // }
     }
 
     @Override
     public boolean allowFileAction() {
         boolean response = true;
-        
-        if (projectFileManager.isModified()) {
-            int dialogResponse = view.showConfirmDialog("There are unsaved changes. Would you like to save them?", "Warning",
-                    IView.YES_NO_CANCEL_OPTION, IView.WARNING_MESSAGE);
 
-            if (dialogResponse == IView.YES_OPTION) {
-                if (this.getCurrentFile() == null) {
-                    Path path = view.promptFileSave();
-                    
+        if (getProjectFileManager().isModified()) {
+            int dialogResponse = getView().showConfirmDialog("There are unsaved changes. Would you like to save them?", "Warning",
+                    View.YES_NO_CANCEL_OPTION, View.WARNING_MESSAGE);
+
+            if (dialogResponse == View.YES_OPTION) {
+                if (getModel().getCurrentFile() == null) {
+                    Path path = getView().promptFileSave();
+
                     if (path == null) {
                         response = false;
                     } else {
-                        saveProjectToFile(path, false);
+                        getModel().saveProjectToFile(path, false);
                     }
                 } else {
-                    saveProjectToFile(this.getCurrentFile(), false);
+                    getModel().saveProjectToFile(getModel().getCurrentFile(), false);
                 }
             } else {
-                response = dialogResponse != IView.CANCEL_OPTION && dialogResponse != IView.CLOSED_OPTION;
+                response = dialogResponse != View.CANCEL_OPTION && dialogResponse != View.CLOSED_OPTION;
             }
         }
 
@@ -309,41 +261,13 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void saveProjectToFile(Path path, boolean isBackup) {
-        LOG.trace(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
-        try {
-            currentProject.setFileVersion(CURRENT_VERSION);
-            projectFileManager.serializeProjectToFile(currentProject, path, isBackup);
-            if (!isBackup) {
-                Configuration.INSTANCE.setLastPath(path.getParent());
-            }
-        } catch (Exception ex) {
-            LOG.error("Could not save file", ex);
-            if (!isBackup) {
-                view.showMessage("Could not save file " + path.toAbsolutePath() + ". Check the log for details.", "Error",
-                        IView.ERROR_MESSAGE);
-            }
-        }
-    }
-
-    @Override
-    public Path getCurrentFile() {
-        return projectFileManager.getCurrentFile();
-    }
-
-    @Override
-    public boolean isProjectModified() {
-        return projectFileManager.isModified();
-    }
-
-    @Override
     public void draw(Graphics2D g2d, Set<DrawingOption> drawOptions, IComponentFilter filter) {
-        if (currentProject == null) {
+        if (getModel().getProject() == null) {
             return;
         }
         Set<IDIYComponent> groupedComponents = new HashSet<IDIYComponent>();
 
-        for (IDIYComponent component : currentProject.getComponents()) {
+        for (IDIYComponent component : getModel().getProject().getComponents()) {
             /*
              * Only try to draw control points of ungrouped components.
              */
@@ -366,12 +290,13 @@ public class Presenter implements IPlugInPort {
 
         List<IDIYComponent> failedComponents = new ArrayList<IDIYComponent>();
 
-        if (currentProject != null) {
-            DrawingContext drawingContext = new DrawingContext(g2d, currentProject, drawOptions, filter, selectionRect, selectedComponents,
-                    getLockedComponents(), groupedComponents, Arrays.asList(instantiationManager.getFirstControlPoint(),
-                            instantiationManager.getPotentialControlPoint()), componentSlotToDraw, dragInProgress);
+        if (getModel().getProject() != null) {
+            DrawingContext drawingContext = new DrawingContext(g2d, getModel().getProject(), drawOptions, filter, selectionRect, getView()
+                    .getSelectedComponents(), getModel().getLockedComponents(), groupedComponents, Arrays.asList(
+                    instantiationManager.getFirstControlPoint(), instantiationManager.getPotentialControlPoint()), componentSlotToDraw,
+                    dragInProgress);
 
-            failedComponents = drawingManager.drawProject(drawingContext);
+            failedComponents = getDrawingManager().drawProject(drawingContext);
         }
 
         List<String> failedComponentNames = new ArrayList<String>();
@@ -383,10 +308,12 @@ public class Presenter implements IPlugInPort {
         Collections.sort(failedComponentNames);
 
         if (!failedComponentNames.isEmpty()) {
-            messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED, "<html><font color='red'>Failed to draw components: "
-                    + StringUtils.toCommaString(failedComponentNames) + "</font></html>");
+            getMessageDispatcher().dispatchMessage(
+                    EventType.STATUS_MESSAGE_CHANGED,
+                    "<html><font color='red'>Failed to draw components: " + StringUtils.toCommaString(failedComponentNames)
+                            + "</font></html>");
         } else {
-            messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED, "");
+            getMessageDispatcher().dispatchMessage(EventType.STATUS_MESSAGE_CHANGED, "");
         }
     }
 
@@ -398,22 +325,14 @@ public class Presenter implements IPlugInPort {
      * @return
      */
     private List<IDIYComponent> findComponentsAtScaled(Point point) {
-        List<IDIYComponent> components = drawingManager.findComponentsAt(point, currentProject);
+        List<IDIYComponent> components = getDrawingManager().findComponentsAt(point, getModel().getProject());
         Iterator<IDIYComponent> iterator = components.iterator();
 
         while (iterator.hasNext()) {
-            if (isComponentLocked(iterator.next())) {
+            if (getModel().isComponentLocked(iterator.next())) {
                 iterator.remove();
             }
         }
-
-        return components;
-    }
-
-    @Override
-    public List<IDIYComponent> findComponentsAt(Point point) {
-        Point scaledPoint = scalePoint(point);
-        List<IDIYComponent> components = findComponentsAtScaled(scaledPoint);
 
         return components;
     }
@@ -433,7 +352,7 @@ public class Presenter implements IPlugInPort {
                  */
                 if (button != MouseButton.LEFT) {
                     instantiationManager.tryToRotateComponentSlot();
-                    messageDispatcher.dispatchMessage(EventType.REPAINT);
+                    getMessageDispatcher().dispatchMessage(EventType.REPAINT);
                     return;
                 }
 
@@ -442,13 +361,13 @@ public class Presenter implements IPlugInPort {
                  */
                 ComponentType componentTypeSlot = instantiationManager.getComponentTypeSlot();
                 Template template = instantiationManager.getTemplate();
-                Project oldProject = currentProject.clone();
+                Project oldProject = getModel().getProject().clone();
 
                 switch (componentTypeSlot.getCreationMethod()) {
                 case SINGLE_CLICK:
                     try {
                         if (isSnapToGrid()) {
-                            CalcUtils.snapPointToGrid(scaledPoint, currentProject.getGridSpacing());
+                            CalcUtils.snapPointToGrid(scaledPoint, getModel().getProject().getGridSpacing());
                         }
 
                         List<IDIYComponent> componentSlot = instantiationManager.getComponentSlot();
@@ -462,8 +381,8 @@ public class Presenter implements IPlugInPort {
                         /*
                          * Select the new component
                          */
-                        messageDispatcher.dispatchMessage(EventType.REPAINT);
-                        updateSelection(newSelection);
+                        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
+                        getView().updateSelection(newSelection);
                     } catch (Exception e) {
                         LOG.error("Error instatiating component of type: " + componentTypeSlot.getInstanceClass().getName(), e);
                     }
@@ -483,18 +402,18 @@ public class Presenter implements IPlugInPort {
                      * componentSlot.
                      */
                     if (isSnapToGrid()) {
-                        CalcUtils.snapPointToGrid(scaledPoint, currentProject.getGridSpacing());
+                        CalcUtils.snapPointToGrid(scaledPoint, getModel().getProject().getGridSpacing());
                     }
                     if (instantiationManager.getComponentSlot() == null) {
                         try {
-                            instantiationManager.instatiatePointByPoint(scaledPoint, currentProject);
+                            instantiationManager.instatiatePointByPoint(scaledPoint, getModel().getProject());
                         } catch (Exception e) {
-                            view.showMessage("Could not create component. Check log for details.", "Error", IView.ERROR_MESSAGE);
+                            getView().showMessage("Could not create component. Check log for details.", "Error", View.ERROR_MESSAGE);
                             LOG.error("Could not create component", e);
                         }
-                        messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, componentTypeSlot,
+                        getMessageDispatcher().dispatchMessage(EventType.SLOT_CHANGED, componentTypeSlot,
                                 instantiationManager.getFirstControlPoint());
-                        messageDispatcher.dispatchMessage(EventType.REPAINT);
+                        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
                     } else {
                         /*
                          * On the second click, add the component to the
@@ -509,13 +428,13 @@ public class Presenter implements IPlugInPort {
                             /*
                              * Select the new component if it's not locked.
                              */
-                            if (!isComponentLocked(component)) {
+                            if (!getModel().isComponentLocked(component)) {
                                 newSelection.add(component);
                             }
                         }
 
-                        updateSelection(newSelection);
-                        messageDispatcher.dispatchMessage(EventType.REPAINT);
+                        getView().updateSelection(newSelection);
+                        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
 
                         if (componentTypeSlot.isAutoEdit() && Configuration.INSTANCE.getAutoEdit()) {
                             editSelection();
@@ -534,13 +453,13 @@ public class Presenter implements IPlugInPort {
                 /*
                  * Notify the listeners.
                  */
-                if (!oldProject.equals(currentProject)) {
-                    messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Add "
-                            + componentTypeSlot.getName());
-                    projectFileManager.notifyFileChange();
+                if (!oldProject.equals(getModel().getProject())) {
+                    getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(),
+                            "Add " + componentTypeSlot.getName());
+                    getProjectFileManager().notifyFileChange();
                 }
             } else {
-                List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(selectedComponents);
+                List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(getView().getSelectedComponents());
                 List<IDIYComponent> components = findComponentsAtScaled(scaledPoint);
 
                 /*
@@ -573,9 +492,9 @@ public class Presenter implements IPlugInPort {
                     }
                 }
 
-                updateSelection(newSelection);
+                getView().updateSelection(newSelection);
 
-                messageDispatcher.dispatchMessage(EventType.REPAINT);
+                getMessageDispatcher().dispatchMessage(EventType.REPAINT);
             }
         }
     }
@@ -594,7 +513,7 @@ public class Presenter implements IPlugInPort {
          * components with all their control points. That will allow the user to
          * drag the whole components.
          */
-        for (IDIYComponent c : selectedComponents) {
+        for (IDIYComponent c : getView().getSelectedComponents()) {
             Set<Integer> pointIndices = new HashSet<Integer>();
             if (c.getControlPointCount() > 0) {
                 for (int i = 0; i < c.getControlPointCount(); i++) {
@@ -617,17 +536,18 @@ public class Presenter implements IPlugInPort {
             Project oldProject = null;
 
             if (key == IKeyProcessor.VK_RIGHT) {
-                oldProject = currentProject.clone();
-                rotateComponents(this.selectedComponents, 1, snapToGrid);
+                oldProject = getModel().getProject().clone();
+                getView().getController().rotateSelection(1);
             } else if (key == IKeyProcessor.VK_LEFT) {
-                oldProject = currentProject.clone();
-                rotateComponents(this.selectedComponents, -1, snapToGrid);
+                oldProject = getModel().getProject().clone();
+                getView().getController().rotateSelection(-1);
             } else {
                 return false;
             }
 
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Rotate Selection");
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(),
+                    "Rotate Selection");
+            getMessageDispatcher().dispatchMessage(EventType.REPAINT);
 
             return true;
         }
@@ -642,13 +562,13 @@ public class Presenter implements IPlugInPort {
         }
 
         if (sticky) {
-            includeStuckComponents(controlPointMap);
+            getView().includeStuckComponents(controlPointMap);
         }
 
         int d;
 
         if (snapToGrid) {
-            d = (int) currentProject.getGridSpacing().convertToPixels();
+            d = (int) getModel().getProject().getGridSpacing().convertToPixels();
         } else {
             d = 1;
         }
@@ -672,10 +592,10 @@ public class Presenter implements IPlugInPort {
             return false;
         }
 
-        Project oldProject = currentProject.clone();
+        Project oldProject = getModel().getProject().clone();
         moveComponents(controlPointMap, dx, dy, snapToGrid);
-        messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Move Selection");
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(), "Move Selection");
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
 
         return true;
     }
@@ -686,13 +606,13 @@ public class Presenter implements IPlugInPort {
 
         if (properties != null && !properties.isEmpty()) {
             Set<PropertyWrapper> defaultedProperties = new HashSet<PropertyWrapper>();
-            boolean edited = view.editProperties(properties, defaultedProperties);
+            boolean edited = getView().editProperties(properties, defaultedProperties);
 
             if (edited) {
                 try {
                     applyPropertiesToSelection(properties);
                 } catch (Exception e1) {
-                    view.showMessage("Error occured while editing selection. Check the log for details.", "Error",
+                    getView().showMessage("Error occured while editing selection. Check the log for details.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     LOG.error("Error applying properties", e1);
                 }
@@ -722,7 +642,7 @@ public class Presenter implements IPlugInPort {
         this.previousScaledPoint = scalePoint(point);
         if (instantiationManager.getComponentTypeSlot() != null) {
             if (isSnapToGrid()) {
-                CalcUtils.snapPointToGrid(previousScaledPoint, currentProject.getGridSpacing());
+                CalcUtils.snapPointToGrid(previousScaledPoint, getModel().getProject().getGridSpacing());
             }
             boolean refresh = false;
             switch (instantiationManager.getComponentTypeSlot().getCreationMethod()) {
@@ -730,18 +650,19 @@ public class Presenter implements IPlugInPort {
                 refresh = instantiationManager.updatePointByPoint(previousScaledPoint);
                 break;
             case SINGLE_CLICK:
-                refresh = instantiationManager.updateSingleClick(previousScaledPoint, isSnapToGrid(), currentProject.getGridSpacing());
+                refresh = instantiationManager.updateSingleClick(previousScaledPoint, isSnapToGrid(), getModel().getProject()
+                        .getGridSpacing());
                 break;
             }
             if (refresh) {
-                messageDispatcher.dispatchMessage(EventType.REPAINT);
+                getMessageDispatcher().dispatchMessage(EventType.REPAINT);
             }
         } else {
             /*
              * Go backwards so we take the highest z-order components first.
              */
-            for (int i = currentProject.getComponents().size() - 1; i >= 0; i--) {
-                IDIYComponent component = currentProject.getComponents().get(i);
+            for (int i = getModel().getProject().getComponents().size() - 1; i >= 0; i--) {
+                IDIYComponent component = getModel().getProject().getComponents().get(i);
                 ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
 
                 for (int pointIndex = 0; pointIndex < component.getControlPointCount(); pointIndex++) {
@@ -749,7 +670,7 @@ public class Presenter implements IPlugInPort {
                     /*
                      * Only consider selected components that are not grouped.
                      */
-                    if (selectedComponents.contains(component) && componentType.isStretchable()
+                    if (getView().getSelectedComponents().contains(component) && componentType.isStretchable()
                             && findAllGroupedComponents(component).size() == 1) {
                         try {
                             if (previousScaledPoint.distance(controlPoint) < RenderingConstants.CONTROL_POINT_SIZE) {
@@ -772,45 +693,13 @@ public class Presenter implements IPlugInPort {
             }
         }
 
-        messageDispatcher.dispatchMessage(EventType.MOUSE_MOVED, previousScaledPoint);
+        getMessageDispatcher().dispatchMessage(EventType.MOUSE_MOVED, previousScaledPoint);
 
         if (!components.equals(controlPointMap)) {
             controlPointMap = components;
-            messageDispatcher
-                    .dispatchMessage(EventType.AVAILABLE_CTRL_POINTS_CHANGED, new HashMap<IDIYComponent, Set<Integer>>(components));
+            getMessageDispatcher().dispatchMessage(EventType.AVAILABLE_CTRL_POINTS_CHANGED,
+                    new HashMap<IDIYComponent, Set<Integer>>(components));
         }
-    }
-
-    @Override
-    public List<IDIYComponent> getSelectedComponents() {
-        return selectedComponents;
-    }
-
-    @Override
-    public void selectAll(double layer) {
-        LOG.trace("selectAll()");
-        List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(currentProject.getComponents());
-        newSelection.removeAll(getLockedComponents());
-        if (layer > 0) {
-            Iterator<IDIYComponent> i = newSelection.iterator();
-            while (i.hasNext()) {
-                IDIYComponent c = i.next();
-                ComponentType type = ComponentRegistry.INSTANCE.getComponentType(c);
-                if ((double) type.getZOrder() != layer)
-                    i.remove();
-            }
-        }
-        updateSelection(newSelection);
-        // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-        // selectedComponents);
-        // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-        // calculateSelectionDimension());
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-    }
-
-    @Override
-    public VersionNumber getCurrentVersionNumber() {
-        return CURRENT_VERSION;
     }
 
     @Override
@@ -824,43 +713,31 @@ public class Presenter implements IPlugInPort {
         }
         this.dragInProgress = true;
         this.dragAction = dragAction;
-        this.preDragProject = currentProject.clone();
+        this.preDragProject = getModel().getProject().clone();
         Point scaledPoint = scalePoint(point);
         this.previousDragPoint = scaledPoint;
         List<IDIYComponent> components = findComponentsAtScaled(scaledPoint);
         if (!this.controlPointMap.isEmpty()) {
             // If we're dragging control points reset selection.
-            updateSelection(new ArrayList<IDIYComponent>(this.controlPointMap.keySet()));
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            getView().updateSelection(new ArrayList<IDIYComponent>(this.controlPointMap.keySet()));
+            getMessageDispatcher().dispatchMessage(EventType.REPAINT);
         } else if (components.isEmpty()) {
             // If there are no components are under the cursor, reset selection.
-            updateSelection(EMPTY_SELECTION);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            getView().clearSelection();
+            getMessageDispatcher().dispatchMessage(EventType.REPAINT);
         } else {
             // Take the last component, i.e. the top order component.
             IDIYComponent component = components.get(0);
             // If the component under the cursor is not already selected, make
             // it into the only selected component.
-            if (!selectedComponents.contains(component)) {
-                updateSelection(new ArrayList<IDIYComponent>(findAllGroupedComponents(component)));
-                // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-                // selectedComponents);
-                // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-                // calculateSelectionDimension());
-                messageDispatcher.dispatchMessage(EventType.REPAINT);
+            if (!getView().getSelectedComponents().contains(component)) {
+                getView().updateSelection(new ArrayList<IDIYComponent>(findAllGroupedComponents(component)));
+                getMessageDispatcher().dispatchMessage(EventType.REPAINT);
             }
             // If there aren't any control points, try to add all the selected
             // components with all their control points. That will allow the
             // user to drag the whole components.
-            for (IDIYComponent c : selectedComponents) {
+            for (IDIYComponent c : getView().getSelectedComponents()) {
                 Set<Integer> pointIndices = new HashSet<Integer>();
                 if (c.getControlPointCount() > 0) {
                     for (int i = 0; i < c.getControlPointCount(); i++) {
@@ -875,7 +752,7 @@ public class Presenter implements IPlugInPort {
                 sticky = !sticky;
             }
             if (sticky) {
-                includeStuckComponents(controlPointMap);
+                getView().includeStuckComponents(controlPointMap);
             }
         }
     }
@@ -884,77 +761,6 @@ public class Presenter implements IPlugInPort {
     public void dragActionChanged(int dragAction) {
         LOG.trace("dragActionChanged(" + dragAction + ")");
         this.dragAction = dragAction;
-    }
-
-    /**
-     * Finds any components that are stuck to one of the components already in
-     * the map.
-     *
-     * @param controlPointMap
-     */
-    private void includeStuckComponents(Map<IDIYComponent, Set<Integer>> controlPointMap) {
-        int oldSize = controlPointMap.size();
-        LOG.trace("Expanding selected component map");
-        for (IDIYComponent component : currentProject.getComponents()) {
-            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
-
-            // Check if there's a control point in the current selection
-            // that matches with one of its control points.
-            for (int i = 0; i < component.getControlPointCount(); i++) {
-                // Do not process a control point if it's already in the map and
-                // if it's locked.
-                if ((!controlPointMap.containsKey(component) || !controlPointMap.get(component).contains(i))
-                        && !isComponentLocked(component)) {
-                    if (component.isControlPointSticky(i)) {
-                        boolean componentMatches = false;
-                        for (Map.Entry<IDIYComponent, Set<Integer>> entry : controlPointMap.entrySet()) {
-                            if (componentMatches) {
-                                break;
-                            }
-                            for (Integer j : entry.getValue()) {
-                                Point firstPoint = component.getControlPoint(i);
-                                if (entry.getKey().isControlPointSticky(j)) {
-                                    Point secondPoint = entry.getKey().getControlPoint(j);
-                                    // If they are close enough we can consider
-                                    // them matched.
-                                    if (firstPoint.distance(secondPoint) < RenderingConstants.CONTROL_POINT_SIZE) {
-                                        componentMatches = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        if (componentMatches) {
-                            LOG.trace("Including component: " + component);
-                            Set<Integer> indices = new HashSet<Integer>();
-                            // For stretchable components just add the
-                            // matching component. Otherwise, add all control
-                            // points.
-                            if (componentType.isStretchable()) {
-                                indices.add(i);
-                            } else {
-                                for (int k = 0; k < component.getControlPointCount(); k++) {
-                                    indices.add(k);
-                                }
-                            }
-                            if (controlPointMap.containsKey(component)) {
-                                controlPointMap.get(component).addAll(indices);
-                            } else {
-                                controlPointMap.put(component, indices);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        int newSize = controlPointMap.size();
-        // As long as we're adding new components, do another iteration.
-        if (newSize > oldSize) {
-            LOG.trace("Component count changed, trying one more time.");
-            includeStuckComponents(controlPointMap);
-        } else {
-            LOG.trace("Component count didn't change, done with expanding.");
-        }
     }
 
     private boolean isSnapToGrid() {
@@ -980,7 +786,7 @@ public class Presenter implements IPlugInPort {
                 return true;
 
             previousDragPoint.translate(actualD.x, actualD.y);
-        } else if (selectedComponents.isEmpty() && instantiationManager.getComponentTypeSlot() == null) {
+        } else if (getView().getSelectedComponents().isEmpty() && instantiationManager.getComponentTypeSlot() == null) {
             // If there's no selection, the only thing to do is update the
             // selection rectangle and refresh.
             Rectangle oldSelectionRect = selectionRect == null ? null : new Rectangle(selectionRect);
@@ -991,7 +797,7 @@ public class Presenter implements IPlugInPort {
             // messageDispatcher.dispatchMessage(EventType.SELECTION_RECT_CHANGED,
             // selectionRect);
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
         return true;
     }
 
@@ -1002,8 +808,8 @@ public class Presenter implements IPlugInPort {
         int actualDy = 0;
         // For each component, do a simulation of the move to see if any of
         // them will overlap or go out of bounds.
-        int width = (int) currentProject.getWidth().convertToPixels();
-        int height = (int) currentProject.getHeight().convertToPixels();
+        int width = (int) getModel().getProject().getWidth().convertToPixels();
+        int height = (int) getModel().getProject().getHeight().convertToPixels();
 
         if (controlPointMap.size() == 1) {
             Map.Entry<IDIYComponent, Set<Integer>> entry = controlPointMap.entrySet().iterator().next();
@@ -1012,14 +818,14 @@ public class Presenter implements IPlugInPort {
             Point testPoint = new Point(firstPoint);
             testPoint.translate(dx, dy);
             if (snapToGrid) {
-                CalcUtils.snapPointToGrid(testPoint, currentProject.getGridSpacing());
+                CalcUtils.snapPointToGrid(testPoint, getModel().getProject().getGridSpacing());
             }
 
             actualDx = testPoint.x - firstPoint.x;
             actualDy = testPoint.y - firstPoint.y;
         } else if (snapToGrid) {
-            actualDx = CalcUtils.roundToGrid(dx, currentProject.getGridSpacing());
-            actualDy = CalcUtils.roundToGrid(dy, currentProject.getGridSpacing());
+            actualDx = CalcUtils.roundToGrid(dx, getModel().getProject().getGridSpacing());
+            actualDy = CalcUtils.roundToGrid(dy, getModel().getProject().getGridSpacing());
         } else {
             actualDx = dx;
             actualDy = dy;
@@ -1067,7 +873,7 @@ public class Presenter implements IPlugInPort {
         // Update all points to new location.
         for (Map.Entry<IDIYComponent, Set<Integer>> entry : controlPointMap.entrySet()) {
             IDIYComponent c = entry.getKey();
-            drawingManager.invalidateComponent(c);
+            getDrawingManager().invalidateComponent(c);
             for (Integer index : entry.getValue()) {
                 Point p = new Point(c.getControlPoint(index));
                 p.translate(actualDx, actualDy);
@@ -1078,188 +884,79 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void rotateSelection(int direction) {
-        if (!selectedComponents.isEmpty()) {
-            Project oldProject = currentProject.clone();
-            rotateComponents(this.selectedComponents, direction, isSnapToGrid());
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Rotate Selection");
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
-        }
-    }
-
-    /**
-     * @param direction
-     *            1 for clockwise, -1 for counter-clockwise
-     */
-    private void rotateComponents(List<IDIYComponent> components, int direction, boolean snapToGrid) {
-        Point center = getCenterOf(components, snapToGrid);
-
-        AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
-
-        // Update all points to new location.
-        for (IDIYComponent component : components) {
-            drawingManager.invalidateComponent(component);
-            ComponentType type = ComponentRegistry.INSTANCE.getComponentType(component);
-            if (type.isRotatable()) {
-                for (int index = 0; index < component.getControlPointCount(); index++) {
-                    Point p = new Point(component.getControlPoint(index));
-                    rotate.transform(p, p);
-                    component.setControlPoint(p, index);
-                }
-                // If component has orientation, change it too
-                List<PropertyWrapper> newProperties = ComponentProcessor.getInstance().extractProperties(component.getClass());
-                for (PropertyWrapper property : newProperties) {
-                    if (property.getType() == Orientation.class) {
-                        try {
-                            property.readFrom(component);
-                            Orientation orientation = (Orientation) property.getValue();
-                            Orientation[] values = Orientation.values();
-                            int newIndex = orientation.ordinal() + direction;
-                            if (newIndex < 0)
-                                newIndex = values.length - 1;
-                            else if (newIndex >= values.length)
-                                newIndex = 0;
-                            property.setValue(values[newIndex]);
-                            property.writeTo(component);
-                        } catch (Exception e) {
-                            LOG.error("Could not change component orientation for " + component.getName(), e);
-                        }
-                    } else if (property.getType() == OrientationHV.class) {
-                        try {
-                            property.readFrom(component);
-                            OrientationHV orientation = (OrientationHV) property.getValue();
-                            property.setValue(OrientationHV.values()[1 - orientation.ordinal()]);
-                            property.writeTo(component);
-                        } catch (Exception e) {
-                            LOG.error("Could not change component orientation for " + component.getName(), e);
-                        }
-                    }
-                }
-            } else {
-                // Non-rotatable
-                Point componentCenter = getCenterOf(Arrays.asList(new IDIYComponent[] { component }), false);
-                Point rotatedComponentCenter = new Point();
-                rotate.transform(componentCenter, rotatedComponentCenter);
-                for (int index = 0; index < component.getControlPointCount(); index++) {
-                    Point p = new Point(component.getControlPoint(index));
-                    p.translate(rotatedComponentCenter.x - componentCenter.x, rotatedComponentCenter.y - componentCenter.y);
-                    component.setControlPoint(p, index);
-                }
-            }
-        }
-    }
-
-    private Point getCenterOf(List<IDIYComponent> components, boolean snapToGrid) {
-        // Determine center of rotation
-        int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE;
-        int maxY = Integer.MIN_VALUE;
-        for (IDIYComponent component : components) {
-            for (int i = 0; i < component.getControlPointCount(); i++) {
-                Point p = component.getControlPoint(i);
-                if (minX > p.x) {
-                    minX = p.x;
-                }
-                if (maxX < p.x) {
-                    maxX = p.x;
-                }
-                if (minY > p.y) {
-                    minY = p.y;
-                }
-                if (maxY < p.y) {
-                    maxY = p.y;
-                }
-            }
-        }
-        int centerX = (maxX + minX) / 2;
-        int centerY = (maxY + minY) / 2;
-
-        if (snapToGrid) {
-            CalcUtils.roundToGrid(centerX, this.currentProject.getGridSpacing());
-            CalcUtils.roundToGrid(centerY, this.currentProject.getGridSpacing());
-        }
-
-        return new Point(centerX, centerY);
-    }
-
-    @Override
     public void dragEnded(Point point) {
         LOG.trace(String.format("dragEnded(%s)", point));
         if (!dragInProgress) {
             return;
         }
         Point scaledPoint = scalePoint(point);
-        if (selectedComponents.isEmpty()) {
+        if (getView().getSelectedComponents().isEmpty()) {
             // If there's no selection finalize selectionRect and see which
             // components intersect with it.
             if (scaledPoint != null) {
                 this.selectionRect = createNormalizedRectangle(scaledPoint, previousDragPoint);
             }
             List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
-            for (IDIYComponent component : currentProject.getComponents()) {
-                if (!isComponentLocked(component)) {
-                    Area area = drawingManager.getComponentArea(component);
+            for (IDIYComponent component : getModel().getProject().getComponents()) {
+                if (!getModel().isComponentLocked(component)) {
+                    Area area = getDrawingManager().getComponentArea(component);
                     if ((area != null) && (selectionRect != null) && area.intersects(selectionRect)) {
                         newSelection.addAll(findAllGroupedComponents(component));
                     }
                 }
             }
             selectionRect = null;
-            updateSelection(newSelection);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
+            getView().updateSelection(newSelection);
         } else {
-            updateSelection(selectedComponents);
+            getView().updateSelection(getView().getSelectedComponents());
         }
         // There is selection, so we need to finalize the drag&drop
         // operation.
 
-        if (!preDragProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, preDragProject, currentProject.clone(), "Drag");
-            projectFileManager.notifyFileChange();
+        if (!preDragProject.equals(getModel().getProject())) {
+            getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, preDragProject, getModel().getProject().clone(), "Drag");
+            getProjectFileManager().notifyFileChange();
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
         dragInProgress = false;
     }
 
     @Override
     public void pasteComponents(List<IDIYComponent> components) {
         LOG.trace(String.format("pasteComponents(%s)", components));
-        instantiationManager.pasteComponents(components, this.previousScaledPoint, isSnapToGrid(), currentProject.getGridSpacing());
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, instantiationManager.getComponentTypeSlot(),
+        instantiationManager
+                .pasteComponents(components, this.previousScaledPoint, isSnapToGrid(), getModel().getProject().getGridSpacing());
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.SLOT_CHANGED, instantiationManager.getComponentTypeSlot(),
                 instantiationManager.getFirstControlPoint());
     }
 
     @Override
     public void deleteSelectedComponents() {
         LOG.trace("deleteSelectedComponents()");
-        if (selectedComponents.isEmpty()) {
+        if (getView().getSelectedComponents().isEmpty()) {
             LOG.debug("Nothing to delete");
             return;
         }
-        Project oldProject = currentProject.clone();
+        Project oldProject = getModel().getProject().clone();
         // Remove selected components from any groups.
-        ungroupComponents(selectedComponents);
+        getView().getController().ungroupSelectedComponents();
         // Remove from area map.
-        for (IDIYComponent component : selectedComponents) {
-            drawingManager.invalidateComponent(component);
+        for (IDIYComponent component : getView().getSelectedComponents()) {
+            getDrawingManager().invalidateComponent(component);
         }
-        currentProject.getComponents().removeAll(selectedComponents);
-        messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Delete");
-        projectFileManager.notifyFileChange();
-        updateSelection(EMPTY_SELECTION);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getModel().getProject().getComponents().removeAll(getView().getSelectedComponents());
+        getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(), "Delete");
+        getProjectFileManager().notifyFileChange();
+        getView().clearSelection();
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
     }
 
     @Override
     public void setSelectionDefaultPropertyValue(String propertyName, Object value) {
         LOG.trace(String.format("setSelectionDefaultPropertyValue(%s, %s)", propertyName, value));
         Map<String, Map<String, Object>> objectProperties = Configuration.INSTANCE.getObjectProperties();
-        for (IDIYComponent component : selectedComponents) {
+        for (IDIYComponent component : getView().getSelectedComponents()) {
             String className = component.getClass().getName();
             LOG.debug("Default property value set for " + className + ":" + propertyName);
             Map<String, Object> objectValues = objectProperties.get(className);
@@ -1285,123 +982,42 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void groupSelectedComponents() {
-        LOG.trace("groupSelectedComponents()");
-        Project oldProject = currentProject.clone();
-        // First remove the selected components from other groups.
-        ungroupComponents(selectedComponents);
-        // Then group them together.
-        currentProject.getGroups().add(new HashSet<IDIYComponent>(selectedComponents));
-        // Notify the listeners.
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Group");
-            projectFileManager.notifyFileChange();
-        }
-    }
-
-    @Override
-    public void ungroupSelectedComponents() {
-        LOG.trace("ungroupSelectedComponents()");
-        Project oldProject = currentProject.clone();
-        ungroupComponents(selectedComponents);
-        // Notify the listeners.
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Ungroup");
-            projectFileManager.notifyFileChange();
-        }
-    }
-
-    @Override
     public void setLayerLocked(double layerZOrder, boolean locked) {
         LOG.trace(String.format("setLayerLocked(%s, %s)", layerZOrder, locked));
         if (locked) {
-            currentProject.getLockedLayers().add(layerZOrder);
+            getModel().getProject().getLockedLayers().add(layerZOrder);
         } else {
-            currentProject.getLockedLayers().remove(layerZOrder);
+            getModel().getProject().getLockedLayers().remove(layerZOrder);
         }
-        updateSelection(EMPTY_SELECTION);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        messageDispatcher.dispatchMessage(EventType.LAYER_STATE_CHANGED, currentProject.getLockedLayers());
-    }
-
-    @Override
-    public void sendSelectionToBack() {
-        LOG.trace("sendSelectionToBack()");
-        Project oldProject = currentProject.clone();
-        for (IDIYComponent component : selectedComponents) {
-            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
-            int index = currentProject.getComponents().indexOf(component);
-            if (index < 0) {
-                LOG.warn("Component not found in the project: " + component.getName());
-            } else
-                while (index > 0) {
-                    IDIYComponent componentBefore = currentProject.getComponents().get(index - 1);
-                    ComponentType componentBeforeType = ComponentRegistry.INSTANCE.getComponentType(componentBefore);
-                    if (!componentType.isFlexibleZOrder() && componentBeforeType.getZOrder() < componentType.getZOrder())
-                        break;
-                    Collections.swap(currentProject.getComponents(), index, index - 1);
-                    index--;
-                }
-        }
-        if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Send to Back");
-            projectFileManager.notifyFileChange();
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
-        }
-    }
-
-    @Override
-    public void bringSelectionToFront() {
-        LOG.trace("bringSelectionToFront()");
-        Project oldProject = currentProject.clone();
-        for (IDIYComponent component : selectedComponents) {
-            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
-            int index = currentProject.getComponents().indexOf(component);
-            if (index < 0) {
-                LOG.warn("Component not found in the project: " + component.getName());
-            } else
-                while (index < currentProject.getComponents().size() - 1) {
-                    IDIYComponent componentAfter = currentProject.getComponents().get(index + 1);
-                    ComponentType componentAfterType = ComponentRegistry.INSTANCE.getComponentType(componentAfter);
-                    if (!componentType.isFlexibleZOrder() && componentAfterType.getZOrder() > componentType.getZOrder())
-                        break;
-                    Collections.swap(currentProject.getComponents(), index, index + 1);
-                    index++;
-                }
-        }
-        if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Bring to Front");
-            projectFileManager.notifyFileChange();
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
-        }
+        getView().clearSelection();
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.LAYER_STATE_CHANGED, getModel().getProject().getLockedLayers());
     }
 
     @Override
     public void refresh() {
         LOG.trace("refresh()");
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
     }
 
     @Override
     public Theme getSelectedTheme() {
-        return drawingManager.getTheme();
+        return getDrawingManager().getTheme();
     }
 
     @Override
     public void setSelectedTheme(Theme theme) {
-        drawingManager.setTheme(theme);
+        getDrawingManager().setTheme(theme);
     }
 
     @Override
     public void renumberSelectedComponents(final boolean xAxisFirst) {
         LOG.trace("renumberSelectedComponents(" + xAxisFirst + ")");
-        if (getSelectedComponents().isEmpty()) {
+        if (getView().getSelectedComponents().isEmpty()) {
             return;
         }
-        Project oldProject = currentProject.clone();
-        List<IDIYComponent> components = new ArrayList<IDIYComponent>(getSelectedComponents());
+        Project oldProject = getModel().getProject().clone();
+        List<IDIYComponent> components = new ArrayList<IDIYComponent>(getView().getSelectedComponents());
         // Sort components by their location.
         Collections.sort(components, new Comparator<IDIYComponent>() {
 
@@ -1458,102 +1074,14 @@ public class Presenter implements IPlugInPort {
         }
         // Assign new ones.
         for (IDIYComponent component : components) {
-            component
-                    .setName(instantiationManager.createUniqueName(ComponentRegistry.INSTANCE.getComponentType(component), currentProject));
+            component.setName(instantiationManager.createUniqueName(ComponentRegistry.INSTANCE.getComponentType(component), getModel()
+                    .getProject()));
         }
 
-        messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Renumber selection");
-        projectFileManager.notifyFileChange();
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-    }
-
-    public void updateSelection(List<IDIYComponent> newSelection) {
-        this.selectedComponents = newSelection;
-        Map<IDIYComponent, Set<Integer>> controlPointMap = new HashMap<IDIYComponent, Set<Integer>>();
-        for (IDIYComponent component : selectedComponents) {
-            Set<Integer> indices = new HashSet<Integer>();
-            for (int i = 0; i < component.getControlPointCount(); i++) {
-                indices.add(i);
-            }
-            controlPointMap.put(component, indices);
-        }
-        if (Configuration.INSTANCE.getStickyPoints()) {
-            includeStuckComponents(controlPointMap);
-        }
-        messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED, selectedComponents, controlPointMap.keySet());
-    }
-
-    @Override
-    public void expandSelection(ExpansionMode expansionMode) {
-        LOG.trace(String.format("expandSelection(%s)", expansionMode));
-        List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(this.selectedComponents);
-        // Find control points of all selected components and all types
-        Set<String> selectedNamePrefixes = new HashSet<String>();
-        if (expansionMode == ExpansionMode.SAME_TYPE) {
-            for (IDIYComponent component : getSelectedComponents()) {
-                selectedNamePrefixes.add(ComponentRegistry.INSTANCE.getComponentType(component).getNamePrefix());
-            }
-        }
-        // Now try to find components that intersect with at least one component
-        // in the pool.
-        for (IDIYComponent component : getCurrentProject().getComponents()) {
-            // Skip already selected components or ones that cannot be stuck to
-            // other components.
-            Area area = drawingManager.getComponentArea(component);
-            if (newSelection.contains(component) || !component.isControlPointSticky(0) || area == null)
-                continue;
-            boolean matches = false;
-            for (IDIYComponent selectedComponent : this.selectedComponents) {
-                Area selectedArea = drawingManager.getComponentArea(selectedComponent);
-                if (selectedArea == null)
-                    continue;
-                Area intersection = new Area(area);
-                intersection.intersect(selectedArea);
-                if (!intersection.isEmpty()) {
-                    matches = true;
-                    break;
-                }
-            }
-
-            if (matches) {
-                switch (expansionMode) {
-                case ALL:
-                case IMMEDIATE:
-                    newSelection.add(component);
-                    break;
-                case SAME_TYPE:
-                    if (selectedNamePrefixes.contains(ComponentRegistry.INSTANCE.getComponentType(component).getNamePrefix())) {
-                        newSelection.add(component);
-                    }
-                    break;
-                }
-            }
-        }
-
-        int oldSize = this.getSelectedComponents().size();
-        updateSelection(newSelection);
-        // Go deeper if possible.
-        if (newSelection.size() > oldSize && expansionMode != ExpansionMode.IMMEDIATE) {
-            expandSelection(expansionMode);
-        }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-    }
-
-    /**
-     * Removes all the groups that contain at least one of the specified
-     * components.
-     *
-     * @param components
-     */
-    private void ungroupComponents(Collection<IDIYComponent> components) {
-        Iterator<Set<IDIYComponent>> groupIterator = currentProject.getGroups().iterator();
-        while (groupIterator.hasNext()) {
-            Set<IDIYComponent> group = groupIterator.next();
-            group.removeAll(components);
-            if (group.isEmpty()) {
-                groupIterator.remove();
-            }
-        }
+        getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(),
+                "Renumber selection");
+        getProjectFileManager().notifyFileChange();
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
     }
 
     /**
@@ -1569,7 +1097,7 @@ public class Presenter implements IPlugInPort {
     private Set<IDIYComponent> findAllGroupedComponents(IDIYComponent component) {
         Set<IDIYComponent> components = new HashSet<IDIYComponent>();
         components.add(component);
-        for (Set<IDIYComponent> group : currentProject.getGroups()) {
+        for (Set<IDIYComponent> group : getModel().getProject().getGroups()) {
             if (group.contains(component)) {
                 components.addAll(group);
                 break;
@@ -1580,13 +1108,13 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public Point2D calculateSelectionDimension() {
-        if (selectedComponents.isEmpty()) {
+        if (getView().getSelectedComponents().isEmpty()) {
             return null;
         }
         boolean metric = Configuration.INSTANCE.getMetric();
         Area area = new Area();
-        for (IDIYComponent component : selectedComponents) {
-            Area componentArea = drawingManager.getComponentArea(component);
+        for (IDIYComponent component : getView().getSelectedComponents()) {
+            Area componentArea = getDrawingManager().getComponentArea(component);
             if (componentArea != null) {
                 area.add(componentArea);
             } else {
@@ -1605,39 +1133,22 @@ public class Presenter implements IPlugInPort {
         return dimension;
     }
 
-    // @Override
-    // public Rectangle2D getSelectedAreaRect() {
-    // if (selectedComponents.isEmpty()) {
-    // return null;
-    // }
-    // Area area = new Area();
-    // for (IDIYComponent component : selectedComponents) {
-    // Area componentArea = drawingManager.getComponentArea(component);
-    // if (componentArea != null) {
-    // area.add(componentArea);
-    // } else {
-    // LOG.warn("No area found for: " + component.getName());
-    // }
-    // }
-    // return area.getBounds2D();
-    // }
-
     /**
      * Adds a component to the project taking z-order into account.
      *
      * @param component
      */
     private void addComponent(IDIYComponent component, boolean canCreatePads) {
-        int index = currentProject.getComponents().size();
+        int index = getModel().getProject().getComponents().size();
         while (index > 0
                 && ComponentRegistry.INSTANCE.getComponentType(component).getZOrder() < ComponentRegistry.INSTANCE.getComponentType(
-                        currentProject.getComponents().get(index - 1)).getZOrder()) {
+                        getModel().getProject().getComponents().get(index - 1)).getZOrder()) {
             index--;
         }
-        if (index < currentProject.getComponents().size()) {
-            currentProject.getComponents().add(index, component);
+        if (index < getModel().getProject().getComponents().size()) {
+            getModel().getProject().getComponents().add(index, component);
         } else {
-            currentProject.getComponents().add(component);
+            getModel().getProject().getComponents().add(component);
         }
         if (canCreatePads && Configuration.INSTANCE.getAutoCreatePads() && !(component instanceof SolderPad)) {
             ComponentType padType = ComponentRegistry.INSTANCE.getComponentType(SolderPad.class);
@@ -1645,7 +1156,7 @@ public class Presenter implements IPlugInPort {
                 if (component.isControlPointSticky(i)) {
                     try {
                         IDIYComponent pad = instantiationManager.instantiateComponent(padType, null, component.getControlPoint(i),
-                                currentProject).get(0);
+                                getModel().getProject()).get(0);
                         pad.setControlPoint(component.getControlPoint(i), 0);
                         addComponent(pad, false);
                     } catch (Exception e) {
@@ -1664,7 +1175,7 @@ public class Presenter implements IPlugInPort {
     @Override
     public List<PropertyWrapper> getMutualSelectionProperties() {
         try {
-            return ComponentProcessor.getInstance().getMutualProperties(selectedComponents);
+            return ComponentProcessor.getInstance().getMutualProperties(getView().getSelectedComponents());
         } catch (Exception e) {
             LOG.error("Could not get mutual selection properties", e);
             return null;
@@ -1674,10 +1185,10 @@ public class Presenter implements IPlugInPort {
     @Override
     public void applyPropertiesToSelection(List<PropertyWrapper> properties) {
         LOG.trace(String.format("applyPropertiesToSelection(%s)", properties));
-        Project oldProject = currentProject.clone();
+        Project oldProject = getModel().getProject().clone();
         try {
-            for (IDIYComponent component : selectedComponents) {
-                drawingManager.invalidateComponent(component);
+            for (IDIYComponent component : getView().getSelectedComponents()) {
+                getDrawingManager().invalidateComponent(component);
                 for (PropertyWrapper property : properties) {
                     if (property.isChanged()) {
                         property.writeTo(component);
@@ -1686,20 +1197,21 @@ public class Presenter implements IPlugInPort {
             }
         } catch (Exception e) {
             LOG.error("Could not apply selection properties", e);
-            view.showMessage("Could not apply changes to the selection. Check the log for details.", "Error", IView.ERROR_MESSAGE);
+            getView().showMessage("Could not apply changes to the selection. Check the log for details.", "Error", View.ERROR_MESSAGE);
         } finally {
             // Notify the listeners.
-            if (!oldProject.equals(currentProject)) {
-                messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Edit Selection");
-                projectFileManager.notifyFileChange();
+            if (!oldProject.equals(getModel().getProject())) {
+                getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(),
+                        "Edit Selection");
+                getProjectFileManager().notifyFileChange();
             }
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
     }
 
     @Override
     public void applyPropertyToSelection(PropertyWrapper property) {
-        applyPropertiesToSelection(Arrays.asList(new PropertyWrapper [] { property }));
+        applyPropertiesToSelection(Arrays.asList(new PropertyWrapper[] { property }));
     }
 
     @Override
@@ -1707,7 +1219,7 @@ public class Presenter implements IPlugInPort {
         List<PropertyWrapper> properties = ComponentProcessor.getInstance().extractProperties(Project.class);
         try {
             for (PropertyWrapper property : properties) {
-                property.readFrom(currentProject);
+                property.readFrom(getModel().getProject());
             }
         } catch (Exception e) {
             LOG.error("Could not get project properties", e);
@@ -1720,21 +1232,22 @@ public class Presenter implements IPlugInPort {
     @Override
     public void applyPropertiesToProject(List<PropertyWrapper> properties) {
         LOG.trace(String.format("applyPropertiesToProject(%s)", properties));
-        Project oldProject = currentProject.clone();
+        Project oldProject = getModel().getProject().clone();
         try {
             for (PropertyWrapper property : properties) {
-                property.writeTo(currentProject);
+                property.writeTo(getModel().getProject());
             }
         } catch (Exception e) {
             LOG.error("Could not apply project properties", e);
-            view.showMessage("Could not apply changes to the project. Check the log for details.", "Error", IView.ERROR_MESSAGE);
+            getView().showMessage("Could not apply changes to the project. Check the log for details.", "Error", View.ERROR_MESSAGE);
         } finally {
             // Notify the listeners.
-            if (!oldProject.equals(currentProject)) {
-                messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Edit Project");
-                projectFileManager.notifyFileChange();
+            if (!oldProject.equals(getModel().getProject())) {
+                getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(),
+                        "Edit Project");
+                getProjectFileManager().notifyFileChange();
             }
-            drawingManager.fireZoomChanged();
+            getDrawingManager().fireZoomChanged();
         }
     }
 
@@ -1752,30 +1265,26 @@ public class Presenter implements IPlugInPort {
             return;
         }
         try {
-            instantiationManager.setComponentTypeSlot(componentType, template, currentProject);
+            instantiationManager.setComponentTypeSlot(componentType, template, getModel().getProject());
             if (componentType != null) {
-                updateSelection(EMPTY_SELECTION);
+                getView().clearSelection();
             }
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
-            messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, instantiationManager.getComponentTypeSlot(),
+            getMessageDispatcher().dispatchMessage(EventType.REPAINT);
+            getMessageDispatcher().dispatchMessage(EventType.SLOT_CHANGED, instantiationManager.getComponentTypeSlot(),
                     instantiationManager.getFirstControlPoint());
         } catch (Exception e) {
             LOG.error("Could not set component type slot", e);
-            view.showMessage("Could not set component type slot. Check log for details.", "Error", IView.ERROR_MESSAGE);
+            getView().showMessage("Could not set component type slot. Check log for details.", "Error", View.ERROR_MESSAGE);
         }
     }
 
     @Override
     public void saveSelectedComponentAsTemplate(String templateName) {
         LOG.trace(String.format("saveSelectedComponentAsTemplate(%s)", templateName));
-        if (selectedComponents.size() != 1) {
+        if (getView().getSelectedComponents().size() != 1) {
             throw new RuntimeException("Can only save a single component as a template at once.");
         }
-        IDIYComponent component = selectedComponents.iterator().next();
+        IDIYComponent component = getView().getSelectedComponents().iterator().next();
         ComponentType type = ComponentRegistry.INSTANCE.getComponentType(component);
         Map<String, List<Template>> templateMap = Configuration.INSTANCE.getTemplates();
         if (templateMap == null) {
@@ -1821,9 +1330,9 @@ public class Presenter implements IPlugInPort {
         }
 
         if (exists) {
-            int result = view.showConfirmDialog("Template with that name already exists. Overwrite?", "Save as Template",
-                    IView.YES_NO_OPTION, IView.WARNING_MESSAGE);
-            if (result != IView.YES_OPTION) {
+            int result = getView().showConfirmDialog("Template with that name already exists. Overwrite?", "Save as Template",
+                    View.YES_NO_OPTION, View.WARNING_MESSAGE);
+            if (result != View.YES_OPTION) {
                 return;
             }
             // Delete the existing template
@@ -1854,14 +1363,14 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public List<Template> getTemplatesForSelection() {
-        if (this.selectedComponents.isEmpty()) {
+        if (getView().getSelectedComponents().isEmpty()) {
             throw new RuntimeException("No components selected");
         }
 
-        ComponentType selectedType = ComponentRegistry.INSTANCE.getComponentType(this.selectedComponents.get(0));
+        ComponentType selectedType = ComponentRegistry.INSTANCE.getComponentType(getView().getSelectedComponents().get(0));
 
-        for (int i = 1; i < this.selectedComponents.size(); i++) {
-            ComponentType newType = ComponentRegistry.INSTANCE.getComponentType(this.selectedComponents.get(i));
+        for (int i = 1; i < getView().getSelectedComponents().size(); i++) {
+            ComponentType newType = ComponentRegistry.INSTANCE.getComponentType(getView().getSelectedComponents().get(i));
             if (newType.getInstanceClass() != selectedType.getInstanceClass()) {
                 throw new RuntimeException("Template can be applied on multiple components of the same type only");
             }
@@ -1874,24 +1383,25 @@ public class Presenter implements IPlugInPort {
     public void applyTemplateToSelection(Template template) {
         LOG.trace(String.format("applyTemplateToSelection(%s)", template.getName()));
 
-        Project oldProject = currentProject.clone();
+        Project oldProject = getModel().getProject().clone();
 
-        for (IDIYComponent component : this.selectedComponents) {
+        for (IDIYComponent component : getView().getSelectedComponents()) {
             try {
-                drawingManager.invalidateComponent(component);
+                getDrawingManager().invalidateComponent(component);
                 this.instantiationManager.loadComponentShapeFromTemplate(component, template);
-                this.instantiationManager.fillWithDefaultProperties(component, template);
+                ModelUtils.fillWithDefaultProperties(component, template);
             } catch (Exception e) {
                 LOG.warn("Could not apply templates to " + component.getName(), e);
             }
         }
 
         // Notify the listeners.
-        if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Edit Selection");
-            projectFileManager.notifyFileChange();
+        if (!oldProject.equals(getModel().getProject())) {
+            getMessageDispatcher().dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, getModel().getProject().clone(),
+                    "Edit Selection");
+            getProjectFileManager().notifyFileChange();
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getMessageDispatcher().dispatchMessage(EventType.REPAINT);
     }
 
     @Override
@@ -1911,33 +1421,15 @@ public class Presenter implements IPlugInPort {
         }
     }
 
-    private Set<IDIYComponent> getLockedComponents() {
-        Set<IDIYComponent> lockedComponents = new HashSet<IDIYComponent>();
-
-        for (IDIYComponent component : currentProject.getComponents()) {
-            if (isComponentLocked(component)) {
-                lockedComponents.add(component);
-            }
-        }
-
-        return lockedComponents;
-    }
-
-    private boolean isComponentLocked(IDIYComponent component) {
-        ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(component);
-
-        return currentProject.getLockedLayers().contains((double) Math.round(componentType.getZOrder()));
-    }
-
     /**
      * Scales point from display base to actual base.
      *
      * @param point
      * @return
      */
-    private Point scalePoint(Point point) {
-        return point == null ? null : new Point((int) (point.x / drawingManager.getZoomLevel()),
-                (int) (point.y / drawingManager.getZoomLevel()));
+    Point scalePoint(Point point) {
+        return point == null ? null : new Point((int) (point.x / getDrawingManager().getZoomLevel()), (int) (point.y / getDrawingManager()
+                .getZoomLevel()));
     }
 
     /**
@@ -1959,7 +1451,35 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void sendEvent(EventType eventType, Object... params) {
-        messageDispatcher.dispatchMessage(eventType, params);
+        getMessageDispatcher().dispatchMessage(eventType, params);
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public void setView(View view) {
+        this.view = view;
+    }
+
+    public DrawingManager getDrawingManager() {
+        return drawingManager;
+    }
+
+    public ProjectFileManager getProjectFileManager() {
+        return projectFileManager;
+    }
+
+    public MessageDispatcher<EventType> getMessageDispatcher() {
+        return messageDispatcher;
     }
 
 }

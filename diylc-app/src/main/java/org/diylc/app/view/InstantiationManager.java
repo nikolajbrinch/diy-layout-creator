@@ -1,14 +1,12 @@
 package org.diylc.app.view;
 
 import java.awt.Point;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.diylc.app.utils.CalcUtils;
+import org.diylc.app.utils.ModelUtils;
 import org.diylc.components.registry.ComponentProcessor;
 import org.diylc.components.registry.ComponentType;
 import org.diylc.core.CreationMethod;
@@ -35,9 +33,13 @@ public class InstantiationManager {
 	public static int MAX_RECENT_COMPONENTS = 16;
 
 	private ComponentType componentTypeSlot;
+	
 	private Template template;
+	
 	private List<IDIYComponent> componentSlot;
+	
 	private Point firstControlPoint;
+	
 	private Point potentialControlPoint;
 
 	private static final ComponentType clipboardType = new ComponentType(
@@ -239,7 +241,7 @@ public class InstantiationManager {
 
 		loadComponentShapeFromTemplate(component, template);
 
-		fillWithDefaultProperties(component, template);
+		ModelUtils.fillWithDefaultProperties(component, template);
 
 		// Write to recent components
 		List<String> recentComponentTypes = Configuration.INSTANCE.getRecentComponents();
@@ -283,55 +285,7 @@ public class InstantiationManager {
 		return componentType.getNamePrefix() + i;
 	}
 
-	/**
-	 * Finds any properties that have default values and injects default values.
-	 * Typically it should be used for {@link IDIYComponent} and {@link Project}
-	 * objects.
-	 * 
-	 * @param object
-	 * @param template
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 */
-	public void fillWithDefaultProperties(Object object, Template template)
-			throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException, SecurityException, NoSuchMethodException {
-		// Extract properties.
-		List<PropertyWrapper> properties = ComponentProcessor.getInstance()
-				.extractProperties(object.getClass());
-		Map<String, PropertyWrapper> propertyCache = new HashMap<String, PropertyWrapper>();
-		// Override with default values if available.
-		for (PropertyWrapper property : properties) {
-			propertyCache.put(property.getName(), property);
-			Map<String, Map<String, Object>> objectProperties = Configuration.INSTANCE.getObjectProperties();
-			Map<String, Object> objectValues = objectProperties.get(object.getClass().getName());
-			Object defaultValue = null;
-			if (objectValues != null) {
-				defaultValue = objectValues.get(property.getName());
-			}
-			if (defaultValue != null) {
-				property.setValue(defaultValue);
-				property.writeTo(object);
-			}
-		}
-		if (template != null) {
-			for (Map.Entry<String, Object> pair : template.getValues()
-					.entrySet()) {
-				PropertyWrapper property = propertyCache.get(pair.getKey());
-				if (property == null) {
-					LOG.warn("Cannot find property " + pair.getKey());
-				} else {
-					LOG.debug("Filling value from template for "
-							+ pair.getKey());
-					property.setValue(pair.getValue());
-					property.writeTo(object);
-				}
-			}
-		}
-	}
+
 
 	/**
 	 * Uses stored control points from the template to shape component.

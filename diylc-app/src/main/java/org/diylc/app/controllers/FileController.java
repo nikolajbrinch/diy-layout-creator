@@ -3,13 +3,12 @@ package org.diylc.app.controllers;
 import java.nio.file.Path;
 
 import org.diylc.app.FileFilterEnum;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.async.Async;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
 import org.diylc.app.view.View;
 import org.diylc.app.view.canvas.IDrawingProvider;
-import org.diylc.app.view.dialogs.DialogFactory;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +19,9 @@ public class FileController extends AbstractController implements ExportControll
 
     private final IDrawingProvider drawingProvider;
 
-    public FileController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort,
+    public FileController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort,
             IDrawingProvider drawingProvider) {
-        super(applicationController, view, model, plugInPort);
+        super(applicationController, view, model, controller, plugInPort);
         this.drawingProvider = drawingProvider;
     }
 
@@ -62,13 +61,13 @@ public class FileController extends AbstractController implements ExportControll
 
     public void save() {
         LOG.info("SaveAction triggered");
-        if (getPlugInPort().getCurrentFile() == null) {
-            final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.DIY.getFilter(),
+        if (getModel().getCurrentFile() == null) {
+            final Path path = getView().showSaveDialog(FileFilterEnum.DIY.getFilter(),
                     Configuration.INSTANCE.getLastPath(), null, FileFilterEnum.DIY.getExtensions()[0], null);
             if (path != null) {
                 new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
                     LOG.debug("Saving to " + path.toAbsolutePath());
-                    getPlugInPort().saveProjectToFile(path, false);
+                    getModel().saveProjectToFile(path, false);
                     return null;
                 }, Async.onSuccess((result) -> {
                     Configuration.INSTANCE.setLastPath(path.getParent().toAbsolutePath().normalize());
@@ -79,8 +78,8 @@ public class FileController extends AbstractController implements ExportControll
             }
         } else {
             new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
-                LOG.debug("Saving to " + getPlugInPort().getCurrentFile().toAbsolutePath());
-                getPlugInPort().saveProjectToFile(getPlugInPort().getCurrentFile(), false);
+                LOG.debug("Saving to " + getModel().getCurrentFile().toAbsolutePath());
+                getModel().saveProjectToFile(getModel().getCurrentFile(), false);
                 return null;
             }, Async.onError((Exception e) -> {
                 getView().showMessage("Could not save to file. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
@@ -90,12 +89,12 @@ public class FileController extends AbstractController implements ExportControll
 
     public void saveAs() {
         LOG.info("SaveAsAction triggered");
-        final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
+        final Path path = getView().showSaveDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
                 null, FileFilterEnum.DIY.getExtensions()[0], null);
         if (path != null) {
             new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
                 LOG.debug("Saving to " + path.toAbsolutePath());
-                getPlugInPort().saveProjectToFile(path, false);
+                getModel().saveProjectToFile(path, false);
                 return null;
             }, Async.onSuccess((result) -> {
                 Configuration.INSTANCE.setLastPath(path.getParent().toAbsolutePath().normalize());

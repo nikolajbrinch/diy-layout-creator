@@ -1,4 +1,4 @@
-package org.diylc.app.update;
+package org.diylc.app.utils.update;
 
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;

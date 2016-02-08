@@ -24,7 +24,7 @@ import org.diylc.app.ComponentTransferable;
 import org.diylc.app.ExpansionMode;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.CanvasController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.BadPositionException;
 import org.diylc.app.view.IPlugInPort;
@@ -56,7 +56,7 @@ public class CanvasPlugin extends AbstractPlugin<CanvasController> implements Ca
 
     private double zoomLevel = 1;
 
-    public CanvasPlugin(CanvasController canvasController, ISwingUI swingUI, DrawingModel model) {
+    public CanvasPlugin(CanvasController canvasController, ISwingUI swingUI, Model model) {
         super(canvasController, swingUI, model);
     }
 
@@ -108,7 +108,7 @@ public class CanvasPlugin extends AbstractPlugin<CanvasController> implements Ca
                         public void run() {
                             if (plugInPort.getNewComponentTypeSlot() == null && e.isPopupTrigger()) {
                                 // Enable actions.
-                                boolean enabled = !plugInPort.getSelectedComponents().isEmpty();
+                                boolean enabled = !getView().getSelectedComponents().isEmpty();
                                 findAction("Cut").setEnabled(enabled);
                                 findAction("Copy").setEnabled(enabled);
                                 try {
@@ -126,7 +126,7 @@ public class CanvasPlugin extends AbstractPlugin<CanvasController> implements Ca
                                 findAction("Ungroup Selection").setEnabled(enabled);
                                 findAction("Send Backward").setEnabled(enabled);
                                 findAction("Bring Forward").setEnabled(enabled);
-                                findAction("Save as Template").setEnabled(plugInPort.getSelectedComponents().size() == 1);
+                                findAction("Save as Template").setEnabled(getView().getSelectedComponents().size() == 1);
 
                                 showPopupAt(e.getX(), e.getY());
                             }
@@ -303,7 +303,7 @@ public class CanvasPlugin extends AbstractPlugin<CanvasController> implements Ca
         JMenu selectionMenu = (JMenu) findMenu("Select");
         selectionMenu.removeAll();
 
-        for (IDIYComponent component : plugInPort.findComponentsAt(new Point(x, y))) {
+        for (IDIYComponent component : getModel().findComponentsAt(new Point(x, y))) {
             JMenuItem item = new JMenuItem(component.getName());
             final IDIYComponent finalComponent = component;
             item.addActionListener((event) -> getController().selectComponent(finalComponent));

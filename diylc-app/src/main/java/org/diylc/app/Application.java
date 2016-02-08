@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -14,19 +13,16 @@ import javax.swing.SwingUtilities;
 
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.ApplicationController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.async.Async;
 import org.diylc.app.view.ISwingUI;
-import org.diylc.app.view.IView;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.View;
-import org.diylc.app.view.dialogs.DialogFactory;
 import org.diylc.app.view.menus.MenuConstants;
 import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.core.BootUtils;
 import org.diylc.core.LRU;
-import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.platform.DefaultQuitResponse;
 import org.diylc.core.platform.Platform;
@@ -191,7 +187,7 @@ public class Application implements ApplicationController {
         return getCurrentDrawing().getView();
     }
 
-    public DrawingModel getCurrentModel() {
+    public Model getCurrentModel() {
         return getCurrentView().getModel();
     }
 
@@ -231,7 +227,7 @@ public class Application implements ApplicationController {
 
     public void open() {
         LOG.info("OpenAction triggered");
-        final Path path = DialogFactory.getInstance().showOpenDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
+        final Path path = getCurrentView().showOpenDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
                 null, FileFilterEnum.DIY.getExtensions()[0], null);
 
         if (path != null) {
@@ -267,30 +263,9 @@ public class Application implements ApplicationController {
 
     public void importProject() {
         LOG.info("ImportAction triggered");
-        Presenter presenter = new Presenter(new IView() {
+        Presenter presenter = new Presenter();
 
-            @Override
-            public int showConfirmDialog(String message, String title, int optionType, int messageType) {
-                return JOptionPane.showConfirmDialog(null, message, title, optionType, messageType);
-            }
-
-            @Override
-            public void showMessage(String message, String title, int messageType) {
-                JOptionPane.showMessageDialog(null, message, title, messageType);
-            }
-
-            @Override
-            public Path promptFileSave() {
-                return null;
-            }
-
-            @Override
-            public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
-                return false;
-            }
-        });
-
-        final Path path = DialogFactory.getInstance().showOpenDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
+        final Path path = getCurrentView().showOpenDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
                 null, FileFilterEnum.DIY.getExtensions()[0], null);
         if (path != null) {
             new Async().execute(() -> {
@@ -303,12 +278,12 @@ public class Application implements ApplicationController {
                  * Grab all components and paste them into the main presenter
                  */
                 Drawing drawing = createNewProject();
-                drawing.getModel().pasteComponents(presenter.getCurrentProject().getComponents());
+                drawing.getModel().pasteComponents(drawing.getModel().getProject().getComponents());
                 /*
                  * Cleanup components in the temp presenter, don't need them
                  * anymore
                  */
-                presenter.selectAll(0);
+//                presenter.selectAll(0);
                 presenter.deleteSelectedComponents();
                 return null;
             }, Async.onError((Exception e) -> {

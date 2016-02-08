@@ -3,7 +3,7 @@ package org.diylc.app.view.menus;
 import org.diylc.app.Accelerators;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.ToolsController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
@@ -15,7 +15,7 @@ import org.diylc.app.view.View;
  */
 public class ToolsMenuPlugin extends AbstractMenuPlugin<ToolsController> {
 
-	public ToolsMenuPlugin(ToolsController toolsController, View view, DrawingModel model) {
+	public ToolsMenuPlugin(ToolsController toolsController, View view, Model model) {
 	    super(toolsController, view, model);
 	}
 

@@ -9,10 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Path;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -21,7 +18,6 @@ import javax.swing.JPanel;
 
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.core.Project;
-import org.diylc.core.PropertyWrapper;
 import org.diylc.core.platform.IFileChooserAccessory;
 
 import com.thoughtworks.xstream.XStream;
@@ -48,28 +44,7 @@ public class ProjectPreview extends JPanel implements PropertyChangeListener, IF
 		super();
 
 		setPreferredSize(new Dimension(140, 128));
-		presenter = new Presenter(new IView() {
-
-			@Override
-			public int showConfirmDialog(String message, String title, int optionType,
-					int messageType) {
-				return 0;
-			}
-
-			@Override
-			public void showMessage(String message, String title, int messageType) {
-			}
-			
-			@Override
-			public Path promptFileSave() {
-				return null;
-			}
-
-			@Override
-			public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
-				return false;
-			}
-		});
+		presenter = new Presenter();
 		xStream = new XStream(new DomDriver());
 
 		emptyProject = new Project();

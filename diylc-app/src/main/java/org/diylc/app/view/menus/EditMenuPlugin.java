@@ -4,14 +4,14 @@ import org.diylc.app.Accelerators;
 import org.diylc.app.ExpansionMode;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.EditMenuController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 
 public class EditMenuPlugin extends AbstractMenuPlugin<EditMenuController> {
 
-    public EditMenuPlugin(EditMenuController editMenuController, View view, DrawingModel model) {
+    public EditMenuPlugin(EditMenuController editMenuController, View view, Model model) {
         super(editMenuController, view, model);
     }
 

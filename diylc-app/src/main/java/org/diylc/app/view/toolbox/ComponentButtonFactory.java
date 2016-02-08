@@ -20,8 +20,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
+import org.diylc.app.view.View;
 import org.diylc.components.registry.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
@@ -37,9 +39,10 @@ class ComponentButtonFactory {
 
 	public static int MARGIN = 3;
 
-	public static JButton create(final IPlugInPort plugInPort,
+	public static JButton create(Model model, View view, final IPlugInPort plugInPort,
 			final ComponentType componentType, final JPopupMenu menu) {
-		JButton button = DropDownButtonFactory.createDropDownButton(
+		
+        JButton button = DropDownButtonFactory.createDropDownButton(
 				componentType.getIcon(), menu);
 
 		button.setBorder(BorderFactory.createEmptyBorder(MARGIN + 1,
@@ -68,8 +71,8 @@ class ComponentButtonFactory {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON3) {
-					List<IDIYComponent> components = plugInPort
-							.getCurrentProject().getComponents();
+					List<IDIYComponent> components = model
+							.getProject().getComponents();
 					List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
 					for (IDIYComponent component : components) {
 						if (componentType.getInstanceClass().equals(
@@ -79,9 +82,9 @@ class ComponentButtonFactory {
 					}
 					// Ctrl appends selection
 					if (e.isControlDown()) {
-						newSelection.addAll(plugInPort.getSelectedComponents());
+						newSelection.addAll(view.getSelectedComponents());
 					}
-					plugInPort.updateSelection(newSelection);
+					view.updateSelection(newSelection);
 					plugInPort.setNewComponentTypeSlot(null, null);
 					plugInPort.refresh();
 				}

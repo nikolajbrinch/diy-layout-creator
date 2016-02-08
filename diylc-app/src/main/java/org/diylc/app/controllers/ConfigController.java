@@ -4,15 +4,15 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JCheckBoxMenuItem;
 
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.core.config.Configuration;
 
 public class ConfigController extends AbstractController {
 
-    public ConfigController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
+    public ConfigController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort) {
+        super(applicationController, view, model, controller, plugInPort);
     }
 
     public void autoCreatePads(ActionEvent event) {

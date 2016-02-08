@@ -1,6 +1,6 @@
 package org.diylc.app.controllers;
 
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.BrowserUtils;
 import org.diylc.app.view.IPlugInPort;
@@ -28,8 +28,8 @@ public class HelpController extends AbstractController {
 
     private AboutDialog aboutDialog;
 
-    public HelpController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
+    public HelpController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort) {
+        super(applicationController, view, model, controller, plugInPort);
     }
 
     public void userManual() {
@@ -63,7 +63,7 @@ public class HelpController extends AbstractController {
     private AboutDialog getAboutDialog() {
         if (aboutDialog == null) {
             aboutDialog = DialogFactory.getInstance().createAboutDialog("DIY Layout Creator", AppIconLoader.IconLarge.getIcon(),
-                    getPlugInPort().getCurrentVersionNumber().toString(), "Branislav Stojkovic", "diylc.org", "bancika@gmail.com", "");
+                    getModel().getCurrentVersionNumber().toString(), "Branislav Stojkovic", "diylc.org", "bancika@gmail.com", "");
         }
         return aboutDialog;
     }

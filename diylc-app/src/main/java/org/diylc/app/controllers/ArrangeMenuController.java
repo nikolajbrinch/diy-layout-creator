@@ -5,7 +5,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.util.EnumSet;
 
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.core.EventType;
@@ -16,8 +16,8 @@ public class ArrangeMenuController extends AbstractController implements Arrange
 
     private final EventReciever<EventType> eventReciever = new EventReciever<EventType>();
 
-    public ArrangeMenuController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
+    public ArrangeMenuController(ApplicationController applicationController, View view, Model model, DrawingController controller, IPlugInPort plugInPort) {
+        super(applicationController, view, model, controller, plugInPort);
 
         eventReciever.registerListener(EnumSet.of(EventType.SELECTION_CHANGED), new EventListener<EventType>() {
 
