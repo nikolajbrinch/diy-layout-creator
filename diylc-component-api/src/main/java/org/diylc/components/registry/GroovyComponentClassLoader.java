@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.codehaus.groovy.control.CompilationFailedException;
-import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.ProgressView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class GroovyComponentClassLoader extends AbstractComponentClassLoader {
     private static final Logger LOG = LoggerFactory.getLogger(GroovyComponentClassLoader.class);
 
     @SuppressWarnings("unchecked")
-    Collection<? extends Class<? extends IDIYComponent>> loadGroovyClasses(ClassLoader classLoader, Path[] directories) {
+    Collection<? extends Class<? extends IDIYComponent>> loadGroovyClasses(ClassLoader classLoader, Path[] directories, ProgressView progressView) {
         Set<Class<? extends IDIYComponent>> componentClasses = new HashSet<Class<? extends IDIYComponent>>();
 
         GroovyClassLoader groovyClassLoader = null;
@@ -41,8 +41,7 @@ public class GroovyComponentClassLoader extends AbstractComponentClassLoader {
             double count = componentTypeFiles.size();
             double counter = 1;
             for (Path path : componentTypeFiles) {
-                getEventDispatcher().sendEvent(EventType.SPLASH_UPDATE,
-                        "Loading component files: " + Math.round(counter / count * 100d) + "%");
+                progressView.update("Loading component files: " + Math.round(counter / count * 100d) + "%");
                 LOG.debug("Loading component file: \"" + path.toAbsolutePath().toString() + "\"");
                 try {
                     Class<?> clazz = groovyClassLoader.parseClass(path.toFile());

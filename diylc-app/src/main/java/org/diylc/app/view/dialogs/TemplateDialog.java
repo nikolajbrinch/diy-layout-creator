@@ -12,15 +12,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -30,7 +26,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -38,271 +33,230 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.diylc.app.model.DrawingModel;
-import org.diylc.app.view.IView;
 import org.diylc.app.view.Presenter;
+import org.diylc.app.view.StubPresenter;
 import org.diylc.app.view.rendering.DrawingOption;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.Resource;
+import org.diylc.core.ResourceLoader;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TemplateDialog extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = LoggerFactory.getLogger(TemplateDialog.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TemplateDialog.class);
 
-	private static final Dimension panelSize = new Dimension(400, 300);
+    private static final Dimension panelSize = new Dimension(400, 300);
 
-	private DrawingModel model;
+    private final ResourceLoader resourceLoader = new ResourceLoader();
 
-	private JList<Path> fileList;
-	
-	private JPanel canvasPanel;
-	
-	private Presenter presenter;
-	
-	private List<Path> files;
-	
-	private JCheckBox showTemplatesBox;
-	
-	private JPanel mainPanel;
-	
-	private JButton loadButton;
-	
-	private JPanel infoPanel;
-	
+    private DrawingModel model;
 
-	public TemplateDialog(JFrame owner, DrawingModel model) {
-		super(owner, "Templates");
-		setModal(true);
-		setResizable(false);
-		this.model = model;
-		this.presenter = new Presenter(new IView() {
+    private JList<Path> fileList;
 
-			@Override
-			public int showConfirmDialog(String message, String title, int optionType,
-					int messageType) {
-				return JOptionPane.showConfirmDialog(TemplateDialog.this, message, title,
-						optionType, messageType);
-			}
+    private JPanel canvasPanel;
 
-			@Override
-			public void showMessage(String message, String title, int messageType) {
-				JOptionPane.showMessageDialog(TemplateDialog.this, message, title, messageType);
-			}
-			
-			@Override
-			public Path promptFileSave() {
-				return null;
-			}
-			
-			@Override
-			public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
-				return false;
-			}
-		});
-		// this.presenter.installPlugin(new IPlugIn() {
-		//
-		// @Override
-		// public void connect(IPlugInPort plugInPort) {
-		// }
-		//
-		// @Override
-		// public EnumSet<EventType> getSubscribedEventTypes() {
-		// return EnumSet.of(EventType.REPAINT);
-		// }
-		//
-		// @Override
-		// public void processMessage(EventType eventType, Object... params) {
-		// if (eventType == EventType.REPAINT) {
-		// getCanvasPanel().repaint();
-		// }
-		// }
-		// });
-		setContentPane(getMainPanel());
-		pack();
-		setLocationRelativeTo(owner);
-	}
+    private Presenter presenter;
 
-	public JPanel getMainPanel() {
-		if (mainPanel == null) {
-			mainPanel = new JPanel(new GridBagLayout());
-			mainPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+    private List<Path> files;
 
-			GridBagConstraints c = new GridBagConstraints();
-			c.gridx = 0;
-			c.gridy = 0;
-			c.weightx = 0;
-			c.weighty = 1;
-			c.weightx = 1;
-			c.gridwidth = 2;
-			c.fill = GridBagConstraints.BOTH;
-			c.insets = new Insets(0, 0, 4, 0);
-			mainPanel.add(getInfoPanel(), c);
+    private JCheckBox showTemplatesBox;
 
-			c.gridy = 1;
-			c.weightx = 0;
-			c.gridwidth = 1;
-			c.insets = new Insets(0, 0, 0, 0);
-			JScrollPane scrollPane = new JScrollPane(getFileList());
-			mainPanel.add(scrollPane, c);
+    private JPanel mainPanel;
 
-			c.gridx = 1;
-			c.weightx = 1;
+    private JButton loadButton;
 
-			JPanel panel = new JPanel(new BorderLayout());
-			panel.setBorder(scrollPane.getBorder());
-			panel.add(getCanvasPanel(), BorderLayout.CENTER);
-			mainPanel.add(panel, c);
+    private JPanel infoPanel;
 
-			c.gridx = 0;
-			c.gridy = 2;
-			c.weightx = 0;
-			c.weighty = 0;
-			c.anchor = GridBagConstraints.LAST_LINE_START;
-			c.fill = GridBagConstraints.NONE;
-			mainPanel.add(getShowTemplatesBox(), c);
+    public TemplateDialog(JFrame owner, DrawingModel model) {
+        super(owner, "Templates");
+        setModal(true);
+        setResizable(false);
+        this.model = model;
+        this.presenter = new StubPresenter();
+        setContentPane(getMainPanel());
+        pack();
+        setLocationRelativeTo(owner);
+    }
 
-			c.gridx = 1;
-			c.anchor = GridBagConstraints.LAST_LINE_END;
-			c.insets = new Insets(4, 0, 0, 0);
-			mainPanel.add(getLoadButton(), c);
-		}
-		return mainPanel;
-	}
+    public JPanel getMainPanel() {
+        if (mainPanel == null) {
+            mainPanel = new JPanel(new GridBagLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-	public JButton getLoadButton() {
-		if (loadButton == null) {
-			loadButton = new JButton("Load Template");
-			loadButton.addActionListener(new ActionListener() {
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.weightx = 0;
+            c.weighty = 1;
+            c.weightx = 1;
+            c.gridwidth = 2;
+            c.fill = GridBagConstraints.BOTH;
+            c.insets = new Insets(0, 0, 4, 0);
+            mainPanel.add(getInfoPanel(), c);
 
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					model.loadProject(presenter.getCurrentProject(), true);
-					dispose();
-				}
-			});
-		}
-		return loadButton;
-	}
+            c.gridy = 1;
+            c.weightx = 0;
+            c.gridwidth = 1;
+            c.insets = new Insets(0, 0, 0, 0);
+            JScrollPane scrollPane = new JScrollPane(getFileList());
+            mainPanel.add(scrollPane, c);
 
-	public JPanel getInfoPanel() {
-		if (infoPanel == null) {
-			infoPanel = new JPanel();
-			infoPanel.setBackground(Color.decode("#FFFFCC"));
-			infoPanel.setBorder(new JTextField().getBorder());
-			JLabel infoLabel = new JLabel(
-					"<html>Templates are semi-product layouts that are used as a starting point for your projects.<br>"
-							+ "Pick a templete in the left list and click \"Load Template\" to load it or close this dialog to continue.<br>"
-							+ "You can create your own templates by placing a DIY file into <b>diylc/templates</b> directory.</html>");
-			infoLabel.setOpaque(false);
-			infoPanel.add(infoLabel);
-		}
-		return infoPanel;
-	}
+            c.gridx = 1;
+            c.weightx = 1;
 
-	public JList<Path> getFileList() {
-		if (fileList == null) {
-			fileList = new JList<Path>(getFiles().toArray(new Path[0]));
-			fileList.setPreferredSize(new Dimension(128, -1));
-			fileList.setCellRenderer(new DefaultListCellRenderer() {
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.setBorder(scrollPane.getBorder());
+            panel.add(getCanvasPanel(), BorderLayout.CENTER);
+            mainPanel.add(panel, c);
 
-				private static final long serialVersionUID = 1L;
+            c.gridx = 0;
+            c.gridy = 2;
+            c.weightx = 0;
+            c.weighty = 0;
+            c.anchor = GridBagConstraints.LAST_LINE_START;
+            c.fill = GridBagConstraints.NONE;
+            mainPanel.add(getShowTemplatesBox(), c);
 
-				@Override
-				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-						boolean isSelected, boolean cellHasFocus) {
-					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index,
-							isSelected, cellHasFocus);
-					if (value instanceof Path) {
-						label.setText(((Path) value).getFileName().toString());
-					}
-					
-					return label;
-				}
+            c.gridx = 1;
+            c.anchor = GridBagConstraints.LAST_LINE_END;
+            c.insets = new Insets(4, 0, 0, 0);
+            mainPanel.add(getLoadButton(), c);
+        }
+        return mainPanel;
+    }
 
-			});
-			fileList.addListSelectionListener(new ListSelectionListener() {
+    public JButton getLoadButton() {
+        if (loadButton == null) {
+            loadButton = new JButton("Load Template");
+            loadButton.addActionListener(new ActionListener() {
 
-				@Override
-				public void valueChanged(ListSelectionEvent e) {
-					Path path = (Path) fileList.getSelectedValue();
-					if (path != null) {
-						try {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    model.loadProject(presenter.getCurrentProject(), true);
+                    dispose();
+                }
+            });
+        }
+        return loadButton;
+    }
+
+    public JPanel getInfoPanel() {
+        if (infoPanel == null) {
+            infoPanel = new JPanel();
+            infoPanel.setBackground(Color.decode("#FFFFCC"));
+            infoPanel.setBorder(new JTextField().getBorder());
+            JLabel infoLabel = new JLabel(
+                    "<html>Templates are semi-product layouts that are used as a starting point for your projects.<br>"
+                            + "Pick a templete in the left list and click \"Load Template\" to load it or close this dialog to continue.<br>"
+                            + "You can create your own templates by placing a DIY file into <b>diylc/templates</b> directory.</html>");
+            infoLabel.setOpaque(false);
+            infoPanel.add(infoLabel);
+        }
+        return infoPanel;
+    }
+
+    public JList<Path> getFileList() {
+        if (fileList == null) {
+            fileList = new JList<Path>(getFiles().toArray(new Path[0]));
+            fileList.setPreferredSize(new Dimension(128, -1));
+            fileList.setCellRenderer(new DefaultListCellRenderer() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                        boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (value instanceof Path) {
+                        label.setText(((Path) value).getFileName().toString());
+                    }
+
+                    return label;
+                }
+
+            });
+            fileList.addListSelectionListener(new ListSelectionListener() {
+
+                @Override
+                public void valueChanged(ListSelectionEvent e) {
+                    Path path = (Path) fileList.getSelectedValue();
+                    if (path != null) {
+                        try {
                             presenter.loadProjectFromFile(path);
                         } catch (Exception e1) {
                             throw new RuntimeException(e1);
                         }
-						Dimension dim = presenter.getCanvasDimensions(true);
-						double xFactor = panelSize.getWidth() / dim.getWidth();
-						double yFactor = panelSize.getHeight() / dim.getHeight();
-						presenter.setZoomLevel(Math.min(xFactor, yFactor));
-						getCanvasPanel().repaint();
-					}
-				}
-			});
-			fileList.setSelectedIndex(0);
-		}
-		return fileList;
-	}
-
-	public JCheckBox getShowTemplatesBox() {
-		if (showTemplatesBox == null) {
-			showTemplatesBox = new JCheckBox("Show this dialog at startup");
-			showTemplatesBox.setSelected(true);
-			showTemplatesBox.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Configuration.INSTANCE.setShowTemplates(showTemplatesBox.isSelected());
-				}
-			});
-		}
-		return showTemplatesBox;
-	}
-
-	public List<Path> getFiles() {
-		if (files == null) {
-			files = new ArrayList<Path>();
-			Path dir = Paths.get("templates");
-			if (Files.exists(dir)) {
-			    try (Stream<Path> stream = Files.list(dir)) {
-			    files.addAll(stream
-			            .filter(path -> Files.isRegularFile(path) && path.getFileName().toString().toLowerCase().endsWith(".diy"))
-			            .collect(Collectors.toList()));
-			    } catch (IOException e) {
-                    LOG.warn("Error getting template files", e);
+                        Dimension dim = presenter.getCanvasDimensions(true);
+                        double xFactor = panelSize.getWidth() / dim.getWidth();
+                        double yFactor = panelSize.getHeight() / dim.getHeight();
+                        presenter.setZoomLevel(Math.min(xFactor, yFactor));
+                        getCanvasPanel().repaint();
+                    }
                 }
-			}
-			LOG.debug("Found " + files.size() + " templates");
-		}
-		return files;
-	}
+            });
+            fileList.setSelectedIndex(0);
+        }
+        return fileList;
+    }
 
-	public JPanel getCanvasPanel() {
-		if (canvasPanel == null) {
-			canvasPanel = new JPanel() {
+    public JCheckBox getShowTemplatesBox() {
+        if (showTemplatesBox == null) {
+            showTemplatesBox = new JCheckBox("Show this dialog at startup");
+            showTemplatesBox.setSelected(true);
+            showTemplatesBox.addActionListener(new ActionListener() {
 
-				private static final long serialVersionUID = 1L;
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Configuration.INSTANCE.setShowTemplates(showTemplatesBox.isSelected());
+                }
+            });
+        }
+        return showTemplatesBox;
+    }
 
-				@Override
-				public void paint(Graphics g) {
-					super.paint(g);
-					// Graphics2D g2d = (Graphics2D) g;
-					// AffineTransform transform = g2d.getTransform();
-					presenter.draw((Graphics2D) g, EnumSet.of(DrawingOption.ZOOM,
-							DrawingOption.ANTIALIASING), null);
-					// g2d.setTransform(transform);
-					// Rectangle rect = canvasPanel.getBounds();
-					// BorderFactory.createEtchedBorder().paintBorder(canvasPanel,
-					// g, 0, 0,
-					// (int) rect.getWidth(), (int) rect.getHeight());
-				}
-			};
-			canvasPanel.setBackground(Color.white);
-			canvasPanel.setPreferredSize(panelSize);
-		}
-		return canvasPanel;
-	}
+    public List<Path> getFiles() {
+        if (files == null) {
+            files = new ArrayList<Path>();
+            try {
+                Set<Resource> resources = resourceLoader.getResources("templates", ".diy");
+
+                for (Resource resource : resources) {
+                    files.add(resource.toPath());
+                }
+            } catch (IOException e) {
+                LOG.warn("Error getting template files", e);
+            }
+            LOG.debug("Found " + files.size() + " templates");
+        }
+
+        return files;
+    }
+
+    public JPanel getCanvasPanel() {
+        if (canvasPanel == null) {
+            canvasPanel = new JPanel() {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void paint(Graphics g) {
+                    super.paint(g);
+                    // Graphics2D g2d = (Graphics2D) g;
+                    // AffineTransform transform = g2d.getTransform();
+                    presenter.draw((Graphics2D) g, EnumSet.of(DrawingOption.ZOOM, DrawingOption.ANTIALIASING), null);
+                    // g2d.setTransform(transform);
+                    // Rectangle rect = canvasPanel.getBounds();
+                    // BorderFactory.createEtchedBorder().paintBorder(canvasPanel,
+                    // g, 0, 0,
+                    // (int) rect.getWidth(), (int) rect.getHeight());
+                }
+            };
+            canvasPanel.setBackground(Color.white);
+            canvasPanel.setPreferredSize(panelSize);
+        }
+        return canvasPanel;
+    }
 }

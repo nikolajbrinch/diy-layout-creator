@@ -1,15 +1,20 @@
 package org.diylc.app.view;
 
+import java.util.Collection;
+import java.util.List;
+
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu.Separator;
 
 import org.diylc.app.Drawing;
 import org.diylc.app.controllers.DrawingController;
-import org.diylc.app.model.DrawingModel;
 import org.diylc.app.view.canvas.Canvas;
+import org.diylc.core.IDIYComponent;
+import org.diylc.core.Project;
 
 public interface View {
 
@@ -29,8 +34,6 @@ public interface View {
 
     public void showMessage(String message, String title, int messageType);
 
-    public DrawingModel getModel();
-
     public void dispose();
 
     public JFrame getFrame();
@@ -46,8 +49,9 @@ public interface View {
      *            {@link Action} to inser
      * @param menuName
      *            name of the menu to insert into
+     * @return 
      */
-    public void addMenuAction(Action action, String menuName);
+    public JMenuItem addMenuAction(Action action, String menuName);
 
     /**
      * Adds a custom submenu into application's main menu. If
@@ -81,4 +85,20 @@ public interface View {
      * @return
      */
     public Drawing getDrawing();
+
+    public void repaintCanvas();
+
+    public void updateStatusBar();
+
+    public void updateStatusBar(String message);
+
+    public void updateZoomLevel(double zoomLevel);
+
+    public void updateLockedLayers();
+
+    public void updateTitle();
+
+    public void initCanvas(Project project, boolean freshStart);
+
+    public void selectionStateChanged(List<IDIYComponent> selection, Collection<IDIYComponent> stuckComponents);
 }

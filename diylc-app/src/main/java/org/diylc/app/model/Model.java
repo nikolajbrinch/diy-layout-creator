@@ -10,8 +10,6 @@ public interface Model {
 
     public List<IDIYComponent> getSelectedComponents();
 
-    public boolean allowFileAction();
-
     public void dispose();
 
     public void loadProject(Project project, boolean freshStart) throws Exception;

@@ -1,78 +1,23 @@
 package org.diylc.app.controllers;
 
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
-import org.diylc.core.EventType;
+import org.diylc.app.view.canvas.Canvas;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.Project;
 import org.diylc.core.Template;
-import org.diylc.core.events.EventListener;
-import org.diylc.core.events.EventReciever;
 
-public class CanvasController extends AbstractController implements ArrangeController,
-        EditController, ClipboardOwner {
+public class CanvasController extends AbstractController implements ArrangeController, EditController {
 
-    private final EventReciever<EventType> eventReciever = new EventReciever<EventType>();
-
-    private final Clipboard clipboard;
-
-    public CanvasController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
+    public CanvasController(ApplicationController applicationController, View view, Model model, IPlugInPort plugInPort) {
         super(applicationController, view, model, plugInPort);
-        this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-
-        eventReciever.registerListener(EnumSet.of(EventType.PROJECT_LOADED, EventType.ZOOM_CHANGED, EventType.REPAINT),
-                new EventListener<EventType>() {
-
-                    @Override
-                    public void processEvent(EventType eventType, Object... params) {
-                        switch (eventType) {
-                        case PROJECT_LOADED:
-                            getView().getCanvas().refreshSize();
-                            if ((Boolean) params[1]) {
-                                /* 
-                                 * Scroll to the center.
-                                 */
-                                Rectangle visibleRect = getView().getCanvas().getVisibleRect();
-                                visibleRect.setLocation((getView().getCanvas().getWidth() - visibleRect.width) / 2, (getView()
-                                        .getCanvas().getHeight() - visibleRect.height) / 2);
-                                getView().getCanvas().scrollRectToVisible(visibleRect);
-                                getView().getCanvas().revalidate();
-                            }
-                            break;
-                        case ZOOM_CHANGED:
-                            Rectangle visibleRect = getView().getCanvas().getVisibleRect();
-                            getView().getCanvas().refreshSize();
-                            /* 
-                             * Try to set the visible area to be centered with
-                             * the previous
-                             * one.
-                             */
-                            double zoomFactor = (Double) params[0] / getView().getZoomLevel();
-                            visibleRect.setBounds((int) (visibleRect.x * zoomFactor), (int) (visibleRect.y * zoomFactor),
-                                    visibleRect.width, visibleRect.height);
-                            getView().getCanvas().scrollRectToVisible(visibleRect);
-                            getView().getCanvas().revalidate();
-
-                            getView().setZoomLevel((Double) params[0]);
-                            break;
-                        case REPAINT:
-                            getView().getCanvas().repaint();
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-
-                });
     }
 
     public void selectComponent(IDIYComponent component) {
@@ -83,15 +28,50 @@ public class CanvasController extends AbstractController implements ArrangeContr
     }
 
     public void applyTemplate(Template template) {
-        getPlugInPort().applyTemplateToSelection(template);        
+        getPlugInPort().applyTemplateToSelection(template);
     }
 
     @Override
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    public Clipboard getClipboard() {
+        return ((DrawingController) getClipboardOwner()).getClipboard();
     }
 
-    public Clipboard getClipboard() {
-        return clipboard;
+    @Override
+    public ClipboardOwner getClipboardOwner() {
+        return getApplicationController().getCurrentDrawing().getController();
+    }
+    
+    public void updateZoomLevel(double zoomLevel) {
+        Rectangle visibleRect = getCanvas().getVisibleRect();
+        getCanvas().refreshSize();
+        /*
+         * Try to set the visible area to be centered with the previous one.
+         */
+        double zoomFactor = zoomLevel / getView().getZoomLevel();
+        visibleRect.setBounds((int) (visibleRect.x * zoomFactor), (int) (visibleRect.y * zoomFactor), visibleRect.width,
+                visibleRect.height);
+        getCanvas().scrollRectToVisible(visibleRect);
+        getCanvas().revalidate();
+
+        getView().setZoomLevel(zoomLevel);
+    }
+
+    public void init(Project project, boolean freshStart) {
+        getCanvas().refreshSize();
+        if (freshStart) {
+            /*
+             * Scroll to the center.
+             */
+            Rectangle visibleRect = getCanvas().getVisibleRect();
+            visibleRect.setLocation((getCanvas().getWidth() - visibleRect.width) / 2,
+                    (getCanvas().getHeight() - visibleRect.height) / 2);
+            getCanvas().scrollRectToVisible(visibleRect);
+            getCanvas().revalidate();
+        }
+    }
+    
+    private Canvas getCanvas() {
+        return getView().getCanvas();
     }
 
 }

@@ -2,7 +2,7 @@ package org.diylc.app.view.menus;
 
 import org.diylc.app.actions.CheckBoxAction;
 import org.diylc.app.controllers.ConfigController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.core.config.Configuration;
@@ -14,7 +14,7 @@ import org.diylc.core.config.Configuration;
  */
 public class ConfigMenuPlugin extends AbstractMenuPlugin<ConfigController> {
 
-    public ConfigMenuPlugin(ConfigController configController, View view, DrawingModel model) {
+    public ConfigMenuPlugin(ConfigController configController, View view, Model model) {
         super(configController, view, model);
     }
 

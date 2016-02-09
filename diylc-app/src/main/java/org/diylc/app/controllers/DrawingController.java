@@ -2,25 +2,31 @@ package org.diylc.app.controllers;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
+import java.awt.datatransfer.Transferable;
 
 import org.diylc.app.Drawing;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.DrawingView;
+import org.diylc.core.Project;
 
-public class DrawingController {
+public class DrawingController implements ClipboardOwner {
 
     private final ApplicationController applicationController;
 
-    private final DrawingView view;
+    private DrawingView view;
 
     private final Clipboard clipboard;
 
     private boolean closed = false;
 
-    public DrawingController(ApplicationController applicationController, DrawingView view) {
+    private final Model model;
+
+    public DrawingController(ApplicationController applicationController, Model model) {
         this.applicationController = applicationController;
-        this.view = view;
+        this.model = model;
 
         this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         this.clipboard.addFlavorListener(new FlavorListener() {
@@ -30,7 +36,6 @@ public class DrawingController {
                 getView().refreshActions();
             }
         });
-
     }
 
     public ApplicationController getApplicationController() {
@@ -58,6 +63,23 @@ public class DrawingController {
 
     private Drawing getDrawing() {
         return getView().getDrawing();
+    }
+
+    @Override
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+        getView().refreshActions();
+    }
+
+    public void autoSave(Project project) {
+        getApplicationController().autoSave(project);
+    }
+
+    public void setView(DrawingView view) {
+        this.view = view;
+    }
+
+    public Model getModel() {
+        return model;
     }
 
 }

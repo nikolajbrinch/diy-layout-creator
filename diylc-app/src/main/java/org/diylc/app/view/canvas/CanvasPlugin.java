@@ -24,7 +24,7 @@ import org.diylc.app.ComponentTransferable;
 import org.diylc.app.ExpansionMode;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.CanvasController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.BadPositionException;
 import org.diylc.app.view.IPlugInPort;
@@ -34,6 +34,7 @@ import org.diylc.app.view.MouseButton;
 import org.diylc.app.view.ProjectDrawingProvider;
 import org.diylc.app.view.menus.AbstractPlugin;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.Project;
 import org.diylc.core.Template;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
@@ -56,7 +57,7 @@ public class CanvasPlugin extends AbstractPlugin<CanvasController> implements Ca
 
     private double zoomLevel = 1;
 
-    public CanvasPlugin(CanvasController canvasController, ISwingUI swingUI, DrawingModel model) {
+    public CanvasPlugin(CanvasController canvasController, ISwingUI swingUI, Model model) {
         super(canvasController, swingUI, model);
     }
 
@@ -366,6 +367,16 @@ public class CanvasPlugin extends AbstractPlugin<CanvasController> implements Ca
     @Override
     public void repaint() {
         getCanvasPanel().repaint();
+    }
+
+    @Override
+    public void updateZoomLevel(double zoomLevel) {
+        getController().updateZoomLevel(zoomLevel);
+    }
+
+    @Override
+    public void init(Project project, boolean freshStart) {
+        getController().init(project, freshStart);
     }
 
 }

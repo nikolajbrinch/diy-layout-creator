@@ -3,7 +3,7 @@ package org.diylc.app.view.menus;
 import org.diylc.app.Accelerators;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.ArrangeMenuController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
@@ -13,7 +13,7 @@ import org.diylc.app.view.View;
  */
 public class ArrangeMenuPlugin extends AbstractMenuPlugin<ArrangeMenuController> {
 
-    public ArrangeMenuPlugin(ArrangeMenuController arrangeController, View view, DrawingModel model) {
+    public ArrangeMenuPlugin(ArrangeMenuController arrangeController, View view, Model model) {
         super(arrangeController, view, model);
     }
 

@@ -6,11 +6,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
-import java.util.EnumSet;
 
-import org.diylc.core.EventType;
-import org.diylc.core.events.EventListener;
-import org.diylc.core.events.EventReciever;
+import org.diylc.core.ProgressView;
 import org.diylc.core.platform.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +17,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @author nikolajbrinch@gmail.com
  */
-public class DiylcSplashScreen implements EventListener<EventType> {
+public class DiylcSplashScreen implements ProgressView {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiylcSplashScreen.class);
 
     public static int WIDTH = 729;
 
     public static int HEIGHT = 408;
-
-    private EventReciever<EventType> eventReciever = new EventReciever<EventType>();
 
     private Graphics2D graphics;
 
@@ -50,20 +45,13 @@ public class DiylcSplashScreen implements EventListener<EventType> {
 
         font = new Font(Platform.getPlatform().getDefaultTextFontName(), Font.PLAIN, 12);
 
-        eventReciever.registerListener(EnumSet.of(EventType.SPLASH_UPDATE), this);
-
-        updateText("Loading application...");
+        update("Loading application...");
     }
 
-    public void processEvent(EventType eventType, Object... params) {
-        if (eventType == EventType.SPLASH_UPDATE) {
-            updateText((String) params[0]);
-        }
-    }
-
-    private void updateText(String message) {
+    @Override
+    public void update(String message) {
         SplashScreen splashScreen = SplashScreen.getSplashScreen();
-        if (splashScreen.isVisible()) {
+        if (splashScreen != null && splashScreen.isVisible()) {
             if (graphics != null) {
                 graphics.setComposite(AlphaComposite.Clear);
                 graphics.fillRect(0, 0, WIDTH, HEIGHT);
@@ -77,7 +65,6 @@ public class DiylcSplashScreen implements EventListener<EventType> {
     }
 
     public void dispose() {
-        eventReciever.unregisterListener(this);
         if (splashScreen != null) {
             if (splashScreen.isVisible()) {
                 splashScreen.close();
@@ -85,7 +72,7 @@ public class DiylcSplashScreen implements EventListener<EventType> {
             splashScreen = null;
             graphics = null;
             font = null;
-            eventReciever = null;
         }
     }
+
 }

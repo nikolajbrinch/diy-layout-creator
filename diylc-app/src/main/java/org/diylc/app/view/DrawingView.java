@@ -10,10 +10,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.EnumSet;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +39,7 @@ import javax.swing.WindowConstants;
 import org.diylc.app.ComponentTransferable;
 import org.diylc.app.Drawing;
 import org.diylc.app.FileFilterEnum;
+import org.diylc.app.actions.CheckBoxAction;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.controllers.ArrangeMenuController;
@@ -52,7 +53,6 @@ import org.diylc.app.controllers.LayersController;
 import org.diylc.app.controllers.ToolsController;
 import org.diylc.app.controllers.ViewController;
 import org.diylc.app.controllers.WindowController;
-import org.diylc.app.model.DrawingModel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.canvas.Canvas;
 import org.diylc.app.view.canvas.CanvasPlugin;
@@ -71,8 +71,9 @@ import org.diylc.app.view.menus.ViewMenuPlugin;
 import org.diylc.app.view.menus.WindowMenuPlugin;
 import org.diylc.app.view.properties.PropertyPlugin;
 import org.diylc.app.view.toolbox.ToolBox;
-import org.diylc.core.EventType;
+import org.diylc.core.IDIYComponent;
 import org.diylc.core.LRU;
+import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.WindowBounds;
@@ -89,8 +90,6 @@ public class DrawingView extends JFrame implements ISwingUI, View {
     private final ApplicationController applicationController;
 
     private DrawingController drawingController;
-
-    private DrawingModel model;
 
     private final Presenter presenter;
 
@@ -112,14 +111,19 @@ public class DrawingView extends JFrame implements ISwingUI, View {
 
     private CanvasPlugin canvasPlugin;
 
-    private PropertyPlugin propertyPlugin;
+    private PropertyPlugin propertyPanel;
+
+    private StatusBar statusBar;
 
     private Drawing drawing;
 
-    public DrawingView(ApplicationController applicationController, Drawing drawing) {
+    private LayersController layersController;
+
+    public DrawingView(ApplicationController applicationController, Drawing drawing, DrawingController controller, Path path, boolean isSaved) {
         super("DIY Layout Creator");
         this.applicationController = applicationController;
         this.drawing = drawing;
+        this.drawingController = controller;
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -130,8 +134,8 @@ public class DrawingView extends JFrame implements ISwingUI, View {
                 AppIconLoader.IconLarge.getImage()));
         DialogFactory.getInstance().initialize(this);
 
-        this.presenter = new Presenter(this);
-        this.model = new DrawingModel(presenter);
+        this.presenter = new Presenter(this, this, controller, path, isSaved);
+        controller.setView(this);
 
         installPlugins();
         presenter.configure();
@@ -167,34 +171,42 @@ public class DrawingView extends JFrame implements ISwingUI, View {
             }
 
         });
+        
+        updateTitle();
 
         setGlassPane(new CustomGlassPane());
     }
 
     private void installPlugins() {
         presenter.installPlugin(new ToolBox(this));
-        presenter.installPlugin(new FileMenuPlugin(getApplication(), new FileController(getApplication(), this, getModel(), presenter,
-                new ProjectDrawingProvider(presenter, false, true)), this, getModel()));
-        presenter
-                .installPlugin(new EditMenuPlugin(new EditMenuController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new ViewMenuPlugin(new ViewController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new ArrangeMenuPlugin(new ArrangeMenuController(getApplication(), this, getModel(), presenter), this,
-                getModel()));
-        presenter
-                .installPlugin(new ConfigMenuPlugin(new ConfigController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter
-                .installPlugin(new LayersMenuPlugin(new LayersController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new ToolsMenuPlugin(new ToolsController(getApplication(), this, getModel(), presenter,
-                new TraceMaskDrawingProvider(presenter)), this, getModel()));
-        presenter
-                .installPlugin(new WindowMenuPlugin(new WindowController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new HelpMenuPlugin(new HelpController(getApplication(), this, getModel(), presenter), this, getModel()));
-        presenter.installPlugin(new StatusBar(this));
-        canvasPlugin = new CanvasPlugin(new CanvasController(getApplication(), this, getModel(), presenter), this, getModel());
+        presenter.installPlugin(new FileMenuPlugin(getApplication(), new FileController(getApplication(), this, getController().getModel(),
+                presenter, new ProjectDrawingProvider(presenter, false, true)), this, getController().getModel()));
+        presenter.installPlugin(new EditMenuPlugin(new EditMenuController(getApplication(), this, getController().getModel(), presenter),
+                this, getController().getModel()));
+        presenter.installPlugin(new ViewMenuPlugin(new ViewController(getApplication(), this, getController().getModel(), presenter), this,
+                getController().getModel()));
+        presenter.installPlugin(new ArrangeMenuPlugin(new ArrangeMenuController(getApplication(), this, getController().getModel(),
+                presenter), this, getController().getModel()));
+        presenter.installPlugin(new ConfigMenuPlugin(new ConfigController(getApplication(), this, getController().getModel(), presenter),
+                this, getController().getModel()));
+        setLayersController(new LayersController(getApplication(), this, getController().getModel(), presenter));
+        presenter.installPlugin(new LayersMenuPlugin(getLayersController(), this, getController().getModel()));
+        presenter.installPlugin(new ToolsMenuPlugin(new ToolsController(getApplication(), this, getController().getModel(), presenter,
+                new TraceMaskDrawingProvider(presenter)), this, getController().getModel()));
+        presenter.installPlugin(new WindowMenuPlugin(new WindowController(getApplication(), this, getController().getModel(), presenter),
+                this, getController().getModel()));
+        presenter.installPlugin(new HelpMenuPlugin(new HelpController(getApplication(), this, getController().getModel(), presenter), this,
+                getController().getModel()));
+
+        setStatusBar(new StatusBar(this));
+        presenter.installPlugin(getStatusBar());
+
+        canvasPlugin = new CanvasPlugin(new CanvasController(getApplication(), this, getController().getModel(), presenter), this,
+                getController().getModel());
         presenter.installPlugin(canvasPlugin);
-        propertyPlugin = new PropertyPlugin(this);
-        presenter.installPlugin(propertyPlugin);
-        presenter.installPlugin(new FramePlugin());
+
+        setPropertyPanel(new PropertyPlugin(this));
+        presenter.installPlugin(getPropertyPanel());
     }
 
     protected void storeWindowBounds(JFrame frame) {
@@ -346,16 +358,17 @@ public class DrawingView extends JFrame implements ISwingUI, View {
     }
 
     @Override
-    public void addMenuAction(Action action, String menuName) {
+    public JMenuItem addMenuAction(Action action, String menuName) {
         LOG.trace(String.format("injectMenuAction(%s, %s)", action == null ? "Separator" : action.getValue(Action.NAME), menuName));
         JMenu menu = findOrCreateMenu(menuName);
+        JMenuItem menuItem = null;
         if (action == null) {
             menu.addSeparator();
         } else {
             Boolean isCheckBox = (Boolean) action.getValue(IView.CHECK_BOX_MENU_ITEM);
             String groupName = (String) action.getValue(IView.RADIO_BUTTON_GROUP_KEY);
             if (isCheckBox != null && isCheckBox) {
-                menu.add(new JCheckBoxMenuItem(action));
+                menuItem = menu.add(new JCheckBoxMenuItem(action));
             } else if (groupName != null) {
                 ButtonGroup group;
                 if (buttonGroupMap.containsKey(groupName)) {
@@ -366,11 +379,13 @@ public class DrawingView extends JFrame implements ISwingUI, View {
                 }
                 JRadioButtonMenuItem item = new JRadioButtonMenuItem(action);
                 group.add(item);
-                menu.add(item);
+                menuItem = menu.add(item);
             } else {
-                menu.add(action);
+                menuItem = menu.add(action);
             }
         }
+
+        return menuItem;
     }
 
     @Override
@@ -438,40 +453,6 @@ public class DrawingView extends JFrame implements ISwingUI, View {
                 FileFilterEnum.DIY.getExtensions()[0], null);
     }
 
-    class FramePlugin implements IPlugIn {
-
-        private IPlugInPort plugInPort;
-
-        @Override
-        public void connect(IPlugInPort plugInPort) {
-            this.plugInPort = plugInPort;
-        }
-
-        @Override
-        public EnumSet<EventType> getSubscribedEventTypes() {
-            return EnumSet.of(EventType.FILE_STATUS_CHANGED);
-        }
-
-        @Override
-        public void processMessage(EventType eventType, Object... params) {
-            if (eventType == EventType.FILE_STATUS_CHANGED) {
-                Path path = (Path) params[0];
-                if (path == null) {
-                    path = Paths.get("Untitled");
-                }
-                if (!SystemUtils.isMac()) {
-                    String modified = (Boolean) params[1] ? " (modified)" : "";
-                    setTitle(String.format("DIYLC %s - %s %s", plugInPort.getCurrentVersionNumber(), path.getFileName().toString(),
-                            modified));
-                } else {
-                    setTitle(path.getFileName().toString());
-                    JRootPane root = getRootPane();
-                    root.putClientProperty("Window.documentModified", (Boolean) params[1]);
-                }
-            }
-        }
-    }
-
     @Override
     public void block() {
         getGlassPane().setVisible(true);
@@ -484,7 +465,7 @@ public class DrawingView extends JFrame implements ISwingUI, View {
 
     @Override
     public void refreshActions() {
-        boolean enabled = !getModel().getSelectedComponents().isEmpty();
+        boolean enabled = !getPresenter().getSelectedComponents().isEmpty();
         enableMenuAction(MenuConstants.ARRANGE_MENU, "Group Selection", enabled);
         enableMenuAction(MenuConstants.ARRANGE_MENU, "Ungroup Selection", enabled);
         enableMenuAction(MenuConstants.ARRANGE_MENU, "Send Backward", enabled);
@@ -506,6 +487,39 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         enableMenuAction(MenuConstants.EDIT_RENUMBER_MENU, "Immediate Only", enabled);
         enableMenuAction(MenuConstants.EDIT_RENUMBER_MENU, "Same Type Only", enabled);
         enableMenuAction(MenuConstants.EDIT_RENUMBER_MENU, "Save as Template", enabled);
+
+        JMenu windowMenu = findMenu("Window");
+        if (windowMenu != null) {
+            Set<JMenuItem> itemsToRemove = new HashSet<>();
+            int count = windowMenu.getItemCount();
+
+            for (int i = 0; i < count; i++) {
+                JMenuItem menuItem = windowMenu.getItem(i);
+                if (menuItem != null) {
+                    Action action = menuItem.getAction();
+                    if (action != null) {
+                        if (action.getValue("UUID") != null) {
+                            itemsToRemove.add(menuItem);
+                        }
+                    }
+                }
+            }
+
+            for (JMenuItem menuItem : itemsToRemove) {
+                windowMenu.remove(menuItem);
+            }
+
+            addMenuAction(null, MenuConstants.WINDOW_MENU);
+            for (Drawing drawing : getApplication().getDrawings()) {
+                boolean checked = drawing.getId().equals(getDrawing().getId());
+                Action action = new CheckBoxAction(drawing.getTitle(), checked, (event) -> getApplication()
+                        .switchWindow(drawing.getId()));
+                action.putValue("UUID", drawing.getId());
+                addMenuAction(action, MenuConstants.WINDOW_MENU);
+            }
+
+        }
+
     }
 
     private void enableMenuAction(String menuName, String actionName, boolean enabled) {
@@ -514,14 +528,6 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         if (action != null) {
             action.setEnabled(enabled);
         }
-    }
-
-    public DrawingModel getModel() {
-        return model;
-    }
-
-    public void setModel(DrawingModel model) {
-        this.model = model;
     }
 
     @Override
@@ -596,6 +602,84 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         }
 
         return displayName;
+    }
+
+    @Override
+    public void repaintCanvas() {
+        getCanvas().repaint();
+    }
+
+    @Override
+    public void updateStatusBar() {
+        getStatusBar().update();
+    }
+
+    @Override
+    public void updateStatusBar(String message) {
+        getStatusBar().update(message);
+    }
+
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
+    public void setStatusBar(StatusBar statusBar) {
+        this.statusBar = statusBar;
+    }
+
+    @Override
+    public void updateZoomLevel(double zoomLevel) {
+        getStatusBar().updateZoomLevel(zoomLevel);
+        getCanvas().updateZoomLevel(zoomLevel);
+        repaintCanvas();
+    }
+
+    @Override
+    public void updateLockedLayers() {
+        getLayersController().updateLockedLayers(getPresenter().getLockedLayers());
+    }
+
+    public void updateTitle() {
+        Path path = getPresenter().getCurrentFile();
+
+        if (!SystemUtils.isMac()) {
+            String modified = getPresenter().isProjectModified() ? " (modified)" : "";
+            setTitle(String.format("DIYLC %s - %s %s", presenter.getCurrentVersionNumber(), path.getFileName().toString(), modified));
+        } else {
+            setTitle(path.getFileName().toString());
+            JRootPane root = getRootPane();
+            root.putClientProperty("Window.documentModified", getPresenter().isProjectModified());
+        }
+
+        refreshActions();
+    }
+
+    public LayersController getLayersController() {
+        return layersController;
+    }
+
+    public void setLayersController(LayersController layersController) {
+        this.layersController = layersController;
+    }
+
+    @Override
+    public void initCanvas(Project project, boolean freshStart) {
+        getCanvas().init(project, freshStart);
+    }
+
+    @Override
+    public void selectionStateChanged(List<IDIYComponent> selection, Collection<IDIYComponent> stuckComponents) {
+        refreshActions();
+        getStatusBar().updateSelectionState(selection, stuckComponents);
+        getPropertyPanel().updateSelectionState(selection, stuckComponents);
+    }
+
+    public PropertyPlugin getPropertyPanel() {
+        return propertyPanel;
+    }
+
+    public void setPropertyPanel(PropertyPlugin propertyPanel) {
+        this.propertyPanel = propertyPanel;
     }
 
 }

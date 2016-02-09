@@ -1,11 +1,13 @@
 package org.diylc.components.registry;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.ProgressView;
 import org.diylc.core.config.Configuration;
 
 public enum ComponentRegistry {
@@ -21,8 +23,8 @@ public enum ComponentRegistry {
     private ComponentRegistry() {
     }
     
-    public void init() {
-        componentTypes = getComponentTypeLoader().loadComponentTypes(Configuration.INSTANCE.getComponentDirectories());
+    public void init(ProgressView progressView) throws IOException {
+        componentTypes = getComponentTypeLoader().loadComponentTypes(Configuration.INSTANCE.getComponentDirectories(), progressView);
 
         for (String category : getComponentTypes().keySet()) {
             for (ComponentType component : getComponentTypes().get(category)) {

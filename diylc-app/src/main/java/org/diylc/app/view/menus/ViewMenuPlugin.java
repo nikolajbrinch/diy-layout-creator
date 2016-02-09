@@ -1,17 +1,19 @@
 package org.diylc.app.view.menus;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 import org.diylc.app.Accelerators;
 import org.diylc.app.actions.CheckBoxAction;
 import org.diylc.app.actions.RadioButtonAction;
 import org.diylc.app.controllers.ViewController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
+import org.diylc.core.Resource;
+import org.diylc.core.ResourceLoader;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
@@ -27,7 +29,9 @@ public class ViewMenuPlugin extends AbstractMenuPlugin<ViewController> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewMenuPlugin.class);
 
-    public ViewMenuPlugin(ViewController viewController, View view, DrawingModel model) {
+    private final ResourceLoader resourceLoader = new ResourceLoader();
+
+    public ViewMenuPlugin(ViewController viewController, View view, Model model) {
         super(viewController, view, model);
     }
 
@@ -47,26 +51,27 @@ public class ViewMenuPlugin extends AbstractMenuPlugin<ViewController> {
         addMenuAction(new CheckBoxAction("Property Panel", Accelerators.SHOW_PROPERTY_PANEL, Configuration.INSTANCE.getPropertyPanel(), (
                 event) -> getController().propertyPanel(event)), MenuConstants.VIEW_MENU);
 
-        File themeDir = new File("themes");
+        try {
+            Set<Resource> resources = resourceLoader.getResources("themes", ".xml");
 
-        if (themeDir.exists()) {
             XStream xStream = new XStream(new DomDriver());
 
             addSubmenu(MenuConstants.VIEW_THEME_MENU, AppIconLoader.Pens.getIcon(), MenuConstants.VIEW_MENU);
 
-            for (File file : themeDir.listFiles()) {
-                if (file.getName().toLowerCase().endsWith(".xml")) {
-                    try {
-                        InputStream in = new FileInputStream(file);
-                        Theme theme = (Theme) xStream.fromXML(in);
+            for (Resource resource : resources) {
+                if (resource.getFilename().toLowerCase().endsWith(".xml")) {
+                    try (InputStream inputStream = resource.openStream()) {
+                        Theme theme = (Theme) xStream.fromXML(inputStream);
                         LOG.debug("Found theme: " + theme.getName());
-                        addMenuAction(
-                                new RadioButtonAction(theme.getName(), "theme", (event) -> getController().switchTheme(theme)), MenuConstants.VIEW_THEME_MENU);
+                        addMenuAction(new RadioButtonAction(theme.getName(), "theme", (event) -> getController().switchTheme(theme)),
+                                MenuConstants.VIEW_THEME_MENU);
                     } catch (Exception e) {
-                        LOG.error("Could not load theme file " + file.getName(), e);
+                        LOG.error("Could not load theme file " + resource.toString(), e);
                     }
                 }
             }
+        } catch (IOException e) {
+            LOG.warn("Could not load themes", e);
         }
     }
 

@@ -1,18 +1,19 @@
 package org.diylc.app.view.properties;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.swing.SwingConstants;
+
 import org.diylc.app.view.BadPositionException;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.ISwingUI;
-import org.diylc.core.EventType;
+import org.diylc.core.IDIYComponent;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-
-import java.util.EnumSet;
 
 /**
  * @author nikolajbrinch@gmail.com
@@ -64,17 +65,8 @@ public class PropertyPlugin implements IPlugIn {
     private PropertyView getPropertyView() {
         return propertyView;
     }
-
-    @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-        return EnumSet.of(EventType.SELECTION_CHANGED);
+    
+    public void updateSelectionState(List<IDIYComponent> selection, Collection<IDIYComponent> stuckComponents) {
+        getPropertyView().displayProperties(plugInPort.getMutualSelectionProperties());
     }
-
-    @Override
-    public void processMessage(EventType eventType, Object... params) {
-        if (eventType == EventType.SELECTION_CHANGED) {
-            getPropertyView().displayProperties(plugInPort.getMutualSelectionProperties());
-        }
-    }
-
 }

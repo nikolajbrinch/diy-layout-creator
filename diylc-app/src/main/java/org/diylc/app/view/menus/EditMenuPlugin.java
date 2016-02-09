@@ -4,21 +4,21 @@ import org.diylc.app.Accelerators;
 import org.diylc.app.ExpansionMode;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.EditMenuController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 
 public class EditMenuPlugin extends AbstractMenuPlugin<EditMenuController> {
 
-    public EditMenuPlugin(EditMenuController editMenuController, View view, DrawingModel model) {
+    public EditMenuPlugin(EditMenuController editMenuController, View view, Model model) {
         super(editMenuController, view, model);
     }
 
     @Override
     public void connect(IPlugInPort plugInPort) {
-        addMenuAction(getController().getUndoHandler().getUndoAction(), MenuConstants.EDIT_MENU);
-        addMenuAction(getController().getUndoHandler().getRedoAction(), MenuConstants.EDIT_MENU);
+        addMenuAction(plugInPort.getUndoHandler().getUndoAction(), MenuConstants.EDIT_MENU);
+        addMenuAction(plugInPort.getUndoHandler().getRedoAction(), MenuConstants.EDIT_MENU);
         addMenuSeparator(MenuConstants.EDIT_MENU);
         addMenuAction(new GenericAction("Cut", AppIconLoader.Cut.getIcon(), Accelerators.CUT, (event) -> getController().cut()), MenuConstants.EDIT_MENU);
         addMenuAction(new GenericAction("Copy", AppIconLoader.Copy.getIcon(), Accelerators.COPY, (event) -> getController().copy()), MenuConstants.EDIT_MENU);

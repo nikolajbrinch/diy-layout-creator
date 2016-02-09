@@ -28,6 +28,9 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.diylc.app.ExpansionMode;
+import org.diylc.app.IUndoListener;
+import org.diylc.app.UndoHandler;
+import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.io.ProjectFileManager;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.utils.StringUtils;
@@ -43,7 +46,6 @@ import org.diylc.components.registry.ComparatorFactory;
 import org.diylc.components.registry.ComponentProcessor;
 import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.components.registry.ComponentType;
-import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Orientation;
 import org.diylc.core.OrientationHV;
@@ -52,7 +54,6 @@ import org.diylc.core.PropertyWrapper;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
-import org.diylc.core.events.MessageDispatcher;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.core.utils.Constants;
 import org.diylc.core.utils.SystemUtils;
@@ -72,6 +73,10 @@ public class Presenter implements IPlugInPort {
     private static final Logger LOG = LoggerFactory.getLogger(Presenter.class);
 
     public static VersionNumber CURRENT_VERSION = new VersionNumber(4, 0, 0);
+
+    private final View drawingView;
+    
+    private final DrawingController controller;
 
     /*
      * Read the latest version from the local update.xml file
@@ -123,8 +128,6 @@ public class Presenter implements IPlugInPort {
 
     private final IView view;
 
-    private MessageDispatcher<EventType> messageDispatcher;
-
     // D&D
     private boolean dragInProgress = false;
 
@@ -139,20 +142,37 @@ public class Presenter implements IPlugInPort {
 
     private Point previousScaledPoint;
 
-    public Presenter(IView view) {
-        super();
-        this.view = view;
-        plugIns = new ArrayList<IPlugIn>();
-        messageDispatcher = new MessageDispatcher<EventType>(true);
-        selectedComponents = new ArrayList<IDIYComponent>();
-        currentProject = new Project();
-        // cloner = new Cloner();
-        drawingManager = new DrawingManager(messageDispatcher);
-        projectFileManager = new ProjectFileManager(messageDispatcher);
-        instantiationManager = new InstantiationManager();
+    private HashMap<IDIYComponent, Set<Integer>> availableControlPoints;
 
-        // lockedLayers = EnumSet.noneOf(ComponentLayer.class);
-        // visibleLayers = EnumSet.allOf(ComponentLayer.class);
+    private boolean projectModified = false;
+
+    private final UndoHandler<Project> undoHandler;
+
+    private Path path;
+
+    private boolean isSaved;
+
+    public Presenter(IView view, View drawingView, DrawingController controller, Path path, boolean isSaved) {
+        this.view = view;
+        this.drawingView = drawingView;
+        this.controller = controller;
+        this.path = path;
+        this.isSaved = isSaved;
+        this.plugIns = new ArrayList<IPlugIn>();
+        this.selectedComponents = new ArrayList<IDIYComponent>();
+        this.currentProject = new Project();
+        this.drawingManager = new DrawingManager(getView());
+        this.projectFileManager = new ProjectFileManager();
+        this.instantiationManager = new InstantiationManager();
+        
+        this.undoHandler = new UndoHandler<Project>(new IUndoListener<Project>() {
+
+            @Override
+            public void actionPerformed(Project currentState) {
+                loadProject(currentState, false);
+            }
+        });
+
     }
 
     public void configure() {
@@ -163,17 +183,10 @@ public class Presenter implements IPlugInPort {
         LOG.trace(String.format("installPlugin(%s)", plugIn.getClass().getSimpleName()));
         plugIns.add(plugIn);
         plugIn.connect(this);
-        messageDispatcher.registerListener(plugIn);
-        messageDispatcher.dispatchMessage(EventType.SPLASH_UPDATE, "Installing plugin " + plugIn.getClass().getName());
     }
 
     public void dispose() {
-        for (IPlugIn plugIn : plugIns) {
-            messageDispatcher.unregisterListener(plugIn);
-        }
     }
-
-    // IPlugInPort
 
     @Override
     public Double[] getAvailableZoomLevels() {
@@ -231,24 +244,12 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void loadProject(Project project, boolean freshStart) {
-        LOG.trace(String.format("loadProject(%s, %s)", project.getTitle(), freshStart));
-        this.currentProject = project;
-        drawingManager.clearComponentAreaMap();
-        updateSelection(EMPTY_SELECTION);
-        messageDispatcher.dispatchMessage(EventType.PROJECT_LOADED, project, freshStart);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        messageDispatcher.dispatchMessage(EventType.LAYER_STATE_CHANGED, currentProject.getLockedLayers());
-    }
-
-    @Override
     public void createNewProject() {
         LOG.trace("createNewFile()");
         try {
             Project project = new Project();
             instantiationManager.fillWithDefaultProperties(project, null);
             loadProject(project, true);
-            projectFileManager.startNewFile();
         } catch (Exception e) {
             LOG.error("Could not create new file", e);
             view.showMessage("Could not create a new file. Check the log for details.", "Error", IView.ERROR_MESSAGE);
@@ -256,13 +257,23 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
+    public void loadProject(Project project, boolean freshStart) {
+        LOG.trace(String.format("loadProject(%s, %s)", project.getTitle(), freshStart));
+        this.currentProject = project;
+        drawingManager.clearComponentAreaMap();
+        updateSelection(EMPTY_SELECTION);
+        getView().initCanvas(project, freshStart);
+        getView().repaintCanvas();
+        getView().updateLockedLayers();
+    }
+
+    @Override
     public void loadProjectFromFile(Path path) throws Exception {
         LOG.trace(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
-        // try {
         List<String> warnings = new ArrayList<String>();
         Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
         loadProject(project, true);
-        projectFileManager.fireFileStatusChanged();
+        getView().updateTitle();
         if (!warnings.isEmpty()) {
             StringBuilder builder = new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
             for (String warning : warnings) {
@@ -272,26 +283,20 @@ public class Presenter implements IPlugInPort {
             builder.append("</html");
             view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
         }
-        // } catch (Exception ex) {
-        // LOG.error("Could not load file", ex);
-        // view.showMessage("Could not open file " + file.getAbsolutePath() +
-        // ". Check the log for details.", "Error", IView.ERROR_MESSAGE);
-        // throw new RuntimeException(ex);
-        // }
     }
 
     @Override
     public boolean allowFileAction() {
         boolean response = true;
-        
-        if (projectFileManager.isModified()) {
+
+        if (isProjectModified()) {
             int dialogResponse = view.showConfirmDialog("There are unsaved changes. Would you like to save them?", "Warning",
                     IView.YES_NO_CANCEL_OPTION, IView.WARNING_MESSAGE);
 
             if (dialogResponse == IView.YES_OPTION) {
                 if (this.getCurrentFile() == null) {
                     Path path = view.promptFileSave();
-                    
+
                     if (path == null) {
                         response = false;
                     } else {
@@ -313,10 +318,14 @@ public class Presenter implements IPlugInPort {
         LOG.trace(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
         try {
             currentProject.setFileVersion(CURRENT_VERSION);
-            projectFileManager.serializeProjectToFile(currentProject, path, isBackup);
+            projectFileManager.serializeProjectToFile(currentProject, path);
+            setProjectModified(false);
+            this.path = path;
+            setSaved(true);
             if (!isBackup) {
                 Configuration.INSTANCE.setLastPath(path.getParent());
             }
+            getView().updateTitle();
         } catch (Exception ex) {
             LOG.error("Could not save file", ex);
             if (!isBackup) {
@@ -326,14 +335,18 @@ public class Presenter implements IPlugInPort {
         }
     }
 
+    private void setSaved(boolean saved) {
+        this.isSaved = saved;
+    }
+
     @Override
     public Path getCurrentFile() {
-        return projectFileManager.getCurrentFile();
+        return path;
     }
 
     @Override
     public boolean isProjectModified() {
-        return projectFileManager.isModified();
+        return projectModified;
     }
 
     @Override
@@ -383,10 +396,11 @@ public class Presenter implements IPlugInPort {
         Collections.sort(failedComponentNames);
 
         if (!failedComponentNames.isEmpty()) {
-            messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED, "<html><font color='red'>Failed to draw components: "
-                    + StringUtils.toCommaString(failedComponentNames) + "</font></html>");
+            getView().updateStatusBar(
+                    "<html><font color='red'>Failed to draw components: " + StringUtils.toCommaString(failedComponentNames)
+                            + "</font></html>");
         } else {
-            messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED, "");
+            getView().updateStatusBar("");
         }
     }
 
@@ -433,7 +447,7 @@ public class Presenter implements IPlugInPort {
                  */
                 if (button != MouseButton.LEFT) {
                     instantiationManager.tryToRotateComponentSlot();
-                    messageDispatcher.dispatchMessage(EventType.REPAINT);
+                    getView().repaintCanvas();
                     return;
                 }
 
@@ -462,7 +476,7 @@ public class Presenter implements IPlugInPort {
                         /*
                          * Select the new component
                          */
-                        messageDispatcher.dispatchMessage(EventType.REPAINT);
+                        getView().repaintCanvas();
                         updateSelection(newSelection);
                     } catch (Exception e) {
                         LOG.error("Error instatiating component of type: " + componentTypeSlot.getInstanceClass().getName(), e);
@@ -492,9 +506,8 @@ public class Presenter implements IPlugInPort {
                             view.showMessage("Could not create component. Check log for details.", "Error", IView.ERROR_MESSAGE);
                             LOG.error("Could not create component", e);
                         }
-                        messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, componentTypeSlot,
-                                instantiationManager.getFirstControlPoint());
-                        messageDispatcher.dispatchMessage(EventType.REPAINT);
+                        getView().updateStatusBar();
+                        getView().repaintCanvas();
                     } else {
                         /*
                          * On the second click, add the component to the
@@ -515,7 +528,7 @@ public class Presenter implements IPlugInPort {
                         }
 
                         updateSelection(newSelection);
-                        messageDispatcher.dispatchMessage(EventType.REPAINT);
+                        getView().repaintCanvas();
 
                         if (componentTypeSlot.isAutoEdit() && Configuration.INSTANCE.getAutoEdit()) {
                             editSelection();
@@ -535,9 +548,7 @@ public class Presenter implements IPlugInPort {
                  * Notify the listeners.
                  */
                 if (!oldProject.equals(currentProject)) {
-                    messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Add "
-                            + componentTypeSlot.getName());
-                    projectFileManager.notifyFileChange();
+                    registerProjectModification(oldProject, currentProject.clone(), "Add " + componentTypeSlot.getName());
                 }
             } else {
                 List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(selectedComponents);
@@ -575,7 +586,7 @@ public class Presenter implements IPlugInPort {
 
                 updateSelection(newSelection);
 
-                messageDispatcher.dispatchMessage(EventType.REPAINT);
+                getView().repaintCanvas();
             }
         }
     }
@@ -626,8 +637,8 @@ public class Presenter implements IPlugInPort {
                 return false;
             }
 
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Rotate Selection");
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            registerProjectModification(oldProject, currentProject.clone(), "Rotate Selection");
+            getView().repaintCanvas();
 
             return true;
         }
@@ -674,8 +685,8 @@ public class Presenter implements IPlugInPort {
 
         Project oldProject = currentProject.clone();
         moveComponents(controlPointMap, dx, dy, snapToGrid);
-        messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Move Selection");
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        registerProjectModification(oldProject, currentProject.clone(), "Move Selection");
+        getView().repaintCanvas();
 
         return true;
     }
@@ -734,7 +745,7 @@ public class Presenter implements IPlugInPort {
                 break;
             }
             if (refresh) {
-                messageDispatcher.dispatchMessage(EventType.REPAINT);
+                getView().repaintCanvas();
             }
         } else {
             /*
@@ -772,12 +783,10 @@ public class Presenter implements IPlugInPort {
             }
         }
 
-        messageDispatcher.dispatchMessage(EventType.MOUSE_MOVED, previousScaledPoint);
-
         if (!components.equals(controlPointMap)) {
             controlPointMap = components;
-            messageDispatcher
-                    .dispatchMessage(EventType.AVAILABLE_CTRL_POINTS_CHANGED, new HashMap<IDIYComponent, Set<Integer>>(components));
+            availableControlPoints = new HashMap<IDIYComponent, Set<Integer>>(components);
+            getView().updateStatusBar();
         }
     }
 
@@ -801,11 +810,7 @@ public class Presenter implements IPlugInPort {
             }
         }
         updateSelection(newSelection);
-        // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-        // selectedComponents);
-        // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-        // calculateSelectionDimension());
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
     }
 
     @Override
@@ -831,19 +836,11 @@ public class Presenter implements IPlugInPort {
         if (!this.controlPointMap.isEmpty()) {
             // If we're dragging control points reset selection.
             updateSelection(new ArrayList<IDIYComponent>(this.controlPointMap.keySet()));
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            getView().repaintCanvas();
         } else if (components.isEmpty()) {
             // If there are no components are under the cursor, reset selection.
             updateSelection(EMPTY_SELECTION);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            getView().repaintCanvas();
         } else {
             // Take the last component, i.e. the top order component.
             IDIYComponent component = components.get(0);
@@ -851,11 +848,7 @@ public class Presenter implements IPlugInPort {
             // it into the only selected component.
             if (!selectedComponents.contains(component)) {
                 updateSelection(new ArrayList<IDIYComponent>(findAllGroupedComponents(component)));
-                // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-                // selectedComponents);
-                // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-                // calculateSelectionDimension());
-                messageDispatcher.dispatchMessage(EventType.REPAINT);
+                getView().repaintCanvas();
             }
             // If there aren't any control points, try to add all the selected
             // components with all their control points. That will allow the
@@ -988,10 +981,8 @@ public class Presenter implements IPlugInPort {
             if (selectionRect.equals(oldSelectionRect)) {
                 return true;
             }
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_RECT_CHANGED,
-            // selectionRect);
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
         return true;
     }
 
@@ -1082,8 +1073,8 @@ public class Presenter implements IPlugInPort {
         if (!selectedComponents.isEmpty()) {
             Project oldProject = currentProject.clone();
             rotateComponents(this.selectedComponents, direction, isSnapToGrid());
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Rotate Selection");
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            registerProjectModification(oldProject, currentProject.clone(), "Rotate Selection");
+            getView().repaintCanvas();
         }
     }
 
@@ -1191,8 +1182,10 @@ public class Presenter implements IPlugInPort {
         }
         Point scaledPoint = scalePoint(point);
         if (selectedComponents.isEmpty()) {
-            // If there's no selection finalize selectionRect and see which
-            // components intersect with it.
+            /*
+             * If there's no selection finalize selectionRect and see which
+             * components intersect with it.
+             */
             if (scaledPoint != null) {
                 this.selectionRect = createNormalizedRectangle(scaledPoint, previousDragPoint);
             }
@@ -1207,21 +1200,16 @@ public class Presenter implements IPlugInPort {
             }
             selectionRect = null;
             updateSelection(newSelection);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
         } else {
             updateSelection(selectedComponents);
         }
-        // There is selection, so we need to finalize the drag&drop
-        // operation.
-
+        /*
+         * There is selection, so we need to finalize the drag&drop operation.
+         */
         if (!preDragProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, preDragProject, currentProject.clone(), "Drag");
-            projectFileManager.notifyFileChange();
+            registerProjectModification(preDragProject, currentProject.clone(), "Drag");
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
         dragInProgress = false;
     }
 
@@ -1229,9 +1217,13 @@ public class Presenter implements IPlugInPort {
     public void pasteComponents(List<IDIYComponent> components) {
         LOG.trace(String.format("pasteComponents(%s)", components));
         instantiationManager.pasteComponents(components, this.previousScaledPoint, isSnapToGrid(), currentProject.getGridSpacing());
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, instantiationManager.getComponentTypeSlot(),
-                instantiationManager.getFirstControlPoint());
+        getView().repaintCanvas();
+        getView().updateStatusBar();
+    }
+
+    @Override
+    public Point getFirstControlPoint() {
+        return instantiationManager.getFirstControlPoint();
     }
 
     @Override
@@ -1242,17 +1234,22 @@ public class Presenter implements IPlugInPort {
             return;
         }
         Project oldProject = currentProject.clone();
-        // Remove selected components from any groups.
+        
+        /* 
+         * Remove selected components from any groups.
+         */
         ungroupComponents(selectedComponents);
-        // Remove from area map.
+        
+        /* 
+         * Remove from area map.
+         */
         for (IDIYComponent component : selectedComponents) {
             drawingManager.invalidateComponent(component);
         }
         currentProject.getComponents().removeAll(selectedComponents);
-        messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Delete");
-        projectFileManager.notifyFileChange();
+        registerProjectModification(oldProject, currentProject.clone(), "Delete");
         updateSelection(EMPTY_SELECTION);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
     }
 
     @Override
@@ -1288,15 +1285,21 @@ public class Presenter implements IPlugInPort {
     public void groupSelectedComponents() {
         LOG.trace("groupSelectedComponents()");
         Project oldProject = currentProject.clone();
-        // First remove the selected components from other groups.
+        /* 
+         * First remove the selected components from other groups.
+         */
         ungroupComponents(selectedComponents);
-        // Then group them together.
+        /* 
+         * Then group them together.
+         */
         currentProject.getGroups().add(new HashSet<IDIYComponent>(selectedComponents));
-        // Notify the listeners.
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+
+        /*
+         * Notify the listeners.
+         */
+        getView().repaintCanvas();
         if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Group");
-            projectFileManager.notifyFileChange();
+            registerProjectModification(oldProject, currentProject.clone(), "Group");
         }
     }
 
@@ -1305,11 +1308,13 @@ public class Presenter implements IPlugInPort {
         LOG.trace("ungroupSelectedComponents()");
         Project oldProject = currentProject.clone();
         ungroupComponents(selectedComponents);
-        // Notify the listeners.
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+
+        /*
+         * Notify the listeners.
+         */
+        getView().repaintCanvas();
         if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Ungroup");
-            projectFileManager.notifyFileChange();
+            registerProjectModification(oldProject, currentProject.clone(), "Ungroup");
         }
     }
 
@@ -1322,8 +1327,8 @@ public class Presenter implements IPlugInPort {
             currentProject.getLockedLayers().remove(layerZOrder);
         }
         updateSelection(EMPTY_SELECTION);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-        messageDispatcher.dispatchMessage(EventType.LAYER_STATE_CHANGED, currentProject.getLockedLayers());
+        getView().repaintCanvas();
+        getView().updateLockedLayers();
     }
 
     @Override
@@ -1346,9 +1351,8 @@ public class Presenter implements IPlugInPort {
                 }
         }
         if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Send to Back");
-            projectFileManager.notifyFileChange();
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            registerProjectModification(oldProject, currentProject.clone(), "Send to Back");
+            getView().repaintCanvas();
         }
     }
 
@@ -1372,16 +1376,15 @@ public class Presenter implements IPlugInPort {
                 }
         }
         if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Bring to Front");
-            projectFileManager.notifyFileChange();
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
+            registerProjectModification(oldProject, currentProject.clone(), "Bring to Front");
+            getView().repaintCanvas();
         }
     }
 
     @Override
     public void refresh() {
         LOG.trace("refresh()");
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
     }
 
     @Override
@@ -1402,7 +1405,9 @@ public class Presenter implements IPlugInPort {
         }
         Project oldProject = currentProject.clone();
         List<IDIYComponent> components = new ArrayList<IDIYComponent>(getSelectedComponents());
-        // Sort components by their location.
+        /* 
+         * Sort components by their location.
+         */
         Collections.sort(components, new Comparator<IDIYComponent>() {
 
             @Override
@@ -1452,19 +1457,22 @@ public class Presenter implements IPlugInPort {
                 return 0;
             }
         });
-        // Clear names.
+        /* 
+         * Clear names.
+         */
         for (IDIYComponent component : components) {
             component.setName("");
         }
-        // Assign new ones.
+        /* 
+         * Assign new ones.
+         */
         for (IDIYComponent component : components) {
             component
                     .setName(instantiationManager.createUniqueName(ComponentRegistry.INSTANCE.getComponentType(component), currentProject));
         }
 
-        messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Renumber selection");
-        projectFileManager.notifyFileChange();
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        registerProjectModification(oldProject, currentProject.clone(), "Renumber selection");
+        getView().repaintCanvas();
     }
 
     public void updateSelection(List<IDIYComponent> newSelection) {
@@ -1480,7 +1488,7 @@ public class Presenter implements IPlugInPort {
         if (Configuration.INSTANCE.getStickyPoints()) {
             includeStuckComponents(controlPointMap);
         }
-        messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED, selectedComponents, controlPointMap.keySet());
+        getView().selectionStateChanged(selectedComponents, controlPointMap.keySet());
     }
 
     @Override
@@ -1536,7 +1544,7 @@ public class Presenter implements IPlugInPort {
         if (newSelection.size() > oldSize && expansionMode != ExpansionMode.IMMEDIATE) {
             expandSelection(expansionMode);
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
     }
 
     /**
@@ -1688,18 +1696,16 @@ public class Presenter implements IPlugInPort {
             LOG.error("Could not apply selection properties", e);
             view.showMessage("Could not apply changes to the selection. Check the log for details.", "Error", IView.ERROR_MESSAGE);
         } finally {
-            // Notify the listeners.
             if (!oldProject.equals(currentProject)) {
-                messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Edit Selection");
-                projectFileManager.notifyFileChange();
+                registerProjectModification(oldProject, currentProject.clone(), "Edit Selection");
             }
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
     }
 
     @Override
     public void applyPropertyToSelection(PropertyWrapper property) {
-        applyPropertiesToSelection(Arrays.asList(new PropertyWrapper [] { property }));
+        applyPropertiesToSelection(Arrays.asList(new PropertyWrapper[] { property }));
     }
 
     @Override
@@ -1729,12 +1735,9 @@ public class Presenter implements IPlugInPort {
             LOG.error("Could not apply project properties", e);
             view.showMessage("Could not apply changes to the project. Check the log for details.", "Error", IView.ERROR_MESSAGE);
         } finally {
-            // Notify the listeners.
             if (!oldProject.equals(currentProject)) {
-                messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Edit Project");
-                projectFileManager.notifyFileChange();
+                registerProjectModification(oldProject, currentProject.clone(), "Edit Project");
             }
-            drawingManager.fireZoomChanged();
         }
     }
 
@@ -1756,13 +1759,8 @@ public class Presenter implements IPlugInPort {
             if (componentType != null) {
                 updateSelection(EMPTY_SELECTION);
             }
-            messageDispatcher.dispatchMessage(EventType.REPAINT);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
-            // selectedComponents);
-            // messageDispatcher.dispatchMessage(EventType.SELECTION_SIZE_CHANGED,
-            // calculateSelectionDimension());
-            messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, instantiationManager.getComponentTypeSlot(),
-                    instantiationManager.getFirstControlPoint());
+            getView().repaintCanvas();
+            getView().updateStatusBar();
         } catch (Exception e) {
             LOG.error("Could not set component type slot", e);
             view.showMessage("Could not set component type slot. Check log for details.", "Error", IView.ERROR_MESSAGE);
@@ -1886,12 +1884,10 @@ public class Presenter implements IPlugInPort {
             }
         }
 
-        // Notify the listeners.
         if (!oldProject.equals(currentProject)) {
-            messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Edit Selection");
-            projectFileManager.notifyFileChange();
+            registerProjectModification(oldProject, currentProject.clone(), "Edit Selection");
         }
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().repaintCanvas();
     }
 
     @Override
@@ -1957,9 +1953,45 @@ public class Presenter implements IPlugInPort {
         return new Rectangle(minX, minY, width, height);
     }
 
-    @Override
-    public void sendEvent(EventType eventType, Object... params) {
-        messageDispatcher.dispatchMessage(eventType, params);
+    public View getView() {
+        return drawingView;
     }
 
+    @Override
+    public Map<IDIYComponent, Set<Integer>> getAvailableControlPoints() {
+        return availableControlPoints;
+    }
+
+    public Set<Double> getLockedLayers() {
+        return getCurrentProject().getLockedLayers();
+    }
+
+    public void setProjectModified(boolean projectModified) {
+        this.projectModified = projectModified;
+        getView().updateTitle();
+    }
+
+    private void registerProjectModification(Project before, Project after, String actionDescription) {
+        getUndoHandler().stateChanged(before, after, actionDescription);
+        getController().autoSave(after);
+        setProjectModified(true);
+    }
+
+    @Override
+    public UndoHandler<Project> getUndoHandler() {
+        return undoHandler;
+    }
+
+    public DrawingController getController() {
+        return controller;
+    }
+
+    public void setCurrentFile(Path currentPath) {
+        this.path = currentPath;
+    }
+
+    @Override
+    public boolean isSaved() {
+        return isSaved;
+    }
 }

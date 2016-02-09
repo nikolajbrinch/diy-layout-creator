@@ -1,6 +1,6 @@
 package org.diylc.app.controllers;
 
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.BrowserUtils;
 import org.diylc.app.view.IPlugInPort;
@@ -28,7 +28,7 @@ public class HelpController extends AbstractController {
 
     private AboutDialog aboutDialog;
 
-    public HelpController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort) {
+    public HelpController(ApplicationController applicationController, View view, Model model, IPlugInPort plugInPort) {
         super(applicationController, view, model, plugInPort);
     }
 

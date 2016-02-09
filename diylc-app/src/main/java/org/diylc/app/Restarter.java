@@ -2,6 +2,8 @@ package org.diylc.app;
 
 import java.io.IOException;
 
+import org.diylc.core.BootConfiguration;
+import org.diylc.core.BootConfigurationBuilder;
 import org.diylc.core.utils.SystemUtils;
 
 public class Restarter implements Runnable {

@@ -1,8 +1,10 @@
 package org.diylc.app.controllers;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 import org.diylc.app.Drawing;
+import org.diylc.core.Project;
 import org.diylc.core.platform.QuitResponse;
 
 public interface ApplicationController {
@@ -54,5 +56,11 @@ public interface ApplicationController {
      * @param file
      */
     public void removeLruPath(Path path);
+
+    public void autoSave(Project project);
+
+    public Collection<Drawing> getDrawings();
+
+    public void switchWindow(String drawingId);
 
 }

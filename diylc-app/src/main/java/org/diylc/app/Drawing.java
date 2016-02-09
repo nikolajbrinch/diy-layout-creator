@@ -1,29 +1,43 @@
 package org.diylc.app;
 
 import java.nio.file.Path;
+import java.util.UUID;
 
 import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.model.DrawingModel;
 import org.diylc.app.view.DrawingView;
+import org.diylc.app.view.Presenter;
 
 public class Drawing {
 
-    private DrawingView view;
+    private final DrawingView view;
 
-    public Drawing(ApplicationController applicationController) {
-        this.view = new DrawingView(applicationController, this);
-        getView().setController(new DrawingController(applicationController, getView()));
+    private final DrawingModel model;
+
+    private final DrawingController controller;
+
+    private final Presenter presenter;
+
+    private final String id;
+
+
+    public Drawing(ApplicationController applicationController, Path path, boolean load) {
+        this.id = UUID.randomUUID().toString();
+        this.model = new DrawingModel();
+        this.controller = new DrawingController(applicationController, model);
+        this.view = new DrawingView(applicationController, this, controller, path, load);
+        this.presenter = getView().getPresenter();
+        getModel().setPresenter(presenter);
+
         getView().setVisible(true);
-    }
 
-    public Drawing(ApplicationController applicationController, Path path) {
-        this(applicationController);
-
-        try {
-            getView().getModel().loadProject(path);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (load) {
+            try {
+                getModel().loadProject(path);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -39,14 +53,22 @@ public class Drawing {
     }
 
     public DrawingModel getModel() {
-        return getView().getModel();
+        return model;
     }
 
     public boolean allowFileAction() {
-        return getModel().allowFileAction();
+        return presenter.allowFileAction();
     }
 
     public DrawingController getController() {
-        return getView().getController();
+        return controller;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return getView().getTitle();
     }
 }

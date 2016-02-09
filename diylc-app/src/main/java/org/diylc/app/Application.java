@@ -3,9 +3,9 @@ package org.diylc.app;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -18,21 +18,21 @@ import org.diylc.app.model.DrawingModel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.async.Async;
 import org.diylc.app.view.ISwingUI;
-import org.diylc.app.view.IView;
 import org.diylc.app.view.Presenter;
+import org.diylc.app.view.StubPresenter;
 import org.diylc.app.view.View;
 import org.diylc.app.view.dialogs.DialogFactory;
+import org.diylc.app.view.dialogs.TemplateDialog;
 import org.diylc.app.view.menus.MenuConstants;
 import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.core.BootUtils;
 import org.diylc.core.LRU;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.Project;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.platform.DefaultQuitResponse;
 import org.diylc.core.platform.Platform;
 import org.diylc.core.platform.PreferencesEvent;
 import org.diylc.core.platform.QuitEvent;
-import org.diylc.core.platform.QuitHandler;
 import org.diylc.core.platform.QuitResponse;
 import org.diylc.core.platform.RestartQuitResponse;
 import org.diylc.core.utils.SystemUtils;
@@ -48,17 +48,22 @@ public class Application implements ApplicationController {
 
     private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
-    private final List<Drawing> drawings = new ArrayList<>();
+    private final Map<String, Drawing> drawings = new LinkedHashMap<>();
+
+    private AutoSave autoSave;
 
     private LRU<Path> lru = new LRU<Path>(15);
 
     private Drawing currentDrawing;
 
-    @SuppressWarnings("unused")
-    private AutoSave autoSave;
+    private int fileNumber = 1;
 
     public void run(String[] args) {
         Platform.getPlatform().setup();
+        Platform.getPlatform().setPreferencesHandler((PreferencesEvent e) -> LOG.debug("Show preferences dialog"));
+        Platform.getPlatform().setQuitHandler((QuitEvent event, QuitResponse response) -> {
+            exit(response);
+        });
 
         DiylcSplashScreen splashScreen = new DiylcSplashScreen();
 
@@ -74,7 +79,20 @@ public class Application implements ApplicationController {
         /*
          * Load components
          */
-        ComponentRegistry.INSTANCE.init();
+        try {
+            ComponentRegistry.INSTANCE.init(splashScreen);
+        } catch (IOException e) {
+            LOG.error("Error loading components", e);
+        }
+
+        /*
+         * Install autosave
+         */
+        try {
+            autoSave = new AutoSave(this);
+        } catch (IOException e) {
+            LOG.error("Error installng auto-same", e);
+        }
 
         setUncaughtExceptionHandler();
 
@@ -83,18 +101,12 @@ public class Application implements ApplicationController {
         lru = Configuration.INSTANCE.getLru();
 
         try {
-            autoSave = new AutoSave(this);
-        } catch (IOException e) {
-            LOG.error("Error installng auto-same", e);
-        }
-
-        try {
             SwingUtilities.invokeAndWait(() -> {
                 if (args.length > 0) {
                     openProject(Paths.get(args[0]));
                 } else {
-                    showTemplates();
                     createNewProject();
+                    showTemplates();
                 }
 
                 splashScreen.dispose();
@@ -104,24 +116,7 @@ public class Application implements ApplicationController {
         } catch (Exception e) {
             LOG.error("Error starting view", e);
         }
-        
-        // if (showWindow()) {
-        // if (args.length > 0) {
-        // openProject(Paths.get(args[0]));
-        // } else {
-        // showTemplates();
-        // }
-        //
-        // }
-        Platform.getPlatform().setPreferencesHandler((PreferencesEvent e) -> LOG.debug("Show preferences dialog"));
-        Platform.getPlatform().setQuitHandler(new QuitHandler() {
 
-            @Override
-            public void handleQuit(QuitEvent event, QuitResponse response) {
-                exit(response);
-            }
-
-        });
     }
 
     private void setDefaultMenuBar() {
@@ -145,16 +140,15 @@ public class Application implements ApplicationController {
     }
 
     private void showTemplates() {
-        // boolean showTemplates = Configuration.INSTANCE.getShowTemplates();
-        // if (showTemplates) {
-        // // TemplateDialog templateDialog = new
-        // TemplateDialog(getCurrentView().getFrame(),
-        // getCurrentView().getModel());
-        // TemplateDialog templateDialog = new TemplateDialog(null, );
-        // if (!templateDialog.getFiles().isEmpty()) {
-        // templateDialog.setVisible(true);
-        // }
-        // }
+        boolean showTemplates = Configuration.INSTANCE.getShowTemplates();
+
+        if (showTemplates) {
+            TemplateDialog templateDialog = new TemplateDialog(getCurrentView().getFrame(), getCurrentModel());
+
+            if (!templateDialog.getFiles().isEmpty()) {
+                templateDialog.setVisible(true);
+            }
+        }
     }
 
     private void warnScriptRun() {
@@ -180,11 +174,21 @@ public class Application implements ApplicationController {
     }
 
     public void setCurrentDrawing(Drawing drawing) {
-        if (!getDrawings().contains(drawing)) {
-            getDrawings().add(0, drawing);
-        }
+        addDrawing(drawing);
 
         this.currentDrawing = drawing;
+    }
+
+    private void addDrawing(Drawing drawing) {
+        if (!getDrawings().contains(drawing)) {
+            drawings.put(drawing.getId(), drawing);
+        }
+
+        updateWindowMenu();
+    }
+
+    private void updateWindowMenu() {
+        getDrawings().stream().forEach((drawing) -> drawing.getView().refreshActions());
     }
 
     public View getCurrentView() {
@@ -192,7 +196,7 @@ public class Application implements ApplicationController {
     }
 
     public DrawingModel getCurrentModel() {
-        return getCurrentView().getModel();
+        return getCurrentDrawing().getModel();
     }
 
     @Override
@@ -207,12 +211,12 @@ public class Application implements ApplicationController {
         getDrawings().stream().forEach((drawing) -> drawing.getView().updateLru(lru));
     }
 
-    public List<Drawing> getDrawings() {
-        return drawings;
+    public Collection<Drawing> getDrawings() {
+        return drawings.values();
     }
 
     public Drawing createNewProject() {
-        Drawing drawing = new Drawing(this);
+        Drawing drawing = new Drawing(this, createPath(), false);
         setCurrentDrawing(drawing);
 
         drawing.getView().updateLru(lru);
@@ -220,8 +224,15 @@ public class Application implements ApplicationController {
         return drawing;
     }
 
+    private Path createPath() {
+        Path path = Paths.get("Untitled" + (fileNumber > 1 ? " " + String.valueOf(fileNumber) : ""));
+        fileNumber++;
+        
+        return path;
+    }
+
     public Drawing openProject(Path path) {
-        Drawing drawing = new Drawing(this, path);
+        Drawing drawing = new Drawing(this, path, true);
         setCurrentDrawing(drawing);
 
         drawing.getView().updateLru(lru);
@@ -267,28 +278,7 @@ public class Application implements ApplicationController {
 
     public void importProject() {
         LOG.info("ImportAction triggered");
-        Presenter presenter = new Presenter(new IView() {
-
-            @Override
-            public int showConfirmDialog(String message, String title, int optionType, int messageType) {
-                return JOptionPane.showConfirmDialog(null, message, title, optionType, messageType);
-            }
-
-            @Override
-            public void showMessage(String message, String title, int messageType) {
-                JOptionPane.showMessageDialog(null, message, title, messageType);
-            }
-
-            @Override
-            public Path promptFileSave() {
-                return null;
-            }
-
-            @Override
-            public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
-                return false;
-            }
-        });
+        Presenter presenter = new StubPresenter();
 
         final Path path = DialogFactory.getInstance().showOpenDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
                 null, FileFilterEnum.DIY.getExtensions()[0], null);
@@ -327,6 +317,18 @@ public class Application implements ApplicationController {
         } else {
             response.cancelQuit();
         }
+    }
+
+    @Override
+    public void autoSave(Project project) {
+        autoSave.update(project);
+    }
+
+    @Override
+    public void switchWindow(String drawingId) {
+        Drawing drawing = drawings.get(drawingId);
+        drawing.getView().requestFocus();
+        setCurrentDrawing(drawing);
     }
 
 }

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.EnumSet;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -14,15 +13,13 @@ import javax.swing.SwingWorker;
 
 import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.view.IView;
-import org.diylc.core.EventType;
+import org.diylc.core.Project;
 import org.diylc.core.config.Configuration;
-import org.diylc.core.events.EventListener;
-import org.diylc.core.events.EventReciever;
 import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AutoSave implements EventListener<EventType> {
+public class AutoSave {
 
     private static final Logger LOG = LoggerFactory.getLogger(AutoSave.class);
 
@@ -30,9 +27,7 @@ public class AutoSave implements EventListener<EventType> {
 
     protected static final long autoSaveFrequency = 60 * 1000;
 
-    private final EventReciever<EventType> eventReciever = new EventReciever<EventType>();
-
-    private final ApplicationController applicationController;
+    private final ApplicationController controller;
 
     private final Path autoSaveDirectory;
 
@@ -40,8 +35,8 @@ public class AutoSave implements EventListener<EventType> {
 
     private Path autoSaveFile;
 
-    public AutoSave(ApplicationController applicationController) throws IOException {
-        this.applicationController = applicationController;
+    public AutoSave(ApplicationController controller) throws IOException {
+        this.controller = controller;
         this.autoSaveDirectory = SystemUtils.getConfigDirectory().toPath();
         this.autoSaveFile = Paths.get(autoSaveDirectory.toString(), AUTO_SAVE_FILE_NAME);
 
@@ -52,11 +47,11 @@ public class AutoSave implements EventListener<EventType> {
             writer.close();
             Files.delete(testPath);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "The current user does not have permissions to access folder " + new File(".").getAbsolutePath()
-                    + ".\nAuto-save feature will not be available, contact your system administrator.", "Warning", IView.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "The current user does not have permissions to access folder " + new File(".").getAbsolutePath()
+                            + ".\nAuto-save feature will not be available, contact your system administrator.", "Warning",
+                    IView.WARNING_MESSAGE);
         }
-
-        eventReciever.registerListener(EnumSet.of(EventType.PROJECT_MODIFIED), this);
 
         init();
     }
@@ -76,7 +71,7 @@ public class AutoSave implements EventListener<EventType> {
                                     "Auto-Save", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE);
                     if (decision == IView.YES_OPTION) {
                         try {
-                            applicationController.open(autoSaveFile);
+                            getController().open(autoSaveFile);
                         } catch (Exception e) {
                             LOG.warn("Error loading autoSave.diy file", e);
                         }
@@ -91,24 +86,26 @@ public class AutoSave implements EventListener<EventType> {
         });
     }
 
-    @Override
-    public void processEvent(EventType eventType, Object... params) {
-        if (eventType == EventType.PROJECT_MODIFIED) {
-            if (System.currentTimeMillis() - lastSave > autoSaveFrequency) {
-                new SwingWorker<Void, Void>() {
+    public void update(Project project) {
 
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+        if (System.currentTimeMillis() - lastSave > autoSaveFrequency) {
+            new SwingWorker<Void, Void>() {
 
-                        lastSave = System.currentTimeMillis();
-                        // applicationController.save(autoSaveFile, true);
+                @Override
+                protected Void doInBackground() throws Exception {
+                    Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
-                        return null;
-                    }
+                    lastSave = System.currentTimeMillis();
+//                    controller.save(autoSaveFile, true);
 
-                }.execute();
-            }
+                    return null;
+                }
+
+            }.execute();
         }
+    }
+
+    public ApplicationController getController() {
+        return controller;
     }
 }

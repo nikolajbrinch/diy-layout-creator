@@ -1,10 +1,12 @@
 package org.diylc.components.registry;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.ProgressView;
 
 public class ComponentLoader {
 
@@ -20,21 +22,21 @@ public class ComponentLoader {
         return classpathComponentClassLoader;
     }
 
-    public Set<Class<? extends IDIYComponent>> loadComponents(ClassLoader classLoader, Path[] directories) {
+    public Set<Class<? extends IDIYComponent>> loadComponents(ClassLoader classLoader, Path[] directories, ProgressView progressView) throws IOException {
         Set<Class<? extends IDIYComponent>> componentClasses = new TreeSet<Class<? extends IDIYComponent>>(new ComponentComparator());
 
         /*
          * Load from directories if there are any
          */
-        if (directories.length > 0) {
-            componentClasses.addAll(getGroovyComponentClassLoader().loadGroovyClasses(classLoader, directories));
-        }
+//        if (directories.length > 0) {
+//            componentClasses.addAll(getGroovyComponentClassLoader().loadGroovyClasses(classLoader, directories));
+//        }
 
         /*
          * If nothing got loaded, load from classpath
          */
         if (componentClasses.isEmpty()) {
-            componentClasses.addAll(getClasspathComponentClassLoader().loadCompiledClasses(classLoader));
+            componentClasses.addAll(getClasspathComponentClassLoader().loadCompiledClasses(classLoader, progressView));
         }
 
         return componentClasses;

@@ -9,39 +9,41 @@ import org.diylc.core.Project;
 
 public class DrawingModel implements Model {
 
-    private final Presenter presenter;
+    private Presenter presenter;
 
-    public DrawingModel(Presenter presenter) {
-        this.presenter = presenter;
+    public DrawingModel() {
     }
     
     @Override
     public List<IDIYComponent> getSelectedComponents() {
-        return presenter.getSelectedComponents();
-    }
-
-    @Override
-    public boolean allowFileAction() {
-        return presenter.allowFileAction();
+        return getPresenter().getSelectedComponents();
     }
 
     @Override
     public void dispose() {
-        presenter.dispose();
+        getPresenter().dispose();
     }
 
     @Override
     public void loadProject(Project project, boolean freshStart) {
-        presenter.loadProject(project, freshStart);
+        getPresenter().loadProject(project, freshStart);
     }
 
     @Override
     public void loadProject(Path path) throws Exception {
-        presenter.loadProjectFromFile(path);        
+        getPresenter().loadProjectFromFile(path);        
     }
 
     public void pasteComponents(List<IDIYComponent> components) {
-        presenter.pasteComponents(components);
+        getPresenter().pasteComponents(components);
+    }
+
+    public Presenter getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(Presenter presenter) {
+        this.presenter = presenter;
     }
 
 }

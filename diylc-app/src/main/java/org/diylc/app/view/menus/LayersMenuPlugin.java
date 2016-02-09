@@ -6,13 +6,13 @@ import org.diylc.app.Layer;
 import org.diylc.app.actions.CheckBoxAction;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.LayersController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 
 public class LayersMenuPlugin extends AbstractMenuPlugin<LayersController> {
 
-    public LayersMenuPlugin(LayersController layersController, View view, DrawingModel model) {
+    public LayersMenuPlugin(LayersController layersController, View view, Model model) {
         super(layersController, view, model);
     }
 

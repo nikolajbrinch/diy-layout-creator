@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.core;
 
 import java.io.File;
 import java.util.List;

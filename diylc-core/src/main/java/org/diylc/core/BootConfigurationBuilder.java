@@ -1,4 +1,4 @@
-package org.diylc.app;
+package org.diylc.core;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -10,8 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.diylc.core.BootUtils;
 
 /**
  * Builder for a BootConfiguation.

@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+//import org.diylc.app.events.FileStatusChangedEvent;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.view.PointConverter;
 import org.diylc.components.AbstractBoard;
@@ -45,13 +46,11 @@ import org.diylc.components.semiconductors.DiodePlastic;
 import org.diylc.components.semiconductors.LED;
 import org.diylc.components.semiconductors.TransistorTO92;
 import org.diylc.core.Display;
-import org.diylc.core.EventType;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Orientation;
 import org.diylc.core.Project;
 import org.diylc.core.VerticalAlignment;
-import org.diylc.core.events.MessageDispatcher;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
@@ -73,9 +72,10 @@ public class ProjectFileManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectFileManager.class);
 
-    // private static final int V1_PIXELS_PER_INCH = 200;
     private static final Size V1_GRID_SPACING = new Size(0.1d, SizeUnit.in);
+
     private static final Map<String, Color> V1_COLOR_MAP = new HashMap<String, Color>();
+
     static {
         V1_COLOR_MAP.put("red", Color.red);
         V1_COLOR_MAP.put("blue", Color.blue);
@@ -86,48 +86,29 @@ public class ProjectFileManager {
     }
 
     private XStream xStream;
+
     // Legacy deserializer for 3.0.1 through 3.0.7, loads Points referenced in
     // pixels.
     private XStream xStreamOld;
 
-    private Path currentFile = null;
-    
-    private boolean modified = false;
-
-    private MessageDispatcher<EventType> messageDispatcher;
-
-    public ProjectFileManager(MessageDispatcher<EventType> messageDispatcher) {
+    public ProjectFileManager() {
         super();
         this.xStream = new XStream(new DomDriver("UTF-8"));
         xStream.autodetectAnnotations(true);
         xStream.registerConverter(new PointConverter());
         this.xStreamOld = new XStream(new DomDriver());
         xStreamOld.autodetectAnnotations(true);
-        this.messageDispatcher = messageDispatcher;
     }
 
-    public void startNewFile() {
-        currentFile = null;
-        modified = false;
-        fireFileStatusChanged();
-    }
-
-    public synchronized void serializeProjectToFile(Project project, Path path, boolean isBackup) throws IOException {
-        if (!isBackup) {
-            LOG.info(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
-        }
+    public synchronized void serializeProjectToFile(Project project, Path path) throws IOException {
+        LOG.info(String.format("saveProjectToFile(%s)", path.toAbsolutePath()));
         OutputStream fos;
-        
+
         fos = Files.newOutputStream(path);
         Writer writer = new OutputStreamWriter(fos, "UTF-8");
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
         xStream.toXML(project, writer);
         fos.close();
-        if (!isBackup) {
-            this.currentFile = path;
-            this.modified = false;
-            fireFileStatusChanged();
-        }
     }
 
     public Project deserializeProjectFromFile(Path path, List<String> warnings) throws SAXException, IOException,
@@ -156,26 +137,7 @@ public class ProjectFileManager {
             }
         }
         Collections.sort(warnings);
-        this.currentFile = path;
-        this.modified = false;
         return project;
-    }
-
-    public void notifyFileChange() {
-        this.modified = true;
-        fireFileStatusChanged();
-    }
-
-    public Path getCurrentFile() {
-        return currentFile;
-    }
-
-    public boolean isModified() {
-        return modified;
-    }
-
-    public void fireFileStatusChanged() {
-        messageDispatcher.dispatchMessage(EventType.FILE_STATUS_CHANGED, getCurrentFile(), isModified());
     }
 
     private Project parseV1File(Element root, List<String> warnings) {

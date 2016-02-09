@@ -14,10 +14,8 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -30,7 +28,6 @@ import org.diylc.app.update.UpdateLabel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.StringUtils;
 import org.diylc.components.registry.ComponentType;
-import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.utils.SystemUtils;
@@ -44,32 +41,32 @@ public class StatusBar extends JPanel implements IPlugIn {
     private static final Logger LOG = LoggerFactory.getLogger(StatusBar.class);
 
     public static String UPDATE_URL = "http://www.diy-fever.com/update.xml";
-    
+
     private static final Format sizeFormat = new DecimalFormat("0.##");
 
     private JComboBox<Double> zoomBox;
-    
+
     private UpdateLabel updateLabel;
-    
+
     private MemoryBar memoryPanel;
-    
+
     private JLabel statusLabel;
-    
+
     private JLabel sizeLabel;
 
     private IPlugInPort plugInPort;
 
     // State variables
     private ComponentType componentSlot;
-    
+
     private Point controlPointSlot;
-    
+
     private List<String> componentNamesUnderCursor;
-    
+
     private List<String> selectedComponentNames;
-    
+
     private List<String> stuckComponentNames;
-    
+
     private String statusMessage;
 
     public StatusBar(ISwingUI swingUI) {
@@ -83,7 +80,6 @@ public class StatusBar extends JPanel implements IPlugIn {
             LOG.error("Could not install status bar", e);
         }
     }
-
 
     public JLabel getSizeLabel() {
         if (sizeLabel == null) {
@@ -116,65 +112,6 @@ public class StatusBar extends JPanel implements IPlugIn {
         this.plugInPort = plugInPort;
 
         layoutComponents();
-    }
-
-    @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-        return EnumSet.of(EventType.ZOOM_CHANGED, EventType.SLOT_CHANGED, EventType.AVAILABLE_CTRL_POINTS_CHANGED,
-                EventType.SELECTION_CHANGED, EventType.STATUS_MESSAGE_CHANGED);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void processMessage(EventType eventType, Object... params) {
-        switch (eventType) {
-        case ZOOM_CHANGED:
-            if (!params[0].equals(getZoomBox().getSelectedItem())) {
-                final Double zoom = (Double) params[0];
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        getZoomBox().setSelectedItem(zoom);
-                    }
-                });
-            }
-            break;
-        case SELECTION_CHANGED:
-            List<IDIYComponent> selection = (List<IDIYComponent>) params[0];
-            Collection<IDIYComponent> stuckComponents = (Collection<IDIYComponent>) params[1];
-            Collection<String> componentNames = new HashSet<String>();
-            for (IDIYComponent component : selection) {
-                componentNames.add("<font color='blue'>" + component.getName() + "</font>");
-            }
-            this.selectedComponentNames = new ArrayList<String>(componentNames);
-            Collections.sort(this.selectedComponentNames);
-            this.stuckComponentNames = new ArrayList<String>();
-            for (IDIYComponent component : stuckComponents) {
-                this.stuckComponentNames.add("<font color='blue'>" + component.getName() + "</font>");
-            }
-            this.stuckComponentNames.removeAll(this.selectedComponentNames);
-            Collections.sort(this.stuckComponentNames);
-            refreshStatusText();
-            break;
-        case SLOT_CHANGED:
-            componentSlot = (ComponentType) params[0];
-            controlPointSlot = (Point) params[1];
-            refreshStatusText();
-            break;
-        case AVAILABLE_CTRL_POINTS_CHANGED:
-            componentNamesUnderCursor = new ArrayList<String>();
-            for (IDIYComponent component : ((Map<IDIYComponent, Integer>) params[0]).keySet()) {
-                componentNamesUnderCursor.add("<font color='blue'>" + component.getName() + "</font>");
-            }
-            Collections.sort(componentNamesUnderCursor);
-            refreshStatusText();
-            break;
-        case STATUS_MESSAGE_CHANGED:
-            statusMessage = (String) params[0];
-        default:
-            break;
-        }
     }
 
     private void layoutComponents() {
@@ -228,7 +165,8 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     private UpdateLabel getUpdateLabel() {
         if (updateLabel == null) {
-            updateLabel = new UpdateLabel(plugInPort.getCurrentVersionNumber(), UPDATE_URL, AppIconLoader.LightBulbOn.getIcon(), AppIconLoader.LightBulbOff.getIcon());
+            updateLabel = new UpdateLabel(plugInPort.getCurrentVersionNumber(), UPDATE_URL, AppIconLoader.LightBulbOn.getIcon(),
+                    AppIconLoader.LightBulbOff.getIcon());
             updateLabel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
         }
         return updateLabel;
@@ -251,6 +189,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     private void refreshStatusText() {
         String statusText = this.statusMessage;
+
         if (componentSlot == null) {
             if (componentNamesUnderCursor != null && !componentNamesUnderCursor.isEmpty()) {
                 String formattedNames = StringUtils.toCommaString(componentNamesUnderCursor);
@@ -299,4 +238,53 @@ public class StatusBar extends JPanel implements IPlugIn {
             }
         });
     }
+
+    public void update() {
+        componentSlot = plugInPort.getNewComponentTypeSlot();
+        controlPointSlot = plugInPort.getFirstControlPoint();
+        componentNamesUnderCursor = new ArrayList<String>();
+        for (IDIYComponent component : plugInPort.getAvailableControlPoints().keySet()) {
+            componentNamesUnderCursor.add("<font color='blue'>" + component.getName() + "</font>");
+        }
+        Collections.sort(componentNamesUnderCursor);
+
+        refreshStatusText();
+    }
+
+    public void update(String message) {
+        statusMessage = message;
+
+        refreshStatusText();
+    }
+
+    public void updateZoomLevel(double zoomLevel) {
+        if (!(zoomLevel == (Double) getZoomBox().getSelectedItem())) {
+            final Double zoom = (Double) zoomLevel;
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    getZoomBox().setSelectedItem(zoom);
+                }
+            });
+        }
+
+    }
+
+    public void updateSelectionState(List<IDIYComponent> selection, Collection<IDIYComponent> stuckComponents) {
+        Collection<String> componentNames = new HashSet<String>();
+        for (IDIYComponent component : selection) {
+            componentNames.add("<font color='blue'>" + component.getName() + "</font>");
+        }
+        this.selectedComponentNames = new ArrayList<String>(componentNames);
+        Collections.sort(this.selectedComponentNames);
+        this.stuckComponentNames = new ArrayList<String>();
+        for (IDIYComponent component : stuckComponents) {
+            this.stuckComponentNames.add("<font color='blue'>" + component.getName() + "</font>");
+        }
+        this.stuckComponentNames.removeAll(this.selectedComponentNames);
+        Collections.sort(this.stuckComponentNames);
+        refreshStatusText();
+    }
+
 }

@@ -17,19 +17,19 @@ import org.diylc.core.PropertyWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface EditController extends MenuController, ClipboardOwner {
+public interface EditController extends MenuController {
 
     static final Logger LOG = LoggerFactory.getLogger(EditController.class);
 
     default void cut() {
         LOG.info("Cut triggered");
-        getClipboard().setContents(new ComponentTransferable(cloneComponents(getPlugInPort().getSelectedComponents())), this);
+        getClipboard().setContents(new ComponentTransferable(cloneComponents(getPlugInPort().getSelectedComponents())), getClipboardOwner());
         getPlugInPort().deleteSelectedComponents();
     }
 
     default void copy() {
         LOG.info("Copy triggered");
-        getClipboard().setContents(new ComponentTransferable(cloneComponents(getPlugInPort().getSelectedComponents())), this);
+        getClipboard().setContents(new ComponentTransferable(cloneComponents(getPlugInPort().getSelectedComponents())), getClipboardOwner());
     }
 
     @SuppressWarnings("unchecked")
@@ -104,4 +104,7 @@ public interface EditController extends MenuController, ClipboardOwner {
     }
 
     public Clipboard getClipboard();
+    
+    public ClipboardOwner getClipboardOwner();
+
 }

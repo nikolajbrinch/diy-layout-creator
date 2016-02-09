@@ -7,21 +7,20 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.diylc.app.UndoHandler;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.IComponentFilter;
 import org.diylc.components.registry.ComponentType;
-import org.diylc.core.EventType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ITemplateProcessor;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
-import org.diylc.core.events.IMessageListener;
-import org.diylc.core.events.MessageDispatcher;
 
 /**
  * Interface for communication between plug-ins and the application. Plug-ins
@@ -31,9 +30,6 @@ import org.diylc.core.events.MessageDispatcher;
  * @author Branislav Stojkovic
  * 
  * @see IPlugIn
- * @see MessageDispatcher
- * @see IMessageListener
- * @see EventType
  */
 public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyProcessor, ITemplateProcessor {
 
@@ -307,12 +303,12 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
      */
     void renumberSelectedComponents(boolean xAxisFirst);
 
-    /**
-     * Dispatches an event
-     * 
-     * @param eventType
-     * @param params
-     */
-    void sendEvent(EventType eventType, Object... params);
+    Point getFirstControlPoint();
+
+    Map<IDIYComponent, Set<Integer>> getAvailableControlPoints();
+
+    UndoHandler<Project> getUndoHandler();
+
+    boolean isSaved();
 
 }

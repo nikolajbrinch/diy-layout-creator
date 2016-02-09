@@ -10,13 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.diylc.core.EventType;
+import org.diylc.app.view.View;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
-import org.diylc.core.events.MessageDispatcher;
 import org.diylc.core.utils.Constants;
 
 /**
@@ -45,15 +44,14 @@ public class DrawingManager {
 
     private Theme theme = Configuration.INSTANCE.getTheme();
 
+    private final View view;
+    
     private double zoomLevel = 1d;
-
-    private MessageDispatcher<EventType> messageDispatcher;
 
     private boolean debugComponentAreas;
 
-    public DrawingManager(MessageDispatcher<EventType> messageDispatcher) {
-        this.messageDispatcher = messageDispatcher;
-
+    public DrawingManager(View view) {
+        this.view = view;
         String debugComponentAreasStr = System.getProperty(DEBUG_COMPONENT_AREAS);
         debugComponentAreas = debugComponentAreasStr != null && debugComponentAreasStr.equalsIgnoreCase("true");
     }
@@ -163,7 +161,7 @@ public class DrawingManager {
 
     public void setZoomLevel(double zoomLevel) {
         this.zoomLevel = zoomLevel;
-        fireZoomChanged();
+        getView().updateZoomLevel(zoomLevel);
     }
 
     public void invalidateComponent(IDIYComponent component) {
@@ -197,11 +195,6 @@ public class DrawingManager {
         return new Dimension((int) width, (int) height);
     }
 
-    public void fireZoomChanged() {
-        messageDispatcher.dispatchMessage(EventType.ZOOM_CHANGED, zoomLevel);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
-    }
-
     public Theme getTheme() {
         return theme;
     }
@@ -209,6 +202,10 @@ public class DrawingManager {
     public void setTheme(Theme theme) {
         this.theme = theme;
         Configuration.INSTANCE.setTheme(theme);
-        messageDispatcher.dispatchMessage(EventType.REPAINT);
+        getView().getCanvas().repaint();
+    }
+
+    public View getView() {
+        return view;
     }
 }

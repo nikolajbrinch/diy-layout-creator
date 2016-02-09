@@ -4,12 +4,12 @@ import javax.swing.Action;
 import javax.swing.Icon;
 
 import org.diylc.app.controllers.Controller;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.View;
 
 public abstract class AbstractMenuPlugin<T extends Controller> extends AbstractPlugin<T> {
 
-    public AbstractMenuPlugin(T controller, View view, DrawingModel model) {
+    public AbstractMenuPlugin(T controller, View view, Model model) {
         super(controller, view, model);
     }
 

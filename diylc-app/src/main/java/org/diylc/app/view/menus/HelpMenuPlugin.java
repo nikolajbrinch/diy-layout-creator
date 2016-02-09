@@ -2,7 +2,7 @@ package org.diylc.app.view.menus;
 
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.HelpController;
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
@@ -17,7 +17,7 @@ import org.diylc.core.utils.SystemUtils;
  */
 public class HelpMenuPlugin extends AbstractMenuPlugin<HelpController> {
 
-    public HelpMenuPlugin(HelpController helpController, View view, DrawingModel model) {
+    public HelpMenuPlugin(HelpController helpController, View view, Model model) {
         super(helpController, view, model);
     }
 

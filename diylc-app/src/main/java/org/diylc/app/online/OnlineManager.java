@@ -1,13 +1,10 @@
 package org.diylc.app.online;
 
-import java.util.EnumSet;
-
 import javax.swing.SwingWorker;
 
 import org.diylc.app.online.presenter.LibraryPresenter;
 import org.diylc.app.view.IPlugIn;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.core.EventType;
 
 public class OnlineManager implements IPlugIn {
 
@@ -36,14 +33,5 @@ public class OnlineManager implements IPlugIn {
 			}
 		};
 		worker.execute();
-	}
-
-	@Override
-	public EnumSet<EventType> getSubscribedEventTypes() {
-		return null;
-	}
-
-	@Override
-	public void processMessage(EventType eventType, Object... params) {
 	}
 }

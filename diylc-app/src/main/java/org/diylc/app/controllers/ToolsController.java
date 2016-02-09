@@ -2,7 +2,7 @@ package org.diylc.app.controllers;
 
 import java.util.List;
 
-import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.app.view.bom.BomDialog;
@@ -19,7 +19,7 @@ public class ToolsController extends AbstractController implements ExportControl
     
     private final IDrawingProvider drawingProvider;
 
-    public ToolsController(ApplicationController applicationController, View view, DrawingModel model, IPlugInPort plugInPort, IDrawingProvider drawingProvider) {
+    public ToolsController(ApplicationController applicationController, View view, Model model, IPlugInPort plugInPort, IDrawingProvider drawingProvider) {
         super(applicationController, view, model, plugInPort);
         this.drawingProvider = drawingProvider;
     }
