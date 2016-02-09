@@ -11,12 +11,11 @@ public class WindowController extends AbstractController {
     }
 
     public void minimize() {
+        getView().minimize();
     }
 
     public void zoom() {
-    }
-
-    public void bringAllToFront() {
+        getView().zoom();
     }
 
 }

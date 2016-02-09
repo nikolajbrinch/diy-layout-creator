@@ -196,6 +196,18 @@ public class StubPresenter extends Presenter {
 
             }
 
+            @Override
+            public void minimize() {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void zoom() {
+                // TODO Auto-generated method stub
+                
+            }
+
         }, new DrawingController(new ApplicationController() {
 
             @Override

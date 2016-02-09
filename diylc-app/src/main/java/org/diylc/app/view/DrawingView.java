@@ -682,4 +682,18 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         this.propertyPanel = propertyPanel;
     }
 
+    @Override
+    public void minimize() {
+        setExtendedState(ICONIFIED);
+    }
+
+    @Override
+    public void zoom() {
+        if (getExtendedState() == MAXIMIZED_BOTH) {
+            setExtendedState(NORMAL);
+        } else {
+            setExtendedState(MAXIMIZED_BOTH);
+        }
+    }
+
 }

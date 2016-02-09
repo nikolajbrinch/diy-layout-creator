@@ -101,4 +101,8 @@ public interface View {
     public void initCanvas(Project project, boolean freshStart);
 
     public void selectionStateChanged(List<IDIYComponent> selection, Collection<IDIYComponent> stuckComponents);
+
+    public void minimize();
+
+    public void zoom();
 }
