@@ -28,9 +28,9 @@ public class ComponentLoader {
         /*
          * Load from directories if there are any
          */
-//        if (directories.length > 0) {
-//            componentClasses.addAll(getGroovyComponentClassLoader().loadGroovyClasses(classLoader, directories));
-//        }
+        if (directories.length > 0) {
+            componentClasses.addAll(getGroovyComponentClassLoader().loadGroovyClasses(classLoader, directories, progressView));
+        }
 
         /*
          * If nothing got loaded, load from classpath
