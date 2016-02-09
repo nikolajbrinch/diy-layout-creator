@@ -210,7 +210,8 @@ public class DrawingView extends JFrame implements ISwingUI, View {
     }
 
     protected void storeWindowBounds(JFrame frame) {
-        Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), frame.getExtendedState()));
+        Configuration.INSTANCE.setWindowBounds(new WindowBounds(frame.getLocation(), frame.getSize(), 
+                frame.getExtendedState() == ICONIFIED ? NORMAL : frame.getExtendedState()));
     }
 
     public Presenter getPresenter() {
@@ -694,6 +695,7 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         } else {
             setExtendedState(MAXIMIZED_BOTH);
         }
+        storeWindowBounds(this);
     }
 
 }
