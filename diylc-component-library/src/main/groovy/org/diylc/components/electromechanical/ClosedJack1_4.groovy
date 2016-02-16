@@ -216,7 +216,7 @@ class ClosedJack1_4 extends AbstractTransparentComponent implements Geometry {
             graphicsContext.fill(body[0])
             graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : SHAFT_COLOR)
             graphicsContext.fill(body[1])
-            graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : METAL_COLOR)
+            graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : Colors.METAL_COLOR)
             graphicsContext.fill(body[3])
             graphicsContext.setComposite(oldComposite)
         }

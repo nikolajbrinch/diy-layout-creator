@@ -7,7 +7,9 @@ import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.components.arduino.PcbText.Placement
+import org.diylc.components.Constants.Placement
+import org.diylc.components.Pin;
+import org.diylc.components.PinBase;
 import org.diylc.core.ComponentState
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
@@ -29,7 +31,7 @@ import java.awt.geom.Area
 import java.util.List
 
 
-@ComponentDescriptor(name = "Arduino Nano V3.0", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Board", description = "Arduino Nano V3.0", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+@ComponentDescriptor(name = "Arduino Nano V3.0", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Arduino", description = "Arduino Nano V3.0", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public class NanoV3 extends AbstractArduino implements Geometry {
 
     private static final long serialVersionUID = 1L
@@ -77,18 +79,18 @@ public class NanoV3 extends AbstractArduino implements Geometry {
     ]
 
     public NanoV3() {
-        super()
+        super("Nano V3")
     }
 
     @Override
     public Area[] getBodyArea() {
         if (body == null) {
             updateControlPoints()
-            body = new Area[2]
+            body = new Area[4]
 
-            int spacing = (int) SPACING.convertToPixels()
-            int padSize = (int) PAD_SIZE.convertToPixels()
-            int holeSize = (int) HOLE_SIZE.convertToPixels()
+            int spacing = (int) PIN_SPACING.convertToPixels()
+            int padSize = (int) org.diylc.components.Constants.SMALL_PAD_SIZE.convertToPixels()
+            int holeSize = (int) org.diylc.components.Constants.LARGE_HOLE_SIZE.convertToPixels()
             int chipSize = (int) CHIP_SIZE.convertToPixels()
             int margin = (int) new Size(1d, SizeUnit.mm).convertToPixels()
 
@@ -103,7 +105,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
             }
             
             int width = 2 * margin + padSize + ROW_PIN_COUNT * spacing + spacing
-            int height = 2 * margin + padSize + PIN_WIDTH * spacing
+            int height = 2 * margin + padSize + ROW_SPACING * spacing
 
             switch (orientation) {
                 case Orientation.DEFAULT:
@@ -112,7 +114,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                 case Orientation._90:
                     y1 -= spacing
                 case Orientation._270:
-                    width = 2 * margin + padSize + PIN_WIDTH * spacing
+                    width = 2 * margin + padSize + ROW_SPACING * spacing
                     height = 2 * margin + padSize + ROW_PIN_COUNT * spacing + spacing
                     break
                 default:
@@ -156,6 +158,8 @@ public class NanoV3 extends AbstractArduino implements Geometry {
 
             body[0] = new Area(rectangle(x1, y1, width, height))
             body[1] = chipArea
+            body[2] = new Area(new PinBase())
+            body[3] = new Area(new Pin())
         }
 
         return body
@@ -163,11 +167,10 @@ public class NanoV3 extends AbstractArduino implements Geometry {
 
     @Override
     void updateControlPoints() {
-        int spacing = (int) SPACING.convertToPixels()
+        int spacing = (int) PIN_SPACING.convertToPixels()
 
         Point firstPoint = controlPoints[0]
 
-        labels.clear()
         List<Point> controlPoints = []
 
         int dx1 = firstPoint.x
@@ -193,7 +196,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                 case Orientation.DEFAULT:
                     dx1 = firstPoint.x + i * spacing
                     dx2 = firstPoint.x + i * spacing
-                    dy2 = firstPoint.y + (PIN_WIDTH * spacing)
+                    dy2 = firstPoint.y + (ROW_SPACING * spacing)
                     row1 = textRow2Reverse
                     row2 = textRow1Reverse
                     row1Placement = Placement.BELOW
@@ -201,7 +204,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                     break
                 case Orientation._90:
                     dy1 = firstPoint.y + i * spacing
-                    dx2 = firstPoint.x + (PIN_WIDTH * spacing)
+                    dx2 = firstPoint.x + (ROW_SPACING * spacing)
                     dy2 = firstPoint.y + i * spacing
                     row1 = textRow1Reverse
                     row2 = textRow2Reverse
@@ -211,7 +214,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                 case Orientation._180:
                     dx1 = firstPoint.x + i * spacing
                     dx2 = firstPoint.x + i * spacing
-                    dy2 = firstPoint.y + (PIN_WIDTH * spacing)
+                    dy2 = firstPoint.y + (ROW_SPACING * spacing)
                     row1 = textRow1
                     row2 = textRow2
                     row1Placement = Placement.BELOW
@@ -219,7 +222,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                     break
                 case Orientation._270:
                     dy1 = firstPoint.y + i * spacing
-                    dx2 = firstPoint.x + (PIN_WIDTH * spacing)
+                    dx2 = firstPoint.x + (ROW_SPACING * spacing)
                     dy2 = firstPoint.y + i * spacing
                     row1 = textRow2
                     row2 = textRow1
@@ -230,30 +233,21 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                     throw new RuntimeException("Unexpected orientation: " + orientation)
             }
 
-            Point controlPoint = point(dx1, dy1)
-            controlPoints << controlPoint
-            labels[(controlPoint)] = new PcbText(row1[i], row1Placement)
-            controlPoint = point(dx2, dy2)
-            controlPoints << controlPoint
-            labels[(controlPoint)] = new PcbText(row2[i], row2Placement)
+            controlPoints << point(dx1, dy1, ['type': 'pad', 'text': row1[i], 'text-placement': row1Placement])
+            controlPoints << point(dx2, dy2, ['type': 'pad', 'text': row2[i], 'text-placement': row2Placement])
         }
 
         /*
          * Other pins
          */
-        String[] column2 = PCB_TEXT["column2"]
-        String[] column2Reverse = PCB_TEXT["column2"].reverse()
-
         switch (orientation) {
             case Orientation.DEFAULT:
                 int x = firstPoint.x
                 int y = firstPoint.y + 2 * spacing
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x + (ROW_PIN_COUNT * spacing) - spacing, y)
-                    controlPoints << controlPoint
-                    controlPoint = point(x + (ROW_PIN_COUNT * spacing), y)
-                    controlPoints << controlPoint
+                    controlPoints << point(x + (ROW_PIN_COUNT * spacing) - spacing, y, ['type': 'pin'])
+                    controlPoints << point(x + (ROW_PIN_COUNT * spacing), y, ['type': 'pin'])
                     y += spacing
                 }
                 break
@@ -262,10 +256,8 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                 int y = firstPoint.y
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x, y + (ROW_PIN_COUNT * spacing) - spacing)
-                    controlPoints << controlPoint
-                    controlPoint = point(x, y + (ROW_PIN_COUNT * spacing))
-                    controlPoints << controlPoint
+                    controlPoints << point(x, y + (ROW_PIN_COUNT * spacing) - spacing, ['type': 'pin'])
+                    controlPoints << point(x, y + (ROW_PIN_COUNT * spacing), ['type': 'pin'])
                     x += spacing
                 }
                 break
@@ -274,23 +266,18 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                 int y = firstPoint.y + 2 * spacing
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x , y)
-                    controlPoints << controlPoint
-                    controlPoint = point(x + spacing , y)
-                    controlPoints << controlPoint
+                    controlPoints << point(x , y, ['type': 'pin'])
+                    controlPoints << point(x + spacing , y, ['type': 'pin'])
                     y += spacing
                 }
                 break
-
             case Orientation._270:
                 int x = firstPoint.x + 2 * spacing
                 int y = firstPoint.y - spacing
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x, y)
-                    controlPoints << controlPoint
-                    controlPoint = point(x, y + spacing)
-                    controlPoints << controlPoint
+                    controlPoints << point(x, y, ['type': 'pin'])
+                    controlPoints << point(x, y + spacing, ['type': 'pin'])
                     x += spacing
                 }
                 break
@@ -299,10 +286,5 @@ public class NanoV3 extends AbstractArduino implements Geometry {
         }
 
         this.controlPoints = controlPoints
-    }
-
-    @Override
-    public String getIconText() {
-        return "Nano V3"
     }
 }

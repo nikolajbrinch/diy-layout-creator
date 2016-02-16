@@ -5,12 +5,20 @@ import java.awt.Rectangle;
 
 trait Geometry {
 
-    Point point(def point) {
-        return new Point(point as Point)
+    ControlPoint point(def point) {
+        return new ControlPoint(point as Point)
     }
 
-    Point point(def x, def y) {
-        return new Point(x as int, y as int)
+    ControlPoint point(def point, Map<String, Object> properties) {
+        return new ControlPoint(point as Point, properties)
+    }
+
+    ControlPoint point(def x, def y) {
+        return new ControlPoint(x as int, y as int)
+    }
+
+    ControlPoint point(def x, def y, Map<String, Object> properties) {
+        return new ControlPoint(x as int, y as int, properties)
     }
 
     Point[] points(Point... points) {

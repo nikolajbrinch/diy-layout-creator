@@ -108,9 +108,9 @@ public class LeverSwitch extends AbstractTransparentComponent {
 
         graphicsContext.draw(body[1])
 
-        graphicsContext.setColor(METAL_COLOR)
+        graphicsContext.setColor(Colors.METAL_COLOR)
         graphicsContext.fill(body[2])
-        graphicsContext.setColor(METAL_COLOR.darker())
+        graphicsContext.setColor(Colors.METAL_COLOR.darker())
         graphicsContext.draw(body[2])
     }
 

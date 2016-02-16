@@ -6,8 +6,11 @@ import org.diylc.components.Angle
 import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
+import org.diylc.components.ControlPoint;
 import org.diylc.components.Geometry
-import org.diylc.components.arduino.PcbText.Placement
+import org.diylc.components.Constants.Placement;
+import org.diylc.components.Pin;
+import org.diylc.components.PinBase;
 import org.diylc.core.ComponentState
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
@@ -33,29 +36,19 @@ public abstract class AbstractArduino extends AbstractTransparentComponent imple
 
     private static final long serialVersionUID = 1L
 
-    public static Color SILVER_COLOR = Color.decode("#C0C0C0")
+    public static Size HALF_PIN_SPACING = new Size(0.05d, SizeUnit.in)
 
-    public static Color CHIP_COLOR = Color.gray
-
-    public static Color CHIP_BORDER_COLOR = Color.gray.darker()
-
-    public static Size PIN_SPACING = new Size(0.05d, SizeUnit.in)
-
-    public static Size SPACING = new Size(0.1d, SizeUnit.in)
-
-    public static Size PAD_SIZE = new Size(0.07d, SizeUnit.in)
-
-    public static Size HOLE_SIZE = new Size(1.33d, SizeUnit.mm)
+    public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
 
     public static float LABEL_FONT_SIZE = 8f
 
     public static Size CHIP_SIZE = new Size(7d, SizeUnit.mm)
 
-    public static int PIN_WIDTH = 6
-    
-    Point[] controlPoints = points(point(0, 0))
+    public static int ROW_SPACING = 6
 
-    Map<Point, PcbText> labels = [:]
+    private String iconText
+        
+    Point[] controlPoints = points(point(0, 0))
 
     transient Area[] body
 
@@ -69,10 +62,9 @@ public abstract class AbstractArduino extends AbstractTransparentComponent imple
 
     protected abstract Area[] getBodyArea()
 
-    protected abstract String getIconText()
-
-    public AbstractArduino() {
+    public AbstractArduino(String iconText) {
         super()
+        this.iconText = iconText
         updateControlPoints()
     }
 
@@ -121,7 +113,7 @@ public abstract class AbstractArduino extends AbstractTransparentComponent imple
 
         Area mainArea = getBodyArea()[0]
         Area chipArea = getBodyArea()[1]
-
+        
         graphicsContext.with {
             Composite oldComposite = graphicsContext.getComposite()
 
@@ -133,47 +125,59 @@ public abstract class AbstractArduino extends AbstractTransparentComponent imple
             setColor(Colors.PCB_BLUE_COLOR)
             fill(mainArea)
 
-            setColor(CHIP_COLOR)
+            setColor(Colors.CHIP_COLOR)
             fill(chipArea)
-            setColor(CHIP_BORDER_COLOR)
+            setColor(Colors.CHIP_BORDER_COLOR)
             draw(chipArea)
 
             /*
              * Draw control points
              */
-            int padSize = (int) PAD_SIZE.convertToPixels()
-            int holeSize = (int) HOLE_SIZE.convertToPixels()
+            int padSize = toInt(org.diylc.components.Constants.SMALL_PAD_SIZE.convertToPixels())
+            int holeSize = toInt(org.diylc.components.Constants.LARGE_HOLE_SIZE.convertToPixels())
 
-            controlPoints.each { Point controlPoint ->
-                drawFilledOval(controlPoint.x - padSize / 2, controlPoint.y - padSize / 2, padSize, SILVER_COLOR.darker(), SILVER_COLOR)
-                drawFilledOval(controlPoint.x - holeSize / 2, controlPoint.y - holeSize / 2, holeSize, SILVER_COLOR.darker(), Constants.CANVAS_COLOR)
-
-                PcbText label = labels[(controlPoint)]
+            
+            controlPoints.each { ControlPoint controlPoint ->
+                if (controlPoint.properties['type'] == 'pad') {
+                    drawFilledOval(controlPoint.x - padSize / 2, controlPoint.y - padSize / 2, padSize, Colors.SILVER_COLOR.darker(), Colors.SILVER_COLOR)
+                    drawFilledOval(controlPoint.x - holeSize / 2, controlPoint.y - holeSize / 2, holeSize, Colors.SILVER_COLOR.darker(), Constants.CANVAS_COLOR)
+                } else if (controlPoint.properties['type'] == 'pin') {
+                    int pinSize = toInt(Pin.DEFAULT_PIN_SIZE.convertToPixels())
+                    int pinBaseSize = toInt(PinBase.DEFAULT_BASE_SIZE.convertToPixels())
+                    Area pinBaseArea = getBodyArea()[2]
+                    Area pinArea = getBodyArea()[3]
+                    int x = toInt(controlPoint.x - pinBaseSize / 2)
+                    int y = toInt(controlPoint.y - pinBaseSize / 2)
+                    drawArea(graphicsContext, x, y, pinBaseArea, Colors.CHIP_COLOR, Colors.CHIP_BORDER_COLOR)
+                    x = toInt(controlPoint.x - pinSize / 2)
+                    y = toInt(controlPoint.y - pinSize / 2)
+                    drawArea(graphicsContext, x, y, pinArea, , Colors.SILVER_COLOR, Colors.SILVER_COLOR.darker())
+                }
                 
-                if (label) {
+                if (controlPoint.properties['text']) {
                     Point point = point(controlPoint)
                     HorizontalAlignment horizontalAlignment
                     VerticalAlignment verticalAlignment
-                    if (label.placement == Placement.BELOW) {
+                    if (controlPoint.properties['text-placement'] == Placement.BELOW) {
                         point.translate(0, padSize.intdiv(2))
                         horizontalAlignment = HorizontalAlignment.CENTER
                         verticalAlignment = VerticalAlignment.TOP
-                    } else if (label.placement == Placement.ABOVE) {
+                    } else if (controlPoint.properties['text-placement'] == Placement.ABOVE) {
                         point.translate(0, (int) -(5 * padSize / 4))
                         horizontalAlignment = HorizontalAlignment.CENTER
                         verticalAlignment = VerticalAlignment.BOTTOM
-                    } else if (label.placement == Placement.LEFT) {
+                    } else if (controlPoint.properties['text-placement'] == Placement.LEFT) {
                         point.translate((int) -(2 * padSize / 3), 0)
                         horizontalAlignment = HorizontalAlignment.RIGHT
                         verticalAlignment = VerticalAlignment.CENTER
-                    } else if (label.placement == Placement.RIGHT) {
+                    } else if (controlPoint.properties['text-placement'] == Placement.RIGHT) {
                         point.translate((int) (2 * padSize / 3), 0)
                         horizontalAlignment = HorizontalAlignment.LEFT
                         verticalAlignment = VerticalAlignment.CENTER
                     }
                     setColor(Color.white)
                     setFont(LABEL_FONT.deriveFont(LABEL_FONT_SIZE))
-                    drawCenteredText(graphicsContext, label.text, point, horizontalAlignment, verticalAlignment)
+                    drawCenteredText(graphicsContext, controlPoint.properties['text'], point, horizontalAlignment, verticalAlignment)
                 }
             }
 
@@ -190,6 +194,6 @@ public abstract class AbstractArduino extends AbstractTransparentComponent imple
         }
         graphicsContext.setColor(Color.white)
         graphicsContext.setFont(LABEL_FONT.deriveFont(LABEL_FONT_SIZE))
-        drawCenteredText(graphicsContext, getIconText(), point(width / 2, height / 2), HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+        drawCenteredText(graphicsContext, iconText, point(width / 2, height / 2), HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
     }
 }

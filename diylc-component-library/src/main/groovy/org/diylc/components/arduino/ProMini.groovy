@@ -7,7 +7,7 @@ import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.components.arduino.PcbText.Placement
+import org.diylc.components.Constants.Placement
 import org.diylc.core.ComponentState
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
@@ -29,7 +29,7 @@ import java.awt.geom.Area
 import java.util.List
 
 
-@ComponentDescriptor(name = "Arduino Pro Mini", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Board", description = "Arduino ProMini", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+@ComponentDescriptor(name = "Arduino Pro Mini", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Arduino", description = "Arduino ProMini", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public  class ProMini extends AbstractArduino implements Geometry {
 
     private static final long serialVersionUID = 1L
@@ -78,7 +78,7 @@ public  class ProMini extends AbstractArduino implements Geometry {
     ]
 
     public ProMini() {
-        super()
+        super("ProMini")
     }
 
     @Override
@@ -87,9 +87,9 @@ public  class ProMini extends AbstractArduino implements Geometry {
             updateControlPoints()
             body = new Area[2]
 
-            int spacing = (int) SPACING.convertToPixels()
-            int padSize = (int) PAD_SIZE.convertToPixels()
-            int holeSize = (int) HOLE_SIZE.convertToPixels()
+            int spacing = (int) PIN_SPACING.convertToPixels()
+            int padSize = (int) org.diylc.components.Constants.SMALL_PAD_SIZE.convertToPixels()
+            int holeSize = (int) org.diylc.components.Constants.LARGE_HOLE_SIZE.convertToPixels()
             int chipSize = (int) CHIP_SIZE.convertToPixels()
             int margin = (int) new Size(1d, SizeUnit.mm).convertToPixels()
 
@@ -131,17 +131,18 @@ public  class ProMini extends AbstractArduino implements Geometry {
 
             switch (orientation) {
                 case Orientation.DEFAULT:
+                    pX1 += spacing
                     break
                 case Orientation._90:
                     pX1 += (chipBounds.width / 2)
-                    pY1 -= (chipBounds.height / 2)
+                    pY1 -= (chipBounds.height / 2) - spacing
                     break
                 case Orientation._180:
-                    pX1 += chipBounds.width
+                    pX1 += chipBounds.width - spacing
                     break
                 case Orientation._270:
                     pX1 += (chipBounds.width / 2)
-                    pY1 += (chipBounds.height / 2)
+                    pY1 += (chipBounds.height / 2) - spacing
                     break
                 default:
                     break
@@ -159,11 +160,10 @@ public  class ProMini extends AbstractArduino implements Geometry {
 
     @Override
     void updateControlPoints() {
-        int spacing = (int) SPACING.convertToPixels()
+        int spacing = (int) PIN_SPACING.convertToPixels()
 
         Point firstPoint = controlPoints[0]
 
-        labels.clear()
         List<Point> controlPoints = []
 
         int dx1 = firstPoint.x
@@ -226,12 +226,8 @@ public  class ProMini extends AbstractArduino implements Geometry {
                     throw new RuntimeException("Unexpected orientation: " + orientation)
             }
 
-            Point controlPoint = point(dx1, dy1)
-            controlPoints << controlPoint
-            labels[(controlPoint)] = new PcbText(row1[i], row1Placement)
-            controlPoint = point(dx2, dy2)
-            controlPoints << controlPoint
-            labels[(controlPoint)] = new PcbText(row2[i], row2Placement)
+            controlPoints << point(dx1, dy1, ['type': 'pad', 'text': row1[i], 'text-placement': row1Placement])
+            controlPoints << point(dx2, dy2, ['type': 'pad', 'text': row2[i], 'text-placement': row2Placement])
         }
 
         /*
@@ -246,27 +242,14 @@ public  class ProMini extends AbstractArduino implements Geometry {
                 int y = firstPoint.y + spacing / 2
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x + (ROW_PIN_COUNT * spacing), y)
-                    Placement placement = Placement.LEFT
-                    if (i == 0) {
-                        placement = Placement.ABOVE
-                    } else if (i == 5) {
-                        placement = Placement.BELOW
-                    }
-                    labels[(controlPoint)] = new PcbText(column2[i], placement)
-                    controlPoints << controlPoint
+                    Placement placement = (i == 0) ? Placement.ABOVE : ((i == 5) ? Placement.BELOW : Placement.LEFT)
+                    controlPoints << point(x + (ROW_PIN_COUNT * spacing), y, ['type': 'pad', 'text': column2[i], 'text-placement': placement])
                     if (i > 1 && i < 5) {
-                        controlPoint = point(x, y)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText(PCB_TEXT["column1"][i - 2], Placement.RIGHT)
+                        controlPoints << point(x, y, ['type': 'pad', 'text': PCB_TEXT["column1"][i - 2], 'text-placement': Placement.RIGHT])
                     }
                     if (i == 5) {
-                        controlPoint = point(x + (7 * spacing) + spacing / 2, y - spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A4", Placement.ABOVE)
-                        controlPoint = point(x + (COLUMN_PIN_COUNT * spacing) + spacing / 2, y - spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A5", Placement.ABOVE)
+                        controlPoints << point(x + (7 * spacing) + spacing / 2, y - spacing / 2, ['type': 'pad', 'text': 'A4', 'text-placement': Placement.ABOVE])
+                        controlPoints << point(x + (COLUMN_PIN_COUNT * spacing) + spacing / 2, y - spacing / 2, ['type': 'pad', 'text': 'A5', 'text-placement': Placement.ABOVE])
                     }
                     y += spacing
                 }
@@ -276,27 +259,14 @@ public  class ProMini extends AbstractArduino implements Geometry {
                 int y = firstPoint.y
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x, y + (ROW_PIN_COUNT * spacing))
-                    Placement placement = Placement.ABOVE
-                    if (i == 0) {
-                        placement = Placement.LEFT
-                    } else if (i == 5) {
-                        placement = Placement.RIGHT
-                    }
-                    labels[(controlPoint)] = new PcbText(column2Reverse[i], placement)
-                    controlPoints << controlPoint
+                    Placement placement = (i == 0) ? Placement.LEFT : ((i == 5) ? Placement.RIGHT : Placement.ABOVE)
+                    controlPoints << point(x, y + (ROW_PIN_COUNT * spacing), ['type': 'pad', 'text': column2Reverse[i], 'text-placement': placement])
                     if (i > 0 && i < 4) {
-                        controlPoint = point(x, y)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText(PCB_TEXT["column1"][2 - (i - 1)], Placement.BELOW)
+                        controlPoints << point(x, y, ['type': 'pad', 'text': PCB_TEXT["column1"][2 - (i - 1)], 'text-placement': Placement.BELOW])
                     }
                     if (i == 1) {
-                        controlPoint = point(x - spacing / 2, y + (COLUMN_PIN_COUNT * spacing) + spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A5", Placement.RIGHT)
-                        controlPoint = point(x - spacing / 2, y + (7 * spacing) + spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A4", Placement.RIGHT)
+                        controlPoints << point(x - spacing / 2, y + (COLUMN_PIN_COUNT * spacing) + spacing / 2, ['type': 'pad', 'text': 'A5', 'text-placement': Placement.RIGHT])
+                        controlPoints << point(x - spacing / 2, y + (7 * spacing) + spacing / 2, ['type': 'pad', 'text': 'A4', 'text-placement': Placement.RIGHT])
                     }
                     x += spacing
                 }
@@ -306,27 +276,14 @@ public  class ProMini extends AbstractArduino implements Geometry {
                 int y = firstPoint.y + spacing / 2
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x , y)
-                    Placement placement = Placement.RIGHT
-                    if (i == 0) {
-                        placement = Placement.ABOVE
-                    } else if (i == 5) {
-                        placement = Placement.BELOW
-                    }
-                    labels[(controlPoint)] = new PcbText(column2Reverse[i], placement)
-                    controlPoints << controlPoint
+                    Placement placement = (i == 0) ? Placement.ABOVE : ((i == 5) ? Placement.BELOW : Placement.RIGHT) 
+                    controlPoints << point(x, y, ['type': 'pad', 'text': column2Reverse[i], 'text-placement': placement])
                     if (i > 0 && i < 4) {
-                        controlPoint = point(x + (ROW_PIN_COUNT * spacing), y)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText(PCB_TEXT["column1"][i - 1], Placement.LEFT)
+                        controlPoints << point(x + (ROW_PIN_COUNT * spacing), y, ['type': 'pad', 'text': PCB_TEXT["column1"][i - 1], 'text-placement': Placement.LEFT])
                     }
                     if (i == 1) {
-                        controlPoint = point(x + (4 * spacing) + spacing / 2, y - spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A5", Placement.BELOW)
-                        controlPoint = point(x + (5 * spacing) + spacing / 2, y - spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A4", Placement.BELOW)
+                        controlPoints << point(x + (4 * spacing) + spacing / 2, y - spacing / 2, ['type': 'pad', 'text': 'A5', 'text-placement': Placement.BELOW])
+                        controlPoints << point(x + (5 * spacing) + spacing / 2, y - spacing / 2, ['type': 'pad', 'text': 'A4', 'text-placement': Placement.BELOW])
                     }
                     y += spacing
                 }
@@ -337,27 +294,14 @@ public  class ProMini extends AbstractArduino implements Geometry {
                 int y = firstPoint.y - spacing
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Point controlPoint = point(x, y)
-                    Placement placement = Placement.BELOW
-                    if (i == 0) {
-                        placement = Placement.LEFT
-                    } else if (i == 5) {
-                        placement = Placement.RIGHT
-                    }
-                    labels[(controlPoint)] = new PcbText(column2[i], placement)
-                    controlPoints << controlPoint
+                    Placement placement = (i == 0) ? Placement.LEFT : ((i == 5) ? Placement.RIGHT : Placement.BELOW)
+                    controlPoints << point(x, y, ['type': 'pad', 'text': column2[i], 'text-placement': placement])
                     if (i > 1 && i < 5) {
-                        controlPoint = point(x, y + (ROW_PIN_COUNT * spacing))
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText(PCB_TEXT["column1"][i - 2], Placement.ABOVE)
+                        controlPoints << point(x, y + (ROW_PIN_COUNT * spacing), ['type': 'pad', 'text': PCB_TEXT["column1"][i - 2], 'text-placement': Placement.ABOVE])
                     }
                     if (i == 5) {
-                        controlPoint = point(x - spacing / 2, y + (4 * spacing) + spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A5", Placement.LEFT)
-                        controlPoint = point(x - spacing / 2, y + (5 * spacing) + spacing / 2)
-                        controlPoints << controlPoint
-                        labels[(controlPoint)] = new PcbText("A4", Placement.LEFT)
+                        controlPoints << point(x - spacing / 2, y + (4 * spacing) + spacing / 2, ['type': 'pad', 'text': 'A5', 'text-placement': Placement.LEFT])
+                        controlPoints << point(x - spacing / 2, y + (5 * spacing) + spacing / 2, ['type': 'pad', 'text': 'A4', 'text-placement': Placement.LEFT])
                     }
                     x += spacing
                 }
@@ -369,8 +313,4 @@ public  class ProMini extends AbstractArduino implements Geometry {
         this.controlPoints = controlPoints
     }
 
-    @Override
-    public String getIconText() {
-        return "ProMini"
-    }
 }

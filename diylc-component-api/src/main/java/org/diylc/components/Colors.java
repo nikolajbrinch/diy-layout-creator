@@ -64,4 +64,10 @@ public class Colors {
     
     public static byte MAX_ALPHA = 127;
 
+    public static Color SILVER_COLOR = Color.decode("#C0C0C0");
+
+    public static Color CHIP_COLOR = Color.gray;
+
+    public static Color CHIP_BORDER_COLOR = Color.gray.darker();
+
 }

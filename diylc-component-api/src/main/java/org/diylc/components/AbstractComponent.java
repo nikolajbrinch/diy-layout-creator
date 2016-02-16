@@ -1,5 +1,6 @@
 package org.diylc.components;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Point;
@@ -8,6 +9,7 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -161,6 +163,17 @@ public abstract class AbstractComponent implements IDIYComponent {
 		graphicsContext.drawString(text, textX, textY);
         graphicsContext.setTransform(transform);
 	}
+	
+    protected void drawArea(GraphicsContext graphicsContext, int x, int y, Area area, Color color, Color borderColor) {
+        Area transformedArea = new Area(area);
+        AffineTransform move = AffineTransform.getTranslateInstance(x, y);
+        transformedArea.transform(move);
+
+        graphicsContext.setColor(color);
+        graphicsContext.fill(transformedArea);
+        graphicsContext.setColor(borderColor);
+        graphicsContext.draw(transformedArea);
+    }
 
 	public IDIYComponent clone() throws CloneNotSupportedException {
 		try {
