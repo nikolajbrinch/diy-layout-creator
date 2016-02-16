@@ -9,7 +9,6 @@ import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
 import org.diylc.components.arduino.PcbText.Placement
 import org.diylc.core.ComponentState
-import org.diylc.core.ControlPoint
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver

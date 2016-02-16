@@ -1,22 +1,21 @@
 package org.diylc.components.arduino
 
-import org.diylc.components.AbstractComponent;
-import org.diylc.components.AbstractTransparentComponent;
-import org.diylc.components.Angle;
+import org.diylc.components.AbstractComponent
+import org.diylc.components.AbstractTransparentComponent
+import org.diylc.components.Angle
 import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
 import org.diylc.components.arduino.PcbText.Placement
 import org.diylc.core.ComponentState
-import org.diylc.core.ControlPoint;
-import org.diylc.core.HorizontalAlignment;
+import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.Orientation;
+import org.diylc.core.Orientation
 import org.diylc.core.Project
-import org.diylc.core.VerticalAlignment;
-import org.diylc.core.VisibilityPolicy;
+import org.diylc.core.VerticalAlignment
+import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
@@ -25,9 +24,9 @@ import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 import java.awt.*
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.util.List;
+import java.awt.geom.AffineTransform
+import java.awt.geom.Area
+import java.util.List
 
 
 @ComponentDescriptor(name = "Arduino Nano V3.0", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Board", description = "Arduino Nano V3.0", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
@@ -37,7 +36,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
 
     private static final int ROW_PIN_COUNT = 15
 
-    private static final int COLUMN_PIN_COUNT = 3;
+    private static final int COLUMN_PIN_COUNT = 3
 
     private static Map<String, List<String>> PCB_TEXT = [
         "row1": [
@@ -117,15 +116,15 @@ public class NanoV3 extends AbstractArduino implements Geometry {
             switch (orientation) {
                 case Orientation.DEFAULT:
                     x1 -= spacing
-                    break;
+                    break
                 case Orientation._90:
                     y1 -= spacing
                 case Orientation._270:
                     width = 2 * margin + padSize + PIN_WIDTH * spacing
                     height = 2 * margin + padSize + ROW_PIN_COUNT * spacing + spacing
-                    break;
+                    break
                 default:
-                    break;
+                    break
             }
 
             Area chipArea = new Area(rectangle(0, 0, chipSize, chipSize))
@@ -144,20 +143,20 @@ public class NanoV3 extends AbstractArduino implements Geometry {
             switch (orientation) {
                 case Orientation.DEFAULT:
                     pX1 -= spacing
-                    break;
+                    break
                 case Orientation._90:
                     pX1 += (chipBounds.width / 2)
                     pY1 -= (chipBounds.height / 2) + spacing
-                    break;
+                    break
                 case Orientation._180:
                     pX1 += chipBounds.width + spacing
-                    break;
+                    break
                 case Orientation._270:
                     pX1 += (chipBounds.width / 2)
                     pY1 += (chipBounds.height / 2) + spacing
-                    break;
+                    break
                 default:
-                    break;
+                    break
             }
 
             AffineTransform move = AffineTransform.getTranslateInstance(pX1, pY1)
@@ -265,7 +264,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                     controlPoints << controlPoint
                     y += spacing
                 }
-                break;
+                break
             case Orientation._90:
                 int x = firstPoint.x + 2 * spacing
                 int y = firstPoint.y
@@ -277,7 +276,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                     controlPoints << controlPoint
                     x += spacing
                 }
-                break;
+                break
             case Orientation._180:
                 int x = firstPoint.x - spacing
                 int y = firstPoint.y + 2 * spacing
@@ -289,7 +288,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                     controlPoints << controlPoint
                     y += spacing
                 }
-                break;
+                break
 
             case Orientation._270:
                 int x = firstPoint.x + 2 * spacing
@@ -302,7 +301,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                     controlPoints << controlPoint
                     x += spacing
                 }
-                break;
+                break
             default:
                 throw new RuntimeException("Unexpected orientation: " + orientation)
         }
