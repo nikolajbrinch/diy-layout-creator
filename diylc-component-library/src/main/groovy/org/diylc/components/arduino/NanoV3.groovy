@@ -73,15 +73,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
             "D10",
             "D11",
             "D12"
-        ],
-        "column1" : ["GND", "A6", "A7"],
-        "column2" : [
-            "DTR",
-            "GND",
-            "VCC",
-            "RXI",
-            "TXD",
-            "GRN"]
+        ]
     ]
 
     public NanoV3() {
