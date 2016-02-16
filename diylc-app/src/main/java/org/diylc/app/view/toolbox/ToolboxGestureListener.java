@@ -7,7 +7,6 @@ import java.awt.dnd.DragGestureListener;
 
 import org.diylc.app.view.IPlugInPort;
 
-
 /**
  * {@link DragGestureListener} for {@link CanvasPanel}.
  * 
@@ -15,19 +14,17 @@ import org.diylc.app.view.IPlugInPort;
  */
 class ToolboxGestureListener implements DragGestureListener {
 
-	private IPlugInPort presenter;
-	private String className;
+    private IPlugInPort presenter;
+    private String className;
 
-	public ToolboxGestureListener(IPlugInPort presenter, String className) {
-		super();
-		this.presenter = presenter;
-		this.className = className;
-	}
+    public ToolboxGestureListener(IPlugInPort presenter, String className) {
+        super();
+        this.presenter = presenter;
+        this.className = className;
+    }
 
-	@Override
-	public void dragGestureRecognized(DragGestureEvent dge) {
-//		presenter.dragStarted(dge.getDragOrigin());
-		dge.startDrag(Cursor.getDefaultCursor(), new StringSelection(className),
-				new ToolboxSourceListener(presenter));
-	}
+    @Override
+    public void dragGestureRecognized(DragGestureEvent dge) {
+        dge.startDrag(Cursor.getDefaultCursor(), new StringSelection(className), new ToolboxSourceListener(presenter));
+    }
 }

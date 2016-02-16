@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.geom.Area;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
@@ -30,8 +29,8 @@ public abstract class AbstractBasicRenderer implements Renderer {
     }
 
     @Override
-    public Map<IDIYComponent, Area> getComponentAreaMap() {
-        return Collections.emptyMap();
+    public ComponentAreaMap getComponentAreaMap() {
+        return ComponentAreaMap.emptyMap();
     }
 
 }

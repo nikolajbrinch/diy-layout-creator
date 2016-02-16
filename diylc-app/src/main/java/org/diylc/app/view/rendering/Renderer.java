@@ -3,7 +3,6 @@ package org.diylc.app.view.rendering;
 import java.awt.Point;
 import java.awt.geom.Area;
 import java.util.List;
-import java.util.Map;
 
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
@@ -20,6 +19,6 @@ public interface Renderer {
 
     public void clearComponentAreaMap();
 
-    public Map<IDIYComponent, Area> getComponentAreaMap();
+    public ComponentAreaMap getComponentAreaMap();
 
 }

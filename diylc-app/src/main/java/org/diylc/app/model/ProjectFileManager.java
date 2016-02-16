@@ -1,4 +1,4 @@
-package org.diylc.app.io;
+package org.diylc.app.model;
 
 import java.awt.Color;
 import java.awt.Point;

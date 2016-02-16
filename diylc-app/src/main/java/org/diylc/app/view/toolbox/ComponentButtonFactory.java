@@ -35,147 +35,104 @@ import org.openide.awt.DropDownButtonFactory;
  */
 class ComponentButtonFactory {
 
-	public static int MARGIN = 3;
+    public static int MARGIN = 3;
 
-	public static JButton create(final IPlugInPort plugInPort,
-			final ComponentType componentType, final JPopupMenu menu) {
-		JButton button = DropDownButtonFactory.createDropDownButton(
-				componentType.getIcon(), menu);
+    public static JButton create(final IPlugInPort plugInPort, final ComponentType componentType, final JPopupMenu menu) {
+        JButton button = DropDownButtonFactory.createDropDownButton(componentType.getIcon(), menu);
 
-		button.setBorder(BorderFactory.createEmptyBorder(MARGIN + 1,
-				MARGIN + 1, MARGIN, MARGIN));
+        button.setBorder(BorderFactory.createEmptyBorder(MARGIN + 1, MARGIN + 1, MARGIN, MARGIN));
 
-		// mainButton.setBorder(BorderFactory.createEmptyBorder());
-		// dropDownButton.setBorder(BorderFactory.createEmptyBorder());
-		// setBorder(BorderFactory.createLineBorder(Color.gray));
+        button.setToolTipText("<html><b>" + componentType.getName() + "</b><br>" + componentType.getDescription() + "<br>Author: "
+                + componentType.getAuthor() + "<br><br>Right click to select all components of this type" + "</html>");
 
-		button.setToolTipText("<html><b>" + componentType.getName()
-				+ "</b><br>" + componentType.getDescription() + "<br>Author: "
-				+ componentType.getAuthor()
-				+ "<br><br>Right click to select all components of this type"
-				+ "</html>");
-		// initializeDnD();
-		button.addActionListener(new ActionListener() {
+        button.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				plugInPort.setNewComponentTypeSlot(componentType, null);
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                plugInPort.setNewComponentTypeSlot(componentType, null);
+            }
+        });
 
-		button.addMouseListener(new MouseAdapter() {
+        button.addMouseListener(new MouseAdapter() {
 
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON3) {
-					List<IDIYComponent> components = plugInPort
-							.getCurrentProject().getComponents();
-					List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
-					for (IDIYComponent component : components) {
-						if (componentType.getInstanceClass().equals(
-								component.getClass())) {
-							newSelection.add(component);
-						}
-					}
-					// Ctrl appends selection
-					if (e.isControlDown()) {
-						newSelection.addAll(plugInPort.getSelectedComponents());
-					}
-					plugInPort.updateSelection(newSelection);
-					plugInPort.setNewComponentTypeSlot(null, null);
-					plugInPort.refresh();
-				}
-			}
-		});
-		// addActionListener(new ActionListener() {
-		//
-		// @Override
-		// public void actionPerformed(ActionEvent e) {
-		// // plugInPort.setCursorIcon(componentType.getIcon());
-		// plugInPort.setNewComponentTypeSlot(componentType);
-		// // try {
-		// // plugInPort.instantiateComponent(componentType
-		// // .getComponentInstanceClass(), null);
-		// // } catch (Exception e1) {
-		// // e1.printStackTrace();
-		// // }
-		// }
-		// });
-		button.addKeyListener(new KeyAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    List<IDIYComponent> components = plugInPort.getCurrentProject().getComponents();
+                    List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
+                    for (IDIYComponent component : components) {
+                        if (componentType.getInstanceClass().equals(component.getClass())) {
+                            newSelection.add(component);
+                        }
+                    }
+                    // Ctrl appends selection
+                    if (e.isControlDown()) {
+                        newSelection.addAll(plugInPort.getSelectedComponents());
+                    }
+                    plugInPort.updateSelection(newSelection);
+                    plugInPort.setNewComponentTypeSlot(null, null);
+                    plugInPort.refresh();
+                }
+            }
+        });
 
-			@Override
-			public void keyPressed(KeyEvent e) {
-				plugInPort.keyPressed(e.getKeyCode(), e.isControlDown(), e
-						.isShiftDown(), e.isAltDown(), e.isMetaDown());
-			}
-		});
-		// addKeyListener(new KeyAdapter() {
-		//
-		// @Override
-		// public void keyPressed(KeyEvent e) {
-		// if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-		// plugInPort.setNewComponentSlot(null);
-		// }
-		// }
-		// });
-		return button;
-	}
+        button.addKeyListener(new KeyAdapter() {
 
-	// private void initializeDnD() {
-	// // Initialize drag source recognizer.
-	// DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(
-	// this,
-	// DnDConstants.ACTION_MOVE,
-	// new ToolboxGestureListener(plugInPort, componentType
-	// .getInstanceClass().getName()));
-	// }
+            @Override
+            public void keyPressed(KeyEvent e) {
+                plugInPort.keyPressed(e.getKeyCode(), e.isControlDown(), e.isShiftDown(), e.isAltDown(), e.isMetaDown());
+            }
+        });
+        return button;
+    }
 
-	public static JMenuItem createTemplateItem(final IPlugInPort plugInPort,
-			final Template template, final ComponentType componentType) {
-		final JMenuItem item = new JMenuItem(template.getName()) {
+    public static JMenuItem createTemplateItem(final IPlugInPort plugInPort, final Template template, final ComponentType componentType) {
+        final JMenuItem item = new JMenuItem(template.getName()) {
 
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			// Customize item size to fit the delete button
-			public java.awt.Dimension getPreferredSize() {
-				Dimension d = super.getPreferredSize();
-				return new Dimension(d.width + 18, d.height);
-			}
-		};
-		item.addActionListener(new ActionListener() {
+            /*
+             * Customize item size to fit the delete button(non-Javadoc)
+             * 
+             * @see javax.swing.JComponent#getPreferredSize()
+             */
+            public java.awt.Dimension getPreferredSize() {
+                Dimension d = super.getPreferredSize();
+                return new Dimension(d.width + 18, d.height);
+            }
+        };
+        item.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				plugInPort.setNewComponentTypeSlot(componentType, template);
-			}
-		});
-		JLabel label = new JLabel(AppIconLoader.Garbage.getIcon());
-		label.setToolTipText("Delete template");
-		label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                plugInPort.setNewComponentTypeSlot(componentType, template);
+            }
+        });
+        JLabel label = new JLabel(AppIconLoader.Garbage.getIcon());
+        label.setToolTipText("Delete template");
+        label.addMouseListener(new MouseAdapter() {
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// Hide the menu
-				Container c = item.getParent();
-				if (c != null && c instanceof JPopupMenu) {
-					JPopupMenu m = (JPopupMenu) c;
-					m.setVisible(false);
-				}
-				int result = JOptionPane.showConfirmDialog(SwingUtilities
-						.getRoot(item),
-						"Are you sure you want to delete template \""
-								+ template.getName() + "\"", "Delete",
-						JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-				if (result != JOptionPane.YES_OPTION) {
-					return;
-				}
-				plugInPort.deleteTemplate(componentType.getCategory(),
-						componentType.getName(), template.getName());
-				e.consume();
-			}
-		});
-		item.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		item.add(label);
-		return item;
-	}
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                /*
+                 * Hide the menu
+                 */
+                Container c = item.getParent();
+                if (c != null && c instanceof JPopupMenu) {
+                    JPopupMenu m = (JPopupMenu) c;
+                    m.setVisible(false);
+                }
+                int result = JOptionPane.showConfirmDialog(SwingUtilities.getRoot(item), "Are you sure you want to delete template \""
+                        + template.getName() + "\"", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (result != JOptionPane.YES_OPTION) {
+                    return;
+                }
+                plugInPort.deleteTemplate(componentType.getCategory(), componentType.getName(), template.getName());
+                e.consume();
+            }
+        });
+        item.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        item.add(label);
+        return item;
+    }
 }

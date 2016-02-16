@@ -31,11 +31,11 @@ import org.diylc.app.ExpansionMode;
 import org.diylc.app.IUndoListener;
 import org.diylc.app.UndoHandler;
 import org.diylc.app.controllers.DrawingController;
-import org.diylc.app.io.ProjectFileManager;
+import org.diylc.app.model.ProjectFileManager;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.utils.StringUtils;
 import org.diylc.app.view.rendering.DrawingContext;
-import org.diylc.app.view.rendering.DrawingManager;
+import org.diylc.app.view.rendering.DrawingRenderer;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.app.view.rendering.RenderingConstants;
 import org.diylc.appframework.update.Version;
@@ -75,7 +75,7 @@ public class Presenter implements IPlugInPort {
     public static VersionNumber CURRENT_VERSION = new VersionNumber(4, 0, 0);
 
     private final View drawingView;
-    
+
     private final DrawingController controller;
 
     /*
@@ -118,7 +118,7 @@ public class Presenter implements IPlugInPort {
     /*
      * Utilities
      */
-    private DrawingManager drawingManager;
+    private DrawingRenderer drawingManager;
 
     private ProjectFileManager projectFileManager;
 
@@ -161,10 +161,10 @@ public class Presenter implements IPlugInPort {
         this.plugIns = new ArrayList<IPlugIn>();
         this.selectedComponents = new ArrayList<IDIYComponent>();
         this.currentProject = new Project();
-        this.drawingManager = new DrawingManager(getView());
+        this.drawingManager = new DrawingRenderer(getView());
         this.projectFileManager = new ProjectFileManager();
         this.instantiationManager = new InstantiationManager();
-        
+
         this.undoHandler = new UndoHandler<Project>(new IUndoListener<Project>() {
 
             @Override
@@ -265,24 +265,6 @@ public class Presenter implements IPlugInPort {
         getView().initCanvas(project, freshStart);
         getView().repaintCanvas();
         getView().updateLockedLayers();
-    }
-
-    @Override
-    public void loadProjectFromFile(Path path) throws Exception {
-        LOG.trace(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
-        List<String> warnings = new ArrayList<String>();
-        Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
-        loadProject(project, true);
-        getView().updateTitle();
-        if (!warnings.isEmpty()) {
-            StringBuilder builder = new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
-            for (String warning : warnings) {
-                builder.append(warning);
-                builder.append("<br>");
-            }
-            builder.append("</html");
-            view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
-        }
     }
 
     @Override
@@ -1234,13 +1216,13 @@ public class Presenter implements IPlugInPort {
             return;
         }
         Project oldProject = currentProject.clone();
-        
-        /* 
+
+        /*
          * Remove selected components from any groups.
          */
         ungroupComponents(selectedComponents);
-        
-        /* 
+
+        /*
          * Remove from area map.
          */
         for (IDIYComponent component : selectedComponents) {
@@ -1285,11 +1267,11 @@ public class Presenter implements IPlugInPort {
     public void groupSelectedComponents() {
         LOG.trace("groupSelectedComponents()");
         Project oldProject = currentProject.clone();
-        /* 
+        /*
          * First remove the selected components from other groups.
          */
         ungroupComponents(selectedComponents);
-        /* 
+        /*
          * Then group them together.
          */
         currentProject.getGroups().add(new HashSet<IDIYComponent>(selectedComponents));
@@ -1405,7 +1387,7 @@ public class Presenter implements IPlugInPort {
         }
         Project oldProject = currentProject.clone();
         List<IDIYComponent> components = new ArrayList<IDIYComponent>(getSelectedComponents());
-        /* 
+        /*
          * Sort components by their location.
          */
         Collections.sort(components, new Comparator<IDIYComponent>() {
@@ -1457,13 +1439,13 @@ public class Presenter implements IPlugInPort {
                 return 0;
             }
         });
-        /* 
+        /*
          * Clear names.
          */
         for (IDIYComponent component : components) {
             component.setName("");
         }
-        /* 
+        /*
          * Assign new ones.
          */
         for (IDIYComponent component : components) {
@@ -1478,16 +1460,21 @@ public class Presenter implements IPlugInPort {
     public void updateSelection(List<IDIYComponent> newSelection) {
         this.selectedComponents = newSelection;
         Map<IDIYComponent, Set<Integer>> controlPointMap = new HashMap<IDIYComponent, Set<Integer>>();
+        
         for (IDIYComponent component : selectedComponents) {
             Set<Integer> indices = new HashSet<Integer>();
+            
             for (int i = 0; i < component.getControlPointCount(); i++) {
                 indices.add(i);
             }
+            
             controlPointMap.put(component, indices);
         }
+        
         if (Configuration.INSTANCE.getStickyPoints()) {
             includeStuckComponents(controlPointMap);
         }
+        
         getView().selectionStateChanged(selectedComponents, controlPointMap.keySet());
     }
 
@@ -1495,28 +1482,43 @@ public class Presenter implements IPlugInPort {
     public void expandSelection(ExpansionMode expansionMode) {
         LOG.trace(String.format("expandSelection(%s)", expansionMode));
         List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>(this.selectedComponents);
-        // Find control points of all selected components and all types
+
+        /*
+         * Find control points of all selected components and all types
+         */
         Set<String> selectedNamePrefixes = new HashSet<String>();
+
         if (expansionMode == ExpansionMode.SAME_TYPE) {
             for (IDIYComponent component : getSelectedComponents()) {
                 selectedNamePrefixes.add(ComponentRegistry.INSTANCE.getComponentType(component).getNamePrefix());
             }
         }
-        // Now try to find components that intersect with at least one component
-        // in the pool.
+
+        /*
+         * Now try to find components that intersect with at least one component
+         * in the pool.
+         */
         for (IDIYComponent component : getCurrentProject().getComponents()) {
-            // Skip already selected components or ones that cannot be stuck to
-            // other components.
+            /*
+             * Skip already selected components or ones that cannot be stuck to
+             * other components.
+             */
             Area area = drawingManager.getComponentArea(component);
-            if (newSelection.contains(component) || !component.isControlPointSticky(0) || area == null)
+            if (newSelection.contains(component) || !component.isControlPointSticky(0) || area == null) {
                 continue;
+            }
+            
             boolean matches = false;
+
             for (IDIYComponent selectedComponent : this.selectedComponents) {
                 Area selectedArea = drawingManager.getComponentArea(selectedComponent);
-                if (selectedArea == null)
+                if (selectedArea == null) {
                     continue;
+                }
+
                 Area intersection = new Area(area);
                 intersection.intersect(selectedArea);
+
                 if (!intersection.isEmpty()) {
                     matches = true;
                     break;
@@ -1540,10 +1542,14 @@ public class Presenter implements IPlugInPort {
 
         int oldSize = this.getSelectedComponents().size();
         updateSelection(newSelection);
-        // Go deeper if possible.
+
+        /*
+         * Go deeper if possible.
+         */
         if (newSelection.size() > oldSize && expansionMode != ExpansionMode.IMMEDIATE) {
             expandSelection(expansionMode);
         }
+
         getView().repaintCanvas();
     }
 

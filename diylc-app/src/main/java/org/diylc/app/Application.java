@@ -3,8 +3,9 @@ package org.diylc.app;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JMenu;
@@ -15,6 +16,7 @@ import javax.swing.SwingUtilities;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.ProjectDeserializer;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.async.Async;
 import org.diylc.app.view.ISwingUI;
@@ -48,6 +50,10 @@ public class Application implements ApplicationController {
 
     private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
+    private static Application application = new Application();
+
+    private static boolean running = false;
+
     private final Map<String, Drawing> drawings = new LinkedHashMap<>();
 
     private AutoSave autoSave;
@@ -58,7 +64,16 @@ public class Application implements ApplicationController {
 
     private int fileNumber = 1;
 
-    public void run(String[] args) {
+    private Application() {
+    }
+
+    public synchronized void run(String[] args) {
+        if (running) {
+            return;
+        } else {
+            running = true;
+        }
+
         Platform.getPlatform().setup();
         Platform.getPlatform().setPreferencesHandler((PreferencesEvent e) -> LOG.debug("Show preferences dialog"));
         Platform.getPlatform().setQuitHandler((QuitEvent event, QuitResponse response) -> {
@@ -103,9 +118,18 @@ public class Application implements ApplicationController {
         try {
             SwingUtilities.invokeAndWait(() -> {
                 if (args.length > 0) {
-                    openProject(Paths.get(args[0]));
-                } else {
-                    createNewProject();
+                    Path path = null;
+                    try {
+                        path = Paths.get(args[0]);
+                        Project project = ProjectDeserializer.loadProjectFromFile(path);
+                        createProject(project, path);
+                    } catch (Exception e) {
+                        LOG.error("Could not open project " + path.toString());
+                    }
+                }
+
+                if (getCurrentDrawing() == null) {
+                    createProject(null, null);
                     showTemplates();
                 }
 
@@ -123,7 +147,8 @@ public class Application implements ApplicationController {
         JMenuBar jMenuBar = new JMenuBar();
         JMenu fileMenu = new JMenu(MenuConstants.FILE_MENU);
         jMenuBar.add(fileMenu);
-        fileMenu.add(new GenericAction("New", AppIconLoader.DocumentPlainYellow.getIcon(), Accelerators.NEW, (event) -> createNewProject()));
+        fileMenu.add(new GenericAction("New", AppIconLoader.DocumentPlainYellow.getIcon(), Accelerators.NEW, (event) -> createProject(null,
+                null)));
         fileMenu.add(new GenericAction("Open", AppIconLoader.FolderOut.getIcon(), Accelerators.OPEN, (event) -> open()));
         fileMenu.add(new JMenu(MenuConstants.FILE_OPEN_RECENT_MENU));
         fileMenu.addSeparator();
@@ -174,15 +199,11 @@ public class Application implements ApplicationController {
     }
 
     public void setCurrentDrawing(Drawing drawing) {
-        addDrawing(drawing);
-
         this.currentDrawing = drawing;
     }
 
     private void addDrawing(Drawing drawing) {
-        if (!getDrawings().contains(drawing)) {
-            drawings.put(drawing.getId(), drawing);
-        }
+        drawings.put(drawing.getId(), drawing);
 
         updateWindowMenu();
     }
@@ -211,12 +232,14 @@ public class Application implements ApplicationController {
         getDrawings().stream().forEach((drawing) -> drawing.getView().updateLru(lru));
     }
 
-    public Collection<Drawing> getDrawings() {
-        return drawings.values();
+    public List<Drawing> getDrawings() {
+        return new ArrayList<Drawing>(drawings.values());
     }
 
-    public Drawing createNewProject() {
-        Drawing drawing = new Drawing(this, createPath(), false);
+    public Drawing createProject(Project project, Path path) {
+        Drawing drawing = new Drawing(this, project != null ? project : new Project(), path != null ? path : createPath(), path != null);
+        addDrawing(drawing);
+
         setCurrentDrawing(drawing);
 
         drawing.getView().updateLru(lru);
@@ -227,17 +250,8 @@ public class Application implements ApplicationController {
     private Path createPath() {
         Path path = Paths.get("Untitled" + (fileNumber > 1 ? " " + String.valueOf(fileNumber) : ""));
         fileNumber++;
-        
+
         return path;
-    }
-
-    public Drawing openProject(Path path) {
-        Drawing drawing = new Drawing(this, path, true);
-        setCurrentDrawing(drawing);
-
-        drawing.getView().updateLru(lru);
-
-        return drawing;
     }
 
     public void open() {
@@ -246,16 +260,7 @@ public class Application implements ApplicationController {
                 null, FileFilterEnum.DIY.getExtensions()[0], null);
 
         if (path != null) {
-            new Async().execute(() -> {
-                LOG.debug("Opening from " + path.toAbsolutePath());
-                openProject(path);
-                return null;
-            }, Async.onSuccess((result) -> {
-                Configuration.INSTANCE.setLastPath(path.getParent().toAbsolutePath().normalize());
-                addLruPath(path);
-            }), Async.onError((Exception e) -> {
-                getCurrentView().showMessage("Could not open file. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
-            }));
+            open(path);
         }
     }
 
@@ -264,7 +269,8 @@ public class Application implements ApplicationController {
         if (path != null) {
             new Async().execute(() -> {
                 LOG.debug("Opening from " + path.toAbsolutePath().normalize());
-                openProject(path);
+                Project project = ProjectDeserializer.loadProjectFromFile(path);
+                createProject(project, path);
                 return null;
             }, Async.onSuccess((result) -> {
                 Configuration.INSTANCE.setLastPath(path.getParent().toAbsolutePath().normalize());
@@ -288,11 +294,11 @@ public class Application implements ApplicationController {
                 /*
                  * Load project in temp presenter
                  */
-                presenter.loadProjectFromFile(path);
+                Project project = ProjectDeserializer.loadProjectFromFile(path);
                 /*
                  * Grab all components and paste them into the main presenter
                  */
-                Drawing drawing = createNewProject();
+                Drawing drawing = createProject(project, path);
                 drawing.getModel().pasteComponents(presenter.getCurrentProject().getComponents());
                 /*
                  * Cleanup components in the temp presenter, don't need them
@@ -308,7 +314,7 @@ public class Application implements ApplicationController {
     }
 
     public void exit(QuitResponse response) {
-        if (getDrawings().stream().map((drawing) -> drawing.getController().close()).noneMatch((closed) -> !closed)) {
+        if (getDrawings().stream().map((drawing) -> drawing.close()).noneMatch((closed) -> !closed)) {
             Configuration.INSTANCE.setAbnormalExit(false);
             if (response instanceof RestartQuitResponse) {
                 BootUtils.installRestarer(new Restarter(new String[0]));
@@ -329,6 +335,25 @@ public class Application implements ApplicationController {
         Drawing drawing = drawings.get(drawingId);
         drawing.getView().requestFocus();
         setCurrentDrawing(drawing);
+    }
+
+    public void closeDrawing(String drawingId) {
+        Drawing drawing = drawings.get(drawingId);
+
+        if (drawing != null && drawing.close()) {
+            drawings.remove(drawingId);
+            setCurrentDrawing(getDrawings().isEmpty() ? null : getDrawings().get(0));
+
+            updateWindowMenu();
+        }
+    }
+
+    public static Application getApplication() {
+        return application;
+    }
+
+    public void showMessage(String message, String title, int messageType) {
+        getCurrentView().showMessage(message, title, messageType);
     }
 
 }

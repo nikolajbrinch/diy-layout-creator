@@ -286,5 +286,9 @@ public class StatusBar extends JPanel implements IPlugIn {
         Collections.sort(this.stuckComponentNames);
         refreshStatusText();
     }
+    
+    public void dispose() {
+        getMemoryPanel().dispose();
+    }
 
 }

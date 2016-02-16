@@ -6,12 +6,20 @@ public class Colors {
 
     public static Color PCB_BOARD_COLOR = Color.decode("#F8EBB3");
 
+    public static Color PCB_BLUE_COLOR = new Color(61, 89, 171);
+
+    public static Color PCB_GREEN_COLOR = new Color(58, 102, 41);
+
     public static Color PCB_BORDER_COLOR = PCB_BOARD_COLOR.darker();
-    
+
+    public static Color PCB_BLUE_BORDER_COLOR = PCB_BLUE_COLOR.darker();
+
+    public static Color PCB_GREEN_BORDER_COLOR = PCB_GREEN_COLOR.darker();
+
     public static Color PCB_STRIP_COLOR = Color.decode("#DA8A67");
 
     public static Color EYELET_BOARD_COLOR = Color.decode("#CCFFCC");
-
+    
     public static Color EYELET_BORDER_COLOR = EYELET_BOARD_COLOR.darker();
     
     public static Color EYELET_COLOR = Color.decode("#C3E4ED");

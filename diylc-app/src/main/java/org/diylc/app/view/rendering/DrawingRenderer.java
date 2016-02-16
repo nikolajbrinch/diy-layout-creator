@@ -24,7 +24,7 @@ import org.diylc.core.utils.Constants;
  * 
  * @author Branislav Stojkovic
  */
-public class DrawingManager {
+public class DrawingRenderer {
 
     public static final String ZOOM_KEY = "zoom";
 
@@ -50,7 +50,7 @@ public class DrawingManager {
 
     private boolean debugComponentAreas;
 
-    public DrawingManager(View view) {
+    public DrawingRenderer(View view) {
         this.view = view;
         String debugComponentAreasStr = System.getProperty(DEBUG_COMPONENT_AREAS);
         debugComponentAreas = debugComponentAreasStr != null && debugComponentAreasStr.equalsIgnoreCase("true");

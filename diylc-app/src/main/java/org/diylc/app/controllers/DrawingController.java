@@ -7,7 +7,6 @@ import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.Transferable;
 
-import org.diylc.app.Drawing;
 import org.diylc.app.model.Model;
 import org.diylc.app.view.DrawingView;
 import org.diylc.core.Project;
@@ -19,8 +18,6 @@ public class DrawingController implements ClipboardOwner {
     private DrawingView view;
 
     private final Clipboard clipboard;
-
-    private boolean closed = false;
 
     private final Model model;
 
@@ -50,19 +47,7 @@ public class DrawingController implements ClipboardOwner {
         return clipboard;
     }
 
-    public synchronized boolean close() {
-        if (!closed) {
-            if (getDrawing().allowFileAction()) {
-                getDrawing().dispose();
-                closed = true;
-            }
-        }
-
-        return closed;
-    }
-
-    private Drawing getDrawing() {
-        return getView().getDrawing();
+    public void dispose() {
     }
 
     @Override

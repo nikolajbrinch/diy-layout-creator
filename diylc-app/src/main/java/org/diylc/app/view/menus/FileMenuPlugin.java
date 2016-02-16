@@ -28,11 +28,11 @@ public class FileMenuPlugin extends AbstractMenuPlugin<FileController> {
 
 	@Override
 	public void connect(IPlugInPort plugInPort) {
-		addMenuAction(new GenericAction("New", AppIconLoader.DocumentPlainYellow.getIcon(), Accelerators.NEW, (event) -> getApplicationController().createNewProject()), MenuConstants.FILE_MENU);
+		addMenuAction(new GenericAction("New", AppIconLoader.DocumentPlainYellow.getIcon(), Accelerators.NEW, (event) -> getApplicationController().createProject(null, null)), MenuConstants.FILE_MENU);
 		addMenuAction(new GenericAction("Open", AppIconLoader.FolderOut.getIcon(), Accelerators.OPEN, (event) -> getApplicationController().open()), MenuConstants.FILE_MENU);
 		addSubmenu(MenuConstants.FILE_OPEN_RECENT_MENU, null, MenuConstants.FILE_MENU);
         addMenuSeparator(MenuConstants.FILE_MENU);
-        addMenuAction(new GenericAction("Close", AppIconLoader.FolderOut.getIcon(), Accelerators.CLOSE, (event) -> getController().close()), MenuConstants.FILE_MENU);
+        addMenuAction(new GenericAction("Close", AppIconLoader.FolderOut.getIcon(), Accelerators.CLOSE, (event) -> getApplicationController().closeDrawing(getController().getDrawing().getId())), MenuConstants.FILE_MENU);
         addMenuSeparator(MenuConstants.FILE_MENU);
 		addMenuAction(new GenericAction("Save", AppIconLoader.DiskBlue.getIcon(), Accelerators.SAVE, (event) -> getController().save()), MenuConstants.FILE_MENU);
 		addMenuAction(new GenericAction("Save As", AppIconLoader.DiskBlue.getIcon(), Accelerators.SAVE_AS, (event) -> getController().saveAs()), MenuConstants.FILE_MENU);

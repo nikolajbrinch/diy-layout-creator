@@ -17,7 +17,7 @@ public interface ApplicationController {
      * Create new project action
      * @return
      */
-    public Drawing createNewProject();
+    public Drawing createProject(Project project, Path path);
 
     /**
      * Open action
@@ -62,5 +62,7 @@ public interface ApplicationController {
     public Collection<Drawing> getDrawings();
 
     public void switchWindow(String drawingId);
+
+    public void closeDrawing(String drawingId);
 
 }

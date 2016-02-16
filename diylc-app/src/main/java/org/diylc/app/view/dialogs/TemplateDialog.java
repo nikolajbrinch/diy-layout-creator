@@ -33,9 +33,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.diylc.app.model.DrawingModel;
+import org.diylc.app.model.ProjectDeserializer;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.StubPresenter;
 import org.diylc.app.view.rendering.DrawingOption;
+import org.diylc.core.Project;
 import org.diylc.core.Resource;
 import org.diylc.core.ResourceLoader;
 import org.diylc.core.config.Configuration;
@@ -185,7 +187,8 @@ public class TemplateDialog extends JDialog {
                     Path path = (Path) fileList.getSelectedValue();
                     if (path != null) {
                         try {
-                            presenter.loadProjectFromFile(path);
+                            Project project = ProjectDeserializer.loadProjectFromFile(path);
+                            presenter.loadProject(project, true);
                         } catch (Exception e1) {
                             throw new RuntimeException(e1);
                         }

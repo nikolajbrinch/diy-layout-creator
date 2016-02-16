@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -109,9 +110,16 @@ public abstract class AbstractComponent implements IDIYComponent {
 		return !clip.intersects(rect);
 	}
 
+	   protected void drawCenteredText(GraphicsContext graphicsContext, String text, Point point,
+	            HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
+	       drawCenteredText(graphicsContext, text, point, horizontalAlignment, verticalAlignment, Angle._0);
+	   }
+	
 	protected void drawCenteredText(GraphicsContext graphicsContext, String text, Point point,
-			HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
-		FontMetrics fontMetrics = graphicsContext.getFontMetrics();
+			HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Angle angle) {
+        AffineTransform transform = graphicsContext.getTransform();
+        
+        FontMetrics fontMetrics = graphicsContext.getFontMetrics();
 		Rectangle stringBounds = fontMetrics.getStringBounds(text, graphicsContext.graphics2D).getBounds();
 
 		Font font = graphicsContext.getFont();
@@ -145,7 +153,13 @@ public abstract class AbstractComponent implements IDIYComponent {
 			break;
 		}
 
+		double rotation = angle.getAngle();
+        AffineTransform rotate = AffineTransform.getRotateInstance(rotation, point.x, point.y);
+        graphicsContext.graphics2D.transform(rotate);
+
+
 		graphicsContext.drawString(text, textX, textY);
+        graphicsContext.setTransform(transform);
 	}
 
 	public IDIYComponent clone() throws CloneNotSupportedException {

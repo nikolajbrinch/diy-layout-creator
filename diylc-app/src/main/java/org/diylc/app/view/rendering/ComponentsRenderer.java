@@ -6,9 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Area;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.diylc.components.IComponentFilter;
@@ -28,13 +27,13 @@ public class ComponentsRenderer implements Renderer {
     /*
      * Keeps Area object of each drawn component.
      */
-    private Map<IDIYComponent, Area> componentAreaMap = new HashMap<IDIYComponent, Area>();
+    private ComponentAreaMap componentAreaMap = new ComponentAreaMap();
 
     /*
      * Maps components to the last state they are drawn in. Also, used to
      * determine which components are invalidated when they are not in the map.
      */
-    private Map<IDIYComponent, ComponentState> lastDrawnStateMap = new HashMap<IDIYComponent, ComponentState>();
+    private ComponentStateMap lastDrawnStateMap = new ComponentStateMap();
 
     @Override
     public List<IDIYComponent> render(RenderingContext renderingContext) {
@@ -47,9 +46,9 @@ public class ComponentsRenderer implements Renderer {
         IComponentFilter componentFilter = renderingContext.getFilter();
         boolean isDragInProgress = renderingContext.isDragInProgress();
         Set<DrawingOption> drawingOptions = renderingContext.getDrawingOptions();
-        
+
         List<IDIYComponent> failedComponents = new ArrayList<IDIYComponent>();
-        
+
         for (IDIYComponent component : components) {
 
             /*
@@ -109,7 +108,7 @@ public class ComponentsRenderer implements Renderer {
                 }
             }
         }
-        
+
         return failedComponents;
     }
 
@@ -121,16 +120,21 @@ public class ComponentsRenderer implements Renderer {
 
     @Override
     public List<IDIYComponent> findComponentsAt(Point point, Project project) {
-        List<IDIYComponent> components = new ArrayList<IDIYComponent>();
-        
+        /*
+         * Since we are adding (inserting) at position 0, LinkedList has way
+         * greater performance than ArrayList, that must do an arraycopy for
+         * each add.
+         */
+        LinkedList<IDIYComponent> components = new LinkedList<IDIYComponent>();
+
         for (int i = 0; i < project.getComponents().size(); i++) {
             Area area = componentAreaMap.get(project.getComponents().get(i));
-            
+
             if (area != null && area.contains(point)) {
-                components.add(0, project.getComponents().get(i));
+                components.addFirst(project.getComponents().get(i));
             }
         }
-        
+
         return components;
     }
 
@@ -144,9 +148,9 @@ public class ComponentsRenderer implements Renderer {
         componentAreaMap.clear();
         lastDrawnStateMap.clear();
     }
-    
+
     @Override
-    public Map<IDIYComponent, Area> getComponentAreaMap() {
+    public ComponentAreaMap getComponentAreaMap() {
         return componentAreaMap;
     }
 

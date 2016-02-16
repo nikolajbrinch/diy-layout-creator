@@ -44,36 +44,34 @@ class ComponentTabbedPane extends JTabbedPane {
     public static int SCROLL_STEP = Constants.ICON_SIZE + ComponentButtonFactory.MARGIN * 2 + 2;
 
     private final IPlugInPort plugInPort;
-    
+
     private Container recentToolbar;
-    
+
     private List<String> pendingRecentComponents = null;
 
     public ComponentTabbedPane(IPlugInPort plugInPort) {
         super();
         this.plugInPort = plugInPort;
-//        eventDispatcher.sendEvent(new SplashScreenUpdateEvent(this, "Loading components..."));
         Map<String, List<ComponentType>> componentTypes = ComponentRegistry.INSTANCE.getComponentTypes();
         addTab("Recently Used", createRecentComponentsPanel());
         List<String> categories = new ArrayList<String>(componentTypes.keySet());
         Collections.sort(categories);
-        
+
         for (String category : categories) {
             JPanel panel = createTab((componentTypes.get(category)));
             addTab(category, panel);
         }
-        
+
         addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
                 ComponentTabbedPane.this.plugInPort.setNewComponentTypeSlot(null, null);
-                /* 
+                /*
                  * Refresh recent components if needed
                  */
                 if (pendingRecentComponents != null) {
-                    refreshRecentComponentsToolbar(getRecentToolbar(),
-                            pendingRecentComponents);
+                    refreshRecentComponentsToolbar(getRecentToolbar(), pendingRecentComponents);
                     getRecentToolbar().invalidate();
                     pendingRecentComponents = null;
                 }
@@ -99,11 +97,11 @@ class ComponentTabbedPane extends JTabbedPane {
 
     private Component createComponentPanel(List<ComponentType> componentTypes) {
         Container toolbar = new Container();
-        
+
         Collections.sort(componentTypes, ComparatorFactory.getInstance().getComponentTypeComparator());
-        
+
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.X_AXIS));
-        
+
         for (ComponentType componentType : componentTypes) {
             Component button = ComponentButtonFactory.create(plugInPort, componentType, createTemplatePopup(componentType));
             toolbar.add(button);
@@ -184,7 +182,7 @@ class ComponentTabbedPane extends JTabbedPane {
             public void popupMenuCanceled(PopupMenuEvent e) {
             }
         });
-        
+
         return templatePopup;
     }
 }

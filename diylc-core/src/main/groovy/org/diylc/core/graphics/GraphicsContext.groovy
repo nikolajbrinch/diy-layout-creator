@@ -7,6 +7,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
@@ -69,8 +70,16 @@ class GraphicsContext {
         graphics2D.fillRect((int) x, (int) y, (int) width, (int) height)
     }
 
+    public void fillRect(def rect) {
+        graphics2D.fillRect((int) (rect as Rectangle).x, (int) (rect as Rectangle).y, (int) (rect as Rectangle).width, (int) (rect as Rectangle).height)
+    }
+
     public void drawRect(def x, def y, def width, def height) {
         graphics2D.drawRect((int) x, (int) y, (int) width, (int) height)
+    }
+
+    public void drawRect(def rect) {
+        graphics2D.drawRect((int) (rect as Rectangle).x, (int) (rect as Rectangle).y, (int) (rect as Rectangle).width, (int) (rect as Rectangle).height)
     }
 
     public void fillRoundRect(def x, def y, def width, def height, def arcWidth, def arcHeight) {

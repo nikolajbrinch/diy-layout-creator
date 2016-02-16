@@ -31,36 +31,6 @@ public class FileController extends AbstractController implements ExportControll
         return drawingProvider;
     }
 
-    public void newProject() {
-        getApplicationController().createNewProject();
-    }
-
-    // public void newProject() {
-    // LOG.info("NewAction triggered");
-    //
-    // if (!getPlugInPort().allowFileAction()) {
-    // return;
-    // }
-    //
-    // getPlugInPort().createNewProject();
-    // List<PropertyWrapper> properties =
-    // getPlugInPort().getProjectProperties();
-    // PropertyEditorDialog editor =
-    // DialogFactory.getInstance().createPropertyEditorDialog(properties,
-    // "Edit Project");
-    // editor.setVisible(true);
-    // if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
-    // getPlugInPort().applyPropertiesToProject(properties);
-    // }
-    // // Save default values.
-    // for (PropertyWrapper property : editor.getDefaultedProperties()) {
-    // if (property.getValue() != null) {
-    // getPlugInPort().setProjectDefaultPropertyValue(property.getName(),
-    // property.getValue());
-    // }
-    // }
-    // }
-
     public void save() {
         LOG.info("SaveAction triggered");
         if (!getPlugInPort().isSaved()) {
@@ -106,9 +76,5 @@ public class FileController extends AbstractController implements ExportControll
     private void updateLastPathAndLru(Path savePath) {
         Configuration.INSTANCE.setLastPath(savePath.getParent().toAbsolutePath().normalize());
         getApplicationController().addLruPath(savePath);
-    }
-
-    public void close() {
-        getDrawing().getController().close();
     }
 }

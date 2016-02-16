@@ -139,18 +139,18 @@ public class DrawingView extends JFrame implements ISwingUI, View {
 
         installPlugins();
         presenter.configure();
-        presenter.createNewProject();
+//        presenter.createNewProject();
 
         addWindowListener(new WindowAdapter() {
 
             @Override
             public void windowClosed(WindowEvent e) {
-                getController().close();
+                getApplication().closeDrawing(getDrawing().getId());
             }
 
             @Override
             public void windowClosing(WindowEvent e) {
-                getController().close();
+                getApplication().closeDrawing(getDrawing().getId());
             }
         });
 
@@ -698,4 +698,11 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         storeWindowBounds(this);
     }
 
+    @Override
+    public void dispose() {
+        statusBar.dispose();
+        super.dispose();
+    }
+
+    
 }

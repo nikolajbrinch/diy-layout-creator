@@ -80,14 +80,6 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     void createNewProject();
 
     /**
-     * Loads a project from the specified file.
-     * 
-     * @param fileName
-     * @throws Exception
-     */
-    void loadProjectFromFile(Path path) throws Exception;
-
-    /**
      * Saves the current project into the specified file.
      * 
      * @param fileName

@@ -253,12 +253,6 @@ public class StubPresenter extends Presenter {
             }
 
             @Override
-            public Drawing createNewProject() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
             public void addLruPath(Path path) {
                 // TODO Auto-generated method stub
 
@@ -281,16 +275,22 @@ public class StubPresenter extends Presenter {
                 // TODO Auto-generated method stub
 
             }
-        }, new Model() {
 
             @Override
-            public void loadProject(Path path) throws Exception {
+            public void closeDrawing(String drawingId) {
                 // TODO Auto-generated method stub
-
+                
             }
 
             @Override
-            public void loadProject(Project project, boolean freshStart) throws Exception {
+            public Drawing createProject(Project project, Path path) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        }, new Model() {
+
+            @Override
+            public void loadProject(Project project, boolean freshStart) {
                 // TODO Auto-generated method stub
 
             }

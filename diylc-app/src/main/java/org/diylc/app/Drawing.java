@@ -8,6 +8,7 @@ import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.model.DrawingModel;
 import org.diylc.app.view.DrawingView;
 import org.diylc.app.view.Presenter;
+import org.diylc.core.Project;
 
 public class Drawing {
 
@@ -21,8 +22,9 @@ public class Drawing {
 
     private final String id;
 
+    private boolean closed = false;
 
-    public Drawing(ApplicationController applicationController, Path path, boolean load) {
+    public Drawing(ApplicationController applicationController, Project project, Path path, boolean load) {
         this.id = UUID.randomUUID().toString();
         this.model = new DrawingModel();
         this.controller = new DrawingController(applicationController, model);
@@ -34,7 +36,7 @@ public class Drawing {
 
         if (load) {
             try {
-                getModel().loadProject(path);
+                getModel().loadProject(project, true);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -45,11 +47,20 @@ public class Drawing {
         return view;
     }
 
-    public void dispose() {
-        getView().block();
-        getModel().dispose();
-        getView().setVisible(false);
-        getView().dispose();
+    public synchronized boolean close() {
+        if (!closed ) {
+            getView().block();
+            if (allowFileAction()) {
+                getController().dispose();
+                getModel().dispose();
+                getView().setVisible(false);
+                getView().dispose();
+                closed = true;
+            } else {
+                getView().unblock();
+            }
+        }
+        return closed;
     }
 
     public DrawingModel getModel() {
@@ -71,4 +82,5 @@ public class Drawing {
     public String getTitle() {
         return getView().getTitle();
     }
+
 }

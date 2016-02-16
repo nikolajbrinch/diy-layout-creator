@@ -12,6 +12,6 @@ public class DIYLCStarter {
      * @param args
      */
     public static void main(String[] args) {
-        new Application().run(args);
+        Application.getApplication().run(args);
     }
 }

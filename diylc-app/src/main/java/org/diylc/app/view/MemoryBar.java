@@ -30,19 +30,28 @@ public class MemoryBar extends JComponent {
 	private static final Logger LOG = LoggerFactory.getLogger(MemoryBar.class);
 
 	private static final int DELAY = 10000;
+	
 	private static final boolean USE_LOG = false;
+	
 	private static final Format format = new DecimalFormat("0.00");
+	
 	private static final String logPattern = "%s MB of %s MB free, max %s MB is available";
+	
 	private static final String tooltipPattern = "<html>%s MB of %s MB free<br>"
 			+ "Max %s MB is available<br>" + "Click to run the garbage collector</html>";
 
 	private static final double THRESHOLD = 0.1d;
 
-	private Thread bgThread;
+    private volatile boolean running = true;
+
+    private Thread thread;
 
 	private long totalMemory = 0;
+	
 	private long freeMemory = 0;
+	
 	private long maxMemory = 0;
+	
 	private double percentFree = 0;
 
 	private boolean autoGC;
@@ -53,12 +62,12 @@ public class MemoryBar extends JComponent {
 
 		setPreferredSize(new Dimension(16, 20));
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		bgThread = new Thread(new Runnable() {
+		thread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				while (true) {
+				while (running) {
 					totalMemory = Runtime.getRuntime().totalMemory();
 					freeMemory = Runtime.getRuntime().freeMemory();
 					maxMemory = Runtime.getRuntime().maxMemory();
@@ -83,8 +92,8 @@ public class MemoryBar extends JComponent {
 					}
 				}
 			}
-		});
-		bgThread.start();
+		}, "memory-info-thread");
+		thread.start();
 
 		addMouseListener(new MouseAdapter() {
 
@@ -120,8 +129,6 @@ public class MemoryBar extends JComponent {
 	}
 
 	public void dispose() {
-		if (bgThread != null) {
-			bgThread.interrupt();
-		}
+	    running = false;
 	}
 }
