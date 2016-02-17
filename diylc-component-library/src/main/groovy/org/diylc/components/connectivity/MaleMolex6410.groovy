@@ -286,14 +286,16 @@ public class MaleMolex6410 extends AbstractTransparentComponent implements Geome
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
+        int pinSize = 2 * width / 32
+        
         graphicsContext.with {
-            drawFilledRect(1, 12, 30, 14, Color.white.darker(), Color.white)
-            drawFilledRect(6, 12, 20, 3, Color.white.darker(), Color.white)
-            drawFilledRect(6, 15, 20, 2, Color.white.darker(), Color.white)
-            drawFilledOval(6, 20, 2, Color.white.darker(), Color.white)
-            drawFilledOval(12, 20, 2, Color.white.darker(), Color.white)
-            drawFilledOval(18, 20, 2, Color.white.darker(), Color.white)
-            drawFilledOval(24, 20, 2, Color.white.darker(), Color.white)
+            drawFilledRect(width / 32, 12 * height / 32, 30 * width / 32, 14 * height / 32, Color.white.darker(), Color.white)
+            drawFilledRect(6 * width / 32, 12 * height / 32, 20 * width / 32, 3 * height / 32, Color.white.darker(), Color.white)
+            drawFilledRect(6 * width / 32, 15 * height / 32, 20 * width / 32, 2 * height / 32, Color.white.darker(), Color.white)
+            drawFilledOval(6 * width / 32, 20 * height / 32, pinSize, Color.white.darker(), Color.white)
+            drawFilledOval(12 * width / 32, 20 * height / 32, pinSize, Color.white.darker(), Color.white)
+            drawFilledOval(18 * width / 32, 20 * height / 32, pinSize, Color.white.darker(), Color.white)
+            drawFilledOval(24 * width / 32, 20 * height / 32, pinSize, Color.white.darker(), Color.white)
         }
     }
 

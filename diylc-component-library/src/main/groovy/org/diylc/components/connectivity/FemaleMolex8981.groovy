@@ -251,8 +251,8 @@ public class FemaleMolex8981 extends AbstractTransparentComponent implements Geo
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        Area area1 = new Area(producePath(1, 10, 31, 22, 3))
-        Area area2 = new Area(producePath(3, 12, 29, 20, 3))
+        Area area1 = new Area(producePath(toInt(1 * width / 32), toInt(10 * height / 32), toInt(31 * width / 32), toInt(22 * height / 32), toInt(3 * width / 32)))
+        Area area2 = new Area(producePath(toInt(3 * width / 32), toInt(12 * height / 32), toInt(29 * width / 32), toInt(20 * height / 32), toInt(3 * width / 32)))
 
         graphicsContext.with {
             setColor(Color.white)
@@ -261,7 +261,7 @@ public class FemaleMolex8981 extends AbstractTransparentComponent implements Geo
             draw(area1)
             draw(area2)
             for (int i = 0; i < 4; i ++) {
-                drawFilledOval((i + 1) * (width / 5), height / 2 - 1, 2, Colors.SILVER_COLOR.darker(), Colors.SILVER_COLOR)
+                drawFilledOval((i + 1) * (width / 5), height / 2 - 1 * height / 32, 2 * width / 32, Colors.SILVER_COLOR.darker(), Colors.SILVER_COLOR)
             }
         }
     }

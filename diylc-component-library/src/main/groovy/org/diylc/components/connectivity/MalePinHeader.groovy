@@ -224,9 +224,9 @@ public class MalePinHeader extends AbstractTransparentComponent implements Geome
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         graphicsContext.with {
             for (int i = 0 ; i < 5; i ++) {
-                drawFilledRect(7 + i * 4, 5, 2, 23, Colors.DARK_SILVER_COLOR, Colors.SILVER_COLOR)
+                drawFilledRect(7 * width / 32 + i * 4, 5 * height / 32, width / 16, 23 * height / 32, Colors.DARK_SILVER_COLOR, Colors.SILVER_COLOR)
             }
-            drawFilledRect(4, 18, 24, 4, Colors.CHIP_BORDER_COLOR, Colors.CHIP_COLOR)
+            drawFilledRect(4 * width / 32, 18 * height / 32, 24 * width / 32, 4 * height / 32, Colors.CHIP_BORDER_COLOR, Colors.CHIP_COLOR)
         }
     }
 
