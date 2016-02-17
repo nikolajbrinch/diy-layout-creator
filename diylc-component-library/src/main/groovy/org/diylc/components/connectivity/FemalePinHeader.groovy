@@ -34,18 +34,22 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Pin header", category = "Connectivity", author = "Nikolaj Brinch Jørgensen", description = "Pin header male", instanceNamePrefix = "Header", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class PinHeader extends AbstractTransparentComponent implements Geometry {
+@ComponentDescriptor(name = "Female Pin header", category = "Connectivity", author = "Nikolaj Brinch Jørgensen", description = "Pin header female", instanceNamePrefix = "Header", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
+public class FemalePinHeader extends AbstractTransparentComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 
-    public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
+    public static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
+
+    public static int PIN_SIZE = Pin.DEFAULT_PIN_SIZE.convertToPixels() + 2
+
+    public static int BASE_SIZE = new Size(2.5d, SizeUnit.mm).convertToPixels()
 
     public static Color COLOR = Color.black
 
     ControlPoint[] controlPoints = points(point(0, 0))
 
-    transient Area[] body
+    transient List<Area> body
 
     @EditableProperty
     String value = ""
@@ -59,7 +63,7 @@ public class PinHeader extends AbstractTransparentComponent implements Geometry 
     @EditableProperty
     ColumnPinCount columnPinCount = ColumnPinCount._1
 
-    public PinHeader() {
+    public FemalePinHeader() {
         super()
         updateControlPoints()
     }
@@ -119,18 +123,16 @@ public class PinHeader extends AbstractTransparentComponent implements Geometry 
 
         Point[] controlPoints = new Point[columnPinCount.value * rowPinCount.value]
 
-        int spacing = (int) PIN_SPACING.convertToPixels()
-
         for(int i = 0; i < columnPinCount.value; i++) {
             for(int j = 0; j < rowPinCount.value; j++) {
                 switch(orientation) {
                     case Orientation.DEFAULT:
                     case Orientation._180:
-                        controlPoints[i * rowPinCount.value + j] = point(x + j * spacing, y + i * spacing)
+                        controlPoints[i * rowPinCount.value + j] = point(x + j * PIN_SPACING, y + i * PIN_SPACING)
                         break
                     case Orientation._90:
                     case Orientation._270:
-                        controlPoints[i * rowPinCount.value + j] = point(x + i * spacing, y + j * spacing)
+                        controlPoints[i * rowPinCount.value + j] = point(x + i * PIN_SPACING, y + j * PIN_SPACING)
                         break
                     default:
                         throw new RuntimeException("Unexpected orientation: " + orientation)
@@ -141,13 +143,71 @@ public class PinHeader extends AbstractTransparentComponent implements Geometry 
         this.controlPoints = controlPoints
     }
 
-    private Area[] getBodyArea() {
+    private List<Area> getBodyArea() {
         if (body == null) {
             updateControlPoints()
-            body = [ new Area(new PinBase()), new Area(new Pin()) ] as Area[]
+
+            Area baseArea
+
+            switch(orientation) {
+                case Orientation.DEFAULT:
+                case Orientation._180:
+                    baseArea = new Area(new Rectangle(0, 0, rowPinCount.value * PIN_SPACING, columnPinCount.value * PIN_SPACING))
+                    break
+                case Orientation._90:
+                case Orientation._270:
+                    baseArea = new Area(new Rectangle(0, 0, columnPinCount.value * PIN_SPACING, rowPinCount.value * PIN_SPACING))
+                    break
+                default:
+                    throw new RuntimeException("Unexpected orientation: " + orientation)
+            }
+
+            List<Area> areas = [baseArea, new Area(new Rectangle(0, 0, PIN_SIZE + 6, PIN_SIZE + 6))]
+            areas.addAll(producePaths(0, 0, PIN_SIZE + 6, PIN_SIZE + 6).collect { GeneralPath path ->
+                new Area(path)
+            })
+            body = areas
         }
 
         return body
+    }
+
+    private List<GeneralPath> producePaths(int x1, int y1, int x2, int y2) {
+        List<GeneralPath> paths = []
+
+        GeneralPath path = new GeneralPath()
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y1)
+        path.lineTo(x2 - 3, y1 + 3)
+        path.lineTo(x1 + 3, y1 + 3)
+        path.lineTo(x1, y1)
+        paths << path
+
+        path = new GeneralPath()
+        path.moveTo(x1, y1)
+        path.lineTo(x1, y2)
+        path.lineTo(x1 + 3, y2 - 3)
+        path.lineTo(x1 + 3, y1 + 3)
+        path.lineTo(x1, y1)
+        paths << path
+
+        path = new GeneralPath()
+        path.moveTo(x2, y1)
+        path.lineTo(x2, y2)
+        path.lineTo(x2 - 3, y2 - 3)
+        path.lineTo(x2 - 3, y1 + 3)
+        path.lineTo(x2, y1)
+        paths << path
+
+        path = new GeneralPath()
+        path.moveTo(x2, y2)
+        path.lineTo(x1, y2)
+        path.lineTo(x1 + 3, y2 - 3)
+        path.lineTo(x2 - 3, y2 - 3)
+        path.lineTo(x2, y2)
+        paths << path
+
+        return paths
     }
 
     @Override
@@ -158,9 +218,11 @@ public class PinHeader extends AbstractTransparentComponent implements Geometry 
             return
         }
 
-        Area baseArea = getBodyArea()[0]
-        Area pinArea = getBodyArea()[1]
-        
+        List areas = getBodyArea()
+        Area baseArea = areas[0]
+        Area pinArea1 = areas[1]
+        List<Area> pinArea2 = areas.subList(2, areas.size())
+
         graphicsContext.with {
             Composite oldComposite = graphicsContext.getComposite()
 
@@ -169,36 +231,31 @@ public class PinHeader extends AbstractTransparentComponent implements Geometry 
                 setComposite(composite)
             }
 
+            int x = toInt(controlPoints[0].x - BASE_SIZE / 2)
+            int y = toInt(controlPoints[0].y - BASE_SIZE / 2)
+
+            drawArea(graphicsContext, x, y, baseArea, Colors.CHIP_COLOR, Colors.CHIP_BORDER_COLOR)
+
             /*
              * Draw control points
              */
-            int pinSize = toInt(Pin.DEFAULT_PIN_SIZE.convertToPixels())
-            int headerSize = toInt(PinBase.DEFAULT_BASE_SIZE.convertToPixels())
-
-            int left = controlPoints[0].x
-            int top = controlPoints[0].y
-            int right = controlPoints[0].x
-            int bottom = controlPoints[0].y
-
             controlPoints.each { Point controlPoint ->
-                int x = toInt(controlPoint.x - headerSize / 2)
-                int y = toInt(controlPoint.y - headerSize / 2)
-                drawArea(graphicsContext, x, y, baseArea, Colors.CHIP_COLOR, Colors.CHIP_BORDER_COLOR)
-                
-                left = Math.min(left, x)
-                top = Math.min(top, y)
-                right = Math.max(right, x)
-                bottom = Math.max(bottom, y)
+                int pinX = toInt(controlPoint.x - (PIN_SIZE + 6) / 2)
+                int pinY = toInt(controlPoint.y - (PIN_SIZE + 6) / 2)
 
-                x = toInt(controlPoint.x - pinSize / 2)
-                y = toInt(controlPoint.y - pinSize / 2)
-                drawArea(graphicsContext, x, y, pinArea, Colors.SILVER_COLOR, Colors.SILVER_COLOR.darker())
+                drawArea(graphicsContext, pinX, pinY, pinArea1, Colors.SILVER_COLOR, null)
+
+                pinArea2.each { Area area ->
+                    drawArea(graphicsContext, pinX, pinY, area, null, Colors.DARK_SILVER_COLOR)
+                }
             }
-            
+
+
             setComposite(oldComposite)
 
             if (componentState == ComponentState.SELECTED) {
-                Rectangle bounds = rectangle(left, top, right - left + headerSize, bottom - top + headerSize / 2)
+                Rectangle bounds = new Rectangle(baseArea.getBounds())
+                bounds.setLocation(x, y)
                 setColor(Colors.SELECTION_COLOR)
                 draw(bounds)
             }

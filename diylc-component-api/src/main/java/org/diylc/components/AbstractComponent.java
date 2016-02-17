@@ -169,10 +169,14 @@ public abstract class AbstractComponent implements IDIYComponent {
         AffineTransform move = AffineTransform.getTranslateInstance(x, y);
         transformedArea.transform(move);
 
-        graphicsContext.setColor(color);
-        graphicsContext.fill(transformedArea);
-        graphicsContext.setColor(borderColor);
-        graphicsContext.draw(transformedArea);
+        if (color != null) {
+            graphicsContext.setColor(color);
+            graphicsContext.fill(transformedArea);
+        }
+        if (borderColor != null) {
+            graphicsContext.setColor(borderColor);
+            graphicsContext.draw(transformedArea);
+        }
     }
 
 	public IDIYComponent clone() throws CloneNotSupportedException {

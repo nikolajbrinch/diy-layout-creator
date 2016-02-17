@@ -66,6 +66,8 @@ public class Colors {
 
     public static Color SILVER_COLOR = Color.decode("#C0C0C0");
 
+    public static Color DARK_SILVER_COLOR = Color.decode("#909090");
+
     public static Color CHIP_COLOR = Color.gray;
 
     public static Color CHIP_BORDER_COLOR = Color.gray.darker();
