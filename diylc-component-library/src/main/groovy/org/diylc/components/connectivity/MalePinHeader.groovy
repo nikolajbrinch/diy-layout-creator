@@ -222,12 +222,12 @@ public class MalePinHeader extends AbstractTransparentComponent implements Geome
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        int diameter = getClosestOdd(width / 2)
-        int holeDiameter = 5
-        graphicsContext.setColor(COLOR)
-        graphicsContext.fillOval((int) (width - diameter) / 2, (int) (height - diameter) / 2, diameter, diameter)
-        graphicsContext.setColor(Constants.CANVAS_COLOR)
-        graphicsContext.fillOval((int) (width - holeDiameter) / 2, (int) (height - holeDiameter) / 2, holeDiameter, holeDiameter)
+        graphicsContext.with {
+            for (int i = 0 ; i < 5; i ++) {
+                drawFilledRect(7 + i * 4, 5, 2, 23, Colors.DARK_SILVER_COLOR, Colors.SILVER_COLOR)
+            }
+            drawFilledRect(4, 18, 24, 4, Colors.CHIP_BORDER_COLOR, Colors.CHIP_COLOR)
+        }
     }
 
     public static enum RowPinCount {

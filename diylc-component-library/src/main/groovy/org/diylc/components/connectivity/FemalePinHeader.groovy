@@ -264,12 +264,14 @@ public class FemalePinHeader extends AbstractTransparentComponent implements Geo
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        int diameter = getClosestOdd(width / 2)
-        int holeDiameter = 5
-        graphicsContext.setColor(COLOR)
-        graphicsContext.fillOval((int) (width - diameter) / 2, (int) (height - diameter) / 2, diameter, diameter)
-        graphicsContext.setColor(Constants.CANVAS_COLOR)
-        graphicsContext.fillOval((int) (width - holeDiameter) / 2, (int) (height - holeDiameter) / 2, holeDiameter, holeDiameter)
+        graphicsContext.with {
+            drawFilledRect(4, 8, 24, 12, Colors.CHIP_BORDER_COLOR, Colors.CHIP_COLOR)
+            for (int j = 0 ; j < 2; j ++) {
+                for (int i = 0 ; i < 5; i ++) {
+                    drawFilledRect(7 + i * 4, 11 + j * 4, 2, Colors.DARK_SILVER_COLOR, Colors.SILVER_COLOR)
+                }
+            }
+        }
     }
 
     public static enum RowPinCount {

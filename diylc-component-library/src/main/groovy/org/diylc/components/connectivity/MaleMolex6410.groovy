@@ -36,8 +36,8 @@ import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Female Molex 8981", category = "Connectivity", author = "Nikolaj Brinch Jørgensen", description = "Female Molex 4 Pin 8981", instanceNamePrefix = "Connector", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
-public class FemaleMolex8981 extends AbstractTransparentComponent implements Geometry {
+@ComponentDescriptor(name = "Male Molex 6410", category = "Connectivity", author = "Nikolaj Brinch Jørgensen", description = "Male Molex 6410", instanceNamePrefix = "Connector", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
+public class MaleMolex6410 extends AbstractTransparentComponent implements Geometry {
 
     private static final long serialVersionUID = 1L
 
@@ -45,21 +45,17 @@ public class FemaleMolex8981 extends AbstractTransparentComponent implements Geo
 
     public static int PIN_COUNT = 4
 
-    public static int PIN_SPACING = new Size(0.2d, SizeUnit.in).convertToPixels()
-
-    public static int PIN_SIZE = new Size(2.12d, SizeUnit.mm).convertToPixels()
-
+    public static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
+    
+    public static int PIN_SIZE = new Size(0.64d, SizeUnit.mm).convertToPixels()
+    
     public static int HALF_PIN_SIZE = (int) (PIN_SIZE / 2)
-
-    public static int WIDTH1 = new Size(23.44d, SizeUnit.mm).convertToPixels()
-
-    public static int WIDTH2 = new Size(19.5d, SizeUnit.mm).convertToPixels()
-
-    public static int HEIGHT = new Size(8.28d, SizeUnit.mm).convertToPixels()
-
+    
+    public static int HEIGHT = new Size(5.8d, SizeUnit.mm).convertToPixels()
+    
     ControlPoint[] controlPoints = points(point(0, 0))
 
-    transient Area[] body
+    transient List<Area> body
 
     @EditableProperty
     String value = ""
@@ -67,7 +63,7 @@ public class FemaleMolex8981 extends AbstractTransparentComponent implements Geo
     @EditableProperty
     Orientation orientation = Orientation.DEFAULT
 
-    public FemaleMolex8981() {
+    public MaleMolex6410() {
         super()
         updateControlPoints()
     }
@@ -133,72 +129,105 @@ public class FemaleMolex8981 extends AbstractTransparentComponent implements Geo
         this.controlPoints = controlPoints
     }
 
-    private Area[] getBodyArea() {
+    private List<Area> getBodyArea() {
         if (body == null) {
             updateControlPoints()
-
-            int gap = toInt((WIDTH1 - WIDTH2) / 2)
-            int thickness = toInt(new Size(0.89d, SizeUnit.mm).convertToPixels())
-            int width = WIDTH1
-            int height = HEIGHT
-
-            if (orientation == Orientation._90 || orientation == Orientation._270) {
-                width = HEIGHT
-                height = WIDTH1
+            
+            Area baseArea
+            
+            switch(orientation) {
+                case Orientation.DEFAULT:
+                case Orientation._180:
+                    baseArea = new Area(new Rectangle(0, 0, PIN_COUNT * PIN_SPACING, HEIGHT))
+                    break;
+                case Orientation._90:
+                case Orientation._270:
+                    baseArea = new Area(new Rectangle(0, 0, HEIGHT, PIN_COUNT * PIN_SPACING))
+                    break;
+                default:
+                    throw new RuntimeException("Unexpected orientation: " + orientation)
             }
-
-            GeneralPath basePath = producePath(0, 0, width, height, gap)
-            GeneralPath innerPath = producePath(thickness, thickness, width - thickness, height - thickness, gap)
-
-            body = [new Area(basePath), new Area(innerPath)] as Area[]
+            
+            body = [baseArea]
+            body.addAll(producePaths(PIN_COUNT).collect { new Area(it) })
         }
 
         return body
     }
 
-    private GeneralPath producePath(int x1, int y1, int x2, int y2, int gap) {
-        GeneralPath path = new GeneralPath()
+    private List<GeneralPath> producePaths(int rowPinCount) {
+        List <GeneralPath> paths = []
 
-        switch (orientation) {
+        int width1 = new Size(1.0d, SizeUnit.mm).convertToPixels()
+        int width2 = new Size(0.53d, SizeUnit.mm).convertToPixels()
+        
+        int x1 = PIN_SPACING / 2
+        int y1 = 0
+        int x2 = rowPinCount * PIN_SPACING - PIN_SPACING / 2
+        int y2 = width1
+        
+        switch(orientation) {
             case Orientation.DEFAULT:
-                path.moveTo(x1, y1)
-                path.lineTo(x2, y1)
-                path.lineTo(x2, y2 - gap)
-                path.lineTo(x2 - gap, y2)
-                path.lineTo(x1 + gap, y2)
-                path.lineTo(x1, y2 - gap)
-                path.lineTo(x1, y1)
                 break
             case Orientation._90:
-                path.moveTo(x1 + gap, y1)
-                path.lineTo(x2, y1)
-                path.lineTo(x2, y2)
-                path.lineTo(x1 + gap, y2)
-                path.lineTo(x1, y2 - gap)
-                path.lineTo(x1, y1 + gap)
-                path.lineTo(x1 + gap, y1)
-                break
+                x1 = HEIGHT - width1
+                y1 = PIN_SPACING / 2
+                x2 = HEIGHT
+                y2 = rowPinCount * PIN_SPACING - PIN_SPACING / 2
             case Orientation._180:
-                path.moveTo(x1 + gap, y1)
-                path.lineTo(x2 - gap, y1)
-                path.lineTo(x2, y1 + gap)
-                path.lineTo(x2, y2)
-                path.lineTo(x1, y2)
-                path.lineTo(x1, y1 + gap)
-                path.lineTo(x1 + gap, y1)
+                y1 = HEIGHT - width1
+                y2 = HEIGHT
                 break
             case Orientation._270:
-                path.moveTo(x1, y1)
-                path.lineTo(x2 - gap, y1)
-                path.lineTo(x2, y1 + gap)
-                path.lineTo(x2, y2 - gap)
-                path.lineTo(x2 - gap, y2)
-                path.lineTo(x1, y2)
-                path.lineTo(x1, y1)
+                x1 = 0
+                y1 = PIN_SPACING / 2
+                x2 = width1
+                y2 = rowPinCount * PIN_SPACING - PIN_SPACING / 2
                 break
+                break
+            default:
+                throw new RuntimeException("Unexpected orientation: " + orientation)
         }
 
-        return path
+        GeneralPath path = new GeneralPath()
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y1)
+        path.lineTo(x2, y2)
+        path.lineTo(x1, y2)
+        path.lineTo(x1, y1)
+        paths << path
+
+        switch(orientation) {
+            case Orientation.DEFAULT:
+                y1 = width1
+                y2 = y1 + width2
+                break
+            case Orientation._90:
+                x1 = HEIGHT - width1 - width2
+                x2 = x1 + width2
+                break
+            case Orientation._180:
+                y1 = HEIGHT - width1 - width2
+                y2 = y1 + width2
+                break
+            case Orientation._270:
+                x1 = width1
+                x2 = x1 + width2
+                break
+            default:
+                throw new RuntimeException("Unexpected orientation: " + orientation)
+        }
+
+        path = new GeneralPath()
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y1)
+        path.lineTo(x2, y2)
+        path.lineTo(x1, y2)
+        path.lineTo(x1, y1)
+        paths << path
+
+        return paths
+
     }
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode, Project project, IDrawingObserver drawingObserver) {
@@ -216,25 +245,31 @@ public class FemaleMolex8981 extends AbstractTransparentComponent implements Geo
                 setComposite(composite)
             }
 
-            Area baseArea = new Area(getBodyArea()[0])
-            AffineTransform move = AffineTransform.getTranslateInstance(
-                    toInt(controlPoints[0].x - (WIDTH1 - 3 * PIN_SPACING) / 2),
-                    toInt(controlPoints[0].y - HEIGHT / 2))
+            int x = toInt(controlPoints[0].x - PIN_SPACING / 2)
+            int y = toInt(controlPoints[0].y - HEIGHT / 2)
+            
+            if (orientation == Orientation._90 || orientation == Orientation._270) {
+                x = toInt(controlPoints[0].x - HEIGHT / 2)
+                y = toInt(controlPoints[0].y - PIN_SPACING / 2)
+            }
+                        
+            List<Area> areas = getBodyArea()
+            Area baseArea = new Area(areas[0])
+            AffineTransform move = AffineTransform.getTranslateInstance(x, y)
             baseArea.transform(move)
-
+            
             setColor(Color.white)
             fill(baseArea)
 
-            Area innerArea = new Area(getBodyArea()[1])
-            innerArea.transform(move)
-            setColor(Color.white.darker())
-            draw(innerArea)
-
+            areas.subList(1, areas.size()).each { Area area ->            
+                Area innerArea = new Area(area)
+                innerArea.transform(move)
+                setColor(Color.white.darker())
+                draw(innerArea)
+            }
+            
             controlPoints.each { ControlPoint controlPoint ->
-                int x = controlPoint.x
-                int y = controlPoint.y
-
-                drawFilledOval(x - HALF_PIN_SIZE, y - HALF_PIN_SIZE, PIN_SIZE, Colors.SILVER_COLOR.darker(), Colors.SILVER_COLOR)
+                drawFilledRect(controlPoint.x - HALF_PIN_SIZE, controlPoint.y - HALF_PIN_SIZE, PIN_SIZE, Colors.SILVER_COLOR.darker(), Colors.SILVER_COLOR)
             }
 
             if (componentState == ComponentState.SELECTED) {
@@ -251,18 +286,15 @@ public class FemaleMolex8981 extends AbstractTransparentComponent implements Geo
 
     @Override
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-        Area area1 = new Area(producePath(1, 10, 31, 22, 3))
-        Area area2 = new Area(producePath(3, 12, 29, 20, 3))
-
         graphicsContext.with {
-            setColor(Color.white)
-            fill(area1)
-            setColor(Color.white.darker())
-            draw(area1)
-            draw(area2)
-            for (int i = 0; i < 4; i ++) {
-                drawFilledOval((i + 1) * (width / 5), height / 2 - 1, 2, Colors.SILVER_COLOR.darker(), Colors.SILVER_COLOR)
-            }
+            drawFilledRect(1, 12, 30, 14, Color.white.darker(), Color.white)
+            drawFilledRect(6, 12, 20, 3, Color.white.darker(), Color.white)
+            drawFilledRect(6, 15, 20, 2, Color.white.darker(), Color.white)
+            drawFilledOval(6, 20, 2, Color.white.darker(), Color.white)
+            drawFilledOval(12, 20, 2, Color.white.darker(), Color.white)
+            drawFilledOval(18, 20, 2, Color.white.darker(), Color.white)
+            drawFilledOval(24, 20, 2, Color.white.darker(), Color.white)
         }
     }
+
 }
