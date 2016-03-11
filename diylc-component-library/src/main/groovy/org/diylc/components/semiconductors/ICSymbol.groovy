@@ -1,30 +1,33 @@
 package org.diylc.components.semiconductors
 
-import org.diylc.components.Colors
-
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
+import java.awt.Font;
 import java.awt.Point
 import java.awt.Polygon
+import java.awt.Rectangle
 import java.awt.Shape
 import java.awt.geom.Area
 import java.awt.geom.GeneralPath
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
+import org.diylc.components.Angle
+import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
+import org.diylc.components.ControlPoint
 import org.diylc.components.Geometry
 import org.diylc.components.ICPointCount
 import org.diylc.core.ComponentState
-import org.diylc.core.Display;
-import org.diylc.core.HorizontalAlignment;
+import org.diylc.core.Display
 import org.diylc.core.IDIYComponent
+import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.ObjectCache;
+import org.diylc.core.ObjectCache
 import org.diylc.core.Project
 import org.diylc.core.Theme
-import org.diylc.core.VerticalAlignment;
+import org.diylc.core.VerticalAlignment
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.config.Configuration
@@ -32,196 +35,313 @@ import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
+import org.diylc.specifications.SpecificationModel
+import org.diylc.specifications.ic.ICPinCount
+import org.diylc.specifications.ic.ICSpecification
+import org.diylc.specifications.ic.ICSpecificationEditor
+import org.diylc.specifications.ic.ICSpecificationModel
 
-@ComponentDescriptor(name = "IC Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "IC", description = "IC symbol with 3 or 5 contacts", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
+@ComponentDescriptor(name = "IC Symbol", author = "Nikolaj Brinch Jørgensen", category = "Schematics", instanceNamePrefix = "IC", description = "IC symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
 public class ICSymbol extends AbstractTransparentComponent implements Geometry {
 
-	private static final long serialVersionUID = 1L
+    private static final long serialVersionUID = 1L
 
-	public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
-	public static Color BODY_COLOR = Color.white
-	public static Color BORDER_COLOR = Color.black
+    public static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
 
-	transient private Shape[] body
+    public static Color BODY_COLOR = Color.white
 
-	protected Point[] controlPoints = points( point(0, 0), point(0, 0),
-			point(0, 0), point(0, 0), point(0, 0))
+    public static Color BORDER_COLOR = Color.black
 
-	@EditableProperty(name = "Contacts")
-	ICPointCount icPointCount = ICPointCount._5
+    public static float PIN_FONT_SIZE = 9f
 
-	@EditableProperty
-	String value = ""
+    private String value
 
-	@EditableProperty(name = "Body")
-	Color bodyColor = BODY_COLOR
+    transient private Shape[] body
 
-	@EditableProperty(name = "Border")
-	Color borderColor = BORDER_COLOR
+    protected ControlPoint[] controlPoints = points(point(0, 0))
 
-	@EditableProperty
-	Display display = Display.NAME
+    @SpecificationModel(category = "IC", type = ICSpecification.class, editor = ICSpecificationEditor.class)
+    @EditableProperty
+    ICSpecificationModel icSpecificationModel = new ICSpecificationModel()
 
+    @EditableProperty
+    String value = ""
 
-	public ICSymbol() {
-		super()
-		updateControlPoints()
-	}
+    @EditableProperty(name = "Body")
+    Color bodyColor = BODY_COLOR
 
-	@Override
-	public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode,
-					 Project project, IDrawingObserver drawingObserver) {
-		if (checkPointsClipped(graphicsContext.getClip())) {
-			return
-		}
-		int pinSpacing = (int) PIN_SPACING.convertToPixels()
-		Composite oldComposite = graphicsContext.getComposite()
-		if (alpha < Colors.MAX_ALPHA) {
-			graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
-		}
+    @EditableProperty(name = "Border")
+    Color borderColor = BORDER_COLOR
 
-		Shape[] body = getBody()
+    @EditableProperty
+    Display display = Display.NAME
 
-		graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor)
-		graphicsContext.fill(body[0])
-		graphicsContext.setComposite(oldComposite)
-		Color finalBorderColor
-		if (outlineMode) {
-			Theme theme = Configuration.INSTANCE.getTheme()
-			finalBorderColor = theme.getOutlineColor()
-		} else {
-			finalBorderColor = borderColor
-		}
-		graphicsContext.setColor(finalBorderColor)
-		// Draw contacts
-		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
-		graphicsContext.draw(body[1])
-		// Draw triangle
-		graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(2))
-		graphicsContext.draw(body[0])
-		// Draw label
-		graphicsContext.setFont(LABEL_FONT)
-		Color finalLabelColor
-		if (outlineMode) {
-			Theme theme = Configuration.INSTANCE.getTheme()
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED : theme
-					.getOutlineColor()
-		} else {
-			finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
-					: Colors.LABEL_COLOR
-		}
-		graphicsContext.setColor(finalLabelColor)
-		int x = (controlPoints[0].x + controlPoints[2].x) / 2
-		drawCenteredText(graphicsContext, display == Display.VALUE ? getValue() : getName(), point(x,
-				controlPoints[0].y + pinSpacing), HorizontalAlignment.CENTER,
-				VerticalAlignment.CENTER)
-		// Draw +/- markers
-		drawCenteredText(graphicsContext, "-", point(controlPoints[0].x + pinSpacing, controlPoints[0].y),
-				HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
-		drawCenteredText(graphicsContext, "+", point(controlPoints[1].x + pinSpacing, controlPoints[1].y),
-				HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
-	}
+    public ICSymbol() {
+        super()
+        updateControlPoints()
+    }
 
-	@Override
-	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
-		int margin = 3 * width / 32
-		Area area = new Area(new Polygon([margin, margin, width - margin ] as int[], [
-				margin, height - margin, height / 2 ] as int[], 3))
-		// area.subtract(new Area(new Rectangle2D.Double(0, 0, 2 * margin,
-		// height)));
-		area.intersect(new Area(new Rectangle2D.Double(2 * margin, 0, width, height)))
-		graphicsContext.setColor(BODY_COLOR)
-		graphicsContext.fill(area)
-		graphicsContext.setColor(BORDER_COLOR)
-		graphicsContext.setFont(LABEL_FONT.deriveFont(8f))
-		drawCenteredText(graphicsContext, "-", point(3 * margin, height / 3), HorizontalAlignment.CENTER,
-				VerticalAlignment.CENTER)
-		drawCenteredText(graphicsContext, "+", point(3 * margin + 1, height * 2 / 3), HorizontalAlignment.CENTER,
-				VerticalAlignment.CENTER)
-		// g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND,
-		// BasicStroke.JOIN_ROUND));
-		graphicsContext.draw(area)
-	}
+    public void setIcSpecificationModel(ICSpecificationModel icSpecificationModel) {
+        this.icSpecificationModel = icSpecificationModel
+        updateControlPoints()
+        body = null
+    }
 
-	@Override
-	public Point getControlPoint(int index) {
-		return controlPoints[index]
-	}
+    @Override
+    public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode,
+            Project project, IDrawingObserver drawingObserver) {
+        if (checkPointsClipped(graphicsContext.getClip())) {
+            return
+        }
+        int pinSpacing = PIN_SPACING
+        Composite oldComposite = graphicsContext.getComposite()
+        if (alpha < Colors.MAX_ALPHA) {
+            graphicsContext.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / Colors.MAX_ALPHA))
+        }
 
-	@Override
-	public int getControlPointCount() {
-		return icPointCount.getValue()
-	}
+        Shape[] body = getBody()
 
-	private void updateControlPoints() {
-		int pinSpacing = (int) PIN_SPACING.convertToPixels()
-		// Update control points.
-		int x = controlPoints[0].x
-		int y = controlPoints[0].y
+        graphicsContext.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor)
+        graphicsContext.fill(body[0])
+        graphicsContext.setComposite(oldComposite)
+        Color finalBorderColor
+        if (outlineMode) {
+            Theme theme = Configuration.INSTANCE.getTheme()
+            finalBorderColor = theme.getOutlineColor()
+        } else {
+            finalBorderColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : borderColor
+        }
+        graphicsContext.setColor(finalBorderColor)
+        graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1))
+        graphicsContext.draw(body[1])
+        
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : borderColor
+        graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(2))
+        graphicsContext.draw(body[0])
 
-		controlPoints[1].x = x
-		controlPoints[1].y = y + pinSpacing * 2
+        graphicsContext.setFont(LABEL_FONT.deriveFont(PIN_FONT_SIZE))
 
-		controlPoints[2].x = x + pinSpacing * 6
-		controlPoints[2].y = y + pinSpacing
+        controlPoints.each { ControlPoint controlPoint ->
+            Point pinIdPoint = point(controlPoint.x, controlPoint.y)
+            HorizontalAlignment pinIdHAlign = HorizontalAlignment.CENTER
+            VerticalAlignment pinIdVAlign = VerticalAlignment.CENTER
 
-		controlPoints[3].x = x + pinSpacing * 3
-		controlPoints[3].y = y - pinSpacing
+            Point pinNamePoint = point(controlPoint.x, controlPoint.y)
+            HorizontalAlignment pinNameHAlign = HorizontalAlignment.CENTER
+            VerticalAlignment pinNameVAlign = VerticalAlignment.CENTER
 
-		controlPoints[4].x = x + pinSpacing * 3
-		controlPoints[4].y = y + pinSpacing * 3
-	}
+            String side = controlPoint.properties['side']
+            Angle angle = Angle._0
 
-	public Shape[] getBody() {
-		if (body == null) {
-			body = new Shape[2]
-			int pinSpacing = (int) PIN_SPACING.convertToPixels()
-			int x = controlPoints[0].x
-			int y = controlPoints[0].y
-			Shape triangle = new Polygon([ x + pinSpacing / 2, x + pinSpacing * 11 / 2,
-					x + pinSpacing / 2 ] as int[], [ y - pinSpacing * 3 / 2, y + pinSpacing,
-					y + pinSpacing * 7 / 2 ] as int[], 3)
-			body[0] = triangle
+            switch (side) {
+                case 'left':
+                    pinIdPoint.translate(pinSpacing.intdiv(2), -pinSpacing.intdiv(3))
+                    pinNamePoint.translate(pinSpacing + 4, 0)
+                    pinNameHAlign = HorizontalAlignment.LEFT
+                    break
+                case 'top':
+                    pinIdPoint.translate(pinSpacing.intdiv(2), pinSpacing.intdiv(3) * 2)
+                    pinNamePoint.translate(3, pinSpacing + 5)
+                    pinNameHAlign = HorizontalAlignment.LEFT
+                    pinNameVAlign = VerticalAlignment.BOTTOM
+                    angle = Angle._90
+                    break
+                case 'right':
+                    pinIdPoint.translate(-pinSpacing.intdiv(2), -pinSpacing.intdiv(3))
+                    pinNamePoint.translate(-(pinSpacing + 3), 0)
+                    pinNameHAlign = HorizontalAlignment.RIGHT
+                    break
+                case 'bottom':
+                    pinIdPoint.translate(pinSpacing.intdiv(2), pinSpacing.intdiv(3) * -2)
+                    pinNamePoint.translate(-2, -(pinSpacing + 5))
+                    pinNameHAlign = HorizontalAlignment.LEFT
+                    pinNameVAlign = VerticalAlignment.BOTTOM
+                    angle = Angle._270
+                    break
+            }
 
-			GeneralPath polyline = new GeneralPath()
-			polyline.moveTo(controlPoints[0].x, controlPoints[0].y)
-			polyline.lineTo(controlPoints[0].x + pinSpacing / 2, controlPoints[0].y)
-			polyline.moveTo(controlPoints[1].x, controlPoints[1].y)
-			polyline.lineTo(controlPoints[1].x + pinSpacing / 2, controlPoints[1].y)
-			polyline.moveTo(controlPoints[2].x, controlPoints[2].y)
-			polyline.lineTo(controlPoints[2].x - pinSpacing / 2, controlPoints[2].y)
-			if (icPointCount == ICPointCount._5) {
-				polyline.moveTo(controlPoints[3].x, controlPoints[3].y)
-				polyline.lineTo(controlPoints[3].x, controlPoints[3].y + pinSpacing * 3 / 4)
-				polyline.moveTo(controlPoints[4].x, controlPoints[4].y)
-				polyline.lineTo(controlPoints[4].x, controlPoints[4].y - pinSpacing * 3 / 4)
-			}
-			body[1] = polyline
-		}
-		return body
-	}
+            drawCenteredText(graphicsContext, String.valueOf(controlPoint.properties['id']), pinIdPoint, pinIdHAlign, pinIdVAlign)
+            drawCenteredText(graphicsContext, String.valueOf(controlPoint.properties['name'] ?: ''), pinNamePoint, pinNameHAlign, pinNameVAlign, angle)
+        }
 
-	@Override
-	public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-		return VisibilityPolicy.WHEN_SELECTED
-	}
+        /* 
+         * Draw label
+         */
+        graphicsContext.setFont(LABEL_FONT)
+        Color finalLabelColor
+        if (outlineMode) {
+            Theme theme = Configuration.INSTANCE.getTheme()
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED : theme
+                    .getOutlineColor()
+        } else {
+            finalLabelColor = componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.LABEL_COLOR_SELECTED
+                    : Colors.LABEL_COLOR
+        }
 
-	@Override
-	public boolean isControlPointSticky(int index) {
-		return true
-	}
+        graphicsContext.setColor(finalLabelColor)
+        ControlPoint firstPoint = controlPoints[0]
+        int x = firstPoint.x
+        int y = firstPoint.y
+        
+        if (firstPoint.properties['side'] == 'top') {
+            x = x - 3 * pinSpacing
+            y = y + 3 * pinSpacing
+        }
+        
+        x = x + pinSpacing + body[0].bounds.width / 2
+        y = y - 2 * pinSpacing + body[0].bounds.height / 2
 
-	@Override
-	public void setControlPoint(Point point, int index) {
-		controlPoints[index].setLocation(point)
-		body = null
-	}
+        if (getValue()) {
+            drawCenteredText(graphicsContext, getName(), point(x, y - 20), HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM)
+            
+            Font smallFont = LABEL_FONT.deriveFont(toFloat(LABEL_FONT.getSize2D() - 3.0))
+            graphicsContext.setFont(smallFont)
+            
+            drawCenteredText(graphicsContext, getValue(), point(x, y), HorizontalAlignment.CENTER, VerticalAlignment.TOP)
+        } else {
+            drawCenteredText(graphicsContext, getName(), point(x, y), HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+        }
+    }
 
-	public void setIcPointCount(ICPointCount icPointCount) {
-		this.icPointCount = icPointCount
-		updateControlPoints()
-		body = null
-	}
+    @Override
+    public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
+        int margin = 3 * width / 32
+        Area area = new Area(new Polygon([margin, margin, width - margin ] as int[], [margin, height - margin, height / 2 ] as int[], 3))
+        area.intersect(new Area(new Rectangle2D.Double(2 * margin, 0, width, height)))
+        graphicsContext.setColor(BODY_COLOR)
+        graphicsContext.fill(area)
+        graphicsContext.setColor(BORDER_COLOR)
+        graphicsContext.setFont(LABEL_FONT.deriveFont(8f))
+        drawCenteredText(graphicsContext, "-", point(3 * margin, height / 3), HorizontalAlignment.CENTER,
+                VerticalAlignment.CENTER)
+        drawCenteredText(graphicsContext, "+", point(3 * margin + 1, height * 2 / 3), HorizontalAlignment.CENTER,
+                VerticalAlignment.CENTER)
+        graphicsContext.draw(area)
+    }
 
+    @Override
+    public Point getControlPoint(int index) {
+        return controlPoints[index]
+    }
 
+    @Override
+    public int getControlPointCount() {
+        return controlPoints.length
+    }
+
+    private void updateControlPoints() {
+        int pinSpacing = PIN_SPACING
+
+        int x = controlPoints[0].x
+        int y = controlPoints[0].y
+
+        List<ControlPoint> controlPoints = []
+
+        icSpecificationModel.pinsLeft.eachWithIndex { pin, i ->
+            controlPoints << point(x, y + i * pinSpacing, pin + ['side': 'left'])
+        }
+        if (!icSpecificationModel.pinsLeft.empty) {
+            icSpecificationModel.pinsTop.eachWithIndex { pin, i ->
+                controlPoints << point(x + 3 * pinSpacing + i * pinSpacing, y - 3 * pinSpacing, pin + ['side': 'top'])
+            }
+        } else {
+            icSpecificationModel.pinsTop.eachWithIndex { pin, i ->
+                controlPoints << point(x + i * pinSpacing, y, pin + ['side': 'top'])
+            }
+
+            x = x - 3 * pinSpacing
+            y = y + 3 * pinSpacing            
+        }
+
+        icSpecificationModel.pinsRight.eachWithIndex { pin, i ->
+            controlPoints << point(x + calculateWidth(pinSpacing) + 5 * pinSpacing, y + i * pinSpacing, pin + ['side': 'right'])
+        }
+        icSpecificationModel.pinsBottom.eachWithIndex { pin, i ->
+            controlPoints << point(x + 3 * pinSpacing + i * pinSpacing, y + calculateHeight(pinSpacing) + 2 * pinSpacing, pin + ['side': 'bottom'])
+        }
+
+        this.controlPoints = controlPoints as ControlPoint[]
+    }
+
+    public Shape[] getBody() {
+        if (body == null) {
+
+            int pinSpacing = PIN_SPACING
+            ControlPoint firstPoint = controlPoints[0]
+            int x = firstPoint.x
+            int y = firstPoint.y
+            
+            if (firstPoint.properties['side'] == 'top') {
+                x = x - 3 * pinSpacing
+                y = y + 3 * pinSpacing
+            }
+
+            int x1 = x + pinSpacing
+            int y1 = y - 2 * pinSpacing
+            int width = calculateWidth(pinSpacing) + 3 * pinSpacing
+            int height = calculateHeight(pinSpacing) + 3 * pinSpacing
+            
+            Rectangle rectangle = rectangle(x1, y1, width, height)
+
+            GeneralPath path = new GeneralPath()
+
+            controlPoints.each { ControlPoint controlPoint ->
+                if (controlPoint.x < rectangle.x && controlPoint.y > rectangle.y) {
+                    path.moveTo(controlPoint.x, controlPoint.y)
+                    path.lineTo(rectangle.x, controlPoint.y)
+                } else if (controlPoint.y < rectangle.y) {
+                    path.moveTo(controlPoint.x, controlPoint.y)
+                    path.lineTo(controlPoint.x, rectangle.y)
+                } else if (controlPoint.y > rectangle.y + rectangle.height) {
+                    path.moveTo(controlPoint.x, rectangle.y + rectangle.height)
+                    path.lineTo(controlPoint.x, controlPoint.y)
+                } else {
+                    path.moveTo(rectangle.x + rectangle.width, controlPoint.y)
+                    path.lineTo(controlPoint.x, controlPoint.y)
+                }
+            }
+
+            body = [rectangle, path] as Shape[]
+        }
+
+        return body
+    }
+    
+    private double calculateWidth(int pinSpacing) {
+        int width = icSpecificationModel?.specification?.width ?: 4
+        
+        return Math.max(width * pinSpacing, Math.max(icSpecificationModel.pinsTop.size(), icSpecificationModel.pinsBottom.size()) * pinSpacing)
+    }
+    
+    private double calculateHeight(int pinSpacing) {
+        int height = icSpecificationModel?.specification?.height ?: -1
+        
+        return Math.max(height * pinSpacing, Math.max(icSpecificationModel.pinsLeft.size(), icSpecificationModel.pinsRight.size()) * pinSpacing)
+    }
+
+    @Override
+    public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
+        return VisibilityPolicy.WHEN_SELECTED
+    }
+
+    @Override
+    public boolean isControlPointSticky(int index) {
+        return true
+    }
+
+    @Override
+    public void setControlPoint(Point point, int index) {
+        controlPoints[index].setLocation(point)
+        body = null
+    }
+
+    public void setIcPointCount(ICPointCount icPointCount) {
+        this.icPointCount = icPointCount
+        updateControlPoints()
+        body = null
+    }
+
+    public String getValue() {
+        return icSpecificationModel.value
+    }
 }

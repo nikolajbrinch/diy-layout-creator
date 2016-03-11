@@ -240,13 +240,21 @@ public class FemalePinHeader extends AbstractTransparentComponent implements Geo
              * Draw control points
              */
             controlPoints.each { Point controlPoint ->
-                int pinX = toInt(controlPoint.x - (PIN_SIZE + 6) / 2)
-                int pinY = toInt(controlPoint.y - (PIN_SIZE + 6) / 2)
+                int pinX = toInt(controlPoint.x - (PIN_SIZE + 4) / 2)
+                int pinY = toInt(controlPoint.y - (PIN_SIZE + 4) / 2)
 
-                drawArea(graphicsContext, pinX, pinY, pinArea1, Colors.SILVER_COLOR, null)
+                drawArea(graphicsContext, pinX, pinY, pinArea1, Colors.CHIP_BORDER_COLOR.darker().darker(), null)
 
+                int i = 0
                 pinArea2.each { Area area ->
-                    drawArea(graphicsContext, pinX, pinY, area, null, Colors.DARK_SILVER_COLOR)
+                    Color color
+                    if (i > 1) {
+                        color = Colors.CHIP_BORDER_COLOR
+                    } else {
+                        color = Colors.CHIP_BORDER_COLOR.darker()
+                    }
+                    drawArea(graphicsContext, pinX, pinY, area, color, null)
+                    i++
                 }
             }
 

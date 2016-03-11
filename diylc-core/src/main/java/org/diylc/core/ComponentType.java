@@ -1,9 +1,7 @@
-package org.diylc.components.registry;
+package org.diylc.core;
 
 import javax.swing.Icon;
 
-import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
 
 /**
@@ -15,26 +13,49 @@ import org.diylc.core.annotations.BomPolicy;
  */
 public class ComponentType {
 
-	private String name;
-	private String description;
-	private CreationMethod creationMethod;
-	private String category;
-	private String namePrefix;
-	private String author;
-	private Icon icon;
-	private Class<? extends IDIYComponent> instanceClass;
-	private double zOrder;
-	private boolean flexibleZOrder;
-	private boolean stretchable;
-	private BomPolicy bomPolicy;
-	private boolean autoEdit;
-	private boolean rotatable;
-
-	public ComponentType(String name, String description, CreationMethod creationMethod,
-			String category, String namePrefix, String author, Icon icon,
-			Class<? extends IDIYComponent> instanceClass, double zOrder, boolean flexibleZOrder,
-					boolean stretchable, BomPolicy bomPolicy, boolean autoEdit, boolean rotatable) {
-		super();
+	private final String name;
+	
+	private final String description;
+	
+	private final CreationMethod creationMethod;
+	
+	private final String category;
+	
+	private final String namePrefix;
+	
+	private final String author;
+	
+	private final Class<? extends IDIYComponent> instanceClass;
+	
+	private final double zOrder;
+	
+	private final boolean flexibleZOrder;
+	
+	private final boolean stretchable;
+	
+	private final BomPolicy bomPolicy;
+	
+	private final boolean autoEdit;
+	
+	private final boolean rotatable;
+	
+    private Icon icon;
+	
+	public ComponentType(
+	        String name, 
+	        String description, 
+	        CreationMethod creationMethod,
+			String category, 
+			String namePrefix, 
+			String author, 
+			Icon icon,
+			Class<? extends IDIYComponent> instanceClass, 
+			double zOrder, 
+			boolean flexibleZOrder,
+			boolean stretchable, 
+			BomPolicy bomPolicy, 
+			boolean autoEdit, 
+			boolean rotatable) {
 		this.name = name;
 		this.description = description;
 		this.creationMethod = creationMethod;
@@ -110,7 +131,7 @@ public class ComponentType {
 	public boolean isRotatable() {
 		return rotatable;
 	}
-
+	
 	@Override
 	public String toString() {
 		return name;

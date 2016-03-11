@@ -19,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.diylc.core.PropertyWrapper;
+import org.diylc.specifications.PropertyEditor;
+import org.diylc.specifications.SpecificationProperty;
 
 public class PropertiesEditor extends JPanel {
     
@@ -70,44 +72,70 @@ public class PropertiesEditor extends JPanel {
         gbc.anchor = GridBagConstraints.LINE_START;
 
         for (PropertyWrapper property : properties) {
-            gbc.gridx = 0;
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.weighty = 0;
-            gbc.weightx = 0;
-
-
-            JLabel label = new JLabel(property.getName() + ": ");
-            add(label, gbc);
-
-            gbc.gridx = 1;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weighty = 0;
-            gbc.weightx = 1;
-
-            JComponent editor = FieldEditorFactory.createFieldEditor(property);
-            components.put(property.getName(), editor);
-            add(editor, gbc);
-
-            if (property.isDefaultable()) {
-                gbc.gridx = 2;
-                gbc.fill = GridBagConstraints.NONE;
-                gbc.weightx = 0;
-
-                if (showDefaultBoxes) {
-                    JCheckBox checkBox = createDefaultCheckBox(property);
-                    add(checkBox, gbc);
-                }
+            if (property instanceof SpecificationProperty) {
+                buildSpecificationEditor(gbc, (SpecificationProperty) property);
+            } else {
+                JComponent editor = FieldEditorFactory.createFieldEditor(property, null);
+                buildEditor(gbc, property, editor);
             }
-
-            // Make value field focused
-            if (property.getName().equalsIgnoreCase("value")) {
-                componentToFocus = editor;
-            }
-
-            gbc.gridy++;
         }
     }
     
+    
+    private void buildSpecificationEditor(GridBagConstraints gbc, SpecificationProperty specificationProperty) {
+        SpecificationComboBoxEditor comboBoxEditor = null;        
+        Map<String, PropertyEditor> propertyEditors = new HashMap<>();
+        
+        for (PropertyWrapper property : specificationProperty.getProperties()) {
+            JComponent editor = FieldEditorFactory.createFieldEditor(property, specificationProperty);
+            if (editor instanceof SpecificationComboBoxEditor) {
+                comboBoxEditor = (SpecificationComboBoxEditor) editor;
+            }
+            propertyEditors.put(property.getName(), new PropertyEditor(property, editor));
+            buildEditor(gbc, property, editor);
+        }
+        
+        comboBoxEditor.getSpecificationEditor().setPropertyEditors(propertyEditors);
+        comboBoxEditor.getSpecificationEditor().init();
+    }
+
+    private void buildEditor(GridBagConstraints gbc, PropertyWrapper property, JComponent editor) {
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weighty = 0;
+        gbc.weightx = 0;
+
+
+        JLabel label = new JLabel(property.getName() + ": ");
+        add(label, gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 0;
+        gbc.weightx = 1;
+
+        components.put(property.getName(), editor);
+        add(editor, gbc);
+
+        if (property.isDefaultable()) {
+            gbc.gridx = 2;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.weightx = 0;
+
+            if (showDefaultBoxes) {
+                JCheckBox checkBox = createDefaultCheckBox(property);
+                add(checkBox, gbc);
+            }
+        }
+
+        // Make value field focused
+        if (property.getName().equalsIgnoreCase("value")) {
+            componentToFocus = editor;
+        }
+
+        gbc.gridy++;
+    }
+
     private JCheckBox createDefaultCheckBox(final PropertyWrapper property) {
         final JCheckBox checkBox = new JCheckBox();
         checkBox.setToolTipText(DEFAULT_BOX_TOOLTIP);

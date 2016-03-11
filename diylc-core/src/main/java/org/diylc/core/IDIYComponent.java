@@ -47,6 +47,16 @@ public interface IDIYComponent extends Serializable {
 	 */
 	void setName(String name);
 
+    /**
+     * Updates component type.
+     */
+    void setComponentType(ComponentType componentType);
+
+    /**
+     * @return component type.
+     */
+    ComponentType getComponentType();
+
 	/**
 	 * @return number of control points for this component instance. May vary
 	 *         between two instances of the same type, e.g. DIL IC with 8 and 16

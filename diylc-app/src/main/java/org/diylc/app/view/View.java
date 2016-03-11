@@ -1,7 +1,9 @@
 package org.diylc.app.view;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -15,8 +17,34 @@ import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.view.canvas.Canvas;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
+import org.diylc.core.PropertyWrapper;
 
 public interface View {
+
+    public static final int ERROR_MESSAGE = 0;
+    public static final int INFORMATION_MESSAGE = 1;
+    public static final int WARNING_MESSAGE = 2;
+    public static final int QUESTION_MESSAGE = 3;
+    public static final int PLAIN_MESSAGE = -1;
+    public static final int DEFAULT_OPTION = -1;
+    public static final int YES_NO_OPTION = 0;
+    public static final int YES_NO_CANCEL_OPTION = 1;
+    public static final int OK_CANCEL_OPTION = 2;
+
+    public static final int YES_OPTION = 0;
+    public static final int NO_OPTION = 1;
+    public static final int CANCEL_OPTION = 2;
+    public static final int OK_OPTION = 0;
+    public static final int CLOSED_OPTION = -1;
+
+    public static final String CHECK_BOX_MENU_ITEM = "org.diylc.checkBoxMenuItem";
+    public static final String RADIO_BUTTON_GROUP_KEY = "org.diylc.radioButtonGroup";
+
+    int showConfirmDialog(String message, String title, int optionType, int messageType);
+
+    boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties);
+
+    Path promptFileSave();
 
     public void refreshActions();
 

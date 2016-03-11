@@ -1,6 +1,7 @@
 package org.diylc.app.view;
 
 import java.nio.file.Path;
+
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.model.Model;
 import org.diylc.app.view.canvas.Canvas;
+import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
@@ -25,13 +27,7 @@ import org.diylc.core.platform.QuitResponse;
 public class StubPresenter extends Presenter {
 
     public StubPresenter() {
-        super(new IView() {
-
-            @Override
-            public void showMessage(String message, String title, int messageType) {
-                // TODO Auto-generated method stub
-
-            }
+        super(new View() {
 
             @Override
             public int showConfirmDialog(String message, String title, int optionType, int messageType) {
@@ -50,8 +46,6 @@ public class StubPresenter extends Presenter {
                 // TODO Auto-generated method stub
                 return null;
             }
-
-        }, new View() {
 
             @Override
             public void refreshActions() {
@@ -284,6 +278,12 @@ public class StubPresenter extends Presenter {
 
             @Override
             public Drawing createProject(Project project, Path path) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public ComponentRegistry getComponentRegistry() {
                 // TODO Auto-generated method stub
                 return null;
             }

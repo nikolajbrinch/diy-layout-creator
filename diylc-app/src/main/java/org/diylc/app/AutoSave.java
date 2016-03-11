@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.diylc.app.controllers.ApplicationController;
-import org.diylc.app.view.IView;
+import org.diylc.app.view.View;
 import org.diylc.core.Project;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.utils.SystemUtils;
@@ -50,7 +50,7 @@ public class AutoSave {
             JOptionPane.showMessageDialog(null,
                     "The current user does not have permissions to access folder " + new File(".").getAbsolutePath()
                             + ".\nAuto-save feature will not be available, contact your system administrator.", "Warning",
-                    IView.WARNING_MESSAGE);
+                    View.WARNING_MESSAGE);
         }
 
         init();
@@ -68,8 +68,8 @@ public class AutoSave {
                             .showConfirmDialog(
                                     null,
                                     "It appears that aplication was not closed normally in the previous session. Do you want to open the last auto-saved file?",
-                                    "Auto-Save", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE);
-                    if (decision == IView.YES_OPTION) {
+                                    "Auto-Save", View.YES_NO_OPTION, View.QUESTION_MESSAGE);
+                    if (decision == View.YES_OPTION) {
                         try {
                             getController().open(autoSaveFile);
                         } catch (Exception e) {

@@ -27,6 +27,7 @@ import org.diylc.app.view.dialogs.DialogFactory;
 import org.diylc.app.view.dialogs.TemplateDialog;
 import org.diylc.app.view.menus.MenuConstants;
 import org.diylc.components.registry.ComponentRegistry;
+import org.diylc.components.registry.ComponentRegistryFactory;
 import org.diylc.core.BootUtils;
 import org.diylc.core.LRU;
 import org.diylc.core.Project;
@@ -53,6 +54,8 @@ public class Application implements ApplicationController {
     private static Application application = new Application();
 
     private static boolean running = false;
+
+    private ComponentRegistry componentRegistry = null;
 
     private final Map<String, Drawing> drawings = new LinkedHashMap<>();
 
@@ -88,6 +91,8 @@ public class Application implements ApplicationController {
             paths[i] = componentDirectories[i].toString();
         }
 
+        Path[] specificationDirectories = Configuration.INSTANCE.getSpecificationDirectories();
+        
         LOG.info("Starting DIYLC with working directory " + System.getProperty("user.dir"));
         LOG.info("Component directories: " + String.join(", ", paths));
 
@@ -95,7 +100,8 @@ public class Application implements ApplicationController {
          * Load components
          */
         try {
-            ComponentRegistry.INSTANCE.init(splashScreen);
+            ComponentRegistryFactory componentRegistryFactory = new ComponentRegistryFactory();
+            componentRegistry = componentRegistryFactory.newComponentRegistry(splashScreen, componentDirectories, specificationDirectories);
         } catch (IOException e) {
             LOG.error("Error loading components", e);
         }
@@ -354,6 +360,10 @@ public class Application implements ApplicationController {
 
     public void showMessage(String message, String title, int messageType) {
         getCurrentView().showMessage(message, title, messageType);
+    }
+
+    public ComponentRegistry getComponentRegistry() {
+        return componentRegistry;
     }
 
 }

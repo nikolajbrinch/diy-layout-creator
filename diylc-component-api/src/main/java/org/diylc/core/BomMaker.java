@@ -10,25 +10,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.components.registry.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
 
 public class BomMaker {
 
-	private static BomMaker instance;
+	private static BomMaker instance = new BomMaker();
 
 	public static BomMaker getInstance() {
-		if (instance == null) {
-			instance = new BomMaker();
-		}
 		return instance;
 	}
 
 	private BomMaker() {
 	}
 
-	public List<BomEntry> createBom(List<IDIYComponent> components) {
+	public List<BomEntry> createBom(ComponentRegistry componentRegistry, List<IDIYComponent> components) {
 		Map<String, BomEntry> entryMap = new LinkedHashMap<String, BomEntry>();
 		List<IDIYComponent> sortedComponents = new ArrayList<IDIYComponent>(
 				components);
@@ -56,7 +52,7 @@ public class BomMaker {
 			}			
 		});
 		for (IDIYComponent component : sortedComponents) {
-			ComponentType type = ComponentRegistry.INSTANCE.getComponentType(component.getClass().getName());
+			ComponentType type = componentRegistry.getComponentType(component.getClass().getName());
 			if (type.getBomPolicy() == BomPolicy.NEVER_SHOW)
 				continue;
 			String name = component.getName();

@@ -2,12 +2,9 @@ package org.diylc.components.registry;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ProgressView;
 import org.slf4j.Logger;
@@ -35,30 +32,21 @@ public class ComponentTypeLoader {
         return iconLoader;
     }
 
-    Map<String, List<ComponentType>> loadComponentTypes(Path[] directories, ProgressView progressView) throws IOException {
+    ComponentTypes loadComponentTypes(Path[] directories, ProgressView progressView) throws IOException {
         return loadComponentTypes(Thread.currentThread().getContextClassLoader(), directories, progressView);
     }
 
-    private Map<String, List<ComponentType>> loadComponentTypes(ClassLoader classLoader, Path[] directories, ProgressView progressView) throws IOException {
+    private ComponentTypes loadComponentTypes(ClassLoader classLoader, Path[] directories, ProgressView progressView) throws IOException {
         LOG.info("Loading component types.");
 
         Set<Class<? extends IDIYComponent>> componentClasses = getComponentLoader().loadComponents(classLoader, directories, progressView);
 
-        Map<String, List<ComponentType>> componentTypes = new HashMap<String, List<ComponentType>>();
+        ComponentTypes componentTypes = new ComponentTypes();
 
         for (Class<? extends IDIYComponent> componentClass : componentClasses) {
             ComponentType componentType = loadComponentType((Class<? extends IDIYComponent>) componentClass, progressView);
 
-            if (componentType != null) {
-                List<ComponentType> components = componentTypes.get(componentType.getCategory());
-
-                if (components == null) {
-                    components = new ArrayList<ComponentType>();
-                    componentTypes.put(componentType.getCategory(), components);
-                }
-
-                components.add(componentType);
-            }
+            componentTypes.add(componentType);
         }
 
         return componentTypes;
@@ -84,10 +72,10 @@ public class ComponentTypeLoader {
         return componentType;
     }
 
-    @SuppressWarnings("unchecked")
-    ComponentType loadComponentType(String className, ProgressView progressView) throws ClassNotFoundException {
-        return loadComponentType((Class<? extends IDIYComponent>) Class.forName(className), progressView);
-
-    }
+//    @SuppressWarnings("unchecked")
+//    ComponentType loadComponentType(String className, ProgressView progressView) throws ClassNotFoundException {
+//        return loadComponentType((Class<? extends IDIYComponent>) Class.forName(className), progressView);
+//
+//    }
 
 }

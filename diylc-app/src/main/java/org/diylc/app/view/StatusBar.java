@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 import org.diylc.app.update.UpdateLabel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.StringUtils;
-import org.diylc.components.registry.ComponentType;
+import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.utils.SystemUtils;

@@ -1,48 +1,37 @@
 package org.diylc.components.registry;
 
-import java.io.IOException;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
-import org.diylc.core.ProgressView;
-import org.diylc.core.config.Configuration;
+import org.diylc.specifications.Specification;
+import org.diylc.specifications.registry.SpecificationRegistry;
 
-public enum ComponentRegistry {
-
-    INSTANCE;
-
-    private final ComponentTypeLoader componentTypeLoader = new ComponentTypeLoader();
+public class ComponentRegistry {
 
     private final Map<String, ComponentType> components = new HashMap<String, ComponentType>();
 
-    private Map<String, List<ComponentType>> componentTypes;
+    private final ComponentTypes componentTypes;
 
-    private ComponentRegistry() {
-    }
-    
-    public void init(ProgressView progressView) throws IOException {
-        componentTypes = getComponentTypeLoader().loadComponentTypes(Configuration.INSTANCE.getComponentDirectories(), progressView);
+    private SpecificationRegistry specificationRegistry;
 
-        for (String category : getComponentTypes().keySet()) {
-            for (ComponentType component : getComponentTypes().get(category)) {
-                getComponents().put(component.getInstanceClass().getName(), component);
-            }
+    ComponentRegistry(ComponentTypes componentTypes, SpecificationRegistry specificationRegistry) {
+        this.componentTypes = componentTypes;
+        this.specificationRegistry = specificationRegistry;
+        
+        for (ComponentType component : componentTypes.getComponents()) {
+            getComponents().put(component.getInstanceClass().getName(), component);
         }
     }
-
+    
     Map<String, ComponentType> getComponents() {
         return components;
     }
 
-    ComponentTypeLoader getComponentTypeLoader() {
-        return componentTypeLoader;
-    }
-
-    public Map<String, List<ComponentType>> getComponentTypes() {
-        return Collections.unmodifiableMap(componentTypes);
+    public ComponentTypes getComponentTypes() {
+        return componentTypes;
     }
 
     public ComponentType getComponentType(Class<? extends IDIYComponent> clazz) {
@@ -55,6 +44,10 @@ public enum ComponentRegistry {
 
     public ComponentType getComponentType(String className) {
         return getComponents().get(className);
+    }
+
+    public Collection<Specification> getSpecifications(String category) {
+        return specificationRegistry.get(category);
     }
 
 }

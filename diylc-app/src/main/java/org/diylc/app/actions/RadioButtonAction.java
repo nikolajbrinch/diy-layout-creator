@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.KeyStroke;
 
-import org.diylc.app.view.IView;
+import org.diylc.app.view.View;
 
 public class RadioButtonAction extends GenericAction {
 
@@ -16,7 +16,7 @@ public class RadioButtonAction extends GenericAction {
 
     public RadioButtonAction(String name, KeyStroke accelerator, String group, ActionListener actionListener) {
         super(name, null, accelerator, actionListener);
-        putValue(IView.RADIO_BUTTON_GROUP_KEY, group);
+        putValue(View.RADIO_BUTTON_GROUP_KEY, group);
     }
 
 }
