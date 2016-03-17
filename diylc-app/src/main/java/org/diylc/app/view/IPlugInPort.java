@@ -14,13 +14,14 @@ import org.diylc.app.UndoHandler;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.IComponentFilter;
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.core.ComponentType;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.ITemplateProcessor;
+import org.diylc.core.components.registry.ComponentRegistry;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.IDIYComponent;
+import org.diylc.core.components.ITemplateProcessor;
 import org.diylc.core.Project;
-import org.diylc.core.PropertyWrapper;
-import org.diylc.core.Template;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
+import org.diylc.core.components.Template;
 import org.diylc.core.Theme;
 
 /**
@@ -35,6 +36,7 @@ import org.diylc.core.Theme;
 public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyProcessor, ITemplateProcessor {
 
     public static final int DND_TOGGLE_STICKY = 0x1;
+
     public static final int DND_TOGGLE_SNAP = 0x40000000;
 
     /**
@@ -83,7 +85,7 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     /**
      * Saves the current project into the specified file.
      * 
-     * @param fileName
+     * @param path
      * @param isBackup
      */
     void saveProjectToFile(Path path, boolean isBackup);
@@ -181,49 +183,49 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
      *         not have mutual properties or can be null if the selection is
      *         empty.
      */
-    List<PropertyWrapper> getMutualSelectionProperties();
+    List<PropertyDescriptor> getMutualSelectionProperties();
 
     void editSelection();
 
     /**
      * @return a list of editable properties of the current project.
      */
-    List<PropertyWrapper> getProjectProperties();
+    List<PropertyDescriptor> getProjectProperties();
 
     /**
      * Applies specified properties to the current project.
      * 
      * @param properties
      */
-    void applyPropertiesToProject(List<PropertyWrapper> properties);
+    void applyPropertiesToProject(List<PropertyDescriptor> properties);
 
     /**
      * Applies specified properties to the current selection.
      * 
      * @param properties
      */
-    void applyPropertiesToSelection(List<PropertyWrapper> properties);
+    void applyPropertiesToSelection(List<PropertyDescriptor> properties);
 
     /**
      * Applies specified property to the current selection.
      * 
      * @param property
      */
-    void applyPropertyToSelection(PropertyWrapper property);
+    void applyPropertyToSelection(PropertyDescriptor property);
 
     /**
      * Gets the current new component slot.
      */
-    ComponentType getNewComponentTypeSlot();
+    ComponentModel getNewComponentTypeSlot();
 
     /**
      * Sets the new component slot. Specified component type will be used to
      * instantiate new component.
      * 
-     * @param componentType
+     * @param componentModel
      * @param template
      */
-    void setNewComponentTypeSlot(ComponentType componentType, Template template);
+    void setNewComponentTypeSlot(ComponentModel componentModel, Template template);
 
     /**
      * Changes default size notation, true for metric, false for imperial.

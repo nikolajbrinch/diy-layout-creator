@@ -5,31 +5,40 @@ import org.diylc.components.Colors
 import java.awt.Color
 import java.awt.Font
 import java.awt.FontMetrics
-import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.HorizontalAlignment;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentAutoEdit;
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.HorizontalAlignment
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.Orientation;
+import org.diylc.core.Orientation
 import org.diylc.core.Project
-import org.diylc.core.VerticalAlignment;
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.VerticalAlignment
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 
-@ComponentDescriptor(name = "Label", author = "Branislav Stojkovic", category = "Misc", description = "User defined label", instanceNamePrefix = "L", zOrder = IDIYComponent.TEXT, flexibleZOrder = true, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
+@ComponentAutoEdit
+@ComponentBomPolicy(BomPolicy.NEVER_SHOW)
+@ComponentEditOptions(stretchable = false)
+@ComponentLayer(value = IDIYComponent.TEXT, flexible = true)
+@ComponentDescriptor(name = "Label", author = "Branislav Stojkovic", category = "Misc", description = "User defined label", instanceNamePrefix = "L")
 public class Label extends AbstractComponent implements Geometry {
 
-    public static String DEFAULT_TEXT = "Double click to edit text"
-
+    public static final String id = "be45857e-5b18-4549-92a1-fe21d0dea9f7"
+    
     private static final long serialVersionUID = 1L
+
+    private static String DEFAULT_TEXT = "Double click to edit text"
 
     private Point point = new Point(0, 0)
 

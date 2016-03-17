@@ -1,26 +1,31 @@
 package org.diylc.components.tube
 
-import org.diylc.components.Colors
-
 import java.awt.BasicStroke
-import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.Shape
 import java.awt.geom.Ellipse2D
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTubeSymbol
-import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Colors
 import org.diylc.components.Geometry
-import org.diylc.core.IDIYComponent
-import org.diylc.core.ObjectCache;
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.ObjectCache
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.annotations.ComponentAutoEdit
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.annotations.ComponentEditOptions
+import org.diylc.core.components.annotations.ComponentPads
+import org.diylc.core.components.properties.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
-@ComponentDescriptor(name = "Triode Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "V", description = "Triode tube symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
+@ComponentAutoEdit
+@ComponentPads(false)
+@ComponentEditOptions(stretchable = false, rotatable = false)
+@ComponentDescriptor(name = "Triode Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "V", description = "Triode tube symbol")
 public class TriodeSymbol extends AbstractTubeSymbol implements Geometry {
 
+    public static final String id = "dae9ad67-a50b-480e-802f-9b451ae6cf78"
+    
     private static final long serialVersionUID = 1L
 
     protected Point[] controlPoints = points(point(0, 0),

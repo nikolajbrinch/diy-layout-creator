@@ -5,7 +5,7 @@ import java.awt.geom.Area;
 import java.util.Collections;
 import java.util.List;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Project;
 
 public abstract class AbstractBasicRenderer implements Renderer {

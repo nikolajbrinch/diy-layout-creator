@@ -4,13 +4,12 @@ import java.awt.Color;
 import java.awt.Point;
 
 import org.diylc.components.AbstractComponent;
-import org.diylc.components.ComponentDescriptor;
-import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
+import org.diylc.core.components.VisibilityPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.CapacitanceUnit;
@@ -19,7 +18,7 @@ import org.diylc.core.measures.ResistanceUnit;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Mock", author = "bancika", category = "Sample", instanceNamePrefix = "M", description = "test", zOrder = IDIYComponent.COMPONENT)
+@ComponentDescriptor(name = "Mock", author = "bancika", category = "Sample", instanceNamePrefix = "M", description = "test")
 public class MockDIYComponent extends AbstractComponent {
 
 	private static final long serialVersionUID = 1L;

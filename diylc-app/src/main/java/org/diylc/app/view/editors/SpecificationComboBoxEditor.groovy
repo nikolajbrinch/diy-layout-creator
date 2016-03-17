@@ -2,31 +2,21 @@ package org.diylc.app.view.editors
 
 import groovy.transform.CompileStatic
 
-import java.awt.Component
 import java.beans.PropertyChangeListener
-import java.util.List
-
 import javax.swing.DefaultComboBoxModel
-import javax.swing.Icon
 import javax.swing.JComboBox
-import javax.swing.JList
-import javax.swing.ListCellRenderer
-import javax.swing.plaf.basic.BasicComboBoxRenderer
 
-import org.diylc.app.view.editors.FontChooserComboBox.FontChooserComboBoxRenderer
-import org.diylc.app.view.editors.FontChooserComboBox.Item
-import org.diylc.specifications.Specification
-import org.diylc.specifications.SpecificationEditor
-import org.diylc.specifications.SpecificationModel
+import org.diylc.core.components.properties.PropertyModel;
+import org.diylc.core.components.properties.PropertyModelEditor
 
 @CompileStatic
-class SpecificationComboBoxEditor extends JComboBox<Specification> {
+class SpecificationComboBoxEditor extends JComboBox<PropertyModel> {
 
-    SpecificationEditor specificationEditor
+    PropertyModelEditor specificationEditor
 
-    public SpecificationComboBoxEditor(List<Specification> specifications, SpecificationEditor specificationEditor) {
+    public SpecificationComboBoxEditor(List<PropertyModel> specifications, PropertyModelEditor specificationEditor) {
         this.specificationEditor = specificationEditor
-        setModel(new DefaultComboBoxModel<Specification>(specifications.toArray(new Specification[0])))
+        setModel(new DefaultComboBoxModel<PropertyModel>(specifications.toArray(new PropertyModel[0])))
         setSelectedItem(specificationEditor.getSelectedSpecification())
         addItemListener(specificationEditor)
         specificationEditor.setComponent(this)

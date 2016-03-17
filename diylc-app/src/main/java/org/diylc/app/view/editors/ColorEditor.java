@@ -10,7 +10,8 @@ import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 
 public class ColorEditor extends JLabel {
 
@@ -18,9 +19,9 @@ public class ColorEditor extends JLabel {
 
     private static final String title = "Click to edit";
 
-    private PropertyWrapper property;
+    private PropertyDescriptor property;
 
-    public ColorEditor(final PropertyWrapper property) {
+    public ColorEditor(final PropertyDescriptor property) {
         super(property.isUnique() ? title : ("(multi value) " + title));
         this.property = property;
         setOpaque(true);

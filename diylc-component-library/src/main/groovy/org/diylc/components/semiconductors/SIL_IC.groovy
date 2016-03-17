@@ -14,39 +14,53 @@ import java.awt.geom.Rectangle2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.Display;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentAutoEdit;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.Display
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "SIP IC", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "IC", description = "Single-in-line package IC", stretchable = false, zOrder = IDIYComponent.COMPONENT)
+@ComponentAutoEdit
+@ComponentEditOptions(stretchable = false)
+@ComponentDescriptor(name = "SIP IC", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "IC", description = "Single-in-line package IC")
 public class SIL_IC extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "6b933ee9-d40b-4c00-831f-7416a7bb74f9"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Color BODY_COLOR = Color.gray
-	public static Color BORDER_COLOR = Color.gray.darker()
-	public static Color PIN_COLOR = Color.decode("#00B2EE")
-	public static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
-	public static Color INDENT_COLOR = Color.gray.darker()
-	public static Color LABEL_COLOR = Color.white
-	public static int EDGE_RADIUS = 6
-	public static Size PIN_SIZE = new Size(0.8d, SizeUnit.mm)
-	public static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in)
-	public static Size THICKNESS = new Size(0.13d, SizeUnit.in)
+	private static Color BODY_COLOR = Color.gray
+	
+    private static Color BORDER_COLOR = Color.gray.darker()
+	
+    private static Color PIN_COLOR = Color.decode("#00B2EE")
+	
+    private static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
+	
+    private static Color INDENT_COLOR = Color.gray.darker()
+	
+    private static Color LABEL_COLOR = Color.white
+	
+    private static int EDGE_RADIUS = 6
+	
+    private static Size PIN_SIZE = new Size(0.8d, SizeUnit.mm)
+	
+    private static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in)
+	
+    private static Size THICKNESS = new Size(0.13d, SizeUnit.in)
 
 	private Point[] controlPoints = points(point(0, 0))
 

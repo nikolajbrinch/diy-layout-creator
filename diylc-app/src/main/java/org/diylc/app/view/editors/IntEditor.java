@@ -10,7 +10,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.diylc.app.utils.AppIconLoader;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.utils.Constants;
 
 public class IntEditor extends DoubleTextField {
@@ -19,11 +20,11 @@ public class IntEditor extends DoubleTextField {
 
 	private Color oldBg = getBackground();
 
-    private PropertyWrapper property;
+    private PropertyDescriptor property;
 
     private Integer oldValue;
 
-	public IntEditor(final PropertyWrapper property) {
+	public IntEditor(final PropertyDescriptor property) {
 		super(AppIconLoader.Warning.getIcon());
         this.property = property;
         this.oldValue = (Integer) property.getValue();

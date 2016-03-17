@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 
 public class ComponentAreaMap {
 

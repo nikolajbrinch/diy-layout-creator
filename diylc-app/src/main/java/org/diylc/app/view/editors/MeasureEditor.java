@@ -18,7 +18,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import org.diylc.app.utils.AppIconLoader;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.measures.AbstractMeasure;
 import org.diylc.core.measures.Unit;
 import org.diylc.core.utils.Constants;
@@ -37,12 +38,12 @@ public class MeasureEditor extends JPanel {
     
     private JComboBox<Object> unitBox;
 
-    private PropertyWrapper property;
+    private PropertyDescriptor property;
 
     private AbstractMeasure<?> oldValue;
 
     @SuppressWarnings("unchecked")
-    public MeasureEditor(final PropertyWrapper property) {
+    public MeasureEditor(final PropertyDescriptor property) {
         this.property = property;
         setLayout(new BorderLayout());
 

@@ -1,6 +1,6 @@
 package org.diylc.components;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 
 public interface IComponentFilter {
 

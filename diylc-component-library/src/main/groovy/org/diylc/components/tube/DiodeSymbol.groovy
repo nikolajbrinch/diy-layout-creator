@@ -2,26 +2,32 @@ package org.diylc.components.tube
 
 import org.diylc.components.Colors
 
-import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.Shape
 import java.awt.geom.Ellipse2D
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTubeSymbol
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.IDIYComponent
-import org.diylc.core.IPropertyValidator
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.properties.IPropertyValidator
+import org.diylc.core.components.annotations.ComponentAutoEdit;
+import org.diylc.core.components.annotations.ComponentPads;
+import org.diylc.core.components.annotations.ComponentEditOptions;
 import org.diylc.core.ObjectCache;
 import org.diylc.core.ValidationException
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 
-@ComponentDescriptor(name = "Diode Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "V", description = "Diode tube symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
+@ComponentAutoEdit
+@ComponentPads(false)
+@ComponentEditOptions(stretchable = false, rotatable = false)
+@ComponentDescriptor(name = "Diode Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "V", description = "Diode tube symbol")
 public class DiodeSymbol extends AbstractTubeSymbol implements Geometry {
 
+    public static final String id = "5cea1730-5662-405d-8cd5-85f8fe45f26e"
+    
 	private static final long serialVersionUID = 1L
 
 	protected Point[] controlPoints = points(point(0, 0),

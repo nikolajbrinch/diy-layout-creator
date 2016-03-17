@@ -1,7 +1,5 @@
 package org.diylc.components.semiconductors
 
-import org.diylc.components.Colors
-
 import java.awt.Polygon
 import java.awt.Shape
 import java.awt.geom.AffineTransform
@@ -10,15 +8,23 @@ import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTransistorSymbol
 import org.diylc.components.BJTPolarity
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.IDIYComponent
-import org.diylc.core.ObjectCache;
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.components.Colors
+import org.diylc.core.ObjectCache
+import org.diylc.core.components.annotations.ComponentAutoEdit
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.annotations.ComponentEditOptions
+import org.diylc.core.components.annotations.ComponentPads
+import org.diylc.core.components.properties.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
-@ComponentDescriptor(name = "BJT Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "Q", description = "Bipolar junction transistor schematic symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
+@ComponentAutoEdit
+@ComponentPads(false)
+@ComponentEditOptions(stretchable = false, rotatable = false)
+@ComponentDescriptor(name = "BJT Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "Q", description = "Bipolar junction transistor schematic symbol")
 public class BJTSymbol extends AbstractTransistorSymbol {
 
+    public static final String id = "a0d13aaa-69cc-43dd-9814-a3bdc1d8b0be"
+    
 	private static final long serialVersionUID = 1L
 
 	@EditableProperty(name = "Polarity")

@@ -23,7 +23,8 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 import org.diylc.app.view.editors.PropertiesEditor;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 
 /**
  * @author nikolajbrinch@gmail.com
@@ -121,7 +122,7 @@ public class PropertyView extends JComponent {
         return UIManager.getFont("Label.font");
     }
 
-    public void displayProperties(List<PropertyWrapper> properties) {
+    public void displayProperties(List<PropertyDescriptor> properties) {
         propertyContainer.removeAll();
 
         if (properties != null && !properties.isEmpty()) {
@@ -129,7 +130,7 @@ public class PropertyView extends JComponent {
             Map<String, JComponent> editors = propertyEditor.getEditors();
             for (JComponent editor : editors.values()) {
                 editor.addPropertyChangeListener((PropertyChangeEvent event) -> {
-                    PropertyWrapper property = findProperty(properties, event.getPropertyName());
+                    PropertyDescriptor property = findProperty(properties, event.getPropertyName());
                     if (property != null) {
                         Object newValue = translateValue(event.getNewValue(), property, properties);
 
@@ -146,12 +147,12 @@ public class PropertyView extends JComponent {
         repaint();
     }
 
-    private Object translateValue(Object value, PropertyWrapper property, List<PropertyWrapper> properties) {
+    private Object translateValue(Object value, PropertyDescriptor property, List<PropertyDescriptor> properties) {
         if (property.getName().equals("Font")) {
             Font newFont = (Font) value;
-            PropertyWrapper sizeProperty = findProperty(properties, "Font Size");
-            PropertyWrapper boldProperty = findProperty(properties, "Font Bold");
-            PropertyWrapper italicProperty = findProperty(properties, "Font Italic");
+            PropertyDescriptor sizeProperty = findProperty(properties, "Font Size");
+            PropertyDescriptor boldProperty = findProperty(properties, "Font Bold");
+            PropertyDescriptor italicProperty = findProperty(properties, "Font Italic");
 
             float size = ((Integer) sizeProperty.getValue()).floatValue();
             boolean bold = (boolean) boldProperty.getValue();
@@ -166,10 +167,10 @@ public class PropertyView extends JComponent {
 
     }
 
-    private PropertyWrapper findProperty(List<PropertyWrapper> properties, String propertyName) {
-        PropertyWrapper property = null;
+    private PropertyDescriptor findProperty(List<PropertyDescriptor> properties, String propertyName) {
+        PropertyDescriptor property = null;
 
-        for (PropertyWrapper propertyWrapper : properties) {
+        for (PropertyDescriptor propertyWrapper : properties) {
             if (propertyWrapper.getName().equals(propertyName)) {
                 property = propertyWrapper;
             }

@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.filechooser.FileFilter;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
 
 public interface Platform {
 
@@ -36,7 +36,7 @@ public interface Platform {
     public OpenDialog createOpenDialog(JFrame parent, Path lastDirectory, Path initialFile, FileFilter filter, String defaultExtension,
             IFileChooserAccessory accessory);
 
-    public JComponent createFontEditor(PropertyWrapper property);
+    public JComponent createFontEditor(PropertyDescriptor property);
 
     public void setDefaultMenuBar(JMenuBar jMenuBar);
 

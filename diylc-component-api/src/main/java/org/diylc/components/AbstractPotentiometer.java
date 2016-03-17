@@ -3,9 +3,10 @@ package org.diylc.components;
 import java.awt.Point;
 
 import org.diylc.core.Orientation;
-import org.diylc.core.VisibilityPolicy;
-import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
+import org.diylc.core.components.VisibilityPolicy;
+import org.diylc.core.components.properties.EditableProperty;
+
+import org.diylc.core.components.properties.PositiveMeasureValidator;
 import org.diylc.core.measures.Resistance;
 
 public abstract class AbstractPotentiometer extends

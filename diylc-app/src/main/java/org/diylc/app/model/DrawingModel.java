@@ -3,7 +3,7 @@ package org.diylc.app.model;
 import java.util.List;
 
 import org.diylc.app.view.Presenter;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Project;
 
 public class DrawingModel implements Model {

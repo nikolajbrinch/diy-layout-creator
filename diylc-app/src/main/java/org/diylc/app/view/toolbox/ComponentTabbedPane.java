@@ -19,10 +19,10 @@ import javax.swing.event.PopupMenuListener;
 
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.components.registry.ComparatorFactory;
-import org.diylc.components.registry.ComponentTypes;
-import org.diylc.components.registry.Constants;
-import org.diylc.core.ComponentType;
-import org.diylc.core.Template;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.registry.ComponentModels;
+import org.diylc.core.Constants;
+import org.diylc.core.components.Template;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
 import org.slf4j.Logger;
@@ -51,13 +51,13 @@ class ComponentTabbedPane extends JTabbedPane {
         super();
         this.plugInPort = plugInPort;
         
-        ComponentTypes componentTypes = plugInPort.getComponentRegistry().getComponentTypes();
+        ComponentModels componentModels = plugInPort.getComponentRegistry().getComponentModels();
         addTab("Recently Used", createRecentComponentsPanel());
-        List<String> categories = componentTypes.getCategories();
+        List<String> categories = componentModels.getCategories();
         Collections.sort(categories);
 
         for (String category : categories) {
-            JPanel panel = createTab((componentTypes.getComponents(category)));
+            JPanel panel = createTab((componentModels.getComponents(category)));
             addTab(category, panel);
         }
 
@@ -78,10 +78,10 @@ class ComponentTabbedPane extends JTabbedPane {
         });
     }
 
-    private JPanel createTab(List<ComponentType> componentTypes) {
+    private JPanel createTab(List<ComponentModel> componentModels) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
-        panel.add(createComponentPanel(componentTypes), BorderLayout.CENTER);
+        panel.add(createComponentPanel(componentModels), BorderLayout.CENTER);
 
         return panel;
     }
@@ -94,15 +94,15 @@ class ComponentTabbedPane extends JTabbedPane {
         return recentToolbar;
     }
 
-    private Component createComponentPanel(List<ComponentType> componentTypes) {
+    private Component createComponentPanel(List<ComponentModel> componentModels) {
         Container toolbar = new Container();
 
-        Collections.sort(componentTypes, ComparatorFactory.getInstance().getComponentTypeComparator());
+        Collections.sort(componentModels, ComparatorFactory.getInstance().getComponentTypeComparator());
 
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.X_AXIS));
 
-        for (ComponentType componentType : componentTypes) {
-            Component button = ComponentButtonFactory.create(plugInPort, componentType, createTemplatePopup(componentType));
+        for (ComponentModel componentModel : componentModels) {
+            Component button = ComponentButtonFactory.create(plugInPort, componentModel, createTemplatePopup(componentModel));
             toolbar.add(button);
         }
 
@@ -129,21 +129,21 @@ class ComponentTabbedPane extends JTabbedPane {
         return panel;
     }
 
-    private boolean refreshRecentComponentsToolbar(Container toolbar, List<String> recentComponentClassList) {
+    private boolean refreshRecentComponentsToolbar(Container toolbar, List<String> recentComponents) {
         toolbar.removeAll();
 
         boolean updateRecentComponentsConfiguraton = false;
 
-        Iterator<String> iterator = recentComponentClassList.iterator();
+        Iterator<String> iterator = recentComponents.iterator();
 
         while (iterator.hasNext()) {
-            String componentClassName = (String) iterator.next();
-            ComponentType componentType = plugInPort.getComponentRegistry().getComponentType(componentClassName);
-            if (componentType != null) {
-                Component button = ComponentButtonFactory.create(plugInPort, componentType, createTemplatePopup(componentType));
+            String componentId = iterator.next();
+            ComponentModel componentModel = plugInPort.getComponentRegistry().getComponentModel(componentId);
+            if (componentModel != null) {
+                Component button = ComponentButtonFactory.create(plugInPort, componentModel, createTemplatePopup(componentModel));
                 toolbar.add(button);
             } else {
-                LOG.warn("Could not create recent component button for " + componentClassName);
+                LOG.warn("Could not create recent component button for " + componentId);
                 iterator.remove();
                 updateRecentComponentsConfiguraton = true;
             }
@@ -152,7 +152,7 @@ class ComponentTabbedPane extends JTabbedPane {
         return updateRecentComponentsConfiguraton;
     }
 
-    private JPopupMenu createTemplatePopup(final ComponentType componentType) {
+    private JPopupMenu createTemplatePopup(final ComponentModel componentModel) {
         final JPopupMenu templatePopup = new JPopupMenu();
         templatePopup.add("Loading...");
         templatePopup.addPopupMenuListener(new PopupMenuListener() {
@@ -160,14 +160,14 @@ class ComponentTabbedPane extends JTabbedPane {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                 templatePopup.removeAll();
-                List<Template> templates = plugInPort.getTemplatesFor(componentType.getCategory(), componentType.getName());
+                List<Template> templates = plugInPort.getTemplatesFor(componentModel.getCategory(), componentModel.getName());
                 if (templates == null || templates.isEmpty()) {
                     JMenuItem item = new JMenuItem("<no templates>");
                     item.setEnabled(false);
                     templatePopup.add(item);
                 } else {
                     for (Template template : templates) {
-                        JMenuItem item = ComponentButtonFactory.createTemplateItem(plugInPort, template, componentType);
+                        JMenuItem item = ComponentButtonFactory.createTemplateItem(plugInPort, template, componentModel);
                         templatePopup.add(item);
                     }
                 }

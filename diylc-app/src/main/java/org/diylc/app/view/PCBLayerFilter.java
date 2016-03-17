@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import org.diylc.components.IComponentFilter;
 import org.diylc.components.PCBLayer;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 
 public class PCBLayerFilter implements IComponentFilter {
 

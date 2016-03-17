@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.filechooser.FileFilter;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
 import org.diylc.core.utils.ReflectionUtils;
 import org.diylc.core.utils.SystemUtils;
 
@@ -142,7 +142,7 @@ public class MacPlatform extends DefaultPlatform {
     }
 
     @Override
-    public JComponent createFontEditor(PropertyWrapper property) {
+    public JComponent createFontEditor(PropertyDescriptor property) {
         return new MacFontEditor(property);
     }
 

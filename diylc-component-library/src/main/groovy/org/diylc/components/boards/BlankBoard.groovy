@@ -6,19 +6,25 @@ import java.awt.Shape
 
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
-import org.diylc.core.annotations.BomPolicy
+import org.diylc.core.components.BomPolicy
 
 
-@ComponentDescriptor(name = "Blank Board", category = "Boards", author = "Branislav Stojkovic", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Blank circuit board", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentLayer(IDIYComponent.BOARD)
+@ComponentDescriptor(name = "Blank Board", category = "Boards", author = "Branislav Stojkovic", instanceNamePrefix = "Board", description = "Blank circuit board")
 class BlankBoard extends AbstractBoard {
 
+    public static final String id = "fa60e2a4-5f68-4f82-b9ff-604e7843c502"
+    
 	private static final long serialVersionUID = 1L
-
+    
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
 		int factor = 32 / width

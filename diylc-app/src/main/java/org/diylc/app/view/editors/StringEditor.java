@@ -10,7 +10,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.utils.Constants;
 
 public class StringEditor extends JTextField {
@@ -19,11 +20,11 @@ public class StringEditor extends JTextField {
 
     private Color oldBg = getBackground();
 
-    private final PropertyWrapper property;
+    private final PropertyDescriptor property;
 
     private String oldValue;
 
-    public StringEditor(PropertyWrapper property) {
+    public StringEditor(PropertyDescriptor property) {
         super(property.getValue() == null ? "" : (String) property.getValue());
         this.property = property;
         this.oldValue = getText();

@@ -10,7 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +109,7 @@ public class DefaultPlatform implements Platform {
     }
 
     @Override
-    public JComponent createFontEditor(PropertyWrapper property) {
+    public JComponent createFontEditor(PropertyDescriptor property) {
         return new DefaultFontEditor(property);
     }
 

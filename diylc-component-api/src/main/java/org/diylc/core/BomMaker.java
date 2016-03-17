@@ -9,9 +9,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.annotations.BomPolicy;
+import org.diylc.core.components.BomPolicy;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.IDIYComponent;
+import org.diylc.core.components.registry.ComponentRegistry;
 
 public class BomMaker {
 
@@ -52,8 +53,8 @@ public class BomMaker {
 			}			
 		});
 		for (IDIYComponent component : sortedComponents) {
-			ComponentType type = componentRegistry.getComponentType(component.getClass().getName());
-			if (type.getBomPolicy() == BomPolicy.NEVER_SHOW)
+			ComponentModel model = component.getComponentModel();
+			if (model.getBomPolicy() == BomPolicy.NEVER_SHOW)
 				continue;
 			String name = component.getName();
 			String value;
@@ -63,17 +64,17 @@ public class BomMaker {
 				value = "<undefined>";
 			}
 			if ((name != null) && (value != null)) {
-				String key = type.getName() + "|" + value;
+				String key = model.getName() + "|" + value;
 				if (entryMap.containsKey(key)) {
 					BomEntry entry = entryMap.get(key);
 					entry.setQuantity(entry.getQuantity() + 1);
-					if (type.getBomPolicy() == BomPolicy.SHOW_ALL_NAMES) {
+					if (model.getBomPolicy() == BomPolicy.SHOW_ALL_NAMES) {
 						entry.setName(entry.getName() + ", " + name);
 					}
 				} else {
-					entryMap.put(key, new BomEntry(type.getName(), type
+					entryMap.put(key, new BomEntry(model.getName(), model
 							.getBomPolicy() == BomPolicy.SHOW_ALL_NAMES ? name
-							: type.getName(), value, 1));
+							: model.getName(), value, 1));
 				}
 			}
 		}

@@ -1,7 +1,6 @@
 package org.diylc.app.view;
 
 import java.nio.file.Path;
-
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
@@ -18,11 +17,12 @@ import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.model.Model;
 import org.diylc.app.view.canvas.Canvas;
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.PropertyWrapper;
 import org.diylc.core.platform.QuitResponse;
+import org.diylc.core.components.properties.PropertyDescriptor;
+import org.diylc.core.components.registry.ComponentRegistry;
+import org.diylc.core.components.registry.SpecificationRegistry;
 
 public class StubPresenter extends Presenter {
 
@@ -36,7 +36,7 @@ public class StubPresenter extends Presenter {
             }
 
             @Override
-            public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
+            public boolean editProperties(List<PropertyDescriptor> properties, Set<PropertyDescriptor> defaultedProperties) {
                 // TODO Auto-generated method stub
                 return false;
             }
@@ -284,6 +284,12 @@ public class StubPresenter extends Presenter {
 
             @Override
             public ComponentRegistry getComponentRegistry() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public SpecificationRegistry getSpecificationRegistry() {
                 // TODO Auto-generated method stub
                 return null;
             }

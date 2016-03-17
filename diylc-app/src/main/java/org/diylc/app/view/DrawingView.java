@@ -71,10 +71,11 @@ import org.diylc.app.view.menus.ViewMenuPlugin;
 import org.diylc.app.view.menus.WindowMenuPlugin;
 import org.diylc.app.view.properties.PropertyPlugin;
 import org.diylc.app.view.toolbox.ToolBox;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.LRU;
 import org.diylc.core.Project;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.WindowBounds;
 import org.diylc.core.utils.SystemUtils;
@@ -277,7 +278,7 @@ public class DrawingView extends JFrame implements ISwingUI {
     }
 
     @Override
-    public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
+    public boolean editProperties(List<PropertyDescriptor> properties, Set<PropertyDescriptor> defaultedProperties) {
         PropertyEditorDialog editor = DialogFactory.getInstance().createPropertyEditorDialog(properties, "Edit Selection");
         editor.setVisible(true);
         defaultedProperties.addAll(editor.getDefaultedProperties());

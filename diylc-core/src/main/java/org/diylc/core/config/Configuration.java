@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 
 import org.diylc.core.ConfigurationManager;
 import org.diylc.core.LRU;
-import org.diylc.core.Template;
+import org.diylc.core.components.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.utils.Constants;
 

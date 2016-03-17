@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 import java.util.Collections;
 import java.util.List;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Theme;
 
 public class CanvasRenderer extends AbstractBasicRenderer {

@@ -1,6 +1,6 @@
 package org.diylc.app;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 
 public enum Layer {
 	CHASSIS("Chassis", IDIYComponent.CHASSIS), BOARD("Board",

@@ -4,25 +4,27 @@ import org.diylc.components.Colors
 
 import java.awt.AlphaComposite
 import java.awt.Composite
-import java.awt.Graphics2D
 
 import org.diylc.components.AbstractShape
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry;
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
-@ComponentDescriptor(name = "Rectangle", author = "Branislav Stojkovic", category = "Shapes", instanceNamePrefix = "RECT", description = "Ractangular area, with or withouth rounded edges", zOrder = IDIYComponent.COMPONENT, flexibleZOrder = true, bomPolicy = BomPolicy.SHOW_ALL_NAMES, autoEdit = false)
+@ComponentLayer(flexible = true)
+@ComponentDescriptor(name = "Rectangle", author = "Branislav Stojkovic", category = "Shapes", instanceNamePrefix = "RECT", description = "Rectangular area, with or withouth rounded edges")
 public class Rectangle extends AbstractShape implements Geometry {
 
+    public static final String id = "dbf3323b-d17b-4561-bde1-c654ec615a36"
+    
 	private static final long serialVersionUID = 1L
 
     @EditableProperty(name = "Radius")

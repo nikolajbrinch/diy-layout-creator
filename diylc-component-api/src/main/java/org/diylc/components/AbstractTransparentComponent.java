@@ -1,6 +1,7 @@
 package org.diylc.components;
 
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.properties.EditableProperty;
+
 
 public abstract class AbstractTransparentComponent extends AbstractComponent {
 

@@ -2,35 +2,41 @@ package org.diylc.components.boards
 
 import org.diylc.core.graphics.GraphicsContext
 
-
 import java.awt.AlphaComposite
-import java.awt.Color
 import java.awt.Point
 import java.awt.Shape
 
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Marshall Style Perf Board", category = "Boards", author = "Branislav Stojkovic", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board as found on some Marshall and Trainwreck amps", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentLayer(IDIYComponent.BOARD)
+@ComponentDescriptor(name = "Marshall Style Perf Board", category = "Boards", author = "Branislav Stojkovic", instanceNamePrefix = "Board", description = "Perforated board as found on some Marshall and Trainwreck amps")
 public class MarshallPerfBoard extends AbstractBoard implements Geometry {
 
+    public static final String id = "49ec271c-36b6-4076-86e3-5d26ef5e5562"
+    
     private static final long serialVersionUID = 1L
 
     public static Size SPACING = new Size(3 / 8d, SizeUnit.in)
 
     public static Size HOLE_SIZE = new Size(1 / 8d, SizeUnit.in)
 
+    
     @EditableProperty
     Size spacing = SPACING
 

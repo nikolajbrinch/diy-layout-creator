@@ -3,27 +3,32 @@ package org.diylc.components.connectivity
 import org.diylc.components.Colors
 
 import java.awt.Color
-import java.awt.Graphics2D
 import java.awt.Shape
 
 import org.diylc.components.AbstractLeadedComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
-import org.diylc.core.CreationMethod
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentCreationMethod;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.CreationMethod
 import org.diylc.core.Display;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.ObjectCache;
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 
-@ComponentDescriptor(name = "Jumper", author = "Branislav Stojkovic", category = "Connectivity", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "J", description = "", zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
+@ComponentBomPolicy(BomPolicy.NEVER_SHOW)
+@ComponentCreationMethod(CreationMethod.POINT_BY_POINT)
+@ComponentDescriptor(name = "Jumper", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "J", description = "")
 public class Jumper extends AbstractLeadedComponent {
 
+    public static final String id = "3ea8ad8f-fc99-4712-9569-9b028c5cc6a5"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Color COLOR = Color.blue
+	private static Color COLOR = Color.blue
 	
 	@Deprecated
 	private Color color

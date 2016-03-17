@@ -6,30 +6,42 @@ import java.awt.Color
 import java.awt.Point
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.boards.VeroBoard;
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
-@ComponentDescriptor(name = "Trace Cut", category = "Connectivity", author = "Branislav Stojkovic", description = "Designates the place where a trace on the vero board needs to be cut", instanceNamePrefix = "Cut", stretchable = false, zOrder = IDIYComponent.TRACE_CUT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
+@ComponentEditOptions(stretchable = false)
+@ComponentBomPolicy(BomPolicy.NEVER_SHOW)
+@ComponentLayer(IDIYComponent.TRACE_CUT)
+@ComponentDescriptor(name = "Trace Cut", category = "Connectivity", author = "Branislav Stojkovic", description = "Designates the place where a trace on the vero board needs to be cut", instanceNamePrefix = "Cut")
 public class TraceCut extends AbstractComponent {
 
+    public static final String id = "68b2c265-423d-4d1a-b7a7-33f0c8a55067"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size SIZE = new Size(0.07d, SizeUnit.in)
-	public static Size CUT_WIDTH = new Size(0.5d, SizeUnit.mm)
-	public static Color FILL_COLOR = Color.white
-	public static Color BORDER_COLOR = Color.red
-	public static Color SELECTION_COLOR = Color.blue
+	private static Size SIZE = new Size(0.07d, SizeUnit.in)
+	
+    private static Size CUT_WIDTH = new Size(0.5d, SizeUnit.mm)
+	
+    private static Color FILL_COLOR = Color.white
+	
+    private static Color BORDER_COLOR = Color.red
+	
+    private static Color SELECTION_COLOR = Color.blue
 
     @EditableProperty
 	Size size = SIZE

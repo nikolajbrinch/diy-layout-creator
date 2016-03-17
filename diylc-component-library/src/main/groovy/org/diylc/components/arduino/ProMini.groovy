@@ -1,27 +1,15 @@
 package org.diylc.components.arduino
 
-import org.diylc.components.AbstractComponent
-import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.Angle
-import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
 import org.diylc.components.Constants.Placement
-import org.diylc.core.ComponentState
-import org.diylc.core.HorizontalAlignment
-import org.diylc.core.IDIYComponent
-import org.diylc.core.IDrawingObserver
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.Orientation
-import org.diylc.core.Project
-import org.diylc.core.VerticalAlignment
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
-import org.diylc.core.graphics.GraphicsContext
+import org.diylc.core.components.BomPolicy
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.core.utils.Constants
 
 import java.awt.*
 import java.awt.geom.AffineTransform
@@ -29,8 +17,11 @@ import java.awt.geom.Area
 import java.util.List
 
 
-@ComponentDescriptor(name = "Arduino Pro Mini", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Arduino", description = "Arduino ProMini", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
-public  class ProMini extends AbstractArduino implements Geometry {
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentDescriptor(name = "Arduino Pro Mini", category = "Arduino", author = "Nikolaj Brinch Jørgensen", instanceNamePrefix = "Arduino", description = "Arduino ProMini")
+public class ProMini extends AbstractArduino implements Geometry {
+
+    public static final String id = "3c4c9a77-2e55-4591-93cb-00c7f6be8564"
 
     private static final long serialVersionUID = 1L
 
@@ -276,7 +267,7 @@ public  class ProMini extends AbstractArduino implements Geometry {
                 int y = firstPoint.y + spacing / 2
 
                 for (int i = 0; i < COLUMN_PIN_COUNT; i++) {
-                    Placement placement = (i == 0) ? Placement.ABOVE : ((i == 5) ? Placement.BELOW : Placement.RIGHT) 
+                    Placement placement = (i == 0) ? Placement.ABOVE : ((i == 5) ? Placement.BELOW : Placement.RIGHT)
                     controlPoints << point(x, y, ['type': 'pad', 'text': column2Reverse[i], 'text-placement': placement])
                     if (i > 0 && i < 4) {
                         controlPoints << point(x + (ROW_PIN_COUNT * spacing), y, ['type': 'pad', 'text': PCB_TEXT["column1"][i - 1], 'text-placement': Placement.LEFT])
@@ -312,5 +303,4 @@ public  class ProMini extends AbstractArduino implements Geometry {
 
         this.controlPoints = controlPoints
     }
-
 }

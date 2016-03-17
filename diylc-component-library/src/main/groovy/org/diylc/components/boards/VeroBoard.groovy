@@ -9,23 +9,30 @@ import java.awt.Point
 import java.awt.Shape
 
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.OrientationHV;
 import org.diylc.core.Project
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Vero Board", category = "Boards", author = "Branislav Stojkovic", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated FR4 board with copper strips connecting all holes in a row", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentLayer(IDIYComponent.BOARD)
+@ComponentDescriptor(name = "Vero Board", category = "Boards", author = "Branislav Stojkovic", instanceNamePrefix = "Board", description = "Perforated FR4 board with copper strips connecting all holes in a row")
 public class VeroBoard extends AbstractBoard implements Geometry {
 
+    public static final String id = "fddf7b10-660d-4b2d-9716-f283339302ac"
+    
     private static final long serialVersionUID = 1L
 
     public static Size SPACING = new Size(0.1d, SizeUnit.in)
@@ -34,6 +41,7 @@ public class VeroBoard extends AbstractBoard implements Geometry {
 
     public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm)
 
+    
     @EditableProperty
     Size spacing = SPACING
 

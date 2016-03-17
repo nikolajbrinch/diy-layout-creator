@@ -3,27 +3,31 @@ package org.diylc.components.connectivity
 import org.diylc.components.Colors
 
 import java.awt.Color
-import java.awt.Graphics2D
 import java.awt.geom.CubicCurve2D
 
 import org.diylc.components.AWG
 import org.diylc.components.AbstractCurvedComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.ObjectCache;
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Hookup Wire", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "W", description = "Flexible wire with two control points", zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
+@ComponentBomPolicy(BomPolicy.NEVER_SHOW)
+@ComponentDescriptor(name = "Hookup Wire", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "W", description = "Flexible wire with two control points")
 public class HookupWire extends AbstractCurvedComponent {
 
+    public static final String id = "7e1a1978-0cc8-4a6a-8ba7-fd49997311e7"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Color COLOR = Color.green
-	public static double INSULATION_THICKNESS_PCT = 0.3
+	private static Color COLOR = Color.green
+    
+	private static double INSULATION_THICKNESS_PCT = 0.3
 
     @EditableProperty(name = "AWG")
 	AWG gauge = AWG._22

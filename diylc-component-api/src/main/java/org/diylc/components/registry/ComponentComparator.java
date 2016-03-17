@@ -2,7 +2,7 @@ package org.diylc.components.registry;
 
 import java.util.Comparator;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 
 public class ComponentComparator implements Comparator<Class<? extends IDIYComponent>> {
 

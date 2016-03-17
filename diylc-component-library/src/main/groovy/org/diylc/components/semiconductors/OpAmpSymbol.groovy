@@ -1,7 +1,5 @@
 package org.diylc.components.semiconductors
 
-import org.diylc.components.Colors
-
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
@@ -13,34 +11,44 @@ import java.awt.geom.GeneralPath
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Colors
 import org.diylc.components.Geometry
 import org.diylc.components.ICPointCount
-import org.diylc.core.ComponentState
-import org.diylc.core.Display;
-import org.diylc.core.HorizontalAlignment;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.Display
+import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.ObjectCache;
+import org.diylc.core.ObjectCache
 import org.diylc.core.Project
 import org.diylc.core.Theme
-import org.diylc.core.VerticalAlignment;
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.VerticalAlignment
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.annotations.ComponentAutoEdit
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.annotations.ComponentEditOptions
+import org.diylc.core.components.annotations.ComponentPads
+import org.diylc.core.components.properties.EditableProperty
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "OpAmp Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "IC", description = "OpAmp symbol with 3 or 5 contacts", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
+@ComponentAutoEdit
+@ComponentPads(false)
+@ComponentEditOptions(stretchable = false, rotatable = false)
+@ComponentDescriptor(name = "OpAmp Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "IC", description = "OpAmp symbol with 3 or 5 contacts")
 public class OpAmpSymbol extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "5548072f-1707-4651-afc0-815dd7eda6ae"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
-	public static Color BODY_COLOR = Color.white
-	public static Color BORDER_COLOR = Color.black
+	private static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
+	
+    private static Color BODY_COLOR = Color.white
+	
+    private static Color BORDER_COLOR = Color.black
 
 	transient private Shape[] body
 

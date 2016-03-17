@@ -18,9 +18,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.diylc.core.PropertyWrapper;
-import org.diylc.specifications.PropertyEditor;
-import org.diylc.specifications.SpecificationProperty;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
+import org.diylc.core.components.properties.PropertyEditor;
+import org.diylc.core.components.properties.CompositePropertyDescriptor;
 
 public class PropertiesEditor extends JPanel {
     
@@ -30,19 +31,19 @@ public class PropertiesEditor extends JPanel {
     
     public final boolean showDefaultBoxes;
 
-    private final List<PropertyWrapper> properties;
+    private final List<PropertyDescriptor> properties;
 
-    private final Set<PropertyWrapper> defaultedProperties;
+    private final Set<PropertyDescriptor> defaultedProperties;
 
     private Component componentToFocus = null;
     
     private Map<String, JComponent> components = new HashMap<>();
 
-    public PropertiesEditor(List<PropertyWrapper> properties) {
+    public PropertiesEditor(List<PropertyDescriptor> properties) {
         this(properties, null);
     }
     
-    public PropertiesEditor(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
+    public PropertiesEditor(List<PropertyDescriptor> properties, Set<PropertyDescriptor> defaultedProperties) {
         this.properties = properties;
         this.defaultedProperties = defaultedProperties;
         this.showDefaultBoxes = defaultedProperties != null;
@@ -71,9 +72,9 @@ public class PropertiesEditor extends JPanel {
         gbc.insets = new Insets(2, 2, 2, 2);
         gbc.anchor = GridBagConstraints.LINE_START;
 
-        for (PropertyWrapper property : properties) {
-            if (property instanceof SpecificationProperty) {
-                buildSpecificationEditor(gbc, (SpecificationProperty) property);
+        for (PropertyDescriptor property : properties) {
+            if (property instanceof CompositePropertyDescriptor) {
+                buildSpecificationEditor(gbc, (CompositePropertyDescriptor) property);
             } else {
                 JComponent editor = FieldEditorFactory.createFieldEditor(property, null);
                 buildEditor(gbc, property, editor);
@@ -82,11 +83,11 @@ public class PropertiesEditor extends JPanel {
     }
     
     
-    private void buildSpecificationEditor(GridBagConstraints gbc, SpecificationProperty specificationProperty) {
+    private void buildSpecificationEditor(GridBagConstraints gbc, CompositePropertyDescriptor specificationProperty) {
         SpecificationComboBoxEditor comboBoxEditor = null;        
         Map<String, PropertyEditor> propertyEditors = new HashMap<>();
         
-        for (PropertyWrapper property : specificationProperty.getProperties()) {
+        for (PropertyDescriptor property : specificationProperty.getProperties()) {
             JComponent editor = FieldEditorFactory.createFieldEditor(property, specificationProperty);
             if (editor instanceof SpecificationComboBoxEditor) {
                 comboBoxEditor = (SpecificationComboBoxEditor) editor;
@@ -99,7 +100,7 @@ public class PropertiesEditor extends JPanel {
         comboBoxEditor.getSpecificationEditor().init();
     }
 
-    private void buildEditor(GridBagConstraints gbc, PropertyWrapper property, JComponent editor) {
+    private void buildEditor(GridBagConstraints gbc, PropertyDescriptor property, JComponent editor) {
         gbc.gridx = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weighty = 0;
@@ -136,7 +137,7 @@ public class PropertiesEditor extends JPanel {
         gbc.gridy++;
     }
 
-    private JCheckBox createDefaultCheckBox(final PropertyWrapper property) {
+    private JCheckBox createDefaultCheckBox(final PropertyDescriptor property) {
         final JCheckBox checkBox = new JCheckBox();
         checkBox.setToolTipText(DEFAULT_BOX_TOOLTIP);
         checkBox.addActionListener(new ActionListener() {

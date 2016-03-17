@@ -5,7 +5,6 @@ import org.diylc.components.Colors
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
-import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.Polygon
 import java.awt.Shape
@@ -15,32 +14,40 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "9V Battery Snap", category = "Electromechanical", author = "Branislav Stojkovic", description = "", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "BTR", autoEdit = false)
+@ComponentEditOptions(stretchable = false)
+@ComponentDescriptor(name = "9V Battery Snap", category = "Electromechanical", author = "Branislav Stojkovic", description = "", instanceNamePrefix = "BTR")
 public class BatterySnap9V extends AbstractTransparentComponent {
 
+    public static final String id = "63a0cec5-f823-4382-b7c0-2295d95134a6"
+    
     private static final long serialVersionUID = 1L
 
     private static Color BODY_COLOR = Color.darkGray
+    
     private static Size WIDTH = new Size(0.5d, SizeUnit.in)
+    
     private static Size LENGTH = new Size(0.75d, SizeUnit.in)
+    
     private static Size TERMINAL_DIAMETER = new Size(0.3d, SizeUnit.in)
+    
     private static Size TERMINAL_SPACING = new Size(0.5d, SizeUnit.in)
+    
     private static Size TERMINAL_BORDER = new Size(0.7d, SizeUnit.mm)
 
     private Point controlPoint = new Point(0, 0)

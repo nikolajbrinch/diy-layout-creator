@@ -15,43 +15,59 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.Display;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentAutoEdit;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.Display
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Transistor (TO-3 package)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "Q", description = "Transistor with large metal body", stretchable = false, zOrder = IDIYComponent.COMPONENT)
+@ComponentAutoEdit
+@ComponentEditOptions(stretchable = false)
+@ComponentDescriptor(name = "Transistor (TO-3 package)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "Q", description = "Transistor with large metal body")
 public class TransistorTO3 extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "7ab351f8-2226-4b6d-bde5-2dfb9fef5e38"
+    
     private static final long serialVersionUID = 1L
 
-    public static Color BODY_COLOR = Color.decode("#D0E0EF")
-    public static Color BORDER_COLOR = BODY_COLOR.darker()
-    public static Color PIN_COLOR = Color.decode("#00B2EE")
-    public static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
-    public static Color LABEL_COLOR = Color.black
+    private static Color BODY_COLOR = Color.decode("#D0E0EF")
+    
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
+    
+    private static Color PIN_COLOR = Color.decode("#00B2EE")
+    
+    private static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
+    
+    private static Color LABEL_COLOR = Color.black
 
-    public static Size LARGE_DIAMETER = new Size(26.2d, SizeUnit.mm)
-    public static Size INNER_DIAMETER = new Size(21.3d, SizeUnit.mm)
-    public static Size SMALL_DIAMETER = new Size(8d, SizeUnit.mm)
-    public static Size HOLE_DISTANCE = new Size(30.1d, SizeUnit.mm)
-    public static Size HOLE_SIZE = new Size(4.1d, SizeUnit.mm)
-    public static Size PIN_SPACING = new Size(10.9d, SizeUnit.mm)
-    public static Size PIN_OFFSET = new Size(1.85d, SizeUnit.mm)
-    public static Size PIN_DIAMETER = new Size(1d, SizeUnit.mm)
+    private static Size LARGE_DIAMETER = new Size(26.2d, SizeUnit.mm)
+    
+    private static Size INNER_DIAMETER = new Size(21.3d, SizeUnit.mm)
+    
+    private static Size SMALL_DIAMETER = new Size(8d, SizeUnit.mm)
+    
+    private static Size HOLE_DISTANCE = new Size(30.1d, SizeUnit.mm)
+    
+    private static Size HOLE_SIZE = new Size(4.1d, SizeUnit.mm)
+    
+    private static Size PIN_SPACING = new Size(10.9d, SizeUnit.mm)
+    
+    private static Size PIN_OFFSET = new Size(1.85d, SizeUnit.mm)
+    
+    private static Size PIN_DIAMETER = new Size(1d, SizeUnit.mm)
 
     transient private Area[] body
 

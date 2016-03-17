@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
 import org.diylc.core.utils.Constants;
 
 public class DefaultFontEditor extends FontChooserComboBox {
@@ -14,11 +14,11 @@ public class DefaultFontEditor extends FontChooserComboBox {
 
     private Color oldBg = getBackground();
 
-    private final PropertyWrapper property;
+    private final PropertyDescriptor property;
 
     private Font oldFont;
 
-    public DefaultFontEditor(final PropertyWrapper property) {
+    public DefaultFontEditor(final PropertyDescriptor property) {
         this.property = property;
         this.oldFont = (Font) property.getValue();
         setSelectedItem(((Font) property.getValue()).getName());

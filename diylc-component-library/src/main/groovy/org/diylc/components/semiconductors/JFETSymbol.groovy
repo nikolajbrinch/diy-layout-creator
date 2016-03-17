@@ -1,22 +1,28 @@
 package org.diylc.components.semiconductors
 
-import org.diylc.components.Colors
-
 import java.awt.Polygon
 import java.awt.Shape
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTransistorSymbol
-import org.diylc.components.ComponentDescriptor
+import org.diylc.components.Colors
 import org.diylc.components.FETPolarity
-import org.diylc.core.IDIYComponent
-import org.diylc.core.ObjectCache;
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.ObjectCache
+import org.diylc.core.components.annotations.ComponentAutoEdit
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.annotations.ComponentEditOptions
+import org.diylc.core.components.annotations.ComponentPads
+import org.diylc.core.components.properties.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
-@ComponentDescriptor(name = "JFET Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "Q", description = "JFET transistor schematic symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
+@ComponentAutoEdit
+@ComponentPads(false)
+@ComponentEditOptions(stretchable = false, rotatable = false)
+@ComponentDescriptor(name = "JFET Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "Q", description = "JFET transistor schematic symbol")
 public class JFETSymbol extends AbstractTransistorSymbol {
 
+    public static final String id = "1bc71fa0-5d4f-4448-9a85-9e31d0445f06"
+    
     private static final long serialVersionUID = 1L
 
     @EditableProperty(name = "Channel")

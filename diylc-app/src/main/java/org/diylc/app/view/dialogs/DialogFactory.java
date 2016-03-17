@@ -12,7 +12,8 @@ import org.diylc.app.online.view.NewUserDialog;
 import org.diylc.app.online.view.UploadDialog;
 import org.diylc.app.view.bom.BomDialog;
 import org.diylc.core.BomEntry;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.platform.IFileChooserAccessory;
 import org.diylc.core.platform.Platform;
 
@@ -42,7 +43,7 @@ public class DialogFactory {
         this.mainFrame = mainFrame;
     }
 
-    public PropertyEditorDialog createPropertyEditorDialog(List<PropertyWrapper> properties, String title) {
+    public PropertyEditorDialog createPropertyEditorDialog(List<PropertyDescriptor> properties, String title) {
         return new PropertyEditorDialog(mainFrame, properties, title);
     }
 

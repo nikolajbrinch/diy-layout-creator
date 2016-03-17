@@ -3,31 +3,40 @@ package org.diylc.components.connectivity
 import org.diylc.components.Colors
 
 import java.awt.Color
-import java.awt.Graphics2D
 import java.awt.Point
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Eyelet", category = "Connectivity", author = "Branislav Stojkovic", description = "Eyelet or turret terminal", instanceNamePrefix = "Eyelet", stretchable = false, zOrder = IDIYComponent.PAD, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+@ComponentEditOptions(stretchable = false)
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentLayer(IDIYComponent.PAD)
+@ComponentDescriptor(name = "Eyelet", category = "Connectivity", author = "Branislav Stojkovic", description = "Eyelet or turret terminal", instanceNamePrefix = "Eyelet")
 public class Eyelet extends AbstractComponent {
 
+    public static final String id = "5dc391d7-399c-4bde-99f0-e49bc1963a9c"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size SIZE = new Size(0.2d, SizeUnit.in)
-    public static Size HOLE_SIZE = new Size(0.1d, SizeUnit.in)
-    public static Color COLOR = Color.decode("#C3E4ED")
+    private static Size SIZE = new Size(0.2d, SizeUnit.in)
+    
+    private static Size HOLE_SIZE = new Size(0.1d, SizeUnit.in)
+    
+    private static Color COLOR = Color.decode("#C3E4ED")
 
     private Point point = new Point(0, 0)
     

@@ -1,36 +1,27 @@
 package org.diylc.components.arduino
 
-import org.diylc.components.AbstractComponent
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.Angle
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard
 import org.diylc.components.ControlPoint;
 import org.diylc.components.Geometry
 import org.diylc.components.Constants.Placement;
 import org.diylc.components.Pin;
-import org.diylc.components.PinBase;
-import org.diylc.core.ComponentState
+import org.diylc.components.PinBase
+import org.diylc.core.components.ComponentState
 import org.diylc.core.HorizontalAlignment
-import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Orientation
 import org.diylc.core.Project
 import org.diylc.core.VerticalAlignment
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
 import java.awt.*
-import java.awt.geom.AffineTransform
 import java.awt.geom.Area
-import java.util.List
-
 
 public abstract class AbstractArduino extends AbstractTransparentComponent implements Geometry {
 

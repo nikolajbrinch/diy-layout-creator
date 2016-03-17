@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.diylc.core.GridType;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.measures.Size;

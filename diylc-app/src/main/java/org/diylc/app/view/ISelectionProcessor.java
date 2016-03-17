@@ -4,7 +4,7 @@ import java.awt.Point;
 import java.util.List;
 
 import org.diylc.app.ExpansionMode;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 
 public interface ISelectionProcessor {
 

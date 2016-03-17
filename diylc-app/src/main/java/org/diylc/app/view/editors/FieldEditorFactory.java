@@ -7,11 +7,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
+import org.diylc.core.components.properties.PropertyModelEditor;
+import org.diylc.core.components.properties.CompositePropertyDescriptor;
 import org.diylc.core.measures.AbstractMeasure;
 import org.diylc.core.platform.Platform;
-import org.diylc.specifications.SpecificationEditor;
-import org.diylc.specifications.SpecificationProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,63 +20,63 @@ public class FieldEditorFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(FieldEditorFactory.class);
 
-    public static JComponent createFieldEditor(PropertyWrapper property, SpecificationProperty specificationProperty) {
-        if (property.getType().equals(String.class)) {
-            StringEditor editor = new StringEditor(property);
+    public static JComponent createFieldEditor(PropertyDescriptor propertyDescriptor, CompositePropertyDescriptor compositePropertyDescriptor) {
+        if (propertyDescriptor.getType().equals(String.class)) {
+            StringEditor editor = new StringEditor(propertyDescriptor);
             return editor;
         }
-        if (property.getType().equals(Color.class)) {
-            ColorEditor editor = new ColorEditor(property);
+        if (propertyDescriptor.getType().equals(Color.class)) {
+            ColorEditor editor = new ColorEditor(propertyDescriptor);
             return editor;
         }
-        if (AbstractMeasure.class.isAssignableFrom(property.getType())) {
-            MeasureEditor editor = new MeasureEditor(property);
+        if (AbstractMeasure.class.isAssignableFrom(propertyDescriptor.getType())) {
+            MeasureEditor editor = new MeasureEditor(propertyDescriptor);
             return editor;
         }
-        if (ImageIcon.class.isAssignableFrom(property.getType())) {
-            ImageEditor editor = new ImageEditor(property);
+        if (ImageIcon.class.isAssignableFrom(propertyDescriptor.getType())) {
+            ImageEditor editor = new ImageEditor(propertyDescriptor);
             return editor;
         }
-        if (property.getType().isEnum()) {
-            EnumEditor editor = new EnumEditor(property);
+        if (propertyDescriptor.getType().isEnum()) {
+            EnumEditor editor = new EnumEditor(propertyDescriptor);
             return editor;
         }
-        if (Byte.class.isAssignableFrom(property.getType()) || byte.class.isAssignableFrom(property.getType())) {
-            ByteEditor editor = new ByteEditor(property);
+        if (Byte.class.isAssignableFrom(propertyDescriptor.getType()) || byte.class.isAssignableFrom(propertyDescriptor.getType())) {
+            ByteEditor editor = new ByteEditor(propertyDescriptor);
             return editor;
         }
-        if (Boolean.class.isAssignableFrom(property.getType()) || boolean.class.isAssignableFrom(property.getType())) {
-            BooleanEditor editor = new BooleanEditor(property);
+        if (Boolean.class.isAssignableFrom(propertyDescriptor.getType()) || boolean.class.isAssignableFrom(propertyDescriptor.getType())) {
+            BooleanEditor editor = new BooleanEditor(propertyDescriptor);
             return editor;
         }
-        if (Font.class.isAssignableFrom(property.getType())) {
-            JComponent editor = Platform.getPlatform().createFontEditor(property);
+        if (Font.class.isAssignableFrom(propertyDescriptor.getType())) {
+            JComponent editor = Platform.getPlatform().createFontEditor(propertyDescriptor);
             return editor;
         }
-        if (Integer.class.isAssignableFrom(property.getType()) || int.class.isAssignableFrom(property.getType())) {
-            IntEditor editor = new IntEditor(property);
+        if (Integer.class.isAssignableFrom(propertyDescriptor.getType()) || int.class.isAssignableFrom(propertyDescriptor.getType())) {
+            IntEditor editor = new IntEditor(propertyDescriptor);
             return editor;
         }
-        if (specificationProperty != null) {
-            if (specificationProperty.getSpecificationType().isAssignableFrom(property.getType())) {
-                Class<? extends SpecificationEditor> specificationEditorClass = specificationProperty.getSpecificationEditor();
+        if (compositePropertyDescriptor != null) {
+            if (compositePropertyDescriptor.getSpecificationType().isAssignableFrom(propertyDescriptor.getType())) {
+                Class<? extends PropertyModelEditor> specificationEditorClass = compositePropertyDescriptor.getSpecificationEditor();
                 
-                SpecificationEditor specificationEditor = null;
+                PropertyModelEditor propertyModelEditor = null;
                 
                 try {
-                    specificationEditor = specificationEditorClass.newInstance();
+                    propertyModelEditor = specificationEditorClass.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
-                    LOG.error("Unable to instantiate editor for specification: " + specificationProperty);
+                    LOG.error("Unable to instantiate editor for specification: " + compositePropertyDescriptor);
                 }
                 
-                specificationEditor.setSpecificationProperty(specificationProperty);
+                propertyModelEditor.setPropertyDescriptor(compositePropertyDescriptor);
                 
-                SpecificationComboBoxEditor editor = new SpecificationComboBoxEditor(specificationProperty.getSpecifications(), specificationEditor);
+                SpecificationComboBoxEditor editor = new SpecificationComboBoxEditor(compositePropertyDescriptor.getPropertyModels(), propertyModelEditor);
                 return editor;
             }
         }
 
-        LOG.error("Unrecognized parameter type: " + property.getType().getName());
+        LOG.error("Unrecognized parameter type: " + propertyDescriptor.getType().getName());
         return new JLabel("Unrecognized");
     }
 }

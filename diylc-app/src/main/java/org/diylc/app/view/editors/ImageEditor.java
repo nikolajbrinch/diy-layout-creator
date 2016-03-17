@@ -8,7 +8,8 @@ import javax.swing.JButton;
 
 import org.diylc.app.FileFilterEnum;
 import org.diylc.app.view.dialogs.DialogFactory;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.config.Configuration;
 
 public class ImageEditor extends JButton {
@@ -17,9 +18,9 @@ public class ImageEditor extends JButton {
 
 	private static final String title = "Click to load image file";
 
-    private PropertyWrapper property;
+    private PropertyDescriptor property;
 
-	public ImageEditor(final PropertyWrapper property) {
+	public ImageEditor(final PropertyDescriptor property) {
 		super(property.isUnique() ? title : ("(multi value) " + title));
         this.property = property;
 		addActionListener(new ActionListener() {

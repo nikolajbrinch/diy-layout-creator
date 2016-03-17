@@ -1,15 +1,17 @@
 package org.diylc.components.boards
 
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -18,9 +20,13 @@ import org.diylc.core.utils.Constants
 import java.awt.*
 
 
-@ComponentDescriptor(name = "Perf Board w/ Pads", category = "Boards", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board with solder pads", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentLayer(IDIYComponent.BOARD)
+@ComponentDescriptor(name = "Perf Board w/ Pads", category = "Boards", author = "Nikolaj Brinch Jørgensen", instanceNamePrefix = "Board", description = "Perforated board with solder pads")
 public class PerfBoard extends AbstractBoard implements Geometry {
 
+    public static final String id = "53364be0-9655-4654-b2bf-786b2a4b5bca"
+    
     private static final long serialVersionUID = 1L
 
     public static Color COPPER_COLOR = Color.decode("#DA8A67")
@@ -31,6 +37,7 @@ public class PerfBoard extends AbstractBoard implements Geometry {
 
     public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm)
 
+    
     @EditableProperty
     Size spacing = SPACING
 

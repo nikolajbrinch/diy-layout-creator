@@ -10,9 +10,9 @@ import org.diylc.app.model.Model;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
 import org.diylc.app.view.canvas.Canvas;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.Template;
+import org.diylc.core.components.Template;
 
 public class CanvasController extends AbstractController implements ArrangeController, EditController {
 

@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+
 //import org.diylc.app.events.FileStatusChangedEvent;
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.app.view.PointConverter;
@@ -47,7 +48,8 @@ import org.diylc.components.semiconductors.LED;
 import org.diylc.components.semiconductors.TransistorTO92;
 import org.diylc.core.Display;
 import org.diylc.core.HorizontalAlignment;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Orientation;
 import org.diylc.core.Project;
 import org.diylc.core.VerticalAlignment;
@@ -55,6 +57,7 @@ import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
+import org.diylc.core.components.registry.ComponentRegistry;
 import org.diylc.core.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,8 +94,11 @@ public class ProjectFileManager {
     // pixels.
     private XStream xStreamOld;
 
-    public ProjectFileManager() {
+    private ComponentRegistry componentRegistry;
+
+    public ProjectFileManager(ComponentRegistry componentRegistry) {
         super();
+        this.componentRegistry = componentRegistry;
         this.xStream = new XStream(new DomDriver("UTF-8"));
         xStream.autodetectAnnotations(true);
         xStream.registerConverter(new PointConverter());
@@ -115,10 +121,13 @@ public class ProjectFileManager {
             ParserConfigurationException {
         LOG.info(String.format("loadProjectFromFile(%s)", path));
         Project project;
+        
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(new InputSource(new InputStreamReader(Files.newInputStream(path))));
+        
         doc.getDocumentElement().normalize();
+        
         if (doc.getDocumentElement().getNodeName().equalsIgnoreCase(Project.class.getName())) {
             project = parseV3File(path);
         } else {
@@ -136,7 +145,17 @@ public class ProjectFileManager {
                 throw new IllegalArgumentException("Unknown file format version: " + formatVersion);
             }
         }
+        
         Collections.sort(warnings);
+        
+        for(IDIYComponent component : project.getComponents()) {
+            if (component.getComponentModel() == null) {
+                String componentModelId = componentRegistry.getComponentModelId(component.getClass().getName());
+                ComponentModel componentModel = componentRegistry.getComponentModel(componentModelId);
+                component.setComponentModel(componentModel);
+            }
+        }
+        
         return project;
     }
 
@@ -455,25 +474,33 @@ public class ProjectFileManager {
                 }
             }
         }
+        
         Collections.sort(project.getComponents(), ComparatorFactory.getInstance().getComponentZOrderComparator());
+        
         return project;
     }
 
     private Point convertV1CoordinatesToV3Point(Point reference, int x, int y) {
         Point point = new Point(reference);
+        
         point.translate((int) (x * Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue()),
                 (int) (y * Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue()));
+        
         return point;
     }
 
     private Color parseV1Color(String color) {
-        if ("brown".equals(color.toLowerCase()))
+        if ("brown".equals(color.toLowerCase())) {
             return new Color(139, 69, 19);
+        }
+        
         try {
             Field field = Color.class.getDeclaredField(color.toLowerCase());
+            
             return (Color) field.get(null);
         } catch (Exception e) {
             LOG.error("Could not parse color \"" + color + "\"", e);
+            
             return Color.black;
         }
     }
@@ -481,6 +508,7 @@ public class ProjectFileManager {
     private Project parseV2File(Element root) {
         Project project = new Project();
         NodeList childNodes = root.getChildNodes();
+        
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -491,22 +519,24 @@ public class ProjectFileManager {
                 }
             }
         }
+        
         return project;
     }
 
     private Project parseV3File(Path path) throws IOException {
         Project project;
-        InputStream fis = Files.newInputStream(path);
-        try {
+        
+        try (InputStream fis = Files.newInputStream(path)) {
             Reader reader = new InputStreamReader(fis, "UTF-8");
             project = (Project) xStream.fromXML(reader);
         } catch (Exception e) {
             LOG.warn("Could not open with the new xStream, trying the old one");
-            fis.close();
-            fis = Files.newInputStream(path);
-            project = (Project) xStreamOld.fromXML(fis);
+            
+            try (InputStream fis = Files.newInputStream(path)) {
+                project = (Project) xStreamOld.fromXML(fis);
+            }
         }
-        fis.close();
+        
         return project;
     }
 }

@@ -12,8 +12,9 @@ import org.diylc.app.ExpansionMode;
 import org.diylc.app.view.dialogs.ButtonDialog;
 import org.diylc.app.view.dialogs.DialogFactory;
 import org.diylc.app.view.dialogs.PropertyEditorDialog;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.IDIYComponent;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public interface EditController extends MenuController {
 
     default void edit() {
         LOG.info("Edit Selection triggered");
-        List<PropertyWrapper> properties = getPlugInPort().getMutualSelectionProperties();
+        List<PropertyDescriptor> properties = getPlugInPort().getMutualSelectionProperties();
         if (properties == null || properties.isEmpty()) {
             LOG.info("Nothing to edit");
             return;
@@ -60,7 +61,7 @@ public interface EditController extends MenuController {
 
     default void editProject() {
         LOG.info("Edit Project triggered");
-        List<PropertyWrapper> properties = getPlugInPort().getProjectProperties();
+        List<PropertyDescriptor> properties = getPlugInPort().getProjectProperties();
         PropertyEditorDialog editor = DialogFactory.getInstance().createPropertyEditorDialog(properties, "Edit Project");
         editor.setVisible(true);
         
@@ -71,7 +72,7 @@ public interface EditController extends MenuController {
         /* 
          * Save default values.
          */
-        for (PropertyWrapper property : editor.getDefaultedProperties()) {
+        for (PropertyDescriptor property : editor.getDefaultedProperties()) {
             if (property.getValue() != null) {
                 getPlugInPort().setProjectDefaultPropertyValue(property.getName(), property.getValue());
             }

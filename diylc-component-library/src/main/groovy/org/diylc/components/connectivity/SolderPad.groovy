@@ -6,28 +6,40 @@ import java.awt.Color
 import java.awt.Point
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.PCBLayer
-import org.diylc.core.ComponentState
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.annotations.ComponentPads;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.BomPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Solder Pad", category = "Connectivity", author = "Branislav Stojkovic", description = "Copper solder pad, round or square", instanceNamePrefix = "Pad", stretchable = false, zOrder = IDIYComponent.PAD, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
+@ComponentEditOptions(stretchable = false)
+@ComponentBomPolicy(BomPolicy.NEVER_SHOW)
+@ComponentPads(false)
+@ComponentLayer(IDIYComponent.PAD)
+@ComponentDescriptor(name = "Solder Pad", category = "Connectivity", author = "Branislav Stojkovic", description = "Copper solder pad, round or square", instanceNamePrefix = "Pad")
 public class SolderPad extends AbstractComponent {
 
+    public static final String id = "066375ac-eb5b-4535-83d5-53c91b3f1462"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size SIZE = new Size(0.09d, SizeUnit.in)
-    public static Size HOLE_SIZE = new Size(0.8d, SizeUnit.mm)
-    public static Color COLOR = Color.black
+    private static Size SIZE = new Size(0.09d, SizeUnit.in)
+    
+    private static Size HOLE_SIZE = new Size(0.8d, SizeUnit.mm)
+    
+    private static Color COLOR = Color.black
 
     private Point point = new Point(0, 0)
 

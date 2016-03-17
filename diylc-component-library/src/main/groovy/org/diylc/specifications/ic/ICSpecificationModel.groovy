@@ -1,13 +1,13 @@
 package org.diylc.specifications.ic
 
-import org.diylc.core.annotations.EditableProperty
-import org.diylc.specifications.SpecificationModel
+import org.diylc.core.components.properties.EditableProperty;
+
 
 
 class ICSpecificationModel {
 
     @EditableProperty(name = 'Model')
-    ICSpecification specification = null
+    ICTypePropertyModel specification = null
 
     @EditableProperty(name = 'Pins')
     ICPinCount pinCount = ICPinCount._14

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.diylc.app.view.View;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;

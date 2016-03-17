@@ -15,9 +15,10 @@ import javax.swing.JPopupMenu.Separator;
 import org.diylc.app.Drawing;
 import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.view.canvas.Canvas;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 
 public interface View {
 
@@ -42,7 +43,7 @@ public interface View {
 
     int showConfirmDialog(String message, String title, int optionType, int messageType);
 
-    boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties);
+    boolean editProperties(List<PropertyDescriptor> properties, Set<PropertyDescriptor> defaultedProperties);
 
     Path promptFileSave();
 

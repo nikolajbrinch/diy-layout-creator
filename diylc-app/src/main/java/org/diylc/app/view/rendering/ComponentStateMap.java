@@ -3,8 +3,8 @@ package org.diylc.app.view.rendering;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.ComponentState;
+import org.diylc.core.components.IDIYComponent;
 
 public class ComponentStateMap {
 

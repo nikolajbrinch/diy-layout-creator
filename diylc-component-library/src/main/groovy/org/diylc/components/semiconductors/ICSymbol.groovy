@@ -3,7 +3,7 @@ package org.diylc.components.semiconductors
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
-import java.awt.Font;
+import java.awt.Font
 import java.awt.Point
 import java.awt.Polygon
 import java.awt.Rectangle
@@ -15,44 +15,50 @@ import java.awt.geom.Rectangle2D
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.Angle
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.ControlPoint
 import org.diylc.components.Geometry
 import org.diylc.components.ICPointCount
-import org.diylc.core.ComponentState
 import org.diylc.core.Display
-import org.diylc.core.IDIYComponent
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VerticalAlignment
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.SpecificationModel
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.annotations.ComponentAutoEdit
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.annotations.ComponentEditOptions
+import org.diylc.core.components.annotations.ComponentPads
+import org.diylc.core.components.properties.EditableProperty
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
-import org.diylc.specifications.SpecificationModel
-import org.diylc.specifications.ic.ICPinCount
-import org.diylc.specifications.ic.ICSpecification
-import org.diylc.specifications.ic.ICSpecificationEditor
 import org.diylc.specifications.ic.ICSpecificationModel
+import org.diylc.specifications.ic.ICTypePropertyModel
+import org.diylc.specifications.ic.ICTypePropertyModelEditor
 
-@ComponentDescriptor(name = "IC Symbol", author = "Nikolaj Brinch Jørgensen", category = "Schematics", instanceNamePrefix = "IC", description = "IC symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
+@ComponentAutoEdit
+@ComponentPads(false)
+@ComponentEditOptions(stretchable = false, rotatable = false)
+@ComponentDescriptor(name = "IC Symbol", author = "Nikolaj Brinch Jørgensen", category = "Schematics", instanceNamePrefix = "IC", description = "IC symbol")
 public class ICSymbol extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "710e39a6-5e08-4a6c-9abd-85a88aa669ba"
+    
     private static final long serialVersionUID = 1L
 
-    public static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
+    private static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
 
-    public static Color BODY_COLOR = Color.white
+    private static Color BODY_COLOR = Color.white
 
-    public static Color BORDER_COLOR = Color.black
+    private static Color BORDER_COLOR = Color.black
 
-    public static float PIN_FONT_SIZE = 9f
+    private static float PIN_FONT_SIZE = 9f
 
     private String value
 
@@ -60,7 +66,7 @@ public class ICSymbol extends AbstractTransparentComponent implements Geometry {
 
     protected ControlPoint[] controlPoints = points(point(0, 0))
 
-    @SpecificationModel(category = "IC", type = ICSpecification.class, editor = ICSpecificationEditor.class)
+    @SpecificationModel(category = "IC", type = ICTypePropertyModel.class, editor = ICTypePropertyModelEditor.class)
     @EditableProperty
     ICSpecificationModel icSpecificationModel = new ICSpecificationModel()
 

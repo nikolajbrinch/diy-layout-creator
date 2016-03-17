@@ -5,7 +5,6 @@ import org.diylc.components.Colors
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
-import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.Rectangle
 import java.awt.Shape
@@ -15,42 +14,56 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.components.JackType
-import org.diylc.core.ComponentState
-import org.diylc.core.HorizontalAlignment;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VerticalAlignment;
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Closed 1/4\" Jack", category = "Electromechanical", author = "Branislav Stojkovic", description = "Enclosed panel mount 1/4\" phono jack", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "J", autoEdit = false)
+@ComponentEditOptions(stretchable = false)
+@ComponentDescriptor(name = "Closed 1/4\" Jack", category = "Electromechanical", author = "Branislav Stojkovic", description = "Enclosed panel mount 1/4\" phono jack", instanceNamePrefix = "J")
 class ClosedJack1_4 extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "5f32c0a3-36d4-48f6-84fc-181177c68ae2"
+    
     private static final long serialVersionUID = 1L
 
     private static Size SPACING = new Size(0.1d, SizeUnit.in)
+    
     private static Size LUG_WIDTH = new Size(0.1d, SizeUnit.in)
+    
     private static Size LUG_LENGTH = new Size(0.12d, SizeUnit.in)
+    
     private static Size LUG_HOLE_SIZE = new Size(1d, SizeUnit.mm)
+    
     private static Color BODY_COLOR = Color.decode("#666666")
+    
     private static Color SHAFT_COLOR = Color.decode("#AAAAAA")
+    
     private static Size SHAFT_LENGTH = new Size(0.25d, SizeUnit.in)
+    
     private static Size SHAFT_WIDTH = new Size(3d / 8, SizeUnit.in)
+    
     private static Color BORDER_COLOR = Color.black
+    
     private static Color LABEL_COLOR = Color.white
+    
     private static Size BODY_WIDTH = new Size(0.65d, SizeUnit.in)
+    
     private static Size BODY_LENGTH = new Size(0.8d, SizeUnit.in)
 
     private Point[] controlPoints = points(point(0, 0))

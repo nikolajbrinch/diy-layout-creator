@@ -6,7 +6,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.utils.Constants;
 
 public class ByteEditor extends JSlider {
@@ -15,9 +16,9 @@ public class ByteEditor extends JSlider {
 
 	private Color oldBg = getBackground();
 
-    private PropertyWrapper property;
+    private PropertyDescriptor property;
 
-	public ByteEditor(final PropertyWrapper property) {
+	public ByteEditor(final PropertyDescriptor property) {
 		super();
         this.property = property;
 		setMinimum(0);

@@ -1,33 +1,37 @@
 package org.diylc.components.boards
 
-import groovy.transform.CompileStatic
-
 import org.diylc.core.graphics.GraphicsContext
 
-import java.awt.Color
-import java.awt.Graphics2D
 import java.awt.Point
 
 import org.diylc.components.AbstractComponent
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.annotations.ComponentLayer;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
 import org.diylc.core.HorizontalAlignment;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
 import org.diylc.core.VerticalAlignment;
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.BomPolicy
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
 
-@ComponentDescriptor(name = "Breadboard", category = "Boards", author = "Branislav Stojkovic", description = "Prototyping solderless breadboard", instanceNamePrefix = "BB", stretchable = false, zOrder = IDIYComponent.BOARD, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+@ComponentEditOptions(stretchable = false)
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentLayer(IDIYComponent.BOARD)
+@ComponentDescriptor(name = "Breadboard", category = "Boards", author = "Branislav Stojkovic", description = "Prototyping solderless breadboard", instanceNamePrefix = "BB")
 public class Breadboard extends AbstractComponent implements Geometry {
 
+    public static final String id = "8b33c35d-35c8-4bb1-a87b-e6dd845c272a"
+    
     private static final long serialVersionUID = 1L
 
     public static Size BODY_ARC = new Size(3d, SizeUnit.mm)
@@ -38,6 +42,7 @@ public class Breadboard extends AbstractComponent implements Geometry {
 
     public static Size HOLE_ARC = new Size(1d, SizeUnit.mm)
 
+    
     protected Point point = point(0, 0)
 
     @Override

@@ -26,8 +26,6 @@ import org.diylc.app.view.View;
 import org.diylc.app.view.dialogs.DialogFactory;
 import org.diylc.app.view.dialogs.TemplateDialog;
 import org.diylc.app.view.menus.MenuConstants;
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.components.registry.ComponentRegistryFactory;
 import org.diylc.core.BootUtils;
 import org.diylc.core.LRU;
 import org.diylc.core.Project;
@@ -38,6 +36,10 @@ import org.diylc.core.platform.PreferencesEvent;
 import org.diylc.core.platform.QuitEvent;
 import org.diylc.core.platform.QuitResponse;
 import org.diylc.core.platform.RestartQuitResponse;
+import org.diylc.core.components.registry.ComponentRegistry;
+import org.diylc.core.components.registry.ComponentRegistryFactory;
+import org.diylc.core.components.registry.SpecificationRegistry;
+import org.diylc.core.components.registry.SpecificationRegistryFactory;
 import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +58,9 @@ public class Application implements ApplicationController {
     private static boolean running = false;
 
     private ComponentRegistry componentRegistry = null;
-
+    
+    private SpecificationRegistry specificationRegistry = null;
+    
     private final Map<String, Drawing> drawings = new LinkedHashMap<>();
 
     private AutoSave autoSave;
@@ -100,8 +104,10 @@ public class Application implements ApplicationController {
          * Load components
          */
         try {
+            SpecificationRegistryFactory specificationRegistryFactory = new SpecificationRegistryFactory();
+            specificationRegistry = specificationRegistryFactory.newSpecificationRegistry(splashScreen, specificationDirectories);
             ComponentRegistryFactory componentRegistryFactory = new ComponentRegistryFactory();
-            componentRegistry = componentRegistryFactory.newComponentRegistry(splashScreen, componentDirectories, specificationDirectories);
+            componentRegistry = componentRegistryFactory.newComponentRegistry(splashScreen, componentDirectories, specificationRegistry);
         } catch (IOException e) {
             LOG.error("Error loading components", e);
         }
@@ -127,7 +133,7 @@ public class Application implements ApplicationController {
                     Path path = null;
                     try {
                         path = Paths.get(args[0]);
-                        Project project = ProjectDeserializer.loadProjectFromFile(path);
+                        Project project = ProjectDeserializer.loadProjectFromFile(componentRegistry, path);
                         createProject(project, path);
                     } catch (Exception e) {
                         LOG.error("Could not open project " + path.toString());
@@ -275,7 +281,7 @@ public class Application implements ApplicationController {
         if (path != null) {
             new Async().execute(() -> {
                 LOG.debug("Opening from " + path.toAbsolutePath().normalize());
-                Project project = ProjectDeserializer.loadProjectFromFile(path);
+                Project project = ProjectDeserializer.loadProjectFromFile(componentRegistry, path);
                 createProject(project, path);
                 return null;
             }, Async.onSuccess((result) -> {
@@ -300,7 +306,7 @@ public class Application implements ApplicationController {
                 /*
                  * Load project in temp presenter
                  */
-                Project project = ProjectDeserializer.loadProjectFromFile(path);
+                Project project = ProjectDeserializer.loadProjectFromFile(componentRegistry, path);
                 /*
                  * Grab all components and paste them into the main presenter
                  */
@@ -364,6 +370,11 @@ public class Application implements ApplicationController {
 
     public ComponentRegistry getComponentRegistry() {
         return componentRegistry;
+    }
+
+    @Override
+    public SpecificationRegistry getSpecificationRegistry() {
+        return specificationRegistry;
     }
 
 }

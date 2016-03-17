@@ -5,7 +5,6 @@ import org.diylc.components.Colors
 import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Composite
-import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.Rectangle
 import java.awt.Shape
@@ -15,42 +14,57 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.HorizontalAlignment;
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.ComponentState
+import org.diylc.core.components.annotations.ComponentEditOptions;
+import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VerticalAlignment;
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.VisibilityPolicy
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-@ComponentDescriptor(name = "Humbucker Pickup", category = "Guitar", author = "Branislav Stojkovic", description = "PAF-style humbucker guitar pickup", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false)
+@ComponentEditOptions(stretchable = false)
+@ComponentDescriptor(name = "Humbucker Pickup", category = "Guitar", author = "Branislav Stojkovic", description = "PAF-style humbucker guitar pickup", instanceNamePrefix = "PKP")
 public class HumbuckerPickup extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "f83986c2-ef29-4244-a6db-c50ecd4778fd"
+    
     private static final long serialVersionUID = 1L
 
     private static Color BODY_COLOR = Color.lightGray
+    
     private static Color POINT_COLOR = Color.darkGray
+    
     private static Size WIDTH = new Size(36.5d, SizeUnit.mm)
+    
     private static Size LENGTH = new Size(68.58d, SizeUnit.mm)
+    
     private static Size LIP_WIDTH = new Size(12.7d, SizeUnit.mm)
+    
     private static Size LIP_LENGTH = new Size(7.9d, SizeUnit.mm)
+    
     private static Size EDGE_RADIUS = new Size(4d, SizeUnit.mm)
+    
     private static Size POINT_MARGIN = new Size(5d, SizeUnit.mm)
+    
     private static Size POINT_SIZE = new Size(3d, SizeUnit.mm)
+    
     private static Size LIP_HOLE_SIZE = new Size(1.5d, SizeUnit.mm)
+    
     private static Size POLE_SIZE = new Size(3d, SizeUnit.mm)
+    
     private static Size POLE_SPACING = new Size(10.1d, SizeUnit.mm)
+    
     private static Size COIL_SPACING = new Size(18d, SizeUnit.mm)
 
     private Point controlPoint = new Point(0, 0)

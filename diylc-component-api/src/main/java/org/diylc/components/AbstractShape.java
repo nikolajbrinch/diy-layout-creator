@@ -3,8 +3,9 @@ package org.diylc.components;
 import java.awt.Color;
 import java.awt.Point;
 
-import org.diylc.core.VisibilityPolicy;
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.VisibilityPolicy;
+import org.diylc.core.components.properties.EditableProperty;
+
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 

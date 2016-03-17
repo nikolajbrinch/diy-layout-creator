@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
+import org.diylc.core.components.VisibilityPolicy;
 
 public class ControlPointsRenderer extends AbstractBasicRenderer {
 

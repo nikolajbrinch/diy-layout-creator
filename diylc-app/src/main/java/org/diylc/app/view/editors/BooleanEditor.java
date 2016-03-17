@@ -6,7 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.utils.Constants;
 
 public class BooleanEditor extends JCheckBox {
@@ -15,9 +16,9 @@ public class BooleanEditor extends JCheckBox {
 
 	private Color oldBg = getBackground();
 
-    private PropertyWrapper property;
+    private PropertyDescriptor property;
 
-	public BooleanEditor(final PropertyWrapper property) {
+	public BooleanEditor(final PropertyDescriptor property) {
 		super();
         this.property = property;
 		setSelected((Boolean) property.getValue());

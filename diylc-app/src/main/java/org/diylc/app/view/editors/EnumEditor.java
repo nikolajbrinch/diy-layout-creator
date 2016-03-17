@@ -7,7 +7,8 @@ import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.utils.Constants;
 
 public class EnumEditor extends JComboBox<Object> {
@@ -16,9 +17,9 @@ public class EnumEditor extends JComboBox<Object> {
 
 	private Color oldBg = getBackground();
 
-	private final PropertyWrapper property;
+	private final PropertyDescriptor property;
 
-	public EnumEditor(final PropertyWrapper property) {
+	public EnumEditor(final PropertyDescriptor property) {
 		this.property = property;
 		Object[] values = property.getType().getEnumConstants();
 		setModel(new DefaultComboBoxModel<Object>(values));

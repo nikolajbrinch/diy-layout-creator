@@ -10,10 +10,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.diylc.appframework.update.VersionNumber;
-import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
+import org.diylc.core.components.properties.EditableProperty;
+import org.diylc.core.components.properties.PositiveMeasureValidator;
 
 /**
  * Entity class that defines a project. Contains project properties and a

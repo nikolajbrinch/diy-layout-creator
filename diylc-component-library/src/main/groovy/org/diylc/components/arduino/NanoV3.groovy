@@ -1,29 +1,17 @@
 package org.diylc.components.arduino
 
-import org.diylc.components.AbstractComponent
-import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.Angle
-import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
-import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
 import org.diylc.components.Constants.Placement
-import org.diylc.components.Pin;
-import org.diylc.components.PinBase;
-import org.diylc.core.ComponentState
-import org.diylc.core.HorizontalAlignment
-import org.diylc.core.IDIYComponent
-import org.diylc.core.IDrawingObserver
+import org.diylc.components.Pin
+import org.diylc.components.PinBase
+import org.diylc.core.components.annotations.ComponentBomPolicy;
+import org.diylc.core.components.annotations.ComponentDescriptor
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.Orientation
-import org.diylc.core.Project
-import org.diylc.core.VerticalAlignment
-import org.diylc.core.VisibilityPolicy
-import org.diylc.core.annotations.BomPolicy
-import org.diylc.core.annotations.EditableProperty
-import org.diylc.core.graphics.GraphicsContext
+import org.diylc.core.components.BomPolicy
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
-import org.diylc.core.utils.Constants
 
 import java.awt.*
 import java.awt.geom.AffineTransform
@@ -31,8 +19,11 @@ import java.awt.geom.Area
 import java.util.List
 
 
-@ComponentDescriptor(name = "Arduino Nano V3.0", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Arduino", description = "Arduino Nano V3.0", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
+@ComponentBomPolicy(BomPolicy.SHOW_ONLY_TYPE_NAME)
+@ComponentDescriptor(name = "Arduino Nano V3.0", category = "Arduino", author = "Nikolaj Brinch Jørgensen", instanceNamePrefix = "Arduino", description = "Arduino Nano V3.0")
 public class NanoV3 extends AbstractArduino implements Geometry {
+
+    public static final String id = "6a4967b3-0fc9-4a07-b0a1-12e107401457"
 
     private static final long serialVersionUID = 1L
 
@@ -103,7 +94,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
                 x1 = Math.min(point.x, x1)
                 y1 = Math.min(point.y, y1)
             }
-            
+
             int width = 2 * margin + padSize + ROW_PIN_COUNT * spacing + spacing
             int height = 2 * margin + padSize + ROW_SPACING * spacing
 

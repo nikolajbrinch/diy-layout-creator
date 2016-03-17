@@ -2,10 +2,10 @@ package org.diylc.components.registry;
 
 import java.util.Comparator;
 
-import org.diylc.core.ComponentType;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.PropertyWrapper;
-import org.diylc.specifications.Specification;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.IDIYComponent;
+import org.diylc.core.components.properties.PropertyDescriptor;
+import org.diylc.core.components.properties.PropertyModel;
 
 public class ComparatorFactory {
 
@@ -13,13 +13,13 @@ public class ComparatorFactory {
 
     private Comparator<IDIYComponent> componentNameComparator;
     
-    private Comparator<ComponentType> componentTypeComparator;
+    private Comparator<ComponentModel> componentTypeComparator;
     
-    private Comparator<PropertyWrapper> propertyNameComparator;
+    private Comparator<PropertyDescriptor> propertyNameComparator;
     
     private Comparator<IDIYComponent> componentZOrderComparator;
 
-    private Comparator<Specification> specificationNameComparator;
+    private Comparator<PropertyModel> specificationNameComparator;
     
     public static ComparatorFactory getInstance() {
         return instance;
@@ -43,12 +43,12 @@ public class ComparatorFactory {
         return componentNameComparator;
     }
 
-    public Comparator<ComponentType> getComponentTypeComparator() {
+    public Comparator<ComponentModel> getComponentTypeComparator() {
         if (componentTypeComparator == null) {
-            componentTypeComparator = new Comparator<ComponentType>() {
+            componentTypeComparator = new Comparator<ComponentModel>() {
 
                 @Override
-                public int compare(ComponentType o1, ComponentType o2) {
+                public int compare(ComponentModel o1, ComponentModel o2) {
                     return o1.getName().compareToIgnoreCase(o2.getName());
                 }
             };
@@ -56,12 +56,12 @@ public class ComparatorFactory {
         return componentTypeComparator;
     }
 
-    public Comparator<PropertyWrapper> getPropertyNameComparator() {
+    public Comparator<PropertyDescriptor> getPropertyNameComparator() {
         if (propertyNameComparator == null) {
-            propertyNameComparator = new Comparator<PropertyWrapper>() {
+            propertyNameComparator = new Comparator<PropertyDescriptor>() {
 
                 @Override
-                public int compare(PropertyWrapper o1, PropertyWrapper o2) {
+                public int compare(PropertyDescriptor o1, PropertyDescriptor o2) {
                     return o1.getName().compareToIgnoreCase(o2.getName());
                 }
 
@@ -76,22 +76,22 @@ public class ComparatorFactory {
 
                 @Override
                 public int compare(IDIYComponent o1, IDIYComponent o2) {
-                    ComponentType type1 = o1.getComponentType();
-                    ComponentType type2 = o2.getComponentType();
-
-                    return new Double(type1.getZOrder()).compareTo(new Double(type2.getZOrder()));
+                    ComponentModel model1 = o1.getComponentModel();
+                    ComponentModel model2 = o2.getComponentModel();
+                    
+                    return new Double(model1.getZOrder()).compareTo(new Double(model2.getZOrder()));
                 }
             };
         }
         return componentZOrderComparator;
     }
 
-    public Comparator<Specification> getSpecificationNameComparator() {
+    public Comparator<PropertyModel> getSpecificationNameComparator() {
         if (specificationNameComparator == null) {
-            specificationNameComparator = new Comparator<Specification>() {
+            specificationNameComparator = new Comparator<PropertyModel>() {
 
                 @Override
-                public int compare(Specification o1, Specification o2) {
+                public int compare(PropertyModel o1, PropertyModel o2) {
                     return o1.getName().compareTo(o2.getName());
                 }
             };

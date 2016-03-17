@@ -12,7 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.diylc.app.view.editors.PropertiesEditor;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.properties.PropertyDescriptor;
+
 import org.diylc.core.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +24,11 @@ public class PropertyEditorDialog extends ButtonDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<PropertyWrapper> properties;
+	private List<PropertyDescriptor> properties;
 
-	private Set<PropertyWrapper> defaultedProperties;
+	private Set<PropertyDescriptor> defaultedProperties;
 
-	public PropertyEditorDialog(JFrame owner, List<PropertyWrapper> properties,
+	public PropertyEditorDialog(JFrame owner, List<PropertyDescriptor> properties,
 			String title) {
 		super(owner, title,
 				new String[] { ButtonDialog.OK, ButtonDialog.CANCEL });
@@ -35,7 +36,7 @@ public class PropertyEditorDialog extends ButtonDialog {
 		LOG.debug("Creating property editor for: " + properties);
 
 		this.properties = properties;
-		this.defaultedProperties = new HashSet<PropertyWrapper>();
+		this.defaultedProperties = new HashSet<PropertyDescriptor>();
 
 		setMinimumSize(new Dimension(240, 40));
 
@@ -46,7 +47,7 @@ public class PropertyEditorDialog extends ButtonDialog {
 	@Override
 	protected boolean validateInput(String button) {
 		if (button.equals(ButtonDialog.OK)) {
-			for (PropertyWrapper property : properties) {
+			for (PropertyDescriptor property : properties) {
 				try {
 					property.getValidator().validate(property.getValue());
 				} catch (ValidationException ve) {
@@ -62,11 +63,11 @@ public class PropertyEditorDialog extends ButtonDialog {
 		return true;
 	}
 
-	public Set<PropertyWrapper> getDefaultedProperties() {
+	public Set<PropertyDescriptor> getDefaultedProperties() {
 		return defaultedProperties;
 	}
 
-	public static boolean showFor(JFrame owner, List<PropertyWrapper> properties, String title) {
+	public static boolean showFor(JFrame owner, List<PropertyDescriptor> properties, String title) {
 		PropertyEditorDialog editor = new PropertyEditorDialog(owner, properties, title);
 		editor.setVisible(true);
 		

@@ -13,7 +13,7 @@ import java.util.Set;
 import org.diylc.app.view.canvas.IDrawingProvider;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.components.PCBLayer;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.IDIYComponent;
 
 /**
  * {@link IDrawingProvider} implementation that uses {@link IPlugInPort} to draw

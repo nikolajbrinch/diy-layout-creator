@@ -12,10 +12,10 @@ import org.diylc.app.model.Model;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.app.view.View;
-import org.diylc.core.Resource;
-import org.diylc.core.ResourceLoader;
 import org.diylc.core.Theme;
 import org.diylc.core.config.Configuration;
+import org.diylc.core.resources.Resource;
+import org.diylc.core.resources.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

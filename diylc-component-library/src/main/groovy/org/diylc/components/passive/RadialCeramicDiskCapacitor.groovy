@@ -7,25 +7,34 @@ import java.awt.Shape
 import java.awt.geom.Ellipse2D
 
 import org.diylc.components.AbstractRadialComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
-import org.diylc.core.IDIYComponent
-import org.diylc.core.annotations.EditableProperty
-import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.annotations.ComponentAutoEdit;
+import org.diylc.core.components.annotations.ComponentCreationMethod;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.CreationMethod
+import org.diylc.core.components.IDIYComponent
+import org.diylc.core.components.properties.EditableProperty;
+import org.diylc.core.components.properties.PositiveMeasureValidator
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Capacitance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
-@ComponentDescriptor(name = "Ceramic Capacitor (radial)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Standard radial ceramic capacitor", zOrder = IDIYComponent.COMPONENT)
+@ComponentAutoEdit
+@ComponentCreationMethod(CreationMethod.POINT_BY_POINT)
+@ComponentDescriptor(name = "Ceramic Capacitor (radial)", author = "Branislav Stojkovic", category = "Passive", instanceNamePrefix = "C", description = "Standard radial ceramic capacitor")
 public class RadialCeramicDiskCapacitor extends AbstractRadialComponent {
 
+    public static final String id = "dd6eb178-4d15-40d8-9375-609755a60411"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size DEFAULT_WIDTH = new Size(1d / 4, SizeUnit.in)
-	public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
-	public static Color BODY_COLOR = Color.decode("#F0E68C")
-	public static Color BORDER_COLOR = BODY_COLOR.darker()
+	private static Size DEFAULT_WIDTH = new Size(1d / 4, SizeUnit.in)
+	
+    private static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
+	
+    private static Color BODY_COLOR = Color.decode("#F0E68C")
+	
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)
 	Capacitance value = null

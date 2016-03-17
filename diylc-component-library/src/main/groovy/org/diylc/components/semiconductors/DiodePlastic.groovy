@@ -7,28 +7,40 @@ import java.awt.Shape
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractLeadedComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
-import org.diylc.core.IDIYComponent
+import org.diylc.core.components.annotations.ComponentAutoEdit;
+import org.diylc.core.components.annotations.ComponentCreationMethod;
+import org.diylc.core.components.annotations.ComponentDescriptor;
+import org.diylc.core.components.CreationMethod
+import org.diylc.core.components.IDIYComponent
 import org.diylc.core.Theme
-import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
-@ComponentDescriptor(name = "Diode (plastic)", author = "Branislav Stojkovic", category = "Semiconductors", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Plastic diode, like most rectifier, zener, schottky, etc.", zOrder = IDIYComponent.COMPONENT)
+@ComponentAutoEdit
+@ComponentCreationMethod(CreationMethod.POINT_BY_POINT)
+@ComponentDescriptor(name = "Diode (plastic)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "D", description = "Plastic diode, like most rectifier, zener, schottky, etc.")
 public class DiodePlastic extends AbstractLeadedComponent {
 
+    public static final String id = "3a0eb638-786d-421e-87d1-3711f9f84854"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size DEFAULT_WIDTH = new Size(1d / 4, SizeUnit.in)
-	public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
-	public static Size MARKER_WIDTH = new Size(1d, SizeUnit.mm)
-	public static Color BODY_COLOR = Color.darkGray
-	public static Color MARKER_COLOR = Color.decode("#DDDDDD")
-	public static Color LABEL_COLOR = Color.white
-	public static Color BORDER_COLOR = BODY_COLOR.darker()
+	private static Size DEFAULT_WIDTH = new Size(1d / 4, SizeUnit.in)
+	
+    private static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
+	
+    private static Size MARKER_WIDTH = new Size(1d, SizeUnit.mm)
+	
+    private static Color BODY_COLOR = Color.darkGray
+	
+    private static Color MARKER_COLOR = Color.decode("#DDDDDD")
+	
+    private static Color LABEL_COLOR = Color.white
+	
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
 
 	@EditableProperty
 	String value = ""

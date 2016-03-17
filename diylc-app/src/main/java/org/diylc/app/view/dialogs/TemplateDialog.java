@@ -38,9 +38,10 @@ import org.diylc.app.view.Presenter;
 import org.diylc.app.view.StubPresenter;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.core.Project;
-import org.diylc.core.Resource;
-import org.diylc.core.ResourceLoader;
 import org.diylc.core.config.Configuration;
+import org.diylc.core.components.registry.ComponentRegistry;
+import org.diylc.core.resources.Resource;
+import org.diylc.core.resources.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,7 +188,7 @@ public class TemplateDialog extends JDialog {
                     Path path = (Path) fileList.getSelectedValue();
                     if (path != null) {
                         try {
-                            Project project = ProjectDeserializer.loadProjectFromFile(path);
+                            Project project = ProjectDeserializer.loadProjectFromFile(getComponentRegistry(), path);
                             presenter.loadProject(project, true);
                         } catch (Exception e1) {
                             throw new RuntimeException(e1);
@@ -205,6 +206,10 @@ public class TemplateDialog extends JDialog {
         return fileList;
     }
 
+    private ComponentRegistry getComponentRegistry() {
+        return presenter.getComponentRegistry();
+    }
+    
     public JCheckBox getShowTemplatesBox() {
         if (showTemplatesBox == null) {
             showTemplatesBox = new JCheckBox("Show this dialog at startup");

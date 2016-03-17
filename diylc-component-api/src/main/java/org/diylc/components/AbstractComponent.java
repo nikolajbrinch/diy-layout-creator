@@ -16,11 +16,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import org.diylc.core.ComponentType;
 import org.diylc.core.HorizontalAlignment;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.IDIYComponent;
 import org.diylc.core.VerticalAlignment;
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.properties.EditableProperty;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.platform.Platform;
 
@@ -40,7 +40,7 @@ public abstract class AbstractComponent implements IDIYComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private ComponentType componentType = null;
+    private transient ComponentModel componentModel;
 
     @EditableProperty(defaultable = false)
     protected String name = "";
@@ -58,13 +58,13 @@ public abstract class AbstractComponent implements IDIYComponent {
     }
 
     @Override
-    public ComponentType getComponentType() {
-        return componentType;
+    public ComponentModel getComponentModel() {
+        return componentModel;
     }
 
     @Override
-    public void setComponentType(ComponentType componentType) {
-        this.componentType = componentType;
+    public void setComponentModel(ComponentModel componentModel) {
+        this.componentModel = componentModel;
     }
 
     @Override
