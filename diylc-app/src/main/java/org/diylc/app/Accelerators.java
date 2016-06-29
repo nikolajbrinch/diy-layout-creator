@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import com.sun.javafx.util.Utils;
+import org.diylc.core.utils.SystemUtils;
 
 /**
  * @author nikolajbrinch@gmail.com
@@ -61,7 +61,7 @@ public class Accelerators {
     public static final KeyStroke MINIMIZE = KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
     static {
-        if (Utils.isMac()) {
+        if (SystemUtils.isMac()) {
             SEND_TO_BACK = KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                     | ActionEvent.SHIFT_MASK);
             BRING_TO_FRONT = KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()

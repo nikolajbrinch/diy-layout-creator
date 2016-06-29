@@ -2,7 +2,7 @@ package org.diylc.app.utils;
 
 import java.util.Arrays;
 
-import com.sun.javafx.util.Utils;
+import org.diylc.core.utils.SystemUtils;
 
 /**
  * @author nikolajbrinch@gmail.com
@@ -29,10 +29,10 @@ public class BrowserUtils {
             /*
              * library not available or failed
              */
-            if (Utils.isMac()) {
+            if (SystemUtils.isMac()) {
                 Class.forName("com.apple.eio.FileManager").getDeclaredMethod("openURL", new Class[] { String.class })
                         .invoke(null, new Object[] { url });
-            } else if (Utils.isWindows()) {
+            } else if (SystemUtils.isWindows()) {
                 Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
             } else {
                 /*
