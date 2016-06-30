@@ -10,10 +10,9 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 
 import org.diylc.app.utils.AppIconLoader;
+import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.javafx.util.Utils;
 
 /**
  * Utility that handles undo/redo operations. Use {@link #getUndoAction()} and
@@ -119,7 +118,7 @@ public class UndoHandler<T> {
 		public RedoAction() {
 			super();
 			putValue(Action.NAME, "Redo");
-			if (Utils.isMac()) {
+			if (SystemUtils.isMac()) {
 				putValue(AbstractAction.ACCELERATOR_KEY,
 						KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit
 								.getDefaultToolkit().getMenuShortcutKeyMask()
