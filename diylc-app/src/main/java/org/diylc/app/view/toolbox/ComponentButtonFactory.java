@@ -22,9 +22,9 @@ import javax.swing.SwingUtilities;
 
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
+import org.diylc.core.components.ComponentModel;
 import org.openide.awt.DropDownButtonFactory;
 
 /**
@@ -37,19 +37,19 @@ class ComponentButtonFactory {
 
     public static int MARGIN = 3;
 
-    public static JButton create(final IPlugInPort plugInPort, final ComponentType componentType, final JPopupMenu menu) {
-        JButton button = DropDownButtonFactory.createDropDownButton(componentType.getIcon(), menu);
+    public static JButton create(final IPlugInPort plugInPort, final ComponentModel componentModel, final JPopupMenu menu) {
+        JButton button = DropDownButtonFactory.createDropDownButton(componentModel.getIcon(), menu);
 
         button.setBorder(BorderFactory.createEmptyBorder(MARGIN + 1, MARGIN + 1, MARGIN, MARGIN));
 
-        button.setToolTipText("<html><b>" + componentType.getName() + "</b><br>" + componentType.getDescription() + "<br>Author: "
-                + componentType.getAuthor() + "<br><br>Right click to select all components of this type" + "</html>");
+        button.setToolTipText("<html><b>" + componentModel.getName() + "</b><br>" + componentModel.getDescription() + "<br>Author: "
+                + componentModel.getAuthor() + "<br><br>Right click to select all components of this type" + "</html>");
 
         button.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                plugInPort.setNewComponentTypeSlot(componentType, null);
+                plugInPort.setNewComponentTypeSlot(componentModel, null);
             }
         });
 
@@ -61,7 +61,7 @@ class ComponentButtonFactory {
                     List<IDIYComponent> components = plugInPort.getCurrentProject().getComponents();
                     List<IDIYComponent> newSelection = new ArrayList<IDIYComponent>();
                     for (IDIYComponent component : components) {
-                        if (componentType.getInstanceClass().equals(component.getClass())) {
+                        if (componentModel.getInstanceClass().equals(component.getClass())) {
                             newSelection.add(component);
                         }
                     }
@@ -86,7 +86,7 @@ class ComponentButtonFactory {
         return button;
     }
 
-    public static JMenuItem createTemplateItem(final IPlugInPort plugInPort, final Template template, final ComponentType componentType) {
+    public static JMenuItem createTemplateItem(final IPlugInPort plugInPort, final Template template, final ComponentModel componentModel) {
         final JMenuItem item = new JMenuItem(template.getName()) {
 
             private static final long serialVersionUID = 1L;
@@ -105,7 +105,7 @@ class ComponentButtonFactory {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                plugInPort.setNewComponentTypeSlot(componentType, template);
+                plugInPort.setNewComponentTypeSlot(componentModel, template);
             }
         });
         JLabel label = new JLabel(AppIconLoader.Garbage.getIcon());
@@ -127,7 +127,7 @@ class ComponentButtonFactory {
                 if (result != JOptionPane.YES_OPTION) {
                     return;
                 }
-                plugInPort.deleteTemplate(componentType.getCategory(), componentType.getName(), template.getName());
+                plugInPort.deleteTemplate(componentModel.getCategory(), componentModel.getName(), template.getName());
                 e.consume();
             }
         });

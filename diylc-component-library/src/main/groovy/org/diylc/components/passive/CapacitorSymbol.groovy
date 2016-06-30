@@ -6,28 +6,34 @@ import java.awt.Shape
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractSchematicLeadedSymbol
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Capacitance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 @ComponentDescriptor(name = "Capacitor (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Capacitor schematic symbol with an optional polarity sign", zOrder = IDIYComponent.COMPONENT)
 public class CapacitorSymbol extends AbstractSchematicLeadedSymbol {
 
+    public static final String id = "86533907-680b-4d8c-8a81-4d49fa320581"
+
     private static final long serialVersionUID = 1L
 
-    public static Size DEFAULT_LENGTH = new Size(0.05, SizeUnit.in)
-    public static Size DEFAULT_WIDTH = new Size(0.15, SizeUnit.in)
+    private static Size DEFAULT_LENGTH = new Size(0.05, SizeUnit.in)
+
+    private static Size DEFAULT_WIDTH = new Size(0.15, SizeUnit.in)
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)
     Capacitance value = null
 
     @Deprecated
+    @JsonIgnore
     Voltage voltage = Voltage._63V
 
     @EditableProperty(name = "Voltage")

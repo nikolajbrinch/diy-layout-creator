@@ -8,23 +8,33 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public abstract class AbstractShape  extends AbstractTransparentComponent {
 
 	private static final long serialVersionUID = 1L;
 
 	public static Size DEFAULT_WIDTH = new Size(0.6d, SizeUnit.in);
+	
 	public static Size DEFAULT_HEIGHT = new Size(0.4d, SizeUnit.in);
 
 	protected String value = "";
+
+	@JsonProperty
 	protected Point[] controlPoints = new Point[] {
 			new Point(0, 0),
 			new Point((int) DEFAULT_WIDTH.convertToPixels(),
 					(int) DEFAULT_HEIGHT.convertToPixels()) };
+	
 	protected Point firstPoint = new Point();
+	
 	protected Point secondPoint = new Point();
 
+	
 	protected Color color = Colors.SHAPE_FILL_COLOR;
+	
 	protected Color borderColor = Colors.SHAPE_BORDER_COLOR;
+	
 	protected Size borderThickness = new Size(0.2d, SizeUnit.mm);
 
 	@EditableProperty(name = "Color")

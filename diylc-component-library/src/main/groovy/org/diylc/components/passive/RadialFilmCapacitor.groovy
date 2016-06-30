@@ -7,30 +7,38 @@ import java.awt.Shape
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractRadialComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Capacitance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @ComponentDescriptor(name = "Film Capacitor (radial)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Radial film capacitor, similar to Sprague Orange Drop", zOrder = IDIYComponent.COMPONENT)
 public class RadialFilmCapacitor extends AbstractRadialComponent {
 
+    public static final String id = "73226f94-48d4-4b8b-88a6-9de4652740b8"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size DEFAULT_WIDTH = new Size(1d / 4, SizeUnit.in)
-	public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
-	public static Color BODY_COLOR = Color.decode("#FF8000")
-	public static Color BORDER_COLOR = BODY_COLOR.darker()
+	private static Size DEFAULT_WIDTH = new Size(1d / 4, SizeUnit.in)
+	
+    private static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
+	
+    private static Color BODY_COLOR = Color.decode("#FF8000")
+	
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-	private Capacitance value = null
+	Capacitance value = null
 	
     @Deprecated
+    @JsonIgnore
 	Voltage voltage = Voltage._63V
 
     @EditableProperty(name = "Voltage")
@@ -42,37 +50,38 @@ public class RadialFilmCapacitor extends AbstractRadialComponent {
 		this.borderColor = BORDER_COLOR
 	}
 
-	public Capacitance getValue() {
-		return this.@value
-	}
+//	public Capacitance getValue() {
+//		return this.@value
+//	}
+//
+//	public void setValue(Capacitance value) {
+//		this.@value = value
+//	}
 
-	public void setValue(Capacitance value) {
-		this.@value = value
-	}
-
+    @JsonIgnore
 	@Override
 	public String getValueForDisplay() {
 		return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString())
 	}
 
-	@Deprecated
-	public Voltage getVoltage() {
-		return this.@voltage
-	}
+//	@Deprecated
+//	public Voltage getVoltage() {
+//		return this.@voltage
+//	}
+//
+//	@Deprecated
+//	public void setVoltage(Voltage voltage) {
+//		this.@voltage = voltage
+//	}
 
-	@Deprecated
-	public void setVoltage(Voltage voltage) {
-		this.@voltage = voltage
-	}
-
-	public Voltage getVoltageNew() {
-		return this.@voltageNew
-	}
-
-	public void setVoltageNew(Voltage voltageNew) {
-		this.@voltageNew = voltageNew
-	}
-
+//	public Voltage getVoltageNew() {
+//		return this.@voltageNew
+//	}
+//
+//	public void setVoltageNew(Voltage voltageNew) {
+//		this.@voltageNew = voltageNew
+//	}
+//
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
 		graphicsContext.rotate(-Math.PI / 4, width / 2, height / 2)

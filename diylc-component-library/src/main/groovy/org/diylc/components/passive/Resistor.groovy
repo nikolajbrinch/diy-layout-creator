@@ -7,31 +7,41 @@ import java.awt.Shape
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractLeadedComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.ResistorColorCode
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Resistance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @ComponentDescriptor(name = "Resistor", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "R", description = "Resistor layout symbol", zOrder = IDIYComponent.COMPONENT)
 public class Resistor extends AbstractLeadedComponent {
 
+    public static final String id = "bb61d88a-55fa-4c74-ad91-abc4df7a2eba"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in)
-    public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
-    public static Color BODY_COLOR = Color.decode("#82CFFD")
-    public static Color BORDER_COLOR = BODY_COLOR.darker()
-    public static int BAND_SPACING = 5
-    public static int FIRST_BAND = 4
+    private static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in)
+    
+    private static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
+    
+    private static Color BODY_COLOR = Color.decode("#82CFFD")
+    
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
+    
+    private static int BAND_SPACING = 5
+    
+    private static int FIRST_BAND = 4
 
     @Deprecated
+    @JsonIgnore
     Power power = Power.HALF
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)

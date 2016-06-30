@@ -16,7 +16,6 @@ import javax.swing.SwingUtilities;
 import org.diylc.app.actions.GenericAction;
 import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.model.DrawingModel;
-import org.diylc.app.model.ProjectDeserializer;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.async.Async;
 import org.diylc.app.view.ISwingUI;
@@ -26,11 +25,14 @@ import org.diylc.app.view.View;
 import org.diylc.app.view.dialogs.DialogFactory;
 import org.diylc.app.view.dialogs.TemplateDialog;
 import org.diylc.app.view.menus.MenuConstants;
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.components.registry.ComponentRegistryFactory;
 import org.diylc.core.BootUtils;
 import org.diylc.core.LRU;
 import org.diylc.core.Project;
+import org.diylc.core.ProjectDeserializer;
+import org.diylc.core.components.registry.ComponentFactory;
+import org.diylc.core.components.registry.ComponentRegistry;
+import org.diylc.core.components.registry.ComponentRegistryFactory;
+import org.diylc.core.components.registry.DefaultComponentFactory;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.platform.DefaultQuitResponse;
 import org.diylc.core.platform.Platform;
@@ -41,30 +43,32 @@ import org.diylc.core.platform.RestartQuitResponse;
 import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author nikolajbrinch@gmail.com
  */
+@Component
 public class Application implements ApplicationController {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
     private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
-    private static Application application = new Application();
-
     private static boolean running = false;
 
     private ComponentRegistry componentRegistry = null;
 
-    private final Map<String, Drawing> drawings = new LinkedHashMap<>();
+    private ComponentFactory componentFactory = null;
 
     private AutoSave autoSave;
 
     private LRU<Path> lru = new LRU<Path>(15);
 
-    private Drawing currentDrawing;
-
+    @Autowired
+    private DrawingManager drawingManager;
+    
     private int fileNumber = 1;
 
     private Application() {
@@ -92,7 +96,7 @@ public class Application implements ApplicationController {
         }
 
         Path[] specificationDirectories = Configuration.INSTANCE.getSpecificationDirectories();
-        
+
         LOG.info("Starting DIYLC with working directory " + System.getProperty("user.dir"));
         LOG.info("Component directories: " + String.join(", ", paths));
 
@@ -102,6 +106,7 @@ public class Application implements ApplicationController {
         try {
             ComponentRegistryFactory componentRegistryFactory = new ComponentRegistryFactory();
             componentRegistry = componentRegistryFactory.newComponentRegistry(splashScreen, componentDirectories, specificationDirectories);
+            componentFactory = new DefaultComponentFactory();
         } catch (IOException e) {
             LOG.error("Error loading components", e);
         }
@@ -127,7 +132,7 @@ public class Application implements ApplicationController {
                     Path path = null;
                     try {
                         path = Paths.get(args[0]);
-                        Project project = ProjectDeserializer.loadProjectFromFile(path);
+                        Project project = new ProjectDeserializer(componentRegistry, componentFactory).readProject(path);
                         createProject(project, path);
                     } catch (Exception e) {
                         LOG.error("Could not open project " + path.toString());
@@ -153,8 +158,8 @@ public class Application implements ApplicationController {
         JMenuBar jMenuBar = new JMenuBar();
         JMenu fileMenu = new JMenu(MenuConstants.FILE_MENU);
         jMenuBar.add(fileMenu);
-        fileMenu.add(new GenericAction("New", AppIconLoader.DocumentPlainYellow.getIcon(), Accelerators.NEW, (event) -> createProject(null,
-                null)));
+        fileMenu.add(new GenericAction("New", AppIconLoader.DocumentPlainYellow.getIcon(), Accelerators.NEW,
+                (event) -> createProject(null, null)));
         fileMenu.add(new GenericAction("Open", AppIconLoader.FolderOut.getIcon(), Accelerators.OPEN, (event) -> open()));
         fileMenu.add(new JMenu(MenuConstants.FILE_OPEN_RECENT_MENU));
         fileMenu.addSeparator();
@@ -174,7 +179,8 @@ public class Application implements ApplicationController {
         boolean showTemplates = Configuration.INSTANCE.getShowTemplates();
 
         if (showTemplates) {
-            TemplateDialog templateDialog = new TemplateDialog(getCurrentView().getFrame(), getCurrentModel());
+            TemplateDialog templateDialog = new TemplateDialog(getCurrentView().getFrame(), getCurrentModel(), componentRegistry,
+                    componentFactory);
 
             if (!templateDialog.getFiles().isEmpty()) {
                 templateDialog.setVisible(true);
@@ -185,10 +191,11 @@ public class Application implements ApplicationController {
     private void warnScriptRun() {
         String val = System.getProperty(SCRIPT_RUN);
         if (!"true".equals(val)) {
-            int response = JOptionPane.showConfirmDialog(null, "It is not recommended to run DIYLC by clicking on the diylc.jar file.\n"
-                    + "Please use diylc.exe on Windows or run.sh on OSX/Linux to ensure the best\n"
-                    + "performance and reliability. Do you want to continue?", "DIYLC", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE);
+            int response = JOptionPane.showConfirmDialog(null,
+                    "It is not recommended to run DIYLC by clicking on the diylc.jar file.\n"
+                            + "Please use diylc.exe on Windows or run.sh on OSX/Linux to ensure the best\n"
+                            + "performance and reliability. Do you want to continue?",
+                    "DIYLC", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (response != JOptionPane.YES_OPTION) {
                 System.exit(0);
             }
@@ -201,21 +208,7 @@ public class Application implements ApplicationController {
     }
 
     public Drawing getCurrentDrawing() {
-        return currentDrawing;
-    }
-
-    public void setCurrentDrawing(Drawing drawing) {
-        this.currentDrawing = drawing;
-    }
-
-    private void addDrawing(Drawing drawing) {
-        drawings.put(drawing.getId(), drawing);
-
-        updateWindowMenu();
-    }
-
-    private void updateWindowMenu() {
-        getDrawings().stream().forEach((drawing) -> drawing.getView().refreshActions());
+        return drawingManager.getCurrentDrawing();
     }
 
     public View getCurrentView() {
@@ -229,24 +222,19 @@ public class Application implements ApplicationController {
     @Override
     public void addLruPath(Path path) {
         lru.addItem(path);
-        getDrawings().stream().forEach((drawing) -> drawing.getView().updateLru(lru));
+        drawingManager.updateLru(lru);
     }
 
     @Override
     public void removeLruPath(Path path) {
         lru.removeItem(path);
-        getDrawings().stream().forEach((drawing) -> drawing.getView().updateLru(lru));
+        drawingManager.updateLru(lru);
     }
 
-    public List<Drawing> getDrawings() {
-        return new ArrayList<Drawing>(drawings.values());
-    }
-
-    public Drawing createProject(Project project, Path path) {
-        Drawing drawing = new Drawing(this, project != null ? project : new Project(), path != null ? path : createPath(), path != null);
-        addDrawing(drawing);
-
-        setCurrentDrawing(drawing);
+    public Drawing createProject(final Project project, final Path path) {
+        Drawing drawing = drawingManager.newDrawing(this, project != null ? project : new Project(), path != null ? path : createPath(), path != null);
+        
+        drawingManager.refreshActions();
 
         drawing.getView().updateLru(lru);
 
@@ -263,7 +251,7 @@ public class Application implements ApplicationController {
     public void open() {
         LOG.info("OpenAction triggered");
         final Path path = DialogFactory.getInstance().showOpenDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(),
-                null, FileFilterEnum.DIY.getExtensions()[0], null);
+                null, FileFilterEnum.DIY.getExtensions()[1], null);
 
         if (path != null) {
             open(path);
@@ -275,10 +263,10 @@ public class Application implements ApplicationController {
         if (path != null) {
             new Async().execute(() -> {
                 LOG.debug("Opening from " + path.toAbsolutePath().normalize());
-                Project project = ProjectDeserializer.loadProjectFromFile(path);
+                Project project = new ProjectDeserializer(componentRegistry, componentFactory).readProject(path);
                 createProject(project, path);
                 return null;
-            }, Async.onSuccess((result) -> {
+            } , Async.onSuccess((result) -> {
                 Configuration.INSTANCE.setLastPath(path.getParent().toAbsolutePath().normalize());
                 addLruPath(path);
             }), Async.onError((Exception e) -> {
@@ -300,7 +288,7 @@ public class Application implements ApplicationController {
                 /*
                  * Load project in temp presenter
                  */
-                Project project = ProjectDeserializer.loadProjectFromFile(path);
+                Project project = new ProjectDeserializer(componentRegistry, componentFactory).readProject(path);
                 /*
                  * Grab all components and paste them into the main presenter
                  */
@@ -313,14 +301,14 @@ public class Application implements ApplicationController {
                 presenter.selectAll(0);
                 presenter.deleteSelectedComponents();
                 return null;
-            }, Async.onError((Exception e) -> {
+            } , Async.onError((Exception e) -> {
                 getCurrentView().showMessage("Could not open file. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
             }));
         }
     }
 
     public void exit(QuitResponse response) {
-        if (getDrawings().stream().map((drawing) -> drawing.close()).noneMatch((closed) -> !closed)) {
+        if (drawingManager.closeAll()) {
             Configuration.INSTANCE.setAbnormalExit(false);
             if (response instanceof RestartQuitResponse) {
                 BootUtils.installRestarer(new Restarter(new String[0]));
@@ -338,24 +326,11 @@ public class Application implements ApplicationController {
 
     @Override
     public void switchWindow(String drawingId) {
-        Drawing drawing = drawings.get(drawingId);
-        drawing.getView().requestFocus();
-        setCurrentDrawing(drawing);
+        drawingManager.setCurrentDrawing(drawingId);
     }
 
     public void closeDrawing(String drawingId) {
-        Drawing drawing = drawings.get(drawingId);
-
-        if (drawing != null && drawing.close()) {
-            drawings.remove(drawingId);
-            setCurrentDrawing(getDrawings().isEmpty() ? null : getDrawings().get(0));
-
-            updateWindowMenu();
-        }
-    }
-
-    public static Application getApplication() {
-        return application;
+        drawingManager.closeDrawing(drawingId);
     }
 
     public void showMessage(String message, String title, int messageType) {
@@ -366,4 +341,12 @@ public class Application implements ApplicationController {
         return componentRegistry;
     }
 
+    public ComponentFactory getComponentFactory() {
+        return componentFactory;
+    }
+
+    @Override
+    public DrawingManager getDrawingManager() {
+        return drawingManager;
+    }
 }

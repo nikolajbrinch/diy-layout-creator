@@ -7,35 +7,45 @@ import java.awt.Shape
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractLeadedComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Theme
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Capacitance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @ComponentDescriptor(name = "Electrolytic Capacitor (axial)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Axial electrolytic capacitor, similar to Sprague Atom, F&T, etc", zOrder = IDIYComponent.COMPONENT)
 public class AxialElectrolyticCapacitor extends AbstractLeadedComponent {
 
+    public static final String id = "513075ee-b4b5-4850-afbc-4353b231c5fe"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in)
-    public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
-    public static Color BODY_COLOR = Color.decode("#EAADEA")
-    public static Color BORDER_COLOR = BODY_COLOR.darker()
-    public static Color MARKER_COLOR = Color.gray
-    public static Color TICK_COLOR = Color.white
+    private static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in)
+    
+    private static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
+    
+    private static Color BODY_COLOR = Color.decode("#EAADEA")
+    
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
+    
+    private static Color MARKER_COLOR = Color.gray
+    
+    private static Color TICK_COLOR = Color.white
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)
     Capacitance value = null
 
     @Deprecated
+    @JsonIgnore
     Voltage voltage = Voltage._63V
 
     @EditableProperty(name = "Voltage")

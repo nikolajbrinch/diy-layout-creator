@@ -11,7 +11,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.core.ComponentState;
 import org.diylc.core.Display;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ObjectCache;
@@ -19,6 +18,7 @@ import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
@@ -38,6 +38,7 @@ public abstract class AbstractLeadedComponent extends
 	private static final long serialVersionUID = 1L;
 
 	public static Size LEAD_THICKNESS = new Size(0.6d, SizeUnit.mm);
+	
 	public static Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
 
     @EditableProperty(name = "Length", defaultable = true)
@@ -46,7 +47,7 @@ public abstract class AbstractLeadedComponent extends
 	@EditableProperty(name = "Width", defaultable = true)
 	protected Size width;
 	
-	protected Point[] points = new Point[] {
+	private Point[] points = new Point[] {
 			new Point((int) (-DEFAULT_SIZE.convertToPixels() / 2), 0),
 			new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0) };
 	
@@ -83,19 +84,19 @@ public abstract class AbstractLeadedComponent extends
 	public void draw(GraphicsContext graphicsContext, ComponentState componentState,
 					 boolean outlineMode, Project project,
 					 IDrawingObserver drawingObserver) {
-		double distance = points[0].distance(points[1]);
+		double distance = getPoints()[0].distance(getPoints()[1]);
 		Shape shape = getBodyShape();
 		// If there's no body, just draw the line connecting the ending points.
 		if (shape == null) {
 			drawLead(graphicsContext, componentState);
 		} else if (supportsStandingMode()
-				&& length.convertToPixels() > points[0].distance(points[1])) {
+				&& length.convertToPixels() > getPoints()[0].distance(getPoints()[1])) {
 			// When ending points are too close draw the component in standing
 			// mode.
 			int width = getClosestOdd(this.width.convertToPixels());
-			Shape body = new Ellipse2D.Double((getFlipStanding() ? points[1]
-					: points[0]).x
-					- width / 2, (getFlipStanding() ? points[1] : points[0]).y
+			Shape body = new Ellipse2D.Double((getFlipStanding() ? getPoints()[1]
+					: getPoints()[0]).x
+					- width / 2, (getFlipStanding() ? getPoints()[1] : getPoints()[0]).y
 					- width / 2, width, width);
 			Composite oldComposite = graphicsContext.getComposite();
 			if (alpha < Colors.MAX_ALPHA) {
@@ -127,8 +128,8 @@ public abstract class AbstractLeadedComponent extends
 		} else {
 			// Normal mode with component body in the center and two lead parts.
 			Rectangle shapeRect = shape.getBounds();
-			Double theta = Math.atan2(points[1].y - points[0].y, points[1].x
-					- points[0].x);
+			Double theta = Math.atan2(getPoints()[1].y - getPoints()[0].y, getPoints()[1].x
+					- getPoints()[0].x);
 			// Go back to the original transformation to draw leads.
 			if (!outlineMode) {
 				AffineTransform textTransform = graphicsContext.getTransform();
@@ -146,26 +147,26 @@ public abstract class AbstractLeadedComponent extends
 						componentState).darker()
 						: getLeadColorForPainting(componentState);
 				graphicsContext.setColor(leadColor);
-				int endX = (int) (points[0].x + Math.cos(theta) * leadLength);
-				int endY = (int) Math.round(points[0].y + Math.sin(theta)
+				int endX = (int) (getPoints()[0].x + Math.cos(theta) * leadLength);
+				int endY = (int) Math.round(getPoints()[0].y + Math.sin(theta)
 						* leadLength);
-				graphicsContext.drawLine(points[0].x, points[0].y, endX, endY);
-				endX = (int) (points[1].x + Math.cos(theta - Math.PI)
+				graphicsContext.drawLine(getPoints()[0].x, getPoints()[0].y, endX, endY);
+				endX = (int) (getPoints()[1].x + Math.cos(theta - Math.PI)
 						* leadLength);
-				endY = (int) Math.round(points[1].y + Math.sin(theta - Math.PI)
+				endY = (int) Math.round(getPoints()[1].y + Math.sin(theta - Math.PI)
 						* leadLength);
-				graphicsContext.drawLine(points[1].x, points[1].y, endX, endY);
+				graphicsContext.drawLine(getPoints()[1].x, getPoints()[1].y, endX, endY);
 				if (shouldShadeLeads()) {
 					graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(
 							leadThickness - 2));
 					leadColor = getLeadColorForPainting(componentState);
 					graphicsContext.setColor(leadColor);
-					graphicsContext.drawLine(points[0].x, points[0].y,
-							(int) (points[0].x + Math.cos(theta) * leadLength),
-							(int) (points[0].y + Math.sin(theta) * leadLength));
-					graphicsContext.drawLine(points[1].x, points[1].y,
-							(int) (points[1].x + Math.cos(theta - Math.PI)
-									* leadLength), (int) (points[1].y + Math
+					graphicsContext.drawLine(getPoints()[0].x, getPoints()[0].y,
+							(int) (getPoints()[0].x + Math.cos(theta) * leadLength),
+							(int) (getPoints()[0].y + Math.sin(theta) * leadLength));
+					graphicsContext.drawLine(getPoints()[1].x, getPoints()[1].y,
+							(int) (getPoints()[1].x + Math.cos(theta - Math.PI)
+									* leadLength), (int) (getPoints()[1].y + Math
 									.sin(theta - Math.PI)
 									* leadLength));
 				}
@@ -184,8 +185,8 @@ public abstract class AbstractLeadedComponent extends
 				length = getLength().convertToPixels();
 			}
 			oldTransform = graphicsContext.getTransform();
-			graphicsContext.translate((points[0].x + points[1].x - length) / 2,
-					(points[0].y + points[1].y - width) / 2);
+			graphicsContext.translate((getPoints()[0].x + getPoints()[1].x - length) / 2,
+					(getPoints()[0].y + getPoints()[1].y - width) / 2);
 			graphicsContext.rotate(theta, length / 2, width / 2);
 			// Draw body.
 			Composite oldComposite = graphicsContext.getComposite();
@@ -307,13 +308,13 @@ public abstract class AbstractLeadedComponent extends
 				componentState).darker()
 				: getLeadColorForPainting(componentState);
 		graphicsContext.setColor(leadColor);
-		graphicsContext.drawLine(points[0].x, points[0].y, points[1].x, points[1].y);
+		graphicsContext.drawLine(getPoints()[0].x, getPoints()[0].y, getPoints()[1].x, getPoints()[1].y);
 		if (shouldShadeLeads()) {
 			graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(
 					getLeadThickness() - 2));
 			leadColor = getLeadColorForPainting(componentState);
 			graphicsContext.setColor(leadColor);
-			graphicsContext.drawLine(points[0].x, points[0].y, points[1].x, points[1].y);
+			graphicsContext.drawLine(getPoints()[0].x, getPoints()[0].y, getPoints()[1].x, getPoints()[1].y);
 		}
 	}
 
@@ -403,12 +404,12 @@ public abstract class AbstractLeadedComponent extends
 
 	@Override
 	public int getControlPointCount() {
-		return points.length;
+		return getPoints().length;
 	}
 
 	@Override
 	public Point getControlPoint(int index) {
-		return (Point) points[index];
+		return (Point) getPoints()[index];
 	}
 
 	@Override
@@ -423,7 +424,7 @@ public abstract class AbstractLeadedComponent extends
 
 	@Override
 	public void setControlPoint(Point point, int index) {
-		points[index].setLocation(point);
+		getPoints()[index].setLocation(point);
 	}
 
 	public Color getBodyColor() {
@@ -491,4 +492,12 @@ public abstract class AbstractLeadedComponent extends
 	public void setFlipStanding(boolean flipStanding) {
 		this.flipStanding = flipStanding;
 	}
+
+    public Point[] getPoints() {
+        return points;
+    }
+
+    public void setPoints(Point[] points) {
+        this.points = points;
+    }
 }

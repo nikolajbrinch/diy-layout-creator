@@ -13,42 +13,52 @@ import java.awt.geom.Area
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.components.ToggleSwitchType
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.ObjectCache;
-import org.diylc.core.OrientationHV;
+import org.diylc.core.ObjectCache
+import org.diylc.core.OrientationHV
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.thoughtworks.xstream.annotations.XStreamAlias
 
 @ComponentDescriptor(name = "Mini Toggle Switch", category = "Electromechanical", author = "Branislav Stojkovic", description = "Panel mounted mini toggle switch", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "SW", autoEdit = false)
 public class MiniToggleSwitch extends AbstractTransparentComponent implements Geometry {
-
+    
+    public static final String id = "582c5b97-45e0-407b-a6f7-aa24f329af6d"
+    
     private static final long serialVersionUID = 1L
 
     private static Size SPACING = new Size(0.2d, SizeUnit.in)
+
     private static Size MARGIN = new Size(0.08d, SizeUnit.in)
+
     private static Size CIRCLE_SIZE = new Size(0.09d, SizeUnit.in)
+
     private static Size LUG_WIDTH = new Size(0.060d, SizeUnit.in)
+
     private static Size LUG_THICKNESS = new Size(0.02d, SizeUnit.in)
 
     private static Color BODY_COLOR = Color.decode("#3299CC")
+
     private static Color BORDER_COLOR = BODY_COLOR.darker()
+
     private static Color CIRCLE_COLOR = Color.decode("#FFFFAA")
 
-    protected Point[] controlPoints = [new Point(0, 0) ] as Point[]
+    Point[] controlPoints = [new Point(0, 0) ] as Point[]
+
     transient protected Shape body
 
     @EditableProperty
@@ -57,7 +67,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent implements Ge
     @XStreamAlias("switchType")
     @EditableProperty(name = "Type")
     ToggleSwitchType value = ToggleSwitchType.DPDT
-    
+
     @EditableProperty
     OrientationHV orientation = OrientationHV.VERTICAL
 
@@ -237,7 +247,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent implements Ge
         }
     }
 
-    public Shape getBody() {
+    private Shape getBody() {
         if (body == null) {
             Point firstPoint = controlPoints[0]
             int margin = (int) MARGIN.convertToPixels()

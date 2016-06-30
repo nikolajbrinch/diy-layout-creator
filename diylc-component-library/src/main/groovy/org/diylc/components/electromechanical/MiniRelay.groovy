@@ -15,18 +15,18 @@ import java.awt.geom.Rectangle2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.components.Geometry;
-import org.diylc.core.ComponentState
-import org.diylc.core.Display;
+import org.diylc.components.Geometry
+import org.diylc.core.ComponentDescriptor;
+import org.diylc.core.Display
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.ObjectCache;
-import org.diylc.core.Orientation;
+import org.diylc.core.ObjectCache
+import org.diylc.core.Orientation
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
@@ -35,37 +35,58 @@ import org.diylc.core.measures.Voltage
 import org.diylc.core.measures.VoltageUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 @ComponentDescriptor(name = "Mini Relay", author = "Branislav Stojkovic", category = "Electromechanical", instanceNamePrefix = "RY", description = "Miniature PCB mount relay, like Omron G5V-1 or G5V-2", stretchable = false, zOrder = IDIYComponent.COMPONENT)
 public class MiniRelay extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "42fd8051-0f40-4128-9651-ac451da979bd"
+
     private static final long serialVersionUID = 1L
 
-    public static Color BODY_COLOR = Color.gray
-    public static Color BORDER_COLOR = Color.gray.darker()
-    public static Color PIN_COLOR = Color.decode("#00B2EE")
-    public static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
-    public static Color INDENT_COLOR = Color.gray.darker()
-    public static Color LABEL_COLOR = Color.white
-    public static int EDGE_RADIUS = 6
-    public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
-    public static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in)
-    public static Size BODY_MARGIN = new Size(0.05d, SizeUnit.in)
+    private static Color BODY_COLOR = Color.gray
 
-    public static Size MINI_PIN_SPACING = new Size(0.2d, SizeUnit.in)
-    public static Size MINI_ROW_SPACING = new Size(0.3d, SizeUnit.in)
-    public static Size MINI_WIDTH = new Size(20.1d, SizeUnit.mm)
-    public static Size MINI_HEIGHT = new Size(9.9d, SizeUnit.mm)
-    public static Size MINI_GAP = new Size(0.1d, SizeUnit.in)
+    private static Color BORDER_COLOR = Color.gray.darker()
 
-    public static Size ULTRA_PIN_SPACING = new Size(0.1d, SizeUnit.in)
-    public static Size ULTRA_ROW_SPACING = new Size(0.2d, SizeUnit.in)
-    public static Size ULTRA_WIDTH = new Size(12.2d, SizeUnit.mm)
-    public static Size ULTRA_HEIGHT = new Size(7.2d, SizeUnit.mm)
-    public static Size ULTRA_GAP = new Size(0.1d, SizeUnit.in)
+    private static Color PIN_COLOR = Color.decode("#00B2EE")
+
+    private static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
+
+    private static Color INDENT_COLOR = Color.gray.darker()
+
+    private static Color LABEL_COLOR = Color.white
+
+    private static int EDGE_RADIUS = 6
+
+    private static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
+
+    private static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in)
+
+    private static Size BODY_MARGIN = new Size(0.05d, SizeUnit.in)
+
+    private static Size MINI_PIN_SPACING = new Size(0.2d, SizeUnit.in)
+
+    private static Size MINI_ROW_SPACING = new Size(0.3d, SizeUnit.in)
+
+    private static Size MINI_WIDTH = new Size(20.1d, SizeUnit.mm)
+
+    private static Size MINI_HEIGHT = new Size(9.9d, SizeUnit.mm)
+
+    private static Size MINI_GAP = new Size(0.1d, SizeUnit.in)
+
+    private static Size ULTRA_PIN_SPACING = new Size(0.1d, SizeUnit.in)
+
+    private static Size ULTRA_ROW_SPACING = new Size(0.2d, SizeUnit.in)
+
+    private static Size ULTRA_WIDTH = new Size(12.2d, SizeUnit.mm)
+
+    private static Size ULTRA_HEIGHT = new Size(7.2d, SizeUnit.mm)
+
+    private static Size ULTRA_GAP = new Size(0.1d, SizeUnit.in)
 
     transient private Area[] body
 
-    private Point[] controlPoints = [new Point(0, 0) ] as Point[]
+    Point[] controlPoints = [new Point(0, 0) ] as Point[]
 
     @EditableProperty
     String value = ""
@@ -196,7 +217,7 @@ public class MiniRelay extends AbstractTransparentComponent implements Geometry 
         }
     }
 
-    public Area[] getBody() {
+    private Area[] getBody() {
         if (body == null) {
             body = new Area[2]
             int x = controlPoints[0].x

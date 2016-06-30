@@ -1,11 +1,10 @@
-package org.diylc.components;
+package org.diylc.core;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
+import org.diylc.core.components.CreationMethod;
 
 /**
  * Annotation for {@link IDIYComponent} implementation. Describes component

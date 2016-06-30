@@ -1,15 +1,15 @@
 package org.diylc.components.boards
 
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -21,15 +21,17 @@ import java.awt.*
 @ComponentDescriptor(name = "Prototype Board w/ Pads", category = "Boards", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board with solder pads", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public class ProtoBoard extends AbstractBoard implements Geometry {
 
+    public static final String id = "c40cb14d-d6ac-49eb-9a9b-5083f09f74e8"
+    
     private static final long serialVersionUID = 1L
 
-    public static Color SILVER_COLOR = Color.decode("#C0C0C0")
+    private static Color SILVER_COLOR = Color.decode("#C0C0C0")
     
-    public static Size SPACING = new Size(0.1d, SizeUnit.in)
+    private static Size SPACING = new Size(0.1d, SizeUnit.in)
 
-    public static Size PAD_SIZE = new Size(0.07d, SizeUnit.in)
+    private static Size PAD_SIZE = new Size(0.07d, SizeUnit.in)
     
-    public static Size HOLE_SIZE = new Size(1.33d, SizeUnit.mm)
+    private static Size HOLE_SIZE = new Size(1.33d, SizeUnit.mm)
     
     @EditableProperty
     Size spacing = SPACING

@@ -1,16 +1,15 @@
 package org.diylc.components.boards
 
 import org.diylc.components.Colors
-
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.OrientationHV;
 import org.diylc.core.Project
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -21,11 +20,15 @@ import java.awt.*
 @ComponentDescriptor(name = "TriPad Board", category = "Boards", author = "Hauke Juhls", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated FR4 board with copper strips connecting 3 holes in a row (aka TriPad Board)")
 public class TriPadBoard extends AbstractBoard implements Geometry {
 
+    public static final String id = "7be31257-4468-40b1-a16e-5ff984bd4c54"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size SPACING = new Size(0.1d, SizeUnit.in)
-    public static Size STRIP_SIZE = new Size(0.07d, SizeUnit.in)
-    public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm)
+    private static Size SPACING = new Size(0.1d, SizeUnit.in)
+    
+    private static Size STRIP_SIZE = new Size(0.07d, SizeUnit.in)
+    
+    private static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm)
 
     @EditableProperty(name = "Holes per strip")
     int stripSpan = 3 // determines how many holes are covered by a

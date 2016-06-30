@@ -15,9 +15,8 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -28,32 +27,50 @@ import org.diylc.core.Theme
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Humbucker Pickup", category = "Guitar", author = "Branislav Stojkovic", description = "PAF-style humbucker guitar pickup", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false)
 public class HumbuckerPickup extends AbstractTransparentComponent implements Geometry {
-
+    
+    public static final String id = "f83986c2-ef29-4244-a6db-c50ecd4778fd"
+    
     private static final long serialVersionUID = 1L
 
     private static Color BODY_COLOR = Color.lightGray
+    
     private static Color POINT_COLOR = Color.darkGray
+    
     private static Size WIDTH = new Size(36.5d, SizeUnit.mm)
+    
     private static Size LENGTH = new Size(68.58d, SizeUnit.mm)
+    
     private static Size LIP_WIDTH = new Size(12.7d, SizeUnit.mm)
+    
     private static Size LIP_LENGTH = new Size(7.9d, SizeUnit.mm)
+    
     private static Size EDGE_RADIUS = new Size(4d, SizeUnit.mm)
+    
     private static Size POINT_MARGIN = new Size(5d, SizeUnit.mm)
+    
     private static Size POINT_SIZE = new Size(3d, SizeUnit.mm)
+    
     private static Size LIP_HOLE_SIZE = new Size(1.5d, SizeUnit.mm)
+    
     private static Size POLE_SIZE = new Size(3d, SizeUnit.mm)
+    
     private static Size POLE_SPACING = new Size(10.1d, SizeUnit.mm)
+    
     private static Size COIL_SPACING = new Size(18d, SizeUnit.mm)
 
-    private Point controlPoint = new Point(0, 0)
+    Point controlPoint = new Point(0, 0)
+    
     transient Shape[] body
 
     @EditableProperty(name = "Model")
@@ -118,7 +135,7 @@ public class HumbuckerPickup extends AbstractTransparentComponent implements Geo
         }
     }
 
-    public Shape[] getBody() {
+    private Shape[] getBody() {
         if (body == null) {
             body = new Shape[4]
 

@@ -14,9 +14,8 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.Display;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -26,40 +25,62 @@ import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Transistor (TO-220 package)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "Q", description = "Transistors with metal tab for heat sink mounting", stretchable = false, zOrder = IDIYComponent.COMPONENT)
 public class TransistorTO220 extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "530347e7-9b76-4ae2-9698-433a4717536b"
+    
     private static final long serialVersionUID = 1L
 
-    public static Color BODY_COLOR = Color.gray
-    public static Color BORDER_COLOR = Color.gray.darker()
-    public static Color PIN_COLOR = Color.decode("#00B2EE")
-    public static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
-    public static Color TAB_COLOR = Color.decode("#C3E4ED")
-    public static Color TAB_BORDER_COLOR = TAB_COLOR.darker()
-    public static Color LABEL_COLOR = Color.white
-    public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
-    public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
-    public static Size BODY_WIDTH = new Size(0.4d, SizeUnit.in)
-    public static Size BODY_THICKNESS = new Size(4.5d, SizeUnit.mm)
-    public static Size BODY_HEIGHT = new Size(9d, SizeUnit.mm)
-    public static Size TAB_THICKNESS = new Size(1d, SizeUnit.mm)
-    public static Size TAB_HEIGHT = new Size(6.2d, SizeUnit.mm)
-    public static Size TAB_HOLE_DIAMETER = new Size(3.6d, SizeUnit.mm)
-    public static Size LEAD_LENGTH = new Size(3.5d, SizeUnit.mm)
-    public static Size LEAD_THICKNESS = new Size(0.8d, SizeUnit.mm)
+    private static Color BODY_COLOR = Color.gray
+    
+    private static Color BORDER_COLOR = Color.gray.darker()
+    
+    private static Color PIN_COLOR = Color.decode("#00B2EE")
+    
+    private static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
+    
+    private static Color TAB_COLOR = Color.decode("#C3E4ED")
+    
+    private static Color TAB_BORDER_COLOR = TAB_COLOR.darker()
+    
+    private static Color LABEL_COLOR = Color.white
+    
+    private static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
+    
+    private static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
+    
+    private static Size BODY_WIDTH = new Size(0.4d, SizeUnit.in)
+    
+    private static Size BODY_THICKNESS = new Size(4.5d, SizeUnit.mm)
+    
+    private static Size BODY_HEIGHT = new Size(9d, SizeUnit.mm)
+    
+    private static Size TAB_THICKNESS = new Size(1d, SizeUnit.mm)
+    
+    private static Size TAB_HEIGHT = new Size(6.2d, SizeUnit.mm)
+    
+    private static Size TAB_HOLE_DIAMETER = new Size(3.6d, SizeUnit.mm)
+    
+    private static Size LEAD_LENGTH = new Size(3.5d, SizeUnit.mm)
+    
+    private static Size LEAD_THICKNESS = new Size(0.8d, SizeUnit.mm)
 
-    transient private Shape[] body
-
-    private Point[] controlPoints = points( point(0, 0),
+    Point[] controlPoints = points( point(0, 0),
             point(0, 0), point(0, 0))
 
+    transient private Shape[] body
+    
     @EditableProperty
     String value = ""
 
@@ -152,7 +173,7 @@ public class TransistorTO220 extends AbstractTransparentComponent implements Geo
         }
     }
 
-    public Shape[] getBody() {
+    private Shape[] getBody() {
         if (body == null) {
             body = new Shape[2]
             int x = controlPoints[0].x

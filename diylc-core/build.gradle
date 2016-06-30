@@ -17,5 +17,5 @@ dependencies {
     compile(group: 'org.apache.poi', name: 'poi', version: '3.13') {
         exclude module: 'commons-codec'
     }
-    compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.1-1')
+    compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.2')
 }

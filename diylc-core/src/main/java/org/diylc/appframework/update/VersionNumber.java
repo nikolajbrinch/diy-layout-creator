@@ -13,6 +13,9 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
     @Deprecated
     private transient int build;
 
+    public VersionNumber() {
+    }
+    
     public VersionNumber(int major, int minor, int patch) {
         super();
         this.major = major;

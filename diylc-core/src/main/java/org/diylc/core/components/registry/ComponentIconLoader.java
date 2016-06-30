@@ -1,4 +1,4 @@
-package org.diylc.components.registry;
+package org.diylc.core.components.registry;
 
 import java.awt.Graphics2D;
 import java.awt.Image;

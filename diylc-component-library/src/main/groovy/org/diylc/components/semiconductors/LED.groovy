@@ -9,11 +9,11 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractLeadedComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -21,11 +21,15 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "LED", author = "Branislav Stojkovic", category = "Semiconductors", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Light Emitting Diode", zOrder = IDIYComponent.COMPONENT)
 public class LED extends AbstractLeadedComponent {
 
+    public static final String id = "a3c87f93-3fa9-4924-bf81-d71920e7a713"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size DEFAULT_SIZE = new Size(5d, SizeUnit.mm)
-	public static Color BODY_COLOR = Color.decode("#5DFC0A")
-	public static Color BORDER_COLOR = BODY_COLOR.darker()
+	private static Size DEFAULT_SIZE = new Size(5d, SizeUnit.mm)
+	
+    private static Color BODY_COLOR = Color.decode("#5DFC0A")
+	
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
 
 	@EditableProperty
 	String value = "";

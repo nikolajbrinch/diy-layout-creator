@@ -8,10 +8,10 @@ import java.awt.Point
 import java.util.Arrays
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
+import org.diylc.components.ControlPoint;
 import org.diylc.components.Geometry
 import org.diylc.components.PCBLayer
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
@@ -19,20 +19,27 @@ import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Ground Fill", author = "Branislav Stojkovic", category = "Connectivity", instanceNamePrefix = "GF", description = "Polygonal ground fill area", zOrder = IDIYComponent.TRACE, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class GroundFill extends AbstractComponent implements Geometry {
 
+    public static final String id = "1beabe8c-44e4-42fa-9216-080d97d1856c"
+    
     private static final long serialVersionUID = 1L
 
-    public static Color COLOR = Color.black
-    public static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in)
-    public static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in)
+    private static Color COLOR = Color.black
+    
+    private static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in)
+    
+    private static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in)
 
-    protected Point[] controlPoints = points(
+    ControlPoint[] controlPoints = points(
         point(0, 0),
         point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
         point((int) DEFAULT_WIDTH.convertToPixels(),

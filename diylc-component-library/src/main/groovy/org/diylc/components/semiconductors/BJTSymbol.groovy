@@ -10,7 +10,7 @@ import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTransistorSymbol
 import org.diylc.components.BJTPolarity
-import org.diylc.components.ComponentDescriptor
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.EditableProperty
@@ -19,12 +19,14 @@ import org.diylc.core.graphics.GraphicsContext
 @ComponentDescriptor(name = "BJT Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "Q", description = "Bipolar junction transistor schematic symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
 public class BJTSymbol extends AbstractTransistorSymbol {
 
+    public static final String id = "a0d13aaa-69cc-43dd-9814-a3bdc1d8b0be"
+    
 	private static final long serialVersionUID = 1L
 
 	@EditableProperty(name = "Polarity")
 	BJTPolarity polarity = BJTPolarity.NPN
 
-	public Shape[] getBody() {
+	protected Shape[] getBody() {
 		if (this.@body == null) {
 			this.@body = new Shape[3]
 			int x = controlPoints[0].x

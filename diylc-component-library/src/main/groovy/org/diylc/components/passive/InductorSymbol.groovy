@@ -6,11 +6,11 @@ import java.awt.Shape
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractSchematicLeadedSymbol
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Current
 import org.diylc.core.measures.Inductance
@@ -21,10 +21,13 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "Inductor (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "L", description = "Inductor schematic symbol", zOrder = IDIYComponent.COMPONENT)
 public class InductorSymbol extends AbstractSchematicLeadedSymbol {
 
+    public static final String id = "b0b6ddb2-98b3-48fb-82af-4431836f5be0"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in)
-    public static Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in)
+    private static Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in)
+    
+    private static Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in)
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)
     Inductance value = null

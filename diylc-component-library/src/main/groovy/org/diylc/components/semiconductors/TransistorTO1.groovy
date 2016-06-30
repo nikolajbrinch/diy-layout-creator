@@ -14,9 +14,8 @@ import java.awt.geom.Rectangle2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.Display;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -26,31 +25,45 @@ import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Transistor (TO-1 package)", author = "Branislav Stojkovic", category = "Semiconductors", instanceNamePrefix = "Q", description = "Transistor with small metal body", stretchable = false, zOrder = IDIYComponent.COMPONENT)
 public class TransistorTO1 extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "a17faf6d-4286-4a7e-a82b-05e2aee5d502"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Color BODY_COLOR = Color.decode("#D0E0EF")
-	public static Color BORDER_COLOR = BODY_COLOR.darker()
-	public static Color PIN_COLOR = Color.decode("#00B2EE")
-	public static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
-	public static Color LABEL_COLOR = Color.black
-	public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
-	public static Size PIN_SPACING = new Size(0.05d, SizeUnit.in)
-	public static Size BODY_DIAMETER = new Size(0.24d, SizeUnit.in)
-	public static Size BODY_LENGTH = new Size(0.4d, SizeUnit.in)
-	public static Size EDGE_RADIUS = new Size(2d, SizeUnit.mm)
+	private static Color BODY_COLOR = Color.decode("#D0E0EF")
+	
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
+	
+    private static Color PIN_COLOR = Color.decode("#00B2EE")
+	
+    private static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
+	
+    private static Color LABEL_COLOR = Color.black
+	
+    private static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
+	
+    private static Size PIN_SPACING = new Size(0.05d, SizeUnit.in)
+	
+    private static Size BODY_DIAMETER = new Size(0.24d, SizeUnit.in)
+	
+    private static Size BODY_LENGTH = new Size(0.4d, SizeUnit.in)
+	
+    private static Size EDGE_RADIUS = new Size(2d, SizeUnit.mm)
 
 	transient private Area body
 
-	private Point[] controlPoints = points( point(0, 0),
+	Point[] controlPoints = points( point(0, 0),
 			point(0, 0), point(0, 0))
 
 	@EditableProperty
@@ -146,7 +159,7 @@ public class TransistorTO1 extends AbstractTransparentComponent implements Geome
 		}
 	}
 
-	public Area getBody() {
+	protected Area getBody() {
 		if (body == null) {
 			int x = (controlPoints[0].x + controlPoints[1].x + controlPoints[2].x) / 3
 			int y = (controlPoints[0].y + controlPoints[1].y + controlPoints[2].y) / 3

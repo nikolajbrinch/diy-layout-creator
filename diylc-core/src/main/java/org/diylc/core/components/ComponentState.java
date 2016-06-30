@@ -1,4 +1,4 @@
-package org.diylc.core;
+package org.diylc.core.components;
 
 /**
  * Enumerates all possible states that a component can be in.

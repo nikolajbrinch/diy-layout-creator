@@ -6,16 +6,18 @@ import java.awt.Composite;
 import java.awt.Point;
 import java.awt.geom.CubicCurve2D;
 
-import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.core.utils.Constants;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class AbstractCurvedComponent extends AbstractTransparentComponent {
 
@@ -23,6 +25,7 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
 
 	public static Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
 
+    @JsonProperty
 	protected Point[] controlPoints = new Point[] {
 			new Point(0, 0),
 			new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
@@ -31,6 +34,7 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
 			new Point((int) DEFAULT_SIZE.convertToPixels(), (int) DEFAULT_SIZE.convertToPixels()) };
 
 	protected Color color = getDefaultColor();
+	
 	protected PointCount pointCount = PointCount.FOUR;
 
 	/**

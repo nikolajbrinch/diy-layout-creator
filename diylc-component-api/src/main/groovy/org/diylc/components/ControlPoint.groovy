@@ -11,22 +11,25 @@ class ControlPoint extends Point {
         super()
     }
 
+    ControlPoint(ControlPoint controlPoint) {
+        this(controlPoint.x, controlPoint.y, controlPoint.properties)
+    }
+
     ControlPoint(Point point) {
         super(point)
     }
 
     ControlPoint(Point point, Map<String, Object> properties) {
         super(point)
-        this.properties = properties
+        this.properties.putAll(properties)
     }
 
     ControlPoint(int x, int y) {
         super(x, y)
-        this.properties = properties
     }
 
     ControlPoint(int x, int y, Map<String, Object> properties) {
         super(x, y)
-        this.properties = properties
+        this.properties.putAll(properties)
     }
 }

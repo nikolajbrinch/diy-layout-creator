@@ -15,42 +15,57 @@ import java.awt.geom.Rectangle2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.ObjectCache;
-import org.diylc.core.Orientation;
+import org.diylc.core.ObjectCache
+import org.diylc.core.Orientation
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 @ComponentDescriptor(name = "Lever Switch", category = "Guitar", author = "Branislav Stojkovic", description = "Strat-style lever switch", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "SW")
 public class LeverSwitch extends AbstractTransparentComponent {
+
+    public static final String id = "8a06a2e4-0d25-4f3f-8d29-d030f45cab1e"
 
     private static final long serialVersionUID = 1L
 
     private static Color BASE_COLOR = Color.lightGray
+
     private static Color WAFER_COLOR = Color.decode("#CD8500")
 
     private static Size BASE_WIDTH = new Size(10d, SizeUnit.mm)
+
     private static Size BASE_LENGTH = new Size(47.5d, SizeUnit.mm)
+
     private static Size WAFER_LENGTH = new Size(40d, SizeUnit.mm)
+
     private static Size WAFER_SPACING = new Size(7.62d, SizeUnit.mm)
+
     private static Size WAFER_THICKNESS = new Size(1.27d, SizeUnit.mm)
+
     private static Size HOLE_SIZE = new Size(2d, SizeUnit.mm)
+
     private static Size HOLE_SPACING = new Size(41.2d, SizeUnit.mm)
+
     private static Size TERMINAL_WIDTH = new Size(2d, SizeUnit.mm)
+
     private static Size TERMINAL_LENGTH = new Size(0.1d, SizeUnit.in)
+
     private static Size TERMINAL_SPACING = new Size(0.1d, SizeUnit.in)
 
-    private Point[] controlPoints = [new Point(0, 0) ] as Point[]
+    Point[] controlPoints = [new Point(0, 0) ] as Point[]
+
     transient Shape[] body
 
     String value = ""
@@ -114,7 +129,7 @@ public class LeverSwitch extends AbstractTransparentComponent {
         graphicsContext.draw(body[2])
     }
 
-    public Shape[] getBody() {
+    private Shape[] getBody() {
         if (body == null) {
             body = new Shape[3]
 

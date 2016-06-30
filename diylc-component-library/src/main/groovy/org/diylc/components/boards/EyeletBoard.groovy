@@ -8,15 +8,15 @@ import java.awt.Point
 import java.awt.Shape
 
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
@@ -24,13 +24,15 @@ import org.diylc.core.utils.Constants
 @ComponentDescriptor(name = "Eyelet Board", category = "Boards", author = "Branislav Stojkovic", zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board with eyelets", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public class EyeletBoard extends AbstractBoard implements Geometry {
 
+    public static final String id = "7acf925a-8823-4005-86d7-6390a1dfea29"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size SPACING = new Size(0.5d, SizeUnit.in)
+    private static Size SPACING = new Size(0.5d, SizeUnit.in)
 
-    public static Size EYELET_SIZE = new Size(0.2d, SizeUnit.in)
+    private static Size EYELET_SIZE = new Size(0.2d, SizeUnit.in)
 
-    public static Size HOLE_SIZE = new Size(0.1d, SizeUnit.in)
+    private static Size HOLE_SIZE = new Size(0.1d, SizeUnit.in)
 
     @EditableProperty
     Size spacing = SPACING

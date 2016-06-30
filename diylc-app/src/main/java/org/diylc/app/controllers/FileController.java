@@ -49,12 +49,12 @@ public class FileController extends AbstractController implements ExportControll
         Path initialPath = getPlugInPort().getCurrentFile().toAbsolutePath();
         String initialFilename = initialPath.toString();
         
-        if (!initialFilename.endsWith(FileFilterEnum.DIY.getExtensions()[0])) {
-            initialPath = Paths.get(initialFilename + "." + FileFilterEnum.DIY.getExtensions()[0]);
+        if (!initialFilename.endsWith(FileFilterEnum.DIY.getExtensions()[1])) {
+            initialPath = Paths.get(initialFilename + "." + FileFilterEnum.DIY.getExtensions()[1]);
         }
         
         final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(), initialPath,
-                FileFilterEnum.DIY.getExtensions()[0], null);
+                FileFilterEnum.DIY.getExtensions()[1], null);
 
         if (path != null) {
             new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {

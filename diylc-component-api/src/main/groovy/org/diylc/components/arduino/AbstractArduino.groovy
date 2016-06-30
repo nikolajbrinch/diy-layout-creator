@@ -4,14 +4,13 @@ import org.diylc.components.AbstractComponent
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.Angle
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.ControlPoint;
 import org.diylc.components.Geometry
 import org.diylc.components.Constants.Placement;
 import org.diylc.components.Pin;
 import org.diylc.components.PinBase;
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -21,6 +20,7 @@ import org.diylc.core.VerticalAlignment
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -36,21 +36,21 @@ public abstract class AbstractArduino extends AbstractTransparentComponent imple
 
     private static final long serialVersionUID = 1L
 
-    public static Size HALF_PIN_SPACING = new Size(0.05d, SizeUnit.in)
+    protected static Size HALF_PIN_SPACING = new Size(0.05d, SizeUnit.in)
 
-    public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
+    protected static Size PIN_SPACING = new Size(0.1d, SizeUnit.in)
 
-    public static float LABEL_FONT_SIZE = 8f
+    protected static float LABEL_FONT_SIZE = 8f
 
-    public static Size CHIP_SIZE = new Size(7d, SizeUnit.mm)
+    protected static Size CHIP_SIZE = new Size(7d, SizeUnit.mm)
 
-    public static int ROW_SPACING = 6
+    protected static int ROW_SPACING = 6
 
     private String iconText
         
     Point[] controlPoints = points(point(0, 0))
 
-    transient Area[] body
+    protected transient Area[] body
 
     @EditableProperty
     String value = ""
@@ -135,7 +135,6 @@ public abstract class AbstractArduino extends AbstractTransparentComponent imple
              */
             int padSize = toInt(org.diylc.components.Constants.SMALL_PAD_SIZE.convertToPixels())
             int holeSize = toInt(org.diylc.components.Constants.LARGE_HOLE_SIZE.convertToPixels())
-
             
             controlPoints.each { ControlPoint controlPoint ->
                 if (controlPoint.properties['type'] == 'pad') {

@@ -4,13 +4,12 @@ import org.diylc.components.AbstractComponent
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.Angle
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
 import org.diylc.components.Constants.Placement
 import org.diylc.components.Pin;
 import org.diylc.components.PinBase;
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -20,12 +19,14 @@ import org.diylc.core.VerticalAlignment
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-import java.awt.*
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform
 import java.awt.geom.Area
 import java.util.List
@@ -34,6 +35,8 @@ import java.util.List
 @ComponentDescriptor(name = "Arduino Nano V3.0", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Arduino", description = "Arduino Nano V3.0", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public class NanoV3 extends AbstractArduino implements Geometry {
 
+    public static final String id = "6a4967b3-0fc9-4a07-b0a1-12e107401457"
+    
     private static final long serialVersionUID = 1L
 
     private static final int ROW_PIN_COUNT = 15
@@ -83,7 +86,7 @@ public class NanoV3 extends AbstractArduino implements Geometry {
     }
 
     @Override
-    public Area[] getBodyArea() {
+    protected Area[] getBodyArea() {
         if (body == null) {
             updateControlPoints()
             body = new Area[4]

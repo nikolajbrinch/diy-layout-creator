@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
+import org.diylc.core.components.ComponentModel;
 
 public class BomMaker {
 
@@ -24,7 +23,7 @@ public class BomMaker {
 	private BomMaker() {
 	}
 
-	public List<BomEntry> createBom(ComponentRegistry componentRegistry, List<IDIYComponent> components) {
+	public List<BomEntry> createBom(List<IDIYComponent> components) {
 		Map<String, BomEntry> entryMap = new LinkedHashMap<String, BomEntry>();
 		List<IDIYComponent> sortedComponents = new ArrayList<IDIYComponent>(
 				components);
@@ -52,8 +51,8 @@ public class BomMaker {
 			}			
 		});
 		for (IDIYComponent component : sortedComponents) {
-			ComponentType type = componentRegistry.getComponentType(component.getClass().getName());
-			if (type.getBomPolicy() == BomPolicy.NEVER_SHOW)
+			ComponentModel componentModel = component.getComponentModel();
+			if (componentModel.getBomPolicy() == BomPolicy.NEVER_SHOW)
 				continue;
 			String name = component.getName();
 			String value;
@@ -63,17 +62,17 @@ public class BomMaker {
 				value = "<undefined>";
 			}
 			if ((name != null) && (value != null)) {
-				String key = type.getName() + "|" + value;
+				String key = componentModel.getName() + "|" + value;
 				if (entryMap.containsKey(key)) {
 					BomEntry entry = entryMap.get(key);
 					entry.setQuantity(entry.getQuantity() + 1);
-					if (type.getBomPolicy() == BomPolicy.SHOW_ALL_NAMES) {
+					if (componentModel.getBomPolicy() == BomPolicy.SHOW_ALL_NAMES) {
 						entry.setName(entry.getName() + ", " + name);
 					}
 				} else {
-					entryMap.put(key, new BomEntry(type.getName(), type
+					entryMap.put(key, new BomEntry(componentModel.getName(), componentModel
 							.getBomPolicy() == BomPolicy.SHOW_ALL_NAMES ? name
-							: type.getName(), value, 1));
+							: componentModel.getName(), value, 1));
 				}
 			}
 		}

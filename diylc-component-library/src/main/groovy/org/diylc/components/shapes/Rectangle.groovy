@@ -7,15 +7,15 @@ import java.awt.Composite
 import java.awt.Graphics2D
 
 import org.diylc.components.AbstractShape
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry;
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -23,6 +23,8 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "Rectangle", author = "Branislav Stojkovic", category = "Shapes", instanceNamePrefix = "RECT", description = "Ractangular area, with or withouth rounded edges", zOrder = IDIYComponent.COMPONENT, flexibleZOrder = true, bomPolicy = BomPolicy.SHOW_ALL_NAMES, autoEdit = false)
 public class Rectangle extends AbstractShape implements Geometry {
 
+    public static final String id = "dbf3323b-d17b-4561-bde1-c654ec615a36"
+    
 	private static final long serialVersionUID = 1L
 
     @EditableProperty(name = "Radius")

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Shape;
 
-import org.diylc.core.ComponentState;
 import org.diylc.core.Display;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDrawingObserver;
@@ -13,6 +12,7 @@ import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
@@ -23,12 +23,16 @@ public abstract class AbstractTubeSymbol extends AbstractComponent {
 	private static final long serialVersionUID = 1L;
 
 	public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+	
 	protected String value = "";
 
 	protected Color color = Colors.TUBE_COLOR;
+	
 	protected Display display = Display.NAME;
-	transient protected Shape[] body;
+	
 	protected boolean showHeaters;
+	
+	transient protected Shape[] body;
 
 	@Override
 	public void draw(GraphicsContext graphicsContext, ComponentState componentState,

@@ -10,9 +10,8 @@ import java.awt.Point
 
 import org.diylc.components.AbstractComponent
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -21,6 +20,7 @@ import org.diylc.core.Project
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
@@ -28,17 +28,19 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "Breadboard", category = "Boards", author = "Branislav Stojkovic", description = "Prototyping solderless breadboard", instanceNamePrefix = "BB", stretchable = false, zOrder = IDIYComponent.BOARD, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public class Breadboard extends AbstractComponent implements Geometry {
 
+    public static final String id = "8b33c35d-35c8-4bb1-a87b-e6dd845c272a"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size BODY_ARC = new Size(3d, SizeUnit.mm)
+    private static Size BODY_ARC = new Size(3d, SizeUnit.mm)
 
-    public static float COORDINATE_FONT_SIZE = 9f
+    private static float COORDINATE_FONT_SIZE = 9f
 
-    public static Size HOLE_SIZE = new Size(1.5d, SizeUnit.mm)
+    private static Size HOLE_SIZE = new Size(1.5d, SizeUnit.mm)
 
-    public static Size HOLE_ARC = new Size(1d, SizeUnit.mm)
+    private static Size HOLE_ARC = new Size(1d, SizeUnit.mm)
 
-    protected Point point = point(0, 0)
+    Point point = point(0, 0)
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState,

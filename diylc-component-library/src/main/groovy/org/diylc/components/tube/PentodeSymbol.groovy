@@ -10,20 +10,24 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTubeSymbol
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.graphics.GraphicsContext
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Pentode Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "V", description = "Pentode tube symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
 public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
 
+    public static final String id = "31251420-a37f-49b5-954e-6927b76be94d"
+    
     private static final long serialVersionUID = 1L
 
-    protected Point[] controlPoints = points(point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0))
+    Point[] controlPoints = points(point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0), point(0, 0))
 
     @EditableProperty(name = "Suppressor grid")
     boolean exposeSuppressorGrid = true
@@ -33,7 +37,7 @@ public class PentodeSymbol extends AbstractTubeSymbol implements Geometry {
         updateControlPoints()
     }
 
-    public Shape[] getBody() {
+    protected Shape[] getBody() {
         if (this.@body == null) {
             this.@body = new Shape[3]
             int x = controlPoints[0].x

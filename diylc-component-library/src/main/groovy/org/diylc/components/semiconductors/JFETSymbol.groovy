@@ -7,8 +7,8 @@ import java.awt.Shape
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTransistorSymbol
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.FETPolarity
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.EditableProperty
@@ -16,13 +16,15 @@ import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "JFET Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "Q", description = "JFET transistor schematic symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
 public class JFETSymbol extends AbstractTransistorSymbol {
-
+    
+    public static final String id = "1bc71fa0-5d4f-4448-9a85-9e31d0445f06"
+    
     private static final long serialVersionUID = 1L
 
     @EditableProperty(name = "Channel")
     FETPolarity polarity = FETPolarity.NEGATIVE
 
-    public Shape[] getBody() {
+    protected Shape[] getBody() {
         if (this.@body == null) {
             this.@body = new Shape[3]
             int x = controlPoints[0].x

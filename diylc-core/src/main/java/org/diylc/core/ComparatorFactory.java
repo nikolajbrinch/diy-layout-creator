@@ -1,10 +1,8 @@
-package org.diylc.components.registry;
+package org.diylc.core;
 
 import java.util.Comparator;
 
-import org.diylc.core.ComponentType;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.ComponentModel;
 import org.diylc.specifications.Specification;
 
 public class ComparatorFactory {
@@ -13,7 +11,7 @@ public class ComparatorFactory {
 
     private Comparator<IDIYComponent> componentNameComparator;
     
-    private Comparator<ComponentType> componentTypeComparator;
+    private Comparator<ComponentModel> componentTypeComparator;
     
     private Comparator<PropertyWrapper> propertyNameComparator;
     
@@ -43,12 +41,12 @@ public class ComparatorFactory {
         return componentNameComparator;
     }
 
-    public Comparator<ComponentType> getComponentTypeComparator() {
+    public Comparator<ComponentModel> getComponentTypeComparator() {
         if (componentTypeComparator == null) {
-            componentTypeComparator = new Comparator<ComponentType>() {
+            componentTypeComparator = new Comparator<ComponentModel>() {
 
                 @Override
-                public int compare(ComponentType o1, ComponentType o2) {
+                public int compare(ComponentModel o1, ComponentModel o2) {
                     return o1.getName().compareToIgnoreCase(o2.getName());
                 }
             };
@@ -76,10 +74,10 @@ public class ComparatorFactory {
 
                 @Override
                 public int compare(IDIYComponent o1, IDIYComponent o2) {
-                    ComponentType type1 = o1.getComponentType();
-                    ComponentType type2 = o2.getComponentType();
+                    ComponentModel type1 = o1.getComponentModel();
+                    ComponentModel type2 = o2.getComponentModel();
 
-                    return new Double(type1.getZOrder()).compareTo(new Double(type2.getZOrder()));
+                    return new Double(type1.getzOrder()).compareTo(new Double(type2.getzOrder()));
                 }
             };
         }

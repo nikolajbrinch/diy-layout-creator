@@ -10,9 +10,8 @@ import java.awt.Point
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -22,16 +21,19 @@ import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Label", author = "Branislav Stojkovic", category = "Misc", description = "User defined label", instanceNamePrefix = "L", zOrder = IDIYComponent.TEXT, flexibleZOrder = true, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
 public class Label extends AbstractComponent implements Geometry {
 
-    public static String DEFAULT_TEXT = "Double click to edit text"
-
+    public static final String id = "be45857e-5b18-4549-92a1-fe21d0dea9f7"
+    
     private static final long serialVersionUID = 1L
 
-    private Point point = new Point(0, 0)
+    private static String DEFAULT_TEXT = "Double click to edit text"
+
+    Point point = new Point(0, 0)
 
     @Deprecated
     private boolean center

@@ -1,7 +1,6 @@
 package org.diylc.app.view;
 
 import java.nio.file.Path;
-
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
@@ -14,14 +13,16 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 
 import org.diylc.app.Drawing;
+import org.diylc.app.DrawingManager;
 import org.diylc.app.controllers.ApplicationController;
 import org.diylc.app.controllers.DrawingController;
 import org.diylc.app.model.Model;
 import org.diylc.app.view.canvas.Canvas;
-import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
+import org.diylc.core.components.registry.ComponentFactory;
+import org.diylc.core.components.registry.ComponentRegistry;
 import org.diylc.core.platform.QuitResponse;
 
 public class StubPresenter extends Presenter {
@@ -205,12 +206,6 @@ public class StubPresenter extends Presenter {
         }, new DrawingController(new ApplicationController() {
 
             @Override
-            public void setCurrentDrawing(Drawing drawing) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
             public void removeLruPath(Path path) {
                 // TODO Auto-generated method stub
 
@@ -259,12 +254,6 @@ public class StubPresenter extends Presenter {
             }
 
             @Override
-            public List<Drawing> getDrawings() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
             public void switchWindow(String drawingId) {
                 // TODO Auto-generated method stub
 
@@ -284,6 +273,18 @@ public class StubPresenter extends Presenter {
 
             @Override
             public ComponentRegistry getComponentRegistry() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public ComponentFactory getComponentFactory() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public DrawingManager getDrawingManager() {
                 // TODO Auto-generated method stub
                 return null;
             }

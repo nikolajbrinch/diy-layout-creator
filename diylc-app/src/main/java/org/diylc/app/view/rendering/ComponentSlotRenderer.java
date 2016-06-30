@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

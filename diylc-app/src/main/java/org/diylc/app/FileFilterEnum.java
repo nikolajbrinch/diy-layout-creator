@@ -8,7 +8,7 @@ public enum FileFilterEnum {
 
 	PNG("PNG Images (*.png)", "png"), 
 	PDF("PDF Files (*.pdf)", "pdf"), 
-	DIY("DIY Project Files (*.diy)", "diy"), 
+	DIY("DIY Project Files (*.diy, *.diylc)", "diy", "diylc"), 
 	EXCEL("Excel Workbooks (*.xls)", "xls"), 
 	CSV("Comma Separated Files (*.csv)", "csv"), 
 	HTML("HTML Files (*.html)", "html"), 

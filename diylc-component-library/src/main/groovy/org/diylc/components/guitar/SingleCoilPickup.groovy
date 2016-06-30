@@ -16,9 +16,8 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -29,31 +28,47 @@ import org.diylc.core.Theme
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Strat Single Coil Pickup", category = "Guitar", author = "Branislav Stojkovic", description = "Strat-style single coil guitar pickup", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false)
 public class SingleCoilPickup extends AbstractTransparentComponent implements Geometry {
-
+    
+    public static final String id = "24f289b3-fa4a-46f3-8d33-3b2e2b702cea"
+    
 	private static final long serialVersionUID = 1L
 
 	private static Color BODY_COLOR = Color.darkGray
-	private static Color POINT_COLOR = Color.lightGray
-	private static Size WIDTH = new Size(15.5d, SizeUnit.mm)
-	private static Size LENGTH = new Size(83.82d, SizeUnit.mm)
-	private static Size LIP_WIDTH = new Size(5d, SizeUnit.mm)
-	private static Size LIP_LENGTH = new Size(20d, SizeUnit.mm)
-	private static Size POINT_SIZE = new Size(3d, SizeUnit.mm)
-	private static Size HOLE_SIZE = new Size(2d, SizeUnit.mm)
-	private static Size HOLE_MARGIN = new Size(4d, SizeUnit.mm)
-	private static Size POLE_SIZE = new Size(3d, SizeUnit.mm)
-	private static Size POLE_SPACING = new Size(11.68d, SizeUnit.mm)
+	
+    private static Color POINT_COLOR = Color.lightGray
+	
+    private static Size WIDTH = new Size(15.5d, SizeUnit.mm)
+	
+    private static Size LENGTH = new Size(83.82d, SizeUnit.mm)
+	
+    private static Size LIP_WIDTH = new Size(5d, SizeUnit.mm)
+	
+    private static Size LIP_LENGTH = new Size(20d, SizeUnit.mm)
+	
+    private static Size POINT_SIZE = new Size(3d, SizeUnit.mm)
+	
+    private static Size HOLE_SIZE = new Size(2d, SizeUnit.mm)
+	
+    private static Size HOLE_MARGIN = new Size(4d, SizeUnit.mm)
+	
+    private static Size POLE_SIZE = new Size(3d, SizeUnit.mm)
+	
+    private static Size POLE_SPACING = new Size(11.68d, SizeUnit.mm)
 
-	private Point controlPoint = new Point(0, 0)
-	transient Shape[] body
+	Point controlPoint = new Point(0, 0)
+	
+    transient Shape[] body
 	
     @EditableProperty(name = "Model")
     String value = ""
@@ -114,7 +129,7 @@ public class SingleCoilPickup extends AbstractTransparentComponent implements Ge
 				HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
 	}
 
-	public Shape[] getBody() {
+	private Shape[] getBody() {
 		if (body == null) {
 			body = new Shape[3]
 

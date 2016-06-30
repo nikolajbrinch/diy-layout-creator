@@ -14,14 +14,14 @@ import org.diylc.app.UndoHandler;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.IComponentFilter;
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ITemplateProcessor;
 import org.diylc.core.Project;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.registry.ComponentRegistry;
 
 /**
  * Interface for communication between plug-ins and the application. Plug-ins
@@ -214,16 +214,16 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     /**
      * Gets the current new component slot.
      */
-    ComponentType getNewComponentTypeSlot();
+    ComponentModel getNewComponentTypeSlot();
 
     /**
      * Sets the new component slot. Specified component type will be used to
      * instantiate new component.
      * 
-     * @param componentType
+     * @param componentModel
      * @param template
      */
-    void setNewComponentTypeSlot(ComponentType componentType, Template template);
+    void setNewComponentTypeSlot(ComponentModel componentModel, Template template);
 
     /**
      * Changes default size notation, true for metric, false for imperial.

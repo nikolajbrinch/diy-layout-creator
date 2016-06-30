@@ -6,8 +6,7 @@ import java.awt.Point
 import java.awt.Polygon
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
@@ -15,9 +14,12 @@ import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @ComponentDescriptor(name = "Ground Symbol", author = "Branislav Stojkovic", category = "Schematics", instanceNamePrefix = "GND", description = "Ground schematic symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 class GroundSymbol extends AbstractComponent {
@@ -40,13 +42,16 @@ class GroundSymbol extends AbstractComponent {
             return title
         }
     }
+    
+    public static final String id = "9670c1e9-b509-4c1d-ab06-d0db4561d4ac"
 
     private static final long serialVersionUID = 1L
 
-    public static Color COLOR = Color.black
-    public static Size SIZE = new Size(0.15d, SizeUnit.in)
+    private static Color COLOR = Color.black
+    
+    private static Size SIZE = new Size(0.15d, SizeUnit.in)
 
-    private Point point = new Point(0, 0)
+    Point point = new Point(0, 0)
     
     Void value = null
     

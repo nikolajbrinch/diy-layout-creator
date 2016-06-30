@@ -15,43 +15,56 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
 import org.diylc.components.JackType
-import org.diylc.core.ComponentState
-import org.diylc.core.HorizontalAlignment;
+import org.diylc.core.ComponentDescriptor;
+import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
-import org.diylc.core.ObjectCache;
-import org.diylc.core.Orientation;
+import org.diylc.core.ObjectCache
+import org.diylc.core.Orientation
 import org.diylc.core.Project
 import org.diylc.core.Theme
-import org.diylc.core.VerticalAlignment;
+import org.diylc.core.VerticalAlignment
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 @ComponentDescriptor(name = "Cliff 1/4\" Jack", category = "Electromechanical", author = "Branislav Stojkovic", description = "Cliff-style closed panel mount 1/4\" phono jack", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "J", autoEdit = false)
 public class CliffJack1_4 extends AbstractTransparentComponent implements Geometry {
+
+    public static final String id = "874e9287-f861-493c-882a-8081970a82bc"
 
     private static final long serialVersionUID = 1L
 
     private static Size SPACING = new Size(0.3d, SizeUnit.in)
+
     private static Size PIN_WIDTH = new Size(0.1d, SizeUnit.in)
+
     private static Size PIN_THICKNESS = new Size(0.02d, SizeUnit.in)
+
     private static Color BODY_COLOR = Color.decode("#666666")
+
     private static Color NUT_COLOR = Color.decode("#999999")
+
     private static Color BORDER_COLOR = Color.black
+
     private static Color LABEL_COLOR = Color.white
+
     private static Size BODY_WIDTH = new Size(3 / 4d, SizeUnit.in)
+
     private static Size BODY_LENGTH = new Size(0.9d, SizeUnit.in)
+
     private static Size TAIL_LENGTH = new Size(0.1d, SizeUnit.in)
 
-    private Point[] controlPoints = points(point(0, 0))
+    Point[] controlPoints = points(point(0, 0))
 
     transient private Shape[] body
 
@@ -116,7 +129,7 @@ public class CliffJack1_4 extends AbstractTransparentComponent implements Geomet
         return angle
     }
 
-    public Shape[] getBody() {
+    private Shape[] getBody() {
         if (body == null) {
             body = new Shape[5]
 
@@ -242,7 +255,7 @@ public class CliffJack1_4 extends AbstractTransparentComponent implements Geomet
         graphicsContext.setFont(LABEL_FONT)
         int centerX = (controlPoints[0].x + controlPoints[3].x) / 2
         int centerY = (controlPoints[0].y + controlPoints[3].y) / 2
-        drawCenteredText(graphicsContext, name, point(centerX, centerY),
+        drawCenteredText(graphicsContext, getName(), point(centerX, centerY),
                 HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
     }
 

@@ -2,11 +2,11 @@ package org.diylc.components.semiconductors
 
 import org.diylc.components.AbstractDiodeSymbol
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -16,9 +16,11 @@ import java.awt.*
 @ComponentDescriptor(name = "Zener diode (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Zener diode schematic symbol", zOrder = IDIYComponent.COMPONENT)
 public class ZenerDiodeSymbol extends AbstractDiodeSymbol implements Geometry{
 
+    public static final String id = "0f9d914c-f6ba-40b3-a3c7-5982903825ba"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size BAND_SIZE = new Size(0.01, SizeUnit.in)
+    private static Size BAND_SIZE = new Size(0.01, SizeUnit.in)
 
     public void drawIcon(GraphicsContext graphicsContext, int width, int height) {
         int size = width * 3 / 8

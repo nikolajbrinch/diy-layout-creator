@@ -13,10 +13,9 @@ import java.awt.geom.Area
 import java.awt.geom.Ellipse2D
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.DCPolarity
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -26,27 +25,39 @@ import org.diylc.core.Theme
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Plastic DC Jack", category = "Electromechanical", author = "Branislav Stojkovic", description = "Panel mount plastic DC jack", stretchable = false, zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "J", autoEdit = false, rotatable = false)
 public class PlasticDCJack extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "7d8f485f-fa1d-42bf-a871-e095a866cf22"
+    
     private static final long serialVersionUID = 1L
 
     private static Size LUG_WIDTH = new Size(0.08d, SizeUnit.in)
+    
     private static Size LUG_THICKNESS = new Size(0.02d, SizeUnit.in)
+    
     private static Size SPACING = new Size(0.1d, SizeUnit.in)
+    
     private static Size DIAMETER = new Size(0.5d, SizeUnit.in)
+    
     private static Color BODY_COLOR = Color.decode("#666666")
+    
     private static Color PHENOLIC_COLOR = Color.decode("#CD8500")
+    
     private static Color BORDER_COLOR = Color.black
+    
     private static Color MARKING_COLOR = Color.lightGray
 
-    private Point[] controlPoints = [new Point(0, 0), new Point(0, 0), new Point(0, 0) ] as Point[]
+    Point[] controlPoints = [new Point(0, 0), new Point(0, 0), new Point(0, 0) ] as Point[]
 
     transient private Shape[] body
 
@@ -73,7 +84,7 @@ public class PlasticDCJack extends AbstractTransparentComponent implements Geome
         controlPoints[2] = new Point(x - spacing, y + spacing * 2)
     }
 
-    public Shape[] getBody() {
+    private Shape[] getBody() {
         if (body == null) {
             body = new Shape[4]
 

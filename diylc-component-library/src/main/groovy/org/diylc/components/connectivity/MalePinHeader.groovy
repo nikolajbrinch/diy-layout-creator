@@ -29,13 +29,12 @@ import java.util.Map;
 
 import org.diylc.components.AbstractComponent
 import org.diylc.components.AbstractTransparentComponent;
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.ControlPoint;
 import org.diylc.components.Geometry;
 import org.diylc.components.PCBLayer
 import org.diylc.components.Pin;
 import org.diylc.components.PinBase;
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Orientation;
@@ -43,23 +42,28 @@ import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Male Pin header", category = "Connectivity", author = "Nikolaj Brinch Jørgensen", description = "Pin header male", instanceNamePrefix = "Header", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class MalePinHeader extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "591b66ac-fbd6-4572-ad65-acadcb2cccd7"
+    
     private static final long serialVersionUID = 1L
 
-    public static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
+    private static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
 
-    public static int PIN_SIZE = Pin.DEFAULT_PIN_SIZE.convertToPixels()
+    private static int PIN_SIZE = Pin.DEFAULT_PIN_SIZE.convertToPixels()
 
-    public static int BASE_SIZE = PinBase.DEFAULT_BASE_SIZE.convertToPixels()
+    private static int BASE_SIZE = PinBase.DEFAULT_BASE_SIZE.convertToPixels()
 
-    public static Color COLOR = Color.black
+    private static Color COLOR = Color.black
 
     ControlPoint[] controlPoints = points(point(0, 0))
 

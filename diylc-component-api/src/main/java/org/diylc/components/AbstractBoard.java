@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Point;
 
-import org.diylc.core.ComponentState;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ObjectCache;
@@ -13,29 +12,42 @@ import org.diylc.core.Project;
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class AbstractBoard extends AbstractTransparentComponent {
 
     private static final long serialVersionUID = 1L;
 
-    public static float COORDINATE_FONT_SIZE = 9f;
-    public static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
-    public static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
+    private static float COORDINATE_FONT_SIZE = 9f;
+    
+    private static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
+
+    private static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
 
     protected String value = "";
-    protected Point[] controlPoints = new Point[]{
+
+    private Point[] controlPoints = new Point[]{
             new Point(0, 0),
             new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
     };
+    
+    @JsonProperty
     protected Point firstPoint = new Point();
+    
+    @JsonProperty
     protected Point secondPoint = new Point();
 
     protected Color boardColor = Colors.PCB_BOARD_COLOR;
+    
     protected Color borderColor = Colors.PCB_BORDER_COLOR;
+    
     protected Color coordinateColor = Colors.COORDINATE_COLOR;
+    
     protected Boolean drawCoordinates = true;
 
     @Override
@@ -145,12 +157,12 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
 
     @Override
     public int getControlPointCount() {
-        return controlPoints.length;
+        return getControlPoints().length;
     }
 
     @Override
     public Point getControlPoint(int index) {
-        return controlPoints[index];
+        return getControlPoints()[index];
     }
 
     @Override
@@ -165,10 +177,10 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
 
     @Override
     public void setControlPoint(Point point, int index) {
-        controlPoints[index].setLocation(point);
+        getControlPoints()[index].setLocation(point);
 
-        firstPoint.setLocation(Math.min(controlPoints[0].x, controlPoints[1].x), Math.min(controlPoints[0].y, controlPoints[1].y));
-        secondPoint.setLocation(Math.max(controlPoints[0].x, controlPoints[1].x), Math.max(controlPoints[0].y, controlPoints[1].y));
+        firstPoint.setLocation(Math.min(getControlPoints()[0].x, getControlPoints()[1].x), Math.min(getControlPoints()[0].y, getControlPoints()[1].y));
+        secondPoint.setLocation(Math.max(getControlPoints()[0].x, getControlPoints()[1].x), Math.max(getControlPoints()[0].y, getControlPoints()[1].y));
     }
 
     @EditableProperty
@@ -178,5 +190,13 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Point[] getControlPoints() {
+        return controlPoints;
+    }
+
+    public void setControlPoints(Point[] controlPoints) {
+        this.controlPoints = controlPoints;
     }
 }

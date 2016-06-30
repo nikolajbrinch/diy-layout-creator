@@ -6,28 +6,34 @@ import java.awt.Shape
 import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractSchematicLeadedSymbol
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.PowerUnit
 import org.diylc.core.measures.Resistance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @ComponentDescriptor(name = "Resistor (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "R", description = "Resistor schematic symbol", zOrder = IDIYComponent.COMPONENT)
 public class ResistorSymbol extends AbstractSchematicLeadedSymbol {
 
+    public static final String id = "8d9ceeae-f01e-41b1-af46-fb8bbec5a42e"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in)
-    public static Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in)
+    private static Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in)
+    
+    private static Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in)
 
     @EditableProperty
     Resistance value = null
 
     @Deprecated
+    @JsonIgnore
     Power power = Power.HALF
     
     @EditableProperty(name = "Power rating")

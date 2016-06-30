@@ -1,4 +1,4 @@
-package org.diylc.core;
+package org.diylc.core.components;
 
 public enum CreationMethod {
 

@@ -14,10 +14,8 @@ import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractPotentiometer
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
@@ -25,6 +23,8 @@ import org.diylc.core.Orientation;
 import org.diylc.core.Project
 import org.diylc.core.Theme
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
@@ -33,20 +33,33 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "Trimmer Potentiometer", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.SINGLE_CLICK, instanceNamePrefix = "VR", description = "Various types of board mounted trimmer potentiometers", zOrder = IDIYComponent.COMPONENT, stretchable = false)
 public class TrimmerPotentiometer extends AbstractPotentiometer implements Geometry {
 
+    public static final String id = "dbbbd5f9-8d16-4268-ad52-8944ba3d2e08"
+    
     private static final long serialVersionUID = 1L
 
-    protected static Size FLAT_BODY_SIZE = new Size(9.5d, SizeUnit.mm)
-    protected static Size FLAT_SHAFT_SIZE = new Size(4d, SizeUnit.mm)
-    protected static Size VERTICAL_BODY_LENGTH = new Size(9.5d, SizeUnit.mm)
-    protected static Size VERTICAL_BODY_WIDTH = new Size(4.5d, SizeUnit.mm)
-    protected static Size SPACING = new Size(0.1d, SizeUnit.in)
+    private static Size FLAT_BODY_SIZE = new Size(9.5d, SizeUnit.mm)
+    
+    private static Size FLAT_SHAFT_SIZE = new Size(4d, SizeUnit.mm)
+    
+    private static Size VERTICAL_BODY_LENGTH = new Size(9.5d, SizeUnit.mm)
+    
+    private static Size VERTICAL_BODY_WIDTH = new Size(4.5d, SizeUnit.mm)
+    
+    private static Size SPACING = new Size(0.1d, SizeUnit.in)
+    
     private static Color BODY_COLOR = Color.decode("#FFFFE0")
+    
     private static Color BORDER_COLOR = Color.decode("#8E8E38")
+    
     private static Color SHAFT_COLOR = Color.decode("#FFFFE0")
+    
     private static Color SHAFT_BORDER_COLOR = Color.decode("#8E8E38")
-    public static Color PIN_COLOR = Color.decode("#00B2EE")
-    public static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
-    public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
+    
+    private static Color PIN_COLOR = Color.decode("#00B2EE")
+    
+    private static Color PIN_BORDER_COLOR = PIN_COLOR.darker()
+    
+    private static Size PIN_SIZE = new Size(0.03d, SizeUnit.in)
 
     // Array of 7 elements: 3 lug connectors, 1 pot body and 3 lugs
     transient protected Shape[] body = null
@@ -194,7 +207,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer implements Geome
                 controlPoints[0].y + dy2)
     }
 
-    public Shape[] getBody() {
+    private Shape[] getBody() {
         if (body == null) {
             body = new Shape[2]
 

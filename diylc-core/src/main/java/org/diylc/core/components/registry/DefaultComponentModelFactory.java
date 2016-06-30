@@ -1,16 +1,18 @@
-package org.diylc.components.registry;
+package org.diylc.core.components.registry;
 
 import javax.swing.Icon;
 
-import org.diylc.components.ComponentDescriptor;
-import org.diylc.core.ComponentType;
-import org.diylc.core.CreationMethod;
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.DefaultComponentModel;
+import org.diylc.core.components.CreationMethod;
 
-public class ComponentTypeFactory {
+public class DefaultComponentModelFactory implements ComponentModelFactory {
 
-    public ComponentType newComponentType(IDIYComponent componentInstance) {
+    @Override
+    public ComponentModel newComponentModel(String componentId, IDIYComponent componentInstance) {
         String name;
         String description;
         CreationMethod creationMethod;
@@ -57,7 +59,8 @@ public class ComponentTypeFactory {
             rotatable = true;
         }
         
-        ComponentType componentType = new ComponentType(
+        return new DefaultComponentModel(
+                componentId,
                 name, 
                 description, 
                 creationMethod,
@@ -72,8 +75,6 @@ public class ComponentTypeFactory {
                 bomPolicy, 
                 autoEdit, 
                 rotatable);
-
-        return componentType;
     }
 
 }

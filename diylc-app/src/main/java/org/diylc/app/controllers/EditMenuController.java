@@ -33,4 +33,7 @@ public class EditMenuController extends AbstractController implements EditContro
         return getApplicationController().getCurrentDrawing().getController();
     }
 
+    public ComponentFactory getComponentFactory() {
+        
+    }
 }

@@ -4,11 +4,10 @@ import org.diylc.components.AbstractComponent
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.Angle
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.AbstractBoard
 import org.diylc.components.Geometry
 import org.diylc.components.Constants.Placement
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -18,12 +17,14 @@ import org.diylc.core.VerticalAlignment
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
-import java.awt.*
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform
 import java.awt.geom.Area
 import java.util.List
@@ -31,6 +32,8 @@ import java.util.List
 
 @ComponentDescriptor(name = "Arduino Pro Mini", category = "Arduino", author = "Nikolaj Brinch Jørgensen", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "Arduino", description = "Arduino ProMini", bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false)
 public  class ProMini extends AbstractArduino implements Geometry {
+
+    public static final String id = "3c4c9a77-2e55-4591-93cb-00c7f6be8564"
 
     private static final long serialVersionUID = 1L
 
@@ -82,7 +85,7 @@ public  class ProMini extends AbstractArduino implements Geometry {
     }
 
     @Override
-    public Area[] getBodyArea() {
+    protected Area[] getBodyArea() {
         if (body == null) {
             updateControlPoints()
             body = new Area[2]

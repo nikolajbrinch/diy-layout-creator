@@ -7,30 +7,38 @@ import java.awt.Shape
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractLeadedComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Capacitance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @ComponentDescriptor(name = "Film Capacitor (axial)", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Axial film capacitor, similar to Mallory 150s", zOrder = IDIYComponent.COMPONENT)
 public class AxialFilmCapacitor extends AbstractLeadedComponent {
 
+    public static final String id = "76fd7d46-587d-431d-b52b-1c008c928b7a"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in)
-    public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
-    public static Color BODY_COLOR = Color.decode("#FFE303")
-    public static Color BORDER_COLOR = BODY_COLOR.darker()
+    private static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in)
+    
+    private static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in)
+    
+    private static Color BODY_COLOR = Color.decode("#FFE303")
+    
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)
     Capacitance value = null
     
     @Deprecated
+    @JsonIgnore
     Voltage voltage = Voltage._63V
     
     @EditableProperty(name = "Voltage")

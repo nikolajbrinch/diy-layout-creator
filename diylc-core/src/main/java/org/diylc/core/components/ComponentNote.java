@@ -1,4 +1,4 @@
-package org.diylc.core;
+package org.diylc.core.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

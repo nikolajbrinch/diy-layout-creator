@@ -5,10 +5,10 @@ import org.diylc.components.Colors
 import java.awt.Polygon
 
 import org.diylc.components.AbstractDiodeSymbol
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -16,9 +16,11 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "Schottky diode (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Schottky diode schematic symbol", zOrder = IDIYComponent.COMPONENT)
 public class SchottkyDiodeSymbol extends AbstractDiodeSymbol {
 
+    public static final String id = "c0bdc13f-a9f8-4107-b3cd-768383d313c0"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size BAND_SIZE = new Size(0.01, SizeUnit.in)
+	private static Size BAND_SIZE = new Size(0.01, SizeUnit.in)
 
 	@Override
 	public void drawIcon(GraphicsContext graphicsContext, int width, int height) {

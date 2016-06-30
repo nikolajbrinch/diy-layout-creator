@@ -1,4 +1,4 @@
-package org.diylc.app.utils;
+package org.diylc.core.utils;
 
 import java.awt.Point;
 

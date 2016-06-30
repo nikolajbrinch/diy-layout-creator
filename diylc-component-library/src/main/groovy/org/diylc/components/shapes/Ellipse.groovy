@@ -7,18 +7,20 @@ import java.awt.Composite
 import java.awt.Graphics2D
 
 import org.diylc.components.AbstractShape
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
 import org.diylc.core.annotations.BomPolicy
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Ellipse", author = "Branislav Stojkovic", category = "Shapes", instanceNamePrefix = "ELL", description = "Elliptical area", zOrder = IDIYComponent.COMPONENT, flexibleZOrder = true, bomPolicy = BomPolicy.SHOW_ALL_NAMES, autoEdit = false)
 public class Ellipse extends AbstractShape {
 
+    public static final String id = "328c2d67-51ee-4530-b0cc-41d20d4158e7"
+    
     private static final long serialVersionUID = 1L
 
     @Override

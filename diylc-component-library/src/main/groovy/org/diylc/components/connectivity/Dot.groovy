@@ -7,14 +7,14 @@ import java.awt.Graphics2D
 import java.awt.Point
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -22,10 +22,13 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "Dot", category = "Connectivity", author = "Branislav Stojkovic", description = "Connector dot", instanceNamePrefix = "Dot", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class Dot extends AbstractComponent {
 
+    public static final String id = "edbb23e2-bd6e-49aa-9734-882ad6da0fd4"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size SIZE = new Size(1d, SizeUnit.mm)
-    public static Color COLOR = Color.black
+    private static Size SIZE = new Size(1d, SizeUnit.mm)
+    
+    private static Color COLOR = Color.black
 
     private Point point = new Point(0, 0)
 

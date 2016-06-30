@@ -1,4 +1,4 @@
-package org.diylc.components.registry;
+package org.diylc.core.components.registry;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.diylc.core.ComparatorFactory;
 import org.diylc.core.IPropertyValidator;
 import org.diylc.core.PropertyWrapper;
 import org.diylc.core.annotations.EditableProperty;

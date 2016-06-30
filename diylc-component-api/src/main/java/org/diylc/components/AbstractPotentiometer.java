@@ -13,25 +13,27 @@ public abstract class AbstractPotentiometer extends
 
 	private static final long serialVersionUID = 1L;
 
-	protected Point[] controlPoints;
+	private Point[] controlPoints;
 
 	protected Resistance resistance = null;
+	
 	protected Orientation orientation = Orientation.DEFAULT;
+	
 	protected Taper taper = Taper.LIN;
 
 	@Override
 	public int getControlPointCount() {
-		return controlPoints.length;
+		return getControlPoints().length;
 	}
 
 	@Override
 	public Point getControlPoint(int index) {
-		return controlPoints[index];
+		return getControlPoints()[index];
 	}
 
 	@Override
 	public void setControlPoint(Point point, int index) {
-		controlPoints[index].setLocation(point);
+		getControlPoints()[index].setLocation(point);
 	}
 
 	@Override
@@ -76,4 +78,12 @@ public abstract class AbstractPotentiometer extends
 	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
+
+    public Point[] getControlPoints() {
+        return controlPoints;
+    }
+
+    public void setControlPoints(Point[] controlPoints) {
+        this.controlPoints = controlPoints;
+    }
 }

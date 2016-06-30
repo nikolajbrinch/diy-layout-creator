@@ -12,8 +12,7 @@ import java.awt.geom.Rectangle2D
 import javax.swing.ImageIcon
 
 import org.diylc.components.AbstractTransparentComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.IconImageConverter;
@@ -21,6 +20,7 @@ import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter
 
@@ -29,11 +29,15 @@ import org.diylc.core.graphics.GraphicsContext
 @ComponentDescriptor(name = "Image", author = "Branislav Stojkovic", category = "Misc", description = "User defined image", instanceNamePrefix = "Img", zOrder = IDIYComponent.COMPONENT, flexibleZOrder = true, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
 class Image extends AbstractTransparentComponent {
 
-    public static String DEFAULT_TEXT = "Double click to edit text"
+    public static final String id = "82b3adb8-8c4e-48c2-8523-e2d08637fb1c"
+    
+    private static final long serialVersionUID = 1L
+    
+    private static String DEFAULT_TEXT = "Double click to edit text"
 
-    static final long serialVersionUID = 1L
-	static ImageIcon ICON
-	static byte DEFAULT_SCALE = 50
+	private static ImageIcon ICON
+	
+    private static byte DEFAULT_SCALE = 50
 
 	Point point = new Point(0, 0)
 	

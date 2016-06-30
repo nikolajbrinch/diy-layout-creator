@@ -7,15 +7,15 @@ import java.awt.Graphics2D
 import java.awt.Shape
 
 import org.diylc.components.AbstractLeadedComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.PCBLayer
-import org.diylc.core.ComponentState
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
@@ -23,16 +23,19 @@ import org.diylc.core.measures.SizeUnit
 @ComponentDescriptor(name = "Copper Trace", author = "Branislav Stojkovic", category = "Connectivity", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "Trace", description = "Straight copper trace", zOrder = IDIYComponent.TRACE, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class CopperTrace extends AbstractLeadedComponent {
 
+    public static final String id = "d8063ff1-b2de-4bdf-9818-6cd0a472094b"
+    
 	private static final long serialVersionUID = 1L
 
-	public static Size THICKNESS = new Size(1d, SizeUnit.mm)
-	public static Color COLOR = Color.black
+	private static Size THICKNESS = new Size(1d, SizeUnit.mm)
+	
+    private static Color COLOR = Color.black
 
     @EditableProperty(name = "Width")
 	Size thickness = THICKNESS
     
     @EditableProperty
-	private PCBLayer layer = PCBLayer._1
+	PCBLayer layer = PCBLayer._1
 	
 	public CopperTrace() {
 		super()

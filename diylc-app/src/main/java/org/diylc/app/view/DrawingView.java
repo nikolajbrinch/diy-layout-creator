@@ -511,14 +511,7 @@ public class DrawingView extends JFrame implements ISwingUI {
             }
 
             addMenuAction(null, MenuConstants.WINDOW_MENU);
-            for (Drawing drawing : getApplication().getDrawings()) {
-                boolean checked = drawing.getId().equals(getDrawing().getId());
-                Action action = new CheckBoxAction(drawing.getTitle(), checked, (event) -> getApplication()
-                        .switchWindow(drawing.getId()));
-                action.putValue("UUID", drawing.getId());
-                addMenuAction(action, MenuConstants.WINDOW_MENU);
-            }
-
+            getApplication().getDrawingManager().updateWindowMenus(getDrawing());
         }
 
     }

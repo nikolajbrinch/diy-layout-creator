@@ -15,11 +15,10 @@ import java.awt.geom.Rectangle2D
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.Angle
 import org.diylc.components.Colors
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.ControlPoint
 import org.diylc.components.Geometry
 import org.diylc.components.ICPointCount
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.Display
 import org.diylc.core.IDIYComponent
 import org.diylc.core.HorizontalAlignment
@@ -30,6 +29,7 @@ import org.diylc.core.Theme
 import org.diylc.core.VerticalAlignment
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
@@ -41,24 +41,28 @@ import org.diylc.specifications.ic.ICSpecification
 import org.diylc.specifications.ic.ICSpecificationEditor
 import org.diylc.specifications.ic.ICSpecificationModel
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "IC Symbol", author = "Nikolaj Brinch Jørgensen", category = "Schematics", instanceNamePrefix = "IC", description = "IC symbol", stretchable = false, zOrder = IDIYComponent.COMPONENT, rotatable = false)
 public class ICSymbol extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "710e39a6-5e08-4a6c-9abd-85a88aa669ba"
+    
     private static final long serialVersionUID = 1L
 
-    public static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
+    private static int PIN_SPACING = new Size(0.1d, SizeUnit.in).convertToPixels()
 
-    public static Color BODY_COLOR = Color.white
+    private static Color BODY_COLOR = Color.white
 
-    public static Color BORDER_COLOR = Color.black
+    private static Color BORDER_COLOR = Color.black
 
-    public static float PIN_FONT_SIZE = 9f
+    private static float PIN_FONT_SIZE = 9f
 
     private String value
 
     transient private Shape[] body
 
-    protected ControlPoint[] controlPoints = points(point(0, 0))
+    ControlPoint[] controlPoints = points(point(0, 0))
 
     @SpecificationModel(category = "IC", type = ICSpecification.class, editor = ICSpecificationEditor.class)
     @EditableProperty
@@ -263,7 +267,7 @@ public class ICSymbol extends AbstractTransparentComponent implements Geometry {
         this.controlPoints = controlPoints as ControlPoint[]
     }
 
-    public Shape[] getBody() {
+    private Shape[] getBody() {
         if (body == null) {
 
             int pinSpacing = PIN_SPACING

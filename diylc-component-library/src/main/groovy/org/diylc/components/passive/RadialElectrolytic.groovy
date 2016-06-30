@@ -8,33 +8,44 @@ import java.awt.geom.Rectangle2D
 import java.awt.geom.RoundRectangle2D
 
 import org.diylc.components.AbstractRadialComponent
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Theme
 import org.diylc.core.annotations.EditableProperty
 import org.diylc.core.annotations.PositiveMeasureValidator
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.config.Configuration
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Capacitance
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @ComponentDescriptor(name = "Electrolytic Capacitor", author = "Branislav Stojkovic", category = "Passive", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C", description = "Vertical mounted electrolytic capacitor, polarized or bipolar", zOrder = IDIYComponent.COMPONENT)
 public class RadialElectrolytic extends AbstractRadialComponent {
 
+    public static final String id = "63ae8eab-c916-4d93-97b2-469597034ba0"
+    
     private static final long serialVersionUID = 1L
 
-    public static Size DEFAULT_SIZE = new Size(1d / 4, SizeUnit.in)
-    public static Color BODY_COLOR = Color.decode("#EAADEA")
-    public static Color BORDER_COLOR = BODY_COLOR.darker()
-    public static Color MARKER_COLOR = Color.gray
-    public static Color TICK_COLOR = Color.white
-    public static Size HEIGHT = new Size(0.4d, SizeUnit.in)
-    public static Size EDGE_RADIUS = new Size(1d, SizeUnit.mm)
+    private static Size DEFAULT_SIZE = new Size(1d / 4, SizeUnit.in)
+    
+    private static Color BODY_COLOR = Color.decode("#EAADEA")
+    
+    private static Color BORDER_COLOR = BODY_COLOR.darker()
+    
+    private static Color MARKER_COLOR = Color.gray
+    
+    private static Color TICK_COLOR = Color.white
+    
+    private static Size HEIGHT = new Size(0.4d, SizeUnit.in)
+    
+    private static Size EDGE_RADIUS = new Size(1d, SizeUnit.mm)
 
     @Deprecated
+    @JsonIgnore
     Voltage voltage = Voltage._63V
 
     @EditableProperty(validatorClass = PositiveMeasureValidator.class)

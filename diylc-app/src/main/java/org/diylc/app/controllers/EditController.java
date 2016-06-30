@@ -95,7 +95,7 @@ public interface EditController extends MenuController {
         List<IDIYComponent> result = new ArrayList<IDIYComponent>(components.size());
         for (IDIYComponent component : components) {
             try {
-                result.add(component.clone());
+                result.add(getComponentFactory().createComponent(component));
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }

@@ -33,13 +33,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.diylc.app.model.DrawingModel;
-import org.diylc.app.model.ProjectDeserializer;
 import org.diylc.app.view.Presenter;
 import org.diylc.app.view.StubPresenter;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.core.Project;
+import org.diylc.core.ProjectDeserializer;
 import org.diylc.core.Resource;
 import org.diylc.core.ResourceLoader;
+import org.diylc.core.components.registry.ComponentFactory;
+import org.diylc.core.components.registry.ComponentRegistry;
 import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,10 @@ public class TemplateDialog extends JDialog {
     private static final Dimension panelSize = new Dimension(400, 300);
 
     private final ResourceLoader resourceLoader = new ResourceLoader();
+    
+    private final ComponentRegistry componentRegistry;
+
+    private final ComponentFactory componentFactory;
 
     private DrawingModel model;
 
@@ -72,8 +78,11 @@ public class TemplateDialog extends JDialog {
 
     private JPanel infoPanel;
 
-    public TemplateDialog(JFrame owner, DrawingModel model) {
+
+    public TemplateDialog(JFrame owner, DrawingModel model, ComponentRegistry componentRegistry, ComponentFactory componentFactory) {
         super(owner, "Templates");
+        this.componentRegistry = componentRegistry;
+        this.componentFactory = componentFactory;
         setModal(true);
         setResizable(false);
         this.model = model;
@@ -187,7 +196,7 @@ public class TemplateDialog extends JDialog {
                     Path path = (Path) fileList.getSelectedValue();
                     if (path != null) {
                         try {
-                            Project project = ProjectDeserializer.loadProjectFromFile(path);
+                            Project project = new ProjectDeserializer(componentRegistry, componentFactory).readProject(path);
                             presenter.loadProject(project, true);
                         } catch (Exception e1) {
                             throw new RuntimeException(e1);

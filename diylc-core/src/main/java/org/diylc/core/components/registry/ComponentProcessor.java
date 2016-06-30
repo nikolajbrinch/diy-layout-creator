@@ -1,4 +1,4 @@
-package org.diylc.components.registry;
+package org.diylc.core.components.registry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.diylc.core.ComparatorFactory;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.PropertyWrapper;
 import org.slf4j.Logger;

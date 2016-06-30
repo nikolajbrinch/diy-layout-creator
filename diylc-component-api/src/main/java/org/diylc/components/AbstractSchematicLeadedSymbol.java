@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.core.ComponentState;
 import org.diylc.core.LabelPosition;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
 
 public abstract class AbstractSchematicLeadedSymbol extends AbstractLeadedComponent {
 

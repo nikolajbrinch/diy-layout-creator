@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Shape;
 
-import org.diylc.core.ComponentState;
 import org.diylc.core.Display;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDrawingObserver;
@@ -14,6 +13,7 @@ import org.diylc.core.Theme;
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Size;
@@ -24,11 +24,16 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent {
 	private static final long serialVersionUID = 1L;
 
 	public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+	
 	protected String value = "";
-	protected Point[] controlPoints = new Point[] { new Point(0, 0), new Point(0, 0),
+	
+    private Point[] controlPoints = new Point[] { new Point(0, 0), new Point(0, 0),
 			new Point(0, 0) };
+    
 	protected Color color = Colors.TRANSISTOR_COLOR;
+	
 	protected Display display = Display.NAME;
+	
 	transient protected Shape[] body;
 
 	public AbstractTransistorSymbol() {
@@ -56,8 +61,8 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent {
 
 		// Draw transistor
 
-		int x = controlPoints[0].x;
-		int y = controlPoints[0].y;
+		int x = getControlPoints()[0].x;
+		int y = getControlPoints()[0].y;
 
 		Shape[] body = getBody();
 
@@ -89,25 +94,25 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent {
 
 	@Override
 	public Point getControlPoint(int index) {
-		return controlPoints[index];
+		return getControlPoints()[index];
 	}
 
 	@Override
 	public int getControlPointCount() {
-		return controlPoints.length;
+		return getControlPoints().length;
 	}
 
 	private void updateControlPoints() {
 		int pinSpacing = (int) PIN_SPACING.convertToPixels();
 		// Update control points.
-		int x = controlPoints[0].x;
-		int y = controlPoints[0].y;
+		int x = getControlPoints()[0].x;
+		int y = getControlPoints()[0].y;
 
-		controlPoints[1].x = x + pinSpacing * 2;
-		controlPoints[1].y = y - pinSpacing * 2;
+		getControlPoints()[1].x = x + pinSpacing * 2;
+		getControlPoints()[1].y = y - pinSpacing * 2;
 
-		controlPoints[2].x = x + pinSpacing * 2;
-		controlPoints[2].y = y + pinSpacing * 2;
+		getControlPoints()[2].x = x + pinSpacing * 2;
+		getControlPoints()[2].y = y + pinSpacing * 2;
 	}
 
 	@Override
@@ -131,7 +136,7 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent {
 
 	@Override
 	public void setControlPoint(Point point, int index) {
-		controlPoints[index].setLocation(point);
+		getControlPoints()[index].setLocation(point);
 		// Invalidate body
 		body = null;
 	}
@@ -161,4 +166,12 @@ public abstract class AbstractTransistorSymbol extends AbstractComponent {
 	 * @return
 	 */
 	protected abstract Shape[] getBody();
+
+    public Point[] getControlPoints() {
+        return controlPoints;
+    }
+
+    public void setControlPoints(Point[] controlPoints) {
+        this.controlPoints = controlPoints;
+    }
 }

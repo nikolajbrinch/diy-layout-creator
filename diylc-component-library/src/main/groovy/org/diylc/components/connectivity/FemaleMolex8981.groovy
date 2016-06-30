@@ -17,13 +17,12 @@ import java.util.Map;
 
 import org.diylc.components.AbstractComponent
 import org.diylc.components.AbstractTransparentComponent;
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.ControlPoint;
 import org.diylc.components.Geometry;
 import org.diylc.components.PCBLayer
 import org.diylc.components.Pin;
 import org.diylc.components.PinBase;
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.Orientation;
@@ -31,31 +30,36 @@ import org.diylc.core.Project
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.measures.Size
 import org.diylc.core.measures.SizeUnit
 import org.diylc.core.utils.Constants
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @ComponentDescriptor(name = "Female Molex 8981", category = "Connectivity", author = "Nikolaj Brinch Jørgensen", description = "Female Molex 4 Pin 8981", instanceNamePrefix = "Connector", stretchable = false, zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false)
 public class FemaleMolex8981 extends AbstractTransparentComponent implements Geometry {
 
+    public static final String id = "cf3fd8dc-55b3-47f6-af1d-0911cde0a15b"
+    
     private static final long serialVersionUID = 1L
 
-    public static Color COLOR = Color.black
+    private static Color COLOR = Color.black
 
-    public static int PIN_COUNT = 4
+    private static int PIN_COUNT = 4
 
-    public static int PIN_SPACING = new Size(0.2d, SizeUnit.in).convertToPixels()
+    private static int PIN_SPACING = new Size(0.2d, SizeUnit.in).convertToPixels()
 
-    public static int PIN_SIZE = new Size(2.12d, SizeUnit.mm).convertToPixels()
+    private static int PIN_SIZE = new Size(2.12d, SizeUnit.mm).convertToPixels()
 
-    public static int HALF_PIN_SIZE = (int) (PIN_SIZE / 2)
+    private static int HALF_PIN_SIZE = (int) (PIN_SIZE / 2)
 
-    public static int WIDTH1 = new Size(23.44d, SizeUnit.mm).convertToPixels()
+    private static int WIDTH1 = new Size(23.44d, SizeUnit.mm).convertToPixels()
 
-    public static int WIDTH2 = new Size(19.5d, SizeUnit.mm).convertToPixels()
+    private static int WIDTH2 = new Size(19.5d, SizeUnit.mm).convertToPixels()
 
-    public static int HEIGHT = new Size(8.28d, SizeUnit.mm).convertToPixels()
+    private static int HEIGHT = new Size(8.28d, SizeUnit.mm).convertToPixels()
 
     ControlPoint[] controlPoints = points(point(0, 0))
 

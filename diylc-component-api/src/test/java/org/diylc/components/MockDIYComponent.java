@@ -3,12 +3,13 @@ package org.diylc.components;
 import java.awt.Color;
 import java.awt.Point;
 
-import org.diylc.core.ComponentState;
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.CapacitanceUnit;

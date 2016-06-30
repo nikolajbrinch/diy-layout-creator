@@ -11,9 +11,8 @@ import java.awt.geom.AffineTransform
 import java.awt.geom.Rectangle2D
 
 import org.diylc.components.AbstractComponent
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -23,6 +22,7 @@ import org.diylc.core.VerticalAlignment;
 import org.diylc.core.VisibilityPolicy
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 import org.diylc.core.platform.Platform;
 import org.diylc.core.utils.SystemUtils;
@@ -30,13 +30,15 @@ import org.diylc.core.utils.SystemUtils;
 @ComponentDescriptor(name = "PCB Text", author = "Branislav Stojkovic", category = "Misc", description = "Mirrored text for PCB artwork", instanceNamePrefix = "L", zOrder = IDIYComponent.TRACE, flexibleZOrder = false, stretchable = false, bomPolicy = BomPolicy.NEVER_SHOW)
 class PCBText extends AbstractComponent implements Geometry {
 
-    public static String DEFAULT_TEXT = "Double click to edit text"
-
-    public static Font DEFAULT_FONT = new Font(Platform.getPlatform().getDefaultMonospacedFontName(), Font.BOLD, 15)
-
+    public static final String id = "b96441a5-2991-4c3e-bfea-5e49d116ba54"
+    
     private static final long serialVersionUID = 1L
+    
+    private static String DEFAULT_TEXT = "Double click to edit text"
 
-    private Point point = new Point(0, 0)
+    private static Font DEFAULT_FONT = new Font(Platform.getPlatform().getDefaultMonospacedFontName(), Font.BOLD, 15)
+
+    Point point = new Point(0, 0)
 
     Void value = null
     

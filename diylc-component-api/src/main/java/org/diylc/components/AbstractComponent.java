@@ -11,18 +11,29 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Array;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import org.diylc.core.ComponentType;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.VerticalAlignment;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.components.ComponentModel;
+import org.diylc.core.components.DefaultComponentModel;
 import org.diylc.core.graphics.GraphicsContext;
 import org.diylc.core.platform.Platform;
+import org.diylc.core.serialization.JsonReader;
+import org.diylc.core.serialization.JsonWriter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import groovy.transform.AutoClone;
 
 /**
  * Abstract implementation of {@link IDIYComponent} that contains component name
@@ -40,12 +51,33 @@ public abstract class AbstractComponent implements IDIYComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private ComponentType componentType = null;
+    protected static final Font LABEL_FONT = new Font(Platform.getPlatform().getDefaultTextFontName(), Font.PLAIN, 14);
+
+    private String id;
+
+    private ComponentModel componentModel = null;
 
     @EditableProperty(defaultable = false)
-    protected String name = "";
+    private String name = "";
 
-    public static Font LABEL_FONT = new Font(Platform.getPlatform().getDefaultTextFontName(), Font.PLAIN, 14);
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public ComponentModel getComponentModel() {
+        return componentModel;
+    }
+
+    @Override
+    public void setComponentModel(ComponentModel componentModel) {
+        this.componentModel = componentModel;
+    }
 
     @Override
     public String getName() {
@@ -55,16 +87,6 @@ public abstract class AbstractComponent implements IDIYComponent {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public ComponentType getComponentType() {
-        return componentType;
-    }
-
-    @Override
-    public void setComponentType(ComponentType componentType) {
-        this.componentType = componentType;
     }
 
     @Override
@@ -122,6 +144,7 @@ public abstract class AbstractComponent implements IDIYComponent {
             }
         }
         Rectangle2D rect = new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
+
         return !clip.intersects(rect);
     }
 
@@ -171,11 +194,6 @@ public abstract class AbstractComponent implements IDIYComponent {
         double rotation = angle.getAngle();
         AffineTransform rotate = AffineTransform.getRotateInstance(rotation, point.x, point.y);
         graphicsContext.graphics2D.transform(rotate);
-//        if (angle == Angle._270) {
-//            AffineTransform move = AffineTransform.getTranslateInstance(-(stringBounds.width / 2), -(stringBounds.height / 2));
-//            graphicsContext.graphics2D.transform(move);
-//        }
-
         graphicsContext.drawString(text, textX, textY);
         graphicsContext.setTransform(transform);
     }
@@ -195,92 +213,56 @@ public abstract class AbstractComponent implements IDIYComponent {
         }
     }
 
-    public IDIYComponent clone() throws CloneNotSupportedException {
-        try {
-            /*
-             * Instantiate object of the same type
-             */
-            AbstractComponent newInstance = (AbstractComponent) this.getClass().getConstructors()[0].newInstance();
-            Class<?> clazz = this.getClass();
-            while (AbstractComponent.class.isAssignableFrom(clazz)) {
-                Field[] fields = clazz.getDeclaredFields();
-                clazz = clazz.getSuperclass();
-                // fields = this.getClass().getDeclaredFields();
-
-                /*
-                 * Copy over all non-static, non-final fields that are declared
-                 * in AbstractComponent or one of it's child classes
-                 */
-                for (Field field : fields) {
-                    if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
-                        field.setAccessible(true);
-                        Object value = field.get(this);
-
-                        /*
-                         * Deep copy point arrays. TODO: something nicer
-                         */
-                        if (value != null && value.getClass().isArray()
-                                && value.getClass().getComponentType().isAssignableFrom(Point.class)) {
-                            Object newArray = Array.newInstance(value.getClass().getComponentType(), Array.getLength(value));
-                            for (int i = 0; i < Array.getLength(value); i++) {
-                                Point p = (Point) Array.get(value, i);
-                                Array.set(newArray, i, new Point(p));
-                            }
-                            value = newArray;
-                        }
-
-                        /*
-                         * Deep copy points. TODO: something nicer
-                         */
-                        if (value != null && value instanceof Point) {
-                            value = new Point((Point) value);
-                        }
-
-                        field.set(newInstance, value);
-                    }
-                }
-            }
-            return newInstance;
-        } catch (Exception e) {
-            throw new CloneNotSupportedException("Could not clone the component. Reason: " + e.getMessage());
-        }
-    }
-
     @Override
     public boolean equalsTo(IDIYComponent other) {
-        if (other == null)
+        if (other == null) {
             return false;
-        if (!other.getClass().equals(this.getClass()))
+        }
+
+        if (!other.getClass().equals(this.getClass())) {
             return false;
+        }
+
         Class<?> clazz = this.getClass();
+
         while (AbstractComponent.class.isAssignableFrom(clazz)) {
             Field[] fields = clazz.getDeclaredFields();
             clazz = clazz.getSuperclass();
+
             for (Field field : fields) {
                 if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
                     field.setAccessible(true);
                     try {
                         Object value = field.get(this);
                         Object otherValue = field.get(other);
-                        if (!compareObjects(value, otherValue))
+
+                        if (!compareObjects(value, otherValue)) {
                             return false;
+                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
         }
+
         return true;
     }
 
     private boolean compareObjects(Object o1, Object o2) {
-        if (o1 == null && o2 == null)
+        if (o1 == null && o2 == null) {
             return true;
-        if (o1 == null || o2 == null)
+        }
+
+        if (o1 == null || o2 == null) {
             return false;
+        }
+
         if (o1.getClass().isArray()) {
             return Arrays.equals((Object[]) o1, (Object[]) o2);
         }
+
         return o1.equals(o2);
     }
+
 }

@@ -1,4 +1,4 @@
-package org.diylc.components.registry;
+package org.diylc.core.components.registry;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -15,7 +15,7 @@ public class ComponentRegistryFactory {
 
     private final SpecificationsLoader specificationsLoader = new SpecificationsLoader();
 
-    private final ComponentTypeLoader componentTypeLoader = new ComponentTypeLoader();
+    private final ComponentModelLoader componentModelLoader = new ComponentModelLoader();
 
     public ComponentRegistry newComponentRegistry(ProgressView progressView, Path[] componentDirectories, Path[] specificationDirectories)
             throws IOException {
@@ -23,13 +23,13 @@ public class ComponentRegistryFactory {
                 Thread.currentThread().getContextClassLoader(), specificationDirectories);
         SpecificationRegistry specificationRegistry = getSpecificationsLoader().loadSpecifications(specificationTypeRegistry,
                 Thread.currentThread().getContextClassLoader(), specificationDirectories, progressView);
-        ComponentTypes componentTypes = getComponentTypeLoader().loadComponentTypes(componentDirectories, progressView);
+        ComponentModels componentModels = getComponentModelLoader().loadComponentTypes(componentDirectories, progressView);
 
-        return new ComponentRegistry(componentTypes, specificationRegistry);
+        return new DefaultComponentRegistry(componentModels, specificationRegistry);
     }
 
-    private ComponentTypeLoader getComponentTypeLoader() {
-        return componentTypeLoader;
+    private ComponentModelLoader getComponentModelLoader() {
+        return componentModelLoader;
     }
 
     private SpecificationsLoader getSpecificationsLoader() {

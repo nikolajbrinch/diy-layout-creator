@@ -3,15 +3,17 @@ package org.diylc.components.semiconductors
 import java.awt.Polygon
 import java.awt.geom.AffineTransform
 
-import org.diylc.components.ComponentDescriptor
-import org.diylc.core.CreationMethod
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
+import org.diylc.core.components.CreationMethod;
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "LED (schematic symbol)", author = "Branislav Stojkovic", category = "Schematics", creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Diode schematic symbol", zOrder = IDIYComponent.COMPONENT)
 public class LEDSymbol extends DiodeSymbol {
 
+    public static final String id = "7cf93d8d-bdc5-4078-9dbb-94d340fac3de"
+    
 	private static final long serialVersionUID = 1L
 
 	@Override

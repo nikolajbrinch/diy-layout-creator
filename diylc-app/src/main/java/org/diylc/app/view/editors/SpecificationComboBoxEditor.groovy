@@ -30,6 +30,7 @@ class SpecificationComboBoxEditor extends JComboBox<Specification> {
         setSelectedItem(specificationEditor.getSelectedSpecification())
         addItemListener(specificationEditor)
         specificationEditor.setComponent(this)
+        setMaximumRowCount(20)
     }
     
     

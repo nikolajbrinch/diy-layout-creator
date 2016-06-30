@@ -27,8 +27,8 @@ import javax.swing.SwingUtilities;
 import org.diylc.app.update.UpdateLabel;
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.utils.StringUtils;
-import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.components.ComponentModel;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class StatusBar extends JPanel implements IPlugIn {
     private IPlugInPort plugInPort;
 
     // State variables
-    private ComponentType componentSlot;
+    private ComponentModel componentSlot;
 
     private Point controlPointSlot;
 

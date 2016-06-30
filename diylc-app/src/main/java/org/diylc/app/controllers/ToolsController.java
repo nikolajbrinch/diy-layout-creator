@@ -31,7 +31,7 @@ public class ToolsController extends AbstractController implements ExportControl
     
     public void createBom() {
         LOG.info("CreateBomAction triggered");
-        List<BomEntry> bom = BomMaker.getInstance().createBom(getPlugInPort().getComponentRegistry(), getPlugInPort().getCurrentProject().getComponents());
+        List<BomEntry> bom = BomMaker.getInstance().createBom(getPlugInPort().getCurrentProject().getComponents());
         BomDialog dialog = DialogFactory.getInstance().createBomDialog(bom);
         dialog.setVisible(true);
     }

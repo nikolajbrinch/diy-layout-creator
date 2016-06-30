@@ -4,7 +4,7 @@ import org.diylc.core.annotations.EditableProperty
 import org.diylc.specifications.SpecificationModel
 
 
-class ICSpecificationModel {
+class ICSpecificationModel implements Serializable {
 
     @EditableProperty(name = 'Model')
     ICSpecification specification = null

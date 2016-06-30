@@ -10,20 +10,22 @@ import java.awt.Point
 import java.util.Arrays
 
 import org.diylc.components.AbstractShape
-import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.core.ComponentState
+import org.diylc.core.ComponentDescriptor;
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
 import org.diylc.core.ObjectCache;
 import org.diylc.core.Project
 import org.diylc.core.annotations.BomPolicy
 import org.diylc.core.annotations.EditableProperty
+import org.diylc.core.components.ComponentState;
 import org.diylc.core.graphics.GraphicsContext
 
 @ComponentDescriptor(name = "Polygon", author = "Branislav Stojkovic", category = "Shapes", instanceNamePrefix = "POLY", description = "Polygonal area", zOrder = IDIYComponent.COMPONENT, flexibleZOrder = true, bomPolicy = BomPolicy.SHOW_ALL_NAMES, autoEdit = false)
 public class Polygon extends AbstractShape implements Geometry {
 
+    public static final String id = "c96fdbc4-1831-4a4b-b6c4-1c512f694500"
+    
     private static final long serialVersionUID = 1L
 
     @EditableProperty(name = "Edges")
