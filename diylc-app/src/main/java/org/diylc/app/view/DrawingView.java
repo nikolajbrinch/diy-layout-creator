@@ -81,7 +81,7 @@ import org.diylc.core.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DrawingView extends JFrame implements ISwingUI, View {
+public class DrawingView extends JFrame implements ISwingUI {
 
     private static final Logger LOG = LoggerFactory.getLogger(DrawingView.class);
 
@@ -134,7 +134,7 @@ public class DrawingView extends JFrame implements ISwingUI, View {
                 AppIconLoader.IconLarge.getImage()));
         DialogFactory.getInstance().initialize(this);
 
-        this.presenter = new Presenter(this, this, controller, path, isSaved);
+        this.presenter = new Presenter(this, controller, path, isSaved);
         controller.setView(this);
 
         installPlugins();
@@ -366,8 +366,8 @@ public class DrawingView extends JFrame implements ISwingUI, View {
         if (action == null) {
             menu.addSeparator();
         } else {
-            Boolean isCheckBox = (Boolean) action.getValue(IView.CHECK_BOX_MENU_ITEM);
-            String groupName = (String) action.getValue(IView.RADIO_BUTTON_GROUP_KEY);
+            Boolean isCheckBox = (Boolean) action.getValue(View.CHECK_BOX_MENU_ITEM);
+            String groupName = (String) action.getValue(View.RADIO_BUTTON_GROUP_KEY);
             if (isCheckBox != null && isCheckBox) {
                 menuItem = menu.add(new JCheckBoxMenuItem(action));
             } else if (groupName != null) {

@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 
 import org.diylc.app.Drawing;
+import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.core.Project;
 import org.diylc.core.platform.QuitResponse;
 
@@ -64,5 +65,7 @@ public interface ApplicationController {
     public void switchWindow(String drawingId);
 
     public void closeDrawing(String drawingId);
+
+    public ComponentRegistry getComponentRegistry();
 
 }

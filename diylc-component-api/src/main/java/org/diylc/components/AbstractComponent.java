@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import org.diylc.core.ComponentType;
 import org.diylc.core.HorizontalAlignment;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.VerticalAlignment;
@@ -37,133 +38,148 @@ import org.diylc.core.platform.Platform;
  */
 public abstract class AbstractComponent implements IDIYComponent {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+
+    private ComponentType componentType = null;
 
     @EditableProperty(defaultable = false)
-	protected String name = "";
+    protected String name = "";
 
-	public static Font LABEL_FONT = new Font(Platform.getPlatform().getDefaultTextFontName(), Font.PLAIN, 14);
-	
-	@Override
-	public String getName() {
-		return name;
-	}
+    public static Font LABEL_FONT = new Font(Platform.getPlatform().getDefaultTextFontName(), Font.PLAIN, 14);
 
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public boolean canControlPointOverlap(int index) {
-		return false;
-	}
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
-	
-	public String getValueForDisplay() {
-		return "";
-	}
+    @Override
+    public ComponentType getComponentType() {
+        return componentType;
+    }
 
-	/**
-	 * Returns the closest odd number, i.e. x when x is odd, or x + 1 when x is
-	 * even.
-	 * 
-	 * @param x
-	 * @return
-	 */
-	protected int getClosestOdd(double x) {
-		return ((int) x / 2) * 2 + 1;
-	}
+    @Override
+    public void setComponentType(ComponentType componentType) {
+        this.componentType = componentType;
+    }
 
-	/**
-	 * @param clip
-	 * @return true if none of the control points lie in the clip rectangle.
-	 */
-	protected boolean checkPointsClipped(Shape clip) {
-		for (int i = 0; i < getControlPointCount(); i++) {
-			if (clip.contains(getControlPoint(i))) {
-				return false;
-			}
-		}
-		int minX = Integer.MAX_VALUE;
-		int minY = Integer.MAX_VALUE;
-		int maxX = Integer.MIN_VALUE;
-		int maxY = Integer.MIN_VALUE;
-		for (int i = 0; i < getControlPointCount(); i++) {
-			Point p = getControlPoint(i);
-			if (minX > p.x) {
-				minX = p.x;
-			}
-			if (maxX < p.x) {
-				maxX = p.x;
-			}
-			if (minY > p.y) {
-				minY = p.y;
-			}
-			if (maxY < p.y) {
-				maxY = p.y;
-			}
-		}
-		Rectangle2D rect = new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);		
-		return !clip.intersects(rect);
-	}
+    @Override
+    public boolean canControlPointOverlap(int index) {
+        return false;
+    }
 
-	   protected void drawCenteredText(GraphicsContext graphicsContext, String text, Point point,
-	            HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
-	       drawCenteredText(graphicsContext, text, point, horizontalAlignment, verticalAlignment, Angle._0);
-	   }
-	
-	protected void drawCenteredText(GraphicsContext graphicsContext, String text, Point point,
-			HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, Angle angle) {
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public String getValueForDisplay() {
+        return "";
+    }
+
+    /**
+     * Returns the closest odd number, i.e. x when x is odd, or x + 1 when x is
+     * even.
+     * 
+     * @param x
+     * @return
+     */
+    protected int getClosestOdd(double x) {
+        return ((int) x / 2) * 2 + 1;
+    }
+
+    /**
+     * @param clip
+     * @return true if none of the control points lie in the clip rectangle.
+     */
+    protected boolean checkPointsClipped(Shape clip) {
+        for (int i = 0; i < getControlPointCount(); i++) {
+            if (clip.contains(getControlPoint(i))) {
+                return false;
+            }
+        }
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        for (int i = 0; i < getControlPointCount(); i++) {
+            Point p = getControlPoint(i);
+            if (minX > p.x) {
+                minX = p.x;
+            }
+            if (maxX < p.x) {
+                maxX = p.x;
+            }
+            if (minY > p.y) {
+                minY = p.y;
+            }
+            if (maxY < p.y) {
+                maxY = p.y;
+            }
+        }
+        Rectangle2D rect = new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
+        return !clip.intersects(rect);
+    }
+
+    protected void drawCenteredText(GraphicsContext graphicsContext, String text, Point point, HorizontalAlignment horizontalAlignment,
+            VerticalAlignment verticalAlignment) {
+        drawCenteredText(graphicsContext, text, point, horizontalAlignment, verticalAlignment, Angle._0);
+    }
+
+    protected void drawCenteredText(GraphicsContext graphicsContext, String text, Point point, HorizontalAlignment horizontalAlignment,
+            VerticalAlignment verticalAlignment, Angle angle) {
         AffineTransform transform = graphicsContext.getTransform();
-        
+
         FontMetrics fontMetrics = graphicsContext.getFontMetrics();
-		Rectangle stringBounds = fontMetrics.getStringBounds(text, graphicsContext.graphics2D).getBounds();
+        Rectangle stringBounds = fontMetrics.getStringBounds(text, graphicsContext.graphics2D).getBounds();
 
-		Font font = graphicsContext.getFont();
-		FontRenderContext renderContext = graphicsContext.getFontRenderContext();
-		GlyphVector glyphVector = font.createGlyphVector(renderContext, text);
-		Rectangle visualBounds = glyphVector.getVisualBounds().getBounds();
+        Font font = graphicsContext.getFont();
+        FontRenderContext renderContext = graphicsContext.getFontRenderContext();
+        GlyphVector glyphVector = font.createGlyphVector(renderContext, text);
+        Rectangle visualBounds = glyphVector.getVisualBounds().getBounds();
 
-		int textX = 0;
-		switch (horizontalAlignment) {
-		case CENTER:
-			textX = point.x - stringBounds.width / 2;
-			break;
-		case LEFT:
-			textX = point.x;
-			break;
-		case RIGHT:
-			textX = point.x - stringBounds.width;
-			break;
-		}
+        int textX = 0;
+        switch (horizontalAlignment) {
+        case CENTER:
+            textX = point.x - stringBounds.width / 2;
+            break;
+        case LEFT:
+            textX = point.x;
+            break;
+        case RIGHT:
+            textX = point.x - stringBounds.width;
+            break;
+        }
 
-		int textY = 0;
-		switch (verticalAlignment) {
-		case TOP:
-			textY = point.y + stringBounds.height;
-			break;
-		case CENTER:
-			textY = point.y - visualBounds.height / 2 - visualBounds.y;
-			break;
-		case BOTTOM:
-			textY = point.y - visualBounds.y;
-			break;
-		}
+        int textY = 0;
+        switch (verticalAlignment) {
+        case TOP:
+            textY = point.y + stringBounds.height;
+            break;
+        case CENTER:
+            textY = point.y - visualBounds.height / 2 - visualBounds.y;
+            break;
+        case BOTTOM:
+            textY = point.y - visualBounds.y;
+            break;
+        }
 
-		double rotation = angle.getAngle();
+        double rotation = angle.getAngle();
         AffineTransform rotate = AffineTransform.getRotateInstance(rotation, point.x, point.y);
         graphicsContext.graphics2D.transform(rotate);
+//        if (angle == Angle._270) {
+//            AffineTransform move = AffineTransform.getTranslateInstance(-(stringBounds.width / 2), -(stringBounds.height / 2));
+//            graphicsContext.graphics2D.transform(move);
+//        }
 
-
-		graphicsContext.drawString(text, textX, textY);
+        graphicsContext.drawString(text, textX, textY);
         graphicsContext.setTransform(transform);
-	}
-	
+    }
+
     protected void drawArea(GraphicsContext graphicsContext, int x, int y, Area area, Color color, Color borderColor) {
         Area transformedArea = new Area(area);
         AffineTransform move = AffineTransform.getTranslateInstance(x, y);
@@ -179,105 +195,92 @@ public abstract class AbstractComponent implements IDIYComponent {
         }
     }
 
-	public IDIYComponent clone() throws CloneNotSupportedException {
-		try {
-			/*
-			 * Instantiate object of the same type
-			 */
-			AbstractComponent newInstance = (AbstractComponent) this.getClass()
-					.getConstructors()[0].newInstance();
-			Class<?> clazz = this.getClass();
-			while (AbstractComponent.class.isAssignableFrom(clazz)) {
-				Field[] fields = clazz.getDeclaredFields();
-				clazz = clazz.getSuperclass();
-				// fields = this.getClass().getDeclaredFields();
+    public IDIYComponent clone() throws CloneNotSupportedException {
+        try {
+            /*
+             * Instantiate object of the same type
+             */
+            AbstractComponent newInstance = (AbstractComponent) this.getClass().getConstructors()[0].newInstance();
+            Class<?> clazz = this.getClass();
+            while (AbstractComponent.class.isAssignableFrom(clazz)) {
+                Field[] fields = clazz.getDeclaredFields();
+                clazz = clazz.getSuperclass();
+                // fields = this.getClass().getDeclaredFields();
 
-				/*
-				 * Copy over all non-static, non-final fields that are declared
-				 * in AbstractComponent or one of it's child classes
-				 */
-				for (Field field : fields) {
-					if (!Modifier.isStatic(field.getModifiers())
-							&& !Modifier.isFinal(field.getModifiers())) {
-						field.setAccessible(true);
-						Object value = field.get(this);
+                /*
+                 * Copy over all non-static, non-final fields that are declared
+                 * in AbstractComponent or one of it's child classes
+                 */
+                for (Field field : fields) {
+                    if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
+                        field.setAccessible(true);
+                        Object value = field.get(this);
 
-						/*
-						 * Deep copy point arrays.
-						 * TODO: something nicer
-						 */
-						if (value != null
-								&& value.getClass().isArray()
-								&& value.getClass().getComponentType()
-										.isAssignableFrom(Point.class)) {
-							Object newArray = Array.newInstance(
-									value.getClass().getComponentType(), Array.getLength(value));
-							for (int i = 0; i < Array.getLength(value); i++) {
-								Point p = (Point) Array.get(value, i);
-								Array.set(newArray, i, new Point(p));
-							}
-							value = newArray;
-						}
+                        /*
+                         * Deep copy point arrays. TODO: something nicer
+                         */
+                        if (value != null && value.getClass().isArray()
+                                && value.getClass().getComponentType().isAssignableFrom(Point.class)) {
+                            Object newArray = Array.newInstance(value.getClass().getComponentType(), Array.getLength(value));
+                            for (int i = 0; i < Array.getLength(value); i++) {
+                                Point p = (Point) Array.get(value, i);
+                                Array.set(newArray, i, new Point(p));
+                            }
+                            value = newArray;
+                        }
 
-						/*
-						 * Deep copy points.
-						 * TODO: something nicer
-						 */
-						if (value != null && value instanceof Point) {
-							value = new Point((Point) value);
-						}
+                        /*
+                         * Deep copy points. TODO: something nicer
+                         */
+                        if (value != null && value instanceof Point) {
+                            value = new Point((Point) value);
+                        }
 
-						field.set(newInstance, value);
-					}
-				}
-			}
-			return newInstance;
-		} catch (Exception e) {
-			throw new CloneNotSupportedException("Could not clone the component. Reason: "
-					+ e.getMessage());
-		}
-	}
+                        field.set(newInstance, value);
+                    }
+                }
+            }
+            return newInstance;
+        } catch (Exception e) {
+            throw new CloneNotSupportedException("Could not clone the component. Reason: " + e.getMessage());
+        }
+    }
 
-	@Override
-	public boolean equalsTo(IDIYComponent other) {
-		if (other == null)
-			return false;
-		if (!other.getClass().equals(this.getClass()))
-			return false;
-		Class<?> clazz = this.getClass();
-		while (AbstractComponent.class.isAssignableFrom(clazz)) {
-			Field[] fields = clazz.getDeclaredFields();
-			clazz = clazz.getSuperclass();
-			// fields = this.getClass().getDeclaredFields();
-			// Copy over all non-static, non-final fields that are declared
-			// in
-			// AbstractComponent or one of it's child classes
-			for (Field field : fields) {
-				if (!Modifier.isStatic(field.getModifiers())
-						&& !Modifier.isFinal(field.getModifiers())) {
-					field.setAccessible(true);
-					try {
-						Object value = field.get(this);
-						Object otherValue = field.get(other);
-						if (!compareObjects(value, otherValue))
-							return false;
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				}
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean equalsTo(IDIYComponent other) {
+        if (other == null)
+            return false;
+        if (!other.getClass().equals(this.getClass()))
+            return false;
+        Class<?> clazz = this.getClass();
+        while (AbstractComponent.class.isAssignableFrom(clazz)) {
+            Field[] fields = clazz.getDeclaredFields();
+            clazz = clazz.getSuperclass();
+            for (Field field : fields) {
+                if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
+                    field.setAccessible(true);
+                    try {
+                        Object value = field.get(this);
+                        Object otherValue = field.get(other);
+                        if (!compareObjects(value, otherValue))
+                            return false;
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
-	private boolean compareObjects(Object o1, Object o2) {
-		if (o1 == null && o2 == null)
-			return true;
-		if (o1 == null || o2 == null)
-			return false;
-		if (o1.getClass().isArray()) {
-			return Arrays.equals((Object[])o1, (Object[])o2);
-		}
-		return o1.equals(o2);
-	}
+    private boolean compareObjects(Object o1, Object o2) {
+        if (o1 == null && o2 == null)
+            return true;
+        if (o1 == null || o2 == null)
+            return false;
+        if (o1.getClass().isArray()) {
+            return Arrays.equals((Object[]) o1, (Object[]) o2);
+        }
+        return o1.equals(o2);
+    }
 }

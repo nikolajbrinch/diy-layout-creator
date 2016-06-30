@@ -7,7 +7,7 @@ import java.awt.Point
 
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.boards.VeroBoard
+import org.diylc.components.boards.VeroBoard;
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver

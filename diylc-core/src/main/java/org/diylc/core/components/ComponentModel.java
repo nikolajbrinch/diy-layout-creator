@@ -1,5 +1,6 @@
 package org.diylc.core.components;
 
+import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
 

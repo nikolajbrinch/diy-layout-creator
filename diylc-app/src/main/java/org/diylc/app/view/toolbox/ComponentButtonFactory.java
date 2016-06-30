@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 
 import org.diylc.app.utils.AppIconLoader;
 import org.diylc.app.view.IPlugInPort;
-import org.diylc.components.registry.ComponentType;
+import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
 import org.openide.awt.DropDownButtonFactory;

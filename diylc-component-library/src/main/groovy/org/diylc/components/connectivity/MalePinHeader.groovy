@@ -5,8 +5,6 @@ import java.awt.Point;
 import java.awt.geom.Area;
 
 import org.diylc.components.ControlPoint;
-import org.diylc.components.connectivity.FemalePinHeader.ColumnPinCount;
-import org.diylc.components.connectivity.FemalePinHeader.RowPinCount;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Orientation;

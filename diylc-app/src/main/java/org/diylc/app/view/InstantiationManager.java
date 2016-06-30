@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.diylc.app.utils.CalcUtils;
 import org.diylc.components.registry.ComponentProcessor;
-import org.diylc.components.registry.ComponentType;
+import org.diylc.core.ComponentType;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Orientation;
@@ -33,11 +33,17 @@ public class InstantiationManager {
 	private static final Logger LOG = LoggerFactory.getLogger(InstantiationManager.class);
 
 	public static int MAX_RECENT_COMPONENTS = 16;
-
+	
+	private ComponentProcessor componentProcessor;
+	
 	private ComponentType componentTypeSlot;
+	
 	private Template template;
+	
 	private List<IDIYComponent> componentSlot;
+	
 	private Point firstControlPoint;
+	
 	private Point potentialControlPoint;
 
 	private static final ComponentType clipboardType = new ComponentType(
@@ -45,7 +51,8 @@ public class InstantiationManager {
 			CreationMethod.SINGLE_CLICK, "Multi", "", "", null, null, 0, false,
 			false, null, false, true);
 
-	public InstantiationManager() {
+	public InstantiationManager(ComponentProcessor componentProcessor) {
+        this.componentProcessor = componentProcessor;
 	}
 
 	public ComponentType getComponentTypeSlot() {
@@ -221,9 +228,12 @@ public class InstantiationManager {
 		LOG.trace("Instatiating component of type: "
 				+ componentType.getInstanceClass().getName());
 
-		// Instantiate the component.
+		/* 
+		 * Instantiate the component.
+		 */
 		IDIYComponent component = componentType.getInstanceClass()
 				.newInstance();
+		component.setComponentType(componentType);
 
 		component.setName(createUniqueName(componentType, currentProject));
 
@@ -300,8 +310,7 @@ public class InstantiationManager {
 			throws IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException, SecurityException, NoSuchMethodException {
 		// Extract properties.
-		List<PropertyWrapper> properties = ComponentProcessor.getInstance()
-				.extractProperties(object.getClass());
+		List<PropertyWrapper> properties = componentProcessor.extractProperties(object.getClass());
 		Map<String, PropertyWrapper> propertyCache = new HashMap<String, PropertyWrapper>();
 		// Override with default values if available.
 		for (PropertyWrapper property : properties) {
@@ -359,8 +368,7 @@ public class InstantiationManager {
 			LOG.debug("Component slot is empty, cannot rotate");
 			return;
 		}
-		List<PropertyWrapper> properties = ComponentProcessor.getInstance()
-				.extractProperties(this.componentTypeSlot.getInstanceClass());
+		List<PropertyWrapper> properties = componentProcessor.extractProperties(this.componentTypeSlot.getInstanceClass());
 		PropertyWrapper angleProperty = null;
 		for (PropertyWrapper propertyWrapper : properties) {
 			if (propertyWrapper.getType().getName().equals(

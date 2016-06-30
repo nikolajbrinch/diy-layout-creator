@@ -2,8 +2,10 @@ package org.diylc.components.registry;
 
 import java.util.Comparator;
 
+import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.PropertyWrapper;
+import org.diylc.specifications.Specification;
 
 public class ComparatorFactory {
 
@@ -16,9 +18,9 @@ public class ComparatorFactory {
     private Comparator<PropertyWrapper> propertyNameComparator;
     
     private Comparator<IDIYComponent> componentZOrderComparator;
-    
-    private ComponentTypeFactory componentTypeFactory = new ComponentTypeFactory();
 
+    private Comparator<Specification> specificationNameComparator;
+    
     public static ComparatorFactory getInstance() {
         return instance;
     }
@@ -74,13 +76,26 @@ public class ComparatorFactory {
 
                 @Override
                 public int compare(IDIYComponent o1, IDIYComponent o2) {
-                    ComponentType type1 = componentTypeFactory.newComponentType(o1);
-                    ComponentType type2 = componentTypeFactory.newComponentType(o2);
+                    ComponentType type1 = o1.getComponentType();
+                    ComponentType type2 = o2.getComponentType();
 
-                    return new Double(type1.getZOrder()).compareTo(type2.getZOrder());
+                    return new Double(type1.getZOrder()).compareTo(new Double(type2.getZOrder()));
                 }
             };
         }
         return componentZOrderComparator;
+    }
+
+    public Comparator<Specification> getSpecificationNameComparator() {
+        if (specificationNameComparator == null) {
+            specificationNameComparator = new Comparator<Specification>() {
+
+                @Override
+                public int compare(Specification o1, Specification o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            };
+        }
+        return specificationNameComparator;
     }
 }

@@ -15,7 +15,7 @@ public class PropertyExtractorTests {
     @Test
     public void testExtractFieldProperties() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
             SecurityException, NoSuchMethodException {
-        List<PropertyWrapper> properties = new PropertyExtractor().extractProperties(FieldComponent.class);
+        List<PropertyWrapper> properties = new PropertyExtractor(null).extractProperties(FieldComponent.class);
 
         assertNotNull(properties);
         assertEquals(2, properties.size());
@@ -46,7 +46,7 @@ public class PropertyExtractorTests {
     @Test
     public void testExtractMethodProperties() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
             SecurityException, NoSuchMethodException {
-        List<PropertyWrapper> properties = new PropertyExtractor().extractProperties(MethodComponent.class);
+        List<PropertyWrapper> properties = new PropertyExtractor(null).extractProperties(MethodComponent.class);
 
         assertNotNull(properties);
         assertEquals(2, properties.size());
@@ -78,7 +78,7 @@ public class PropertyExtractorTests {
     @Test
     public void testExtracMixedProperties() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
             SecurityException, NoSuchMethodException {
-        List<PropertyWrapper> properties = new PropertyExtractor().extractProperties(MixedComponent.class);
+        List<PropertyWrapper> properties = new PropertyExtractor(null).extractProperties(MixedComponent.class);
 
         assertNotNull(properties);
         assertEquals(2, properties.size());

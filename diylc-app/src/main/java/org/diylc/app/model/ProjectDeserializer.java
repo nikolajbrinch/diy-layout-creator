@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.diylc.app.Application;
-import org.diylc.app.view.IView;
+import org.diylc.app.view.View;
 import org.diylc.core.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ProjectDeserializer {
             }
             builder.append("</html");
 
-            Application.getApplication().showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
+            Application.getApplication().showMessage(builder.toString(), "Warning", View.WARNING_MESSAGE);
         }
 
         return project;

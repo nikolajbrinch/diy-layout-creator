@@ -1,6 +1,9 @@
 package org.diylc.components.registry;
 
+import javax.swing.Icon;
+
 import org.diylc.components.ComponentDescriptor;
+import org.diylc.core.ComponentType;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
@@ -14,6 +17,7 @@ public class ComponentTypeFactory {
         String category;
         String namePrefix;
         String author;
+        Icon icon = null;
         double zOrder;
         boolean flexibleZOrder;
         boolean stretchable;
@@ -22,10 +26,10 @@ public class ComponentTypeFactory {
         boolean rotatable;
         
         @SuppressWarnings("unchecked")
-        Class<IDIYComponent> clazz = (Class<IDIYComponent>) componentInstance.getClass();
+        Class<? extends IDIYComponent> instanceClass = (Class<IDIYComponent>) componentInstance.getClass();
         
-        if (clazz.isAnnotationPresent(ComponentDescriptor.class)) {
-            ComponentDescriptor annotation = clazz.getAnnotation(ComponentDescriptor.class);
+        if (instanceClass.isAnnotationPresent(ComponentDescriptor.class)) {
+            ComponentDescriptor annotation = instanceClass.getAnnotation(ComponentDescriptor.class);
             name = annotation.name();
             description = annotation.description();
             creationMethod = annotation.creationMethod();
@@ -39,7 +43,7 @@ public class ComponentTypeFactory {
             autoEdit = annotation.autoEdit();
             rotatable = annotation.rotatable();
         } else {
-            name = clazz.getSimpleName();
+            name = instanceClass.getSimpleName();
             description = "";
             creationMethod = CreationMethod.SINGLE_CLICK;
             category = "Uncategorized";
@@ -52,8 +56,22 @@ public class ComponentTypeFactory {
             autoEdit = true;
             rotatable = true;
         }
-        ComponentType componentType = new ComponentType(name, description, creationMethod, category, namePrefix, author, null, clazz,
-                zOrder, flexibleZOrder, stretchable, bomPolicy, autoEdit, rotatable);
+        
+        ComponentType componentType = new ComponentType(
+                name, 
+                description, 
+                creationMethod,
+                category, 
+                namePrefix, 
+                author, 
+                icon,
+                instanceClass, 
+                zOrder, 
+                flexibleZOrder,
+                stretchable, 
+                bomPolicy, 
+                autoEdit, 
+                rotatable);
 
         return componentType;
     }

@@ -23,14 +23,12 @@ public class DoubleTextField extends JTextField {
 	private static final long serialVersionUID = 1L;
 
 	private static final Format format = new DecimalFormat("0.#####");
+	
 	public static final String VALUE_PROPERTY = "DoubleValue";
 
 	private Double value;
-	private JLabel errorLabel;
 
-	// private static ScriptEngineManager factory = new ScriptEngineManager();
-	// private static ScriptEngine engine =
-	// factory.getEngineByName("JavaScript");
+	private JLabel errorLabel;
 
 	private boolean ignoreChanges = false;
 

@@ -3,6 +3,7 @@ package org.diylc.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,6 +18,8 @@ public class FileSystemResource implements Resource {
         this.fullpath = fullpath;
         this.filename = filename;
     }
+
+    public URL toUrl() throws IOException { return toFile().toURI().toURL(); }
 
     public Path toPath() {
         return Paths.get(fullpath);

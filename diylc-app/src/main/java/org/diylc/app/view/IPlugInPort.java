@@ -14,7 +14,8 @@ import org.diylc.app.UndoHandler;
 import org.diylc.app.view.rendering.DrawingOption;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.components.IComponentFilter;
-import org.diylc.components.registry.ComponentType;
+import org.diylc.components.registry.ComponentRegistry;
+import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ITemplateProcessor;
 import org.diylc.core.Project;
@@ -302,5 +303,7 @@ public interface IPlugInPort extends ISelectionProcessor, IMouseProcessor, IKeyP
     UndoHandler<Project> getUndoHandler();
 
     boolean isSaved();
+
+    ComponentRegistry getComponentRegistry();
 
 }

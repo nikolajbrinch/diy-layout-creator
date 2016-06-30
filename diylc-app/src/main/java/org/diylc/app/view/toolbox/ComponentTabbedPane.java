@@ -3,11 +3,9 @@ package org.diylc.app.view.toolbox;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
@@ -21,9 +19,9 @@ import javax.swing.event.PopupMenuListener;
 
 import org.diylc.app.view.IPlugInPort;
 import org.diylc.components.registry.ComparatorFactory;
-import org.diylc.components.registry.ComponentRegistry;
-import org.diylc.components.registry.ComponentType;
+import org.diylc.components.registry.ComponentTypes;
 import org.diylc.components.registry.Constants;
+import org.diylc.core.ComponentType;
 import org.diylc.core.Template;
 import org.diylc.core.config.Configuration;
 import org.diylc.core.config.ConfigurationListener;
@@ -52,13 +50,14 @@ class ComponentTabbedPane extends JTabbedPane {
     public ComponentTabbedPane(IPlugInPort plugInPort) {
         super();
         this.plugInPort = plugInPort;
-        Map<String, List<ComponentType>> componentTypes = ComponentRegistry.INSTANCE.getComponentTypes();
+        
+        ComponentTypes componentTypes = plugInPort.getComponentRegistry().getComponentTypes();
         addTab("Recently Used", createRecentComponentsPanel());
-        List<String> categories = new ArrayList<String>(componentTypes.keySet());
+        List<String> categories = componentTypes.getCategories();
         Collections.sort(categories);
 
         for (String category : categories) {
-            JPanel panel = createTab((componentTypes.get(category)));
+            JPanel panel = createTab((componentTypes.getComponents(category)));
             addTab(category, panel);
         }
 
@@ -139,7 +138,7 @@ class ComponentTabbedPane extends JTabbedPane {
 
         while (iterator.hasNext()) {
             String componentClassName = (String) iterator.next();
-            ComponentType componentType = ComponentRegistry.INSTANCE.getComponentType(componentClassName);
+            ComponentType componentType = plugInPort.getComponentRegistry().getComponentType(componentClassName);
             if (componentType != null) {
                 Component button = ComponentButtonFactory.create(plugInPort, componentType, createTemplatePopup(componentType));
                 toolbar.add(button);

@@ -20,12 +20,10 @@ public class ComponentProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentProcessor.class);
 
-    private static ComponentProcessor instance = new ComponentProcessor();
+    private final PropertyExtractor propertyExtractor;
 
-    private final PropertyExtractor propertyExtractor = new PropertyExtractor();
-    
-    public static ComponentProcessor getInstance() {
-        return instance;
+    public ComponentProcessor(ComponentRegistry componentRegistry) {
+        propertyExtractor = new PropertyExtractor(componentRegistry);
     }
 
     public PropertyExtractor getPropertyExtractor() {
@@ -50,13 +48,13 @@ public class ComponentProcessor {
         if (components.isEmpty()) {
             return null;
         }
-        
+
         List<IDIYComponent> copyComponents = new ArrayList<>(components);
-        
+
         List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
-        
+
         IDIYComponent firstComponent = copyComponents.remove(0);
-        
+
         properties.addAll(getPropertyExtractor().extractProperties(firstComponent.getClass()));
 
         readProperties(properties, firstComponent);
@@ -65,11 +63,12 @@ public class ComponentProcessor {
             List<PropertyWrapper> newProperties = getPropertyExtractor().extractProperties(component.getClass());
 
             readProperties(newProperties, component);
-            
+
             properties.retainAll(newProperties);
 
-            LOG.debug("Mutual properties for \n\t" + String.join(",\n\t", components.stream().map((c) -> c.getName()).collect(Collectors.toList())) + " : \n\t\t" + 
-                    String.join(",\n\t\t", properties.stream().map((p) -> p.getName()).collect(Collectors.toList())));
+            LOG.debug("Mutual properties for \n\t"
+                    + String.join(",\n\t", components.stream().map((c) -> c.getName()).collect(Collectors.toList())) + " : \n\t\t"
+                    + String.join(",\n\t\t", properties.stream().map((p) -> p.getName()).collect(Collectors.toList())));
 
             /*
              * Try to find matching properties in old and new lists and see if
@@ -78,7 +77,7 @@ public class ComponentProcessor {
             for (PropertyWrapper oldProperty : properties) {
                 if (newProperties.contains(oldProperty)) {
                     PropertyWrapper newProperty = newProperties.get(newProperties.indexOf(oldProperty));
-                    
+
                     oldProperty.setUnique(isUnique(newProperty, oldProperty));
                 }
             }
@@ -89,7 +88,8 @@ public class ComponentProcessor {
         return properties;
     }
 
-    private void readProperties(List<PropertyWrapper> properties, IDIYComponent component) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+    private void readProperties(List<PropertyWrapper> properties, IDIYComponent component) throws IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
         for (PropertyWrapper property : properties) {
             property.readFrom(component);
         }
@@ -97,19 +97,18 @@ public class ComponentProcessor {
 
     private boolean isUnique(PropertyWrapper newProperty, PropertyWrapper oldProperty) {
         boolean isUnique = true;
-        
+
         if (newProperty.getValue() != null && newProperty.getValue() != null) {
             if (!newProperty.getValue().equals(oldProperty.getValue()))
                 /*
-                 * Values don't match, so the property is not unique
-                 * valued.
+                 * Values don't match, so the property is not unique valued.
                  */
                 isUnique = false;
         } else if ((newProperty.getValue() == null && oldProperty.getValue() != null)
                 || (newProperty.getValue() != null && oldProperty.getValue() == null)) {
             isUnique = false;
         }
-        
+
         return isUnique;
     }
 

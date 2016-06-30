@@ -9,6 +9,7 @@ import java.awt.datatransfer.Transferable;
 
 import org.diylc.app.model.Model;
 import org.diylc.app.view.DrawingView;
+import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.core.Project;
 
 public class DrawingController implements ClipboardOwner {
@@ -65,6 +66,10 @@ public class DrawingController implements ClipboardOwner {
 
     public Model getModel() {
         return model;
+    }
+
+    public ComponentRegistry getComponentRegistry() {
+        return getApplicationController().getComponentRegistry();
     }
 
 }

@@ -48,13 +48,19 @@ import javax.swing.text.PlainDocument;
 public class FontChooserComboBox extends JComboBox<FontChooserComboBox.Item> implements ItemListener {
 
     private static final long serialVersionUID = 1L;
+    
     float previewFontSize;
+    
     String previewString = "AaBbCc";
+    
     private int recentFontsCount = 5;
 
     List<String> fontNames;
+    
     private HashMap<String, Item> itemsCache = new HashMap<String, Item>();
+    
     private LinkedList<String> recentFontNames;
+    
     private HashMap<String, Item> recentItemsCache = new HashMap<String, Item>();
 
     /**

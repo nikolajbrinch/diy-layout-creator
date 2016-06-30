@@ -8,7 +8,7 @@ import javax.swing.SwingConstants;
  * 
  * @author Branislav Stojkovic
  */
-public interface ISwingUI extends IView, View {
+public interface ISwingUI extends View {
 
 	/**
 	 * Injects a custom GUI panels provided by the plug-in and desired position

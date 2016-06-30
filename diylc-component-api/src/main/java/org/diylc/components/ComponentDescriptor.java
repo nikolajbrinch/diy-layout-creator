@@ -83,5 +83,5 @@ public @interface ComponentDescriptor {
 	 * @return
 	 */
 	boolean rotatable() default true;
-
+	
 }

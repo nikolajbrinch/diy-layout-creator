@@ -28,8 +28,12 @@ public enum Configuration {
                 "abnormalExit"), RECENT_COMPONENTS("recentComponents"), METRIC("metric"), LRU("lru"), EXPORT_GRID("exportGrid"), OUTLINE(
                 "outline"), HI_QUALITY_RENDER("hiQualityRender"), WHEEL_ZOOM("wheelZoom"), ANTI_ALIASING("antiAliasing"), AUTO_CREATE_PADS(
                 "autoCreatePads"), TEMPLATES("templates"), STICKY_POINTS("stickyPoints"), SNAP_TO_GRID("snapToGrid"), AUTO_EDIT("autoEdit"), CONTINUOUS_CREATION(
-                "continuousCreation"), OBJECT_PROPERTIES("objectProperties"), PROJECT_PROPERTIES("projectProperties"), COMPONENT_DIRECTORIES(
-                "componentDirectories"), PROPERTY_PANEL("propertyPanel"), SYSTEM_COMPONENT_LIBRARY("componentLibrary");
+                "continuousCreation"), OBJECT_PROPERTIES("objectProperties"), PROJECT_PROPERTIES("projectProperties"), 
+                COMPONENT_DIRECTORIES("componentDirectories"),
+                SPECIFICATION_DIRECTORIES("specificationDirectories"), 
+                PROPERTY_PANEL("propertyPanel"), 
+                SYSTEM_COMPONENT_LIBRARY("componentLibrary"),
+                SYSTEM_SPECIFICATION_LIBRARY("specificationLibrary");
 
         private String keyValue;
 
@@ -142,6 +146,10 @@ public enum Configuration {
         return System.getProperty("org.diylc.componentLibrary");
     }
 
+    public String getSystemSpecificationLibrary() {
+        return System.getProperty("org.diylc.specificationLibrary");
+    }
+    
     public WindowBounds getWindowBounds() {
         Map<String, Integer> defaultWindowBounds = new HashMap<>();
         defaultWindowBounds.put("x", 100);
@@ -229,18 +237,32 @@ public enum Configuration {
         Path[] componentDirectories = null;
 
         String systemComponentLibrary = getSystemComponentLibrary();
-        
+
         if (systemComponentLibrary == null) {
             componentDirectories = getObjectProperty(Key.COMPONENT_DIRECTORIES,
                     new Path[] { Paths.get(System.getProperty("user.home"), ".diylc/components") });
         } else {
-            componentDirectories = getObjectProperty(
-                    Key.COMPONENT_DIRECTORIES,
-                    new Path[] { Paths.get(systemComponentLibrary),
-                            Paths.get(System.getProperty("user.home"), ".diylc/components") });
+            componentDirectories = getObjectProperty(Key.COMPONENT_DIRECTORIES,
+                    new Path[] { Paths.get(systemComponentLibrary), Paths.get(System.getProperty("user.home"), ".diylc/components") });
         }
 
         return componentDirectories;
+    }
+
+    public Path[] getSpecificationDirectories() {
+        Path[] specificationDirectories = null;
+
+        String systemSpecificationLibrary = getSystemSpecificationLibrary();
+
+        if (systemSpecificationLibrary == null) {
+            specificationDirectories = getObjectProperty(Key.SPECIFICATION_DIRECTORIES,
+                    new Path[] { Paths.get(System.getProperty("user.home"), ".diylc/specifications") });
+        } else {
+            specificationDirectories = getObjectProperty(Key.SPECIFICATION_DIRECTORIES, new Path[] { Paths.get(systemSpecificationLibrary),
+                    Paths.get(System.getProperty("user.home"), ".diylc/specifications") });
+        }
+
+        return specificationDirectories;
     }
 
     public <T> T getProperty(Key key, T defaultValue) {

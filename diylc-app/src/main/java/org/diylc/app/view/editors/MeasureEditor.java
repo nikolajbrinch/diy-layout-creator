@@ -32,7 +32,9 @@ public class MeasureEditor extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private Color oldBg;
+    
     private DoubleTextField valueField;
+    
     private JComboBox<Object> unitBox;
 
     private PropertyWrapper property;
