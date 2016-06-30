@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<RollingRandomAccessFile name="FILEOUT"
+			fileName="/Users/neko/.diylc/log.log"
+			filePattern="/Users/neko/.diylc/logs/diylc-%d{yyyy-MM-dd_HH-mm-ss}.log">
+			<PatternLayout pattern="%d{ABSOLUTE} %5p [%t] %c{1} - %m%n" />
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="1" fileIndex="min" compressionLevel="0"/>
+		</RollingRandomAccessFile>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{ABSOLUTE} %5p [%t] %c{1} - %m%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="STDOUT" />
+			<AppenderRef ref="FILEOUT" />
+		</Root>
+	</Loggers>
+</Configuration>
