@@ -1,6 +1,6 @@
 package org.diylc.components;
 
-public enum PCBLayer {
+public enum PcbLayer {
 
 	_1, _2, _3, _4, _5;
 	

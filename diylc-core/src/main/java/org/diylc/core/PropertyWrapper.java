@@ -8,7 +8,14 @@ import java.lang.reflect.InvocationTargetException;
  * 
  * @author Branislav Stojkovic
  */
-public class PropertyWrapper implements Cloneable {
+@FunctionalInterface
+interface Copyable {
+   
+    PropertyWrapper copy();
+    
+}
+
+public class PropertyWrapper implements Cloneable, Copyable {
 
     private final String name;
 
@@ -199,6 +206,15 @@ public class PropertyWrapper implements Cloneable {
 
     public String getSetter() {
         return setter;
+    }
+
+    @Override
+    public PropertyWrapper copy() {
+        try {
+            return (PropertyWrapper) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

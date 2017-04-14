@@ -1,12 +1,12 @@
 package org.diylc.components;
 
-public enum DCPolarity {
+public enum DcPolarity {
 
 	NONE("None"), CENTER_POSITIVE("Center Positive"), CENTER_NEGATIVE("Center Negative");
 
 	private String title;
 
-	private DCPolarity(String title) {
+	private DcPolarity(String title) {
 		this.title = title;
 	}
 

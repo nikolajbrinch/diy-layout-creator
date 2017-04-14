@@ -3,41 +3,43 @@ package org.diylc.app.model;
 import java.util.List;
 
 import org.diylc.app.view.Presenter;
+import org.diylc.core.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class DrawingModel implements Model {
 
-    private Presenter presenter;
+  private Presenter presenter;
 
-    public DrawingModel() {
-    }
-    
-    @Override
-    public List<IDIYComponent> getSelectedComponents() {
-        return getPresenter().getSelectedComponents();
-    }
+  public DrawingModel() {}
 
-    @Override
-    public void dispose() {
-        getPresenter().dispose();
-    }
+  @Override
+  public List<IDIYComponent> getSelectedComponents() {
+    return getPresenter().getSelectedComponents();
+  }
 
-    @Override
-    public void loadProject(Project project, boolean freshStart) {
-        getPresenter().loadProject(project, freshStart);
-    }
+  @Override
+  public void dispose() {
+    getPresenter().dispose();
+  }
 
-    public void pasteComponents(List<IDIYComponent> components) {
-        getPresenter().pasteComponents(components);
-    }
+  @Override
+  public void loadProject(Project project, boolean freshStart) {
+    project.getComponents().forEach(component -> {
+      ComponentType componentType =
+          presenter.getComponentRegistry().getComponentType(component.getClass());
+      component.setComponentType(componentType);
+    });
+    getPresenter().loadProject(project, freshStart);
+  }
 
-    public Presenter getPresenter() {
-        return presenter;
-    }
-
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-    }
+  public void pasteComponents(List<IDIYComponent> components) {
+    getPresenter().pasteComponents(components);
+  }
 
 }

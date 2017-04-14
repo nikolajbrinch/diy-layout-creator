@@ -9,16 +9,17 @@ import org.diylc.app.view.View;
 
 public class CheckBoxAction extends GenericAction {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public CheckBoxAction(String name, Object value, ActionListener actionListener) {
-        this(name, null, value, actionListener);
-    }
+  public CheckBoxAction(String name, Object value, ActionListener actionListener) {
+    this(name, null, value, actionListener);
+  }
 
-    public CheckBoxAction(String name, KeyStroke accelerator, Object value, ActionListener actionListener) {
-        super(name, null, accelerator, actionListener);
-        putValue(View.CHECK_BOX_MENU_ITEM, true);
-        putValue(AbstractAction.SELECTED_KEY, value);
-    }
+  public CheckBoxAction(String name, KeyStroke accelerator, Object value,
+      ActionListener actionListener) {
+    super(name, null, accelerator, actionListener);
+    putValue(View.CHECK_BOX_MENU_ITEM, true);
+    putValue(AbstractAction.SELECTED_KEY, value);
+  }
 
 }

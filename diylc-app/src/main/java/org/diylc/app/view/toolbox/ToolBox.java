@@ -12,34 +12,34 @@ import org.slf4j.LoggerFactory;
 
 
 public class ToolBox implements IPlugIn {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(StatusBar.class);
-	
-	private final ISwingUI swingUI;
-	
-	private IPlugInPort plugInPort;
-	
-	private ComponentTabbedPane componentTabbedPane;
 
-	public ToolBox(ISwingUI swingUI) {
-		this.swingUI = swingUI;
-	}
+  private static final Logger LOG = LoggerFactory.getLogger(StatusBar.class);
 
-	@Override
-	public void connect(IPlugInPort plugInPort) {
-		this.plugInPort = plugInPort;
-		try {
-			swingUI.injectGUIComponent(getComponentTabbedPane(), SwingConstants.TOP);
-		} catch (BadPositionException e) {
-			LOG.error("Could not install the toolbox", e);
-		}
-	}
-	
-	public ComponentTabbedPane getComponentTabbedPane() {
-		if (componentTabbedPane == null) {
-			componentTabbedPane = new ComponentTabbedPane(plugInPort);
-		}
-		return componentTabbedPane;
-	}
+  private final ISwingUI swingUI;
+
+  private IPlugInPort plugInPort;
+
+  private ComponentTabbedPane componentTabbedPane;
+
+  public ToolBox(ISwingUI swingUI) {
+    this.swingUI = swingUI;
+  }
+
+  @Override
+  public void connect(IPlugInPort plugInPort) {
+    this.plugInPort = plugInPort;
+    try {
+      swingUI.injectGUIComponent(getComponentTabbedPane(), SwingConstants.TOP);
+    } catch (BadPositionException e) {
+      LOG.error("Could not install the toolbox", e);
+    }
+  }
+
+  public ComponentTabbedPane getComponentTabbedPane() {
+    if (componentTabbedPane == null) {
+      componentTabbedPane = new ComponentTabbedPane(plugInPort);
+    }
+    return componentTabbedPane;
+  }
 
 }

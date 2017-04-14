@@ -6,12 +6,12 @@ import org.diylc.app.view.IPlugInPort;
 
 public interface MenuController extends Controller {
 
-    public IPlugInPort getPlugInPort();
-    
-    public Model getModel();
-    
-    public ApplicationController getApplicationController();
-    
-    public Drawing getDrawing();
+  public IPlugInPort getPlugInPort();
+
+  public Model getModel();
+
+  public ApplicationController getApplicationController();
+
+  public Drawing getDrawing();
 
 }

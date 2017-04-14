@@ -7,7 +7,7 @@ import java.awt.Point
 
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.PCBLayer
+import org.diylc.components.PcbLayer
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -44,7 +44,7 @@ public class SolderPad extends AbstractComponent {
     Size holeSize = HOLE_SIZE
 
     @EditableProperty
-    PCBLayer layer = PCBLayer._1
+    PcbLayer layer = PcbLayer._1
 
     @Override
     public void draw(GraphicsContext graphicsContext, ComponentState componentState,

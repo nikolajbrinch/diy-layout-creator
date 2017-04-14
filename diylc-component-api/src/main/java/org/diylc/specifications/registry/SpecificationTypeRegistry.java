@@ -1,15 +1,15 @@
 package org.diylc.specifications.registry;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.diylc.specifications.Specification;
 
 public class SpecificationTypeRegistry {
 
-    private Map<String, Class<? extends Specification>> specificationTypes = new HashMap<String, Class<? extends Specification>>();
+    private Map<String, Class<? extends Specification>> specificationTypes = new ConcurrentHashMap<String, Class<? extends Specification>>();
 
     public Class<? extends Specification> lookup(String category) {
         return specificationTypes.get(category);

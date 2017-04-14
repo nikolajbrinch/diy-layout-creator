@@ -74,7 +74,7 @@ class SpecificationReader {
         
         if (category != null) {
             Class<? extends Specification> specificationType = specificationTypeRegistry.lookup(category);
-            LOG.debug("Creating specification [category = " + category + ", name = " + name + "] as " + specificationType);
+            LOG.trace("Creating specification [category = " + category + ", name = " + name + "] as " + specificationType);
             specification = objectMapper.treeToValue(jsonNode, specificationType);
         }
         

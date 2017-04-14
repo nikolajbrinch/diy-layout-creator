@@ -14,38 +14,42 @@ import org.slf4j.LoggerFactory;
 
 public interface ExportController extends MenuController {
 
-    static final Logger LOG = LoggerFactory.getLogger(ExportController.class);
+  static final Logger LOG = LoggerFactory.getLogger(ExportController.class);
 
-    public IDrawingProvider getDrawingProvider();
+  public IDrawingProvider getDrawingProvider();
 
-    default void exportPdf() {
-        LOG.info("ExportPDFAction triggered");
-        final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.PDF.getFilter(), Configuration.INSTANCE.getLastPath(),
-                null, FileFilterEnum.PDF.getExtensions()[0], null);
-        if (path != null) {
-            new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
-                LOG.debug("Exporting to " + path.toAbsolutePath());
-                DrawingExporter.getInstance().exportPDF(getDrawingProvider(), path);
-                return null;
-            }, Async.onError((Exception e) -> {
-                getView().showMessage("Could not export to PDF. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
-            }));
-        }
+  default void exportPdf() {
+    LOG.info("ExportPDFAction triggered");
+    final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.PDF.getFilter(),
+        Configuration.INSTANCE.getLastPath(),
+        null, FileFilterEnum.PDF.getExtensions()[0], null);
+    if (path != null) {
+      new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
+        LOG.debug("Exporting to " + path.toAbsolutePath());
+        DrawingExporter.getInstance().exportPDF(getDrawingProvider(), path);
+        return null;
+      }, Async.onError((Exception e) -> {
+        getView().showMessage("Could not export to PDF. " + e.getMessage(), "Error",
+            ISwingUI.ERROR_MESSAGE);
+      }));
     }
+  }
 
-    default void exportPng() {
-        LOG.info("ExportPNGAction triggered");
-        final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.PNG.getFilter(), Configuration.INSTANCE.getLastPath(),
-                null, FileFilterEnum.PNG.getExtensions()[0], null);
-        if (path != null) {
-            new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
-                LOG.debug("Exporting to " + path.toAbsolutePath());
-                DrawingExporter.getInstance().exportPNG(getDrawingProvider(), path);
-                return null;
-            }, Async.onError((Exception e) -> {
-                getView().showMessage("Could not export to PNG. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
-            }));
-        }
+  default void exportPng() {
+    LOG.info("ExportPNGAction triggered");
+    final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.PNG.getFilter(),
+        Configuration.INSTANCE.getLastPath(),
+        null, FileFilterEnum.PNG.getExtensions()[0], null);
+    if (path != null) {
+      new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
+        LOG.debug("Exporting to " + path.toAbsolutePath());
+        DrawingExporter.getInstance().exportPNG(getDrawingProvider(), path);
+        return null;
+      }, Async.onError((Exception e) -> {
+        getView().showMessage("Could not export to PNG. " + e.getMessage(), "Error",
+            ISwingUI.ERROR_MESSAGE);
+      }));
     }
+  }
 
 }

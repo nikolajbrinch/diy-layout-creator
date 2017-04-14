@@ -53,11 +53,6 @@ public abstract class AbstractDiodeSymbol extends AbstractSchematicLeadedSymbol 
 		Polygon p = new Polygon(
 				new int[] { 0, 0, (int) (width / Math.sqrt(2)) }, new int[] {
 						0, (int) (width), (int) (width / 2) }, 3);
-		// Area a = new Area(p);
-		// int bandSize = (int) BAND_SIZE.convertToPixels();
-		// a.add(new Area(new Rectangle2D.Double((int) (width / Math.sqrt(2)) +
-		// 1,
-		// 0, bandSize, (int) width)));
 		return p;
 	}
 

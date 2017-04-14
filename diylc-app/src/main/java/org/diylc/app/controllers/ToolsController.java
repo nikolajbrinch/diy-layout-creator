@@ -13,27 +13,30 @@ import org.diylc.core.BomMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ToolsController extends AbstractController implements ExportController, PrintController {
+public class ToolsController extends AbstractController
+    implements ExportController, PrintController {
 
-    static final Logger LOG = LoggerFactory.getLogger(ToolsController.class);
-    
-    private final IDrawingProvider drawingProvider;
+  static final Logger LOG = LoggerFactory.getLogger(ToolsController.class);
 
-    public ToolsController(ApplicationController applicationController, View view, Model model, IPlugInPort plugInPort, IDrawingProvider drawingProvider) {
-        super(applicationController, view, model, plugInPort);
-        this.drawingProvider = drawingProvider;
-    }
+  private final IDrawingProvider drawingProvider;
 
-    @Override
-    public IDrawingProvider getDrawingProvider() {
-        return drawingProvider;
-    }
-    
-    public void createBom() {
-        LOG.info("CreateBomAction triggered");
-        List<BomEntry> bom = BomMaker.getInstance().createBom(getPlugInPort().getComponentRegistry(), getPlugInPort().getCurrentProject().getComponents());
-        BomDialog dialog = DialogFactory.getInstance().createBomDialog(bom);
-        dialog.setVisible(true);
-    }
+  public ToolsController(ApplicationController applicationController, View view, Model model,
+      IPlugInPort plugInPort, IDrawingProvider drawingProvider) {
+    super(applicationController, view, model, plugInPort);
+    this.drawingProvider = drawingProvider;
+  }
+
+  @Override
+  public IDrawingProvider getDrawingProvider() {
+    return drawingProvider;
+  }
+
+  public void createBom() {
+    LOG.info("CreateBomAction triggered");
+    List<BomEntry> bom =
+        BomMaker.getInstance().createBom(getPlugInPort().getCurrentProject().getComponents());
+    BomDialog dialog = DialogFactory.getInstance().createBomDialog(bom);
+    dialog.setVisible(true);
+  }
 
 }

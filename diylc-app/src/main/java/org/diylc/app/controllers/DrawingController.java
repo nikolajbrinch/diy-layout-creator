@@ -12,64 +12,48 @@ import org.diylc.app.view.DrawingView;
 import org.diylc.components.registry.ComponentRegistry;
 import org.diylc.core.Project;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
 public class DrawingController implements ClipboardOwner {
 
-    private final ApplicationController applicationController;
+  private final ApplicationController applicationController;
 
-    private DrawingView view;
+  @Setter
+  private DrawingView view;
 
-    private final Clipboard clipboard;
+  private final Clipboard clipboard;
 
-    private final Model model;
+  private final Model model;
 
-    public DrawingController(ApplicationController applicationController, Model model) {
-        this.applicationController = applicationController;
-        this.model = model;
+  public DrawingController(ApplicationController applicationController, Model model) {
+    this.applicationController = applicationController;
+    this.model = model;
 
-        this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        this.clipboard.addFlavorListener(new FlavorListener() {
+    this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    this.clipboard.addFlavorListener(new FlavorListener() {
 
-            @Override
-            public void flavorsChanged(FlavorEvent e) {
-                getView().refreshActions();
-            }
-        });
-    }
-
-    public ApplicationController getApplicationController() {
-        return applicationController;
-    }
-
-    public DrawingView getView() {
-        return view;
-    }
-
-    public Clipboard getClipboard() {
-        return clipboard;
-    }
-
-    public void dispose() {
-    }
-
-    @Override
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+      @Override
+      public void flavorsChanged(FlavorEvent e) {
         getView().refreshActions();
-    }
+      }
+    });
+  }
 
-    public void autoSave(Project project) {
-        getApplicationController().autoSave(project);
-    }
+  public void dispose() {}
 
-    public void setView(DrawingView view) {
-        this.view = view;
-    }
+  @Override
+  public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    getView().refreshActions();
+  }
 
-    public Model getModel() {
-        return model;
-    }
+  public void autoSave(Project project) {
+    getApplicationController().autoSave(project);
+  }
 
-    public ComponentRegistry getComponentRegistry() {
-        return getApplicationController().getComponentRegistry();
-    }
+  public ComponentRegistry getComponentRegistry() {
+    return getApplicationController().getComponentRegistry();
+  }
 
 }

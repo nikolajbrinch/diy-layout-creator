@@ -10,17 +10,17 @@ import org.slf4j.LoggerFactory;
 
 public interface PrintController extends MenuController {
 
-    static final Logger LOG = LoggerFactory.getLogger(PrintController.class);
+  static final Logger LOG = LoggerFactory.getLogger(PrintController.class);
 
-    public IDrawingProvider getDrawingProvider();
+  public IDrawingProvider getDrawingProvider();
 
-    default void print() {
-        LOG.info("PrintAction triggered");
-        try {
-            DrawingExporter.getInstance().print(getDrawingProvider());
-        } catch (PrinterException e1) {
-            LOG.warn("Error printing", e1);
-        }
+  default void print() {
+    LOG.info("PrintAction triggered");
+    try {
+      DrawingExporter.getInstance().print(getDrawingProvider());
+    } catch (PrinterException e1) {
+      LOG.warn("Error printing", e1);
     }
+  }
 
 }

@@ -12,68 +12,73 @@ import org.slf4j.LoggerFactory;
 
 public class HelpController extends AbstractController {
 
-    static final Logger LOG = LoggerFactory.getLogger(HelpController.class);
+  static final Logger LOG = LoggerFactory.getLogger(HelpController.class);
 
-    public static String MANUAL_URL = "http://code.google.com/p/diy-layout-creator/wiki/Manual";
+  public static String MANUAL_URL = "http://code.google.com/p/diy-layout-creator/wiki/Manual";
 
-    public static String FAQ_URL = "http://code.google.com/p/diy-layout-creator/wiki/FAQ";
+  public static String FAQ_URL = "http://code.google.com/p/diy-layout-creator/wiki/FAQ";
 
-    public static String COMPONENT_URL = "http://code.google.com/p/diy-layout-creator/wiki/ComponentAPI";
+  public static String COMPONENT_URL =
+      "http://code.google.com/p/diy-layout-creator/wiki/ComponentAPI";
 
-    public static String PLUGIN_URL = "http://code.google.com/p/diy-layout-creator/wiki/PluginAPI";
+  public static String PLUGIN_URL = "http://code.google.com/p/diy-layout-creator/wiki/PluginAPI";
 
-    public static String BUG_URL = "http://code.google.com/p/diy-layout-creator/issues/entry";
+  public static String BUG_URL = "http://code.google.com/p/diy-layout-creator/issues/entry";
 
-    public static String DONATE_URL = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=25161";
+  public static String DONATE_URL =
+      "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=25161";
 
-    private AboutDialog aboutDialog;
+  private AboutDialog aboutDialog;
 
-    public HelpController(ApplicationController applicationController, View view, Model model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
+  public HelpController(ApplicationController applicationController, View view, Model model,
+      IPlugInPort plugInPort) {
+    super(applicationController, view, model, plugInPort);
+  }
+
+  public void userManual() {
+    openBrowser(MANUAL_URL);
+  }
+
+  public void faq() {
+    openBrowser(FAQ_URL);
+  }
+
+  public void componentApi() {
+    openBrowser(COMPONENT_URL);
+  }
+
+  public void pluginApi() {
+    openBrowser(PLUGIN_URL);
+  }
+
+  public void submitBug() {
+    openBrowser(BUG_URL);
+  }
+
+  public void donate() {
+    openBrowser(DONATE_URL);
+  }
+
+  public void about() {
+    getAboutDialog().setVisible(true);
+  }
+
+  private AboutDialog getAboutDialog() {
+    if (aboutDialog == null) {
+      aboutDialog = DialogFactory.getInstance().createAboutDialog("DIY Layout Creator",
+          AppIconLoader.IconLarge.getIcon(),
+          getPlugInPort().getCurrentVersionNumber().toString(), "Branislav Stojkovic", "diylc.org",
+          "bancika@gmail.com", "");
     }
+    return aboutDialog;
+  }
 
-    public void userManual() {
-        openBrowser(MANUAL_URL);
+  private void openBrowser(String url) {
+    try {
+      BrowserUtils.openURL(url);
+    } catch (Exception e1) {
+      LOG.error("Could not launch default browser", e1);
     }
-
-    public void faq() {
-        openBrowser(FAQ_URL);
-    }
-
-    public void componentApi() {
-        openBrowser(COMPONENT_URL);
-    }
-
-    public void pluginApi() {
-        openBrowser(PLUGIN_URL);
-    }
-
-    public void submitBug() {
-        openBrowser(BUG_URL);
-    }
-
-    public void donate() {
-        openBrowser(DONATE_URL);
-    }
-
-    public void about() {
-        getAboutDialog().setVisible(true);
-    }
-
-    private AboutDialog getAboutDialog() {
-        if (aboutDialog == null) {
-            aboutDialog = DialogFactory.getInstance().createAboutDialog("DIY Layout Creator", AppIconLoader.IconLarge.getIcon(),
-                    getPlugInPort().getCurrentVersionNumber().toString(), "Branislav Stojkovic", "diylc.org", "bancika@gmail.com", "");
-        }
-        return aboutDialog;
-    }
-
-    private void openBrowser(String url) {
-        try {
-            BrowserUtils.openURL(url);
-        } catch (Exception e1) {
-            LOG.error("Could not launch default browser", e1);
-        }
-    }
+  }
 
 }

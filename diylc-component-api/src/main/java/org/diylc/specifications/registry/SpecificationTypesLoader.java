@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,7 +55,7 @@ public class SpecificationTypesLoader {
         if (directories.length > 0) {
             specificationClasses.addAll(findGroovySpecificationTypes(classLoader, directories));
         }
-        
+
         if (specificationClasses.isEmpty()) {
             specificationClasses.addAll(findClasspathSpecificationTypes(classLoader));
         }
@@ -63,18 +64,33 @@ public class SpecificationTypesLoader {
     }
 
     @SuppressWarnings("unchecked")
+    private Class<? extends Specification> loadGroovySpecificationType(GroovyClassLoader groovyClassLoader, Path path) {
+        Class<? extends Specification> specificationClass = null;
+        LOG.trace("Loading specification file: \"" + path.toAbsolutePath().toString() + "\"");
+        try {
+            Class<?> clazz = groovyClassLoader.parseClass(path.toFile());
+
+            if (isValidSpecificationClass(clazz)) {
+                specificationClass = (Class<? extends Specification>) clazz;
+            }
+        } catch (CompilationFailedException e) {
+            LOG.warn("Compilation failed", e);
+        } catch (IOException e) {
+            LOG.warn("IOException loading class", e);
+        }
+
+        return specificationClass;
+
+    }
+
     private Set<Class<? extends Specification>> findGroovySpecificationTypes(ClassLoader classLoader, Path[] directories) {
         Set<Class<? extends Specification>> specificationClasses = new HashSet<Class<? extends Specification>>();
 
-        GroovyClassLoader groovyClassLoader = null;
-
-        try {
-            groovyClassLoader = new GroovyClassLoader(classLoader);
-
+        try (GroovyClassLoader groovyClassLoader = new GroovyClassLoader(classLoader)) {
             for (Path directory : directories) {
                 groovyClassLoader.addClasspath(directory.toString());
             }
-            
+
             Set<Path> specificationTypeFiles = null;
 
             try {
@@ -83,52 +99,38 @@ public class SpecificationTypesLoader {
                 LOG.error("Error getting groovy files", e);
             }
 
-            for (Path path : specificationTypeFiles) {
-                LOG.debug("Loading specification file: \"" + path.toAbsolutePath().toString() + "\"");
-                try {
-                    Class<?> clazz = groovyClassLoader.parseClass(path.toFile());
-
-                    if (isValidSpecificationClass(clazz)) {
-                        specificationClasses.add((Class<? extends Specification>) clazz);
-                    }
-                } catch (CompilationFailedException e) {
-                    LOG.warn("Compilation failed", e);
-                } catch (IOException e) {
-                    LOG.warn("IOException loading class", e);
-                }
-            }
-        } finally {
-            try {
-                groovyClassLoader.close();
-            } catch (IOException e) {
-                LOG.warn("IOException closing GroovyClassLoader", e);
-            }
+            specificationClasses = specificationTypeFiles.parallelStream()
+                    .map((tf) -> loadGroovySpecificationType(groovyClassLoader, tf))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+        } catch (IOException e) {
+            LOG.warn("IOException closing GroovyClassLoader", e);
         }
 
         return specificationClasses;
     }
 
     @SuppressWarnings("unchecked")
-    private Set<Class<? extends Specification>> findClasspathSpecificationTypes(ClassLoader classLoader) throws IOException {
-        Set<Class<? extends Specification>> specificationClasses = new HashSet<Class<? extends Specification>>();
+    private Class<? extends Specification> instantiateClass(Resource resource) {
+        Class<? extends Specification> clazz = null;
 
-        Set<Resource> classResources = resourceLoader.getResources(classLoader, SPECIFICATION_PACKAGE_NAME, CLASS_EXTENSION);
+        try {
+            LOG.trace("Loading specification class: \"" + resource + "\"");
 
-        for (Resource resource : classResources) {
-            LOG.debug("Loading specification class: \"" + resource + "\"");
-            try {
-                String filename = resource.getFilename();
-                Class<?> clazz = Class.forName(filename.substring(0, filename.lastIndexOf('.')).replace('/', '.'));
-
-                if (isValidSpecificationClass(clazz)) {
-                    specificationClasses.add((Class<? extends Specification>) clazz);
-                }
-            } catch (ClassNotFoundException e) {
-                LOG.warn("Class was not found", e);
-            }
+            String filename = resource.getFilename();
+            clazz = (Class<? extends Specification>) Class.forName(filename.substring(0, filename.lastIndexOf('.')).replace('/', '.'));
+        } catch (ClassNotFoundException e) {
+            LOG.warn("Class was not found", e);
         }
 
-        return specificationClasses;
+        return clazz;
+    }
+
+    private Set<Class<? extends Specification>> findClasspathSpecificationTypes(ClassLoader classLoader) throws IOException {
+        Set<Resource> classResources = resourceLoader.getResources(classLoader, SPECIFICATION_PACKAGE_NAME, CLASS_EXTENSION);
+
+        return classResources.parallelStream().map((resource) -> instantiateClass(resource)).filter(Objects::nonNull)
+                .filter((clazz) -> isValidSpecificationClass(clazz)).collect(Collectors.toSet());
     }
 
     private Set<Path> getGroovyFiles(Path[] directories) throws IOException {

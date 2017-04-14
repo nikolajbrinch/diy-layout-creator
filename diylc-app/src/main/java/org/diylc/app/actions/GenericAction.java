@@ -11,35 +11,36 @@ import org.diylc.core.utils.SystemUtils;
 
 public class GenericAction extends AbstractAction {
 
-    private static final long serialVersionUID = 1L;
-    
-    private ActionListener actionListener;
+  private static final long serialVersionUID = 1L;
 
-    public GenericAction(String name, ActionListener actionListener) {
-        this(name, null, null, actionListener);
-    }
+  private ActionListener actionListener;
 
-    public GenericAction(String name, Icon icon, ActionListener actionListener) {
-        this(name, icon, null, actionListener);
-    }
+  public GenericAction(String name, ActionListener actionListener) {
+    this(name, null, null, actionListener);
+  }
 
-    public GenericAction(String name, KeyStroke accelerator, ActionListener actionListener) {
-        this(name, null, accelerator, actionListener);
-    }
+  public GenericAction(String name, Icon icon, ActionListener actionListener) {
+    this(name, icon, null, actionListener);
+  }
 
-    public GenericAction(String name, Icon icon, KeyStroke accelerator, ActionListener actionListener) {
-        super();
-        this.actionListener = actionListener;
-        putValue(AbstractAction.NAME, name);
-        if (!SystemUtils.isMac()) {
-            putValue(AbstractAction.SMALL_ICON, icon);
-        }
-        putValue(AbstractAction.ACCELERATOR_KEY, accelerator);
+  public GenericAction(String name, KeyStroke accelerator, ActionListener actionListener) {
+    this(name, null, accelerator, actionListener);
+  }
+
+  public GenericAction(String name, Icon icon, KeyStroke accelerator,
+      ActionListener actionListener) {
+    super();
+    this.actionListener = actionListener;
+    putValue(AbstractAction.NAME, name);
+    if (!SystemUtils.isMac()) {
+      putValue(AbstractAction.SMALL_ICON, icon);
     }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.actionListener.actionPerformed(e);
-    }
+    putValue(AbstractAction.ACCELERATOR_KEY, accelerator);
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    this.actionListener.actionPerformed(e);
+  }
 
 }

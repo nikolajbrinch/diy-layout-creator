@@ -15,7 +15,7 @@ import java.awt.geom.Rectangle2D
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.components.ICPointCount
+import org.diylc.components.IcPointCount
 import org.diylc.core.ComponentState
 import org.diylc.core.Display;
 import org.diylc.core.HorizontalAlignment;
@@ -48,7 +48,7 @@ public class OpAmpSymbol extends AbstractTransparentComponent implements Geometr
 			point(0, 0), point(0, 0), point(0, 0))
 
 	@EditableProperty(name = "Contacts")
-	ICPointCount icPointCount = ICPointCount._5
+	IcPointCount icPointCount = IcPointCount._5
 
 	@EditableProperty
 	String value = ""
@@ -186,7 +186,7 @@ public class OpAmpSymbol extends AbstractTransparentComponent implements Geometr
 			polyline.lineTo(controlPoints[1].x + pinSpacing / 2, controlPoints[1].y)
 			polyline.moveTo(controlPoints[2].x, controlPoints[2].y)
 			polyline.lineTo(controlPoints[2].x - pinSpacing / 2, controlPoints[2].y)
-			if (icPointCount == ICPointCount._5) {
+			if (icPointCount == IcPointCount._5) {
 				polyline.moveTo(controlPoints[3].x, controlPoints[3].y)
 				polyline.lineTo(controlPoints[3].x, controlPoints[3].y + pinSpacing * 3 / 4)
 				polyline.moveTo(controlPoints[4].x, controlPoints[4].y)
@@ -213,7 +213,7 @@ public class OpAmpSymbol extends AbstractTransparentComponent implements Geometr
 		body = null
 	}
 
-	public void setIcPointCount(ICPointCount icPointCount) {
+	public void setIcPointCount(IcPointCount icPointCount) {
 		this.icPointCount = icPointCount
 		updateControlPoints()
 		body = null

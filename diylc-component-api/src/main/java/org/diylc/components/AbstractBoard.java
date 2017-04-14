@@ -26,10 +26,8 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
     public static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
 
     protected String value = "";
-    protected Point[] controlPoints = new Point[]{
-            new Point(0, 0),
-            new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
-    };
+    protected Point[] controlPoints = new Point[] { new Point(0, 0),
+            new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()) };
     protected Point firstPoint = new Point();
     protected Point secondPoint = new Point();
 
@@ -39,8 +37,8 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
     protected Boolean drawCoordinates = true;
 
     @Override
-    public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode,
-                     Project project, IDrawingObserver drawingObserver) {
+    public void draw(GraphicsContext graphicsContext, ComponentState componentState, boolean outlineMode, Project project,
+            IDrawingObserver drawingObserver) {
         graphicsContext.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
         if (componentState != ComponentState.DRAGGING) {
@@ -55,12 +53,13 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
             graphicsContext.setComposite(oldComposite);
         }
 
-		/* 
-		 * Do not track any changes that follow because the whole board has been
-		 * tracked so far.
-		 */
+        /*
+         * Do not track any changes that follow because the whole board has been
+         * tracked so far.
+         */
         drawingObserver.stopTracking();
-        graphicsContext.setColor(componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? Colors.SELECTION_COLOR : borderColor);
+        graphicsContext.setColor(componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+                ? Colors.SELECTION_COLOR : borderColor);
         graphicsContext.drawRect(firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
     }
 
@@ -77,7 +76,8 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
         while (p.y < secondPoint.y - spacing) {
             p.y += spacing;
 
-            drawCenteredText(graphicsContext, getCoordinateLabel(t++), new Point(p.x + 2, p.y), HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+            drawCenteredText(graphicsContext, getCoordinateLabel(t++), new Point(p.x + 2, p.y), HorizontalAlignment.LEFT,
+                    VerticalAlignment.CENTER);
         }
 
         p = new Point(firstPoint);
@@ -86,7 +86,8 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
         while (p.x < secondPoint.x - spacing) {
             p.x += spacing;
 
-            drawCenteredText(graphicsContext, getCoordinateLabel(t++), new Point(p.x, p.y - 2), HorizontalAlignment.CENTER, VerticalAlignment.TOP);
+            drawCenteredText(graphicsContext, getCoordinateLabel(t++), new Point(p.x, p.y - 2), HorizontalAlignment.CENTER,
+                    VerticalAlignment.TOP);
         }
     }
 
@@ -116,7 +117,9 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
 
     @EditableProperty(name = "Coordinate Color")
     public Color getCoordinateColor() {
-        // Null protection for older files
+        /*
+         * Null protection for older files
+         */
         return coordinateColor == null ? Colors.COORDINATE_COLOR : coordinateColor;
     }
 
@@ -135,7 +138,9 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
 
     @EditableProperty(name = "Draw Coordinates")
     public boolean getDrawCoordinates() {
-        // Null protection for older files
+        /*
+         * Null protection for older files
+         */
         return drawCoordinates == null || drawCoordinates;
     }
 

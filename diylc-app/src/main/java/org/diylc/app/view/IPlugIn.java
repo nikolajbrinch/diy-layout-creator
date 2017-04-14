@@ -7,12 +7,11 @@ package org.diylc.app.view;
  */
 public interface IPlugIn {
 
-    /**
-     * Method that connects the plug-in with {@link IPlugInPort}. Called by the
-     * application when plug-in is installed.
-     * 
-     * @param plugInPort
-     */
-    default void connect(IPlugInPort plugInPort) {
-    };
+  /**
+   * Method that connects the plug-in with {@link IPlugInPort}. Called by the application when
+   * plug-in is installed.
+   * 
+   * @param plugInPort
+   */
+  default void connect(IPlugInPort plugInPort) {};
 }

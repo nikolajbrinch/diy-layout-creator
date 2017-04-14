@@ -6,16 +6,17 @@ import org.diylc.app.view.View;
 
 public class WindowController extends AbstractController {
 
-    public WindowController(ApplicationController applicationController, View view, Model model, IPlugInPort plugInPort) {
-        super(applicationController, view, model, plugInPort);
-    }
+  public WindowController(ApplicationController applicationController, View view, Model model,
+      IPlugInPort plugInPort) {
+    super(applicationController, view, model, plugInPort);
+  }
 
-    public void minimize() {
-        getView().minimize();
-    }
+  public void minimize() {
+    getView().minimize();
+  }
 
-    public void zoom() {
-        getView().zoom();
-    }
+  public void zoom() {
+    getView().zoom();
+  }
 
 }

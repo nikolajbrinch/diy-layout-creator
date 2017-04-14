@@ -8,7 +8,7 @@ import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTransistorSymbol
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.FETPolarity
+import org.diylc.components.FetPolarity
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.EditableProperty
@@ -20,7 +20,7 @@ public class MOSFETSymbol extends AbstractTransistorSymbol {
 	private static final long serialVersionUID = 1L
 
 	@EditableProperty(name = "Channel")
-	FETPolarity polarity = FETPolarity.NEGATIVE
+	FetPolarity polarity = FetPolarity.NEGATIVE
 
 	public Shape[] getBody() {
 		if (this.@body == null) {
@@ -52,7 +52,7 @@ public class MOSFETSymbol extends AbstractTransistorSymbol {
 			this.@body[1] = polyline
 
 			Polygon arrow
-			if (polarity == FETPolarity.NEGATIVE) {
+			if (polarity == FetPolarity.NEGATIVE) {
 				arrow = new Polygon([ x + pinSpacing * 8 / 6, x + pinSpacing * 8 / 6,
 						x + pinSpacing * 12 / 6 ] as int[], [ y + pinSpacing * 6 / 5,
 						y + pinSpacing * 4 / 5, y + pinSpacing ] as int[], 3)
@@ -83,7 +83,7 @@ public class MOSFETSymbol extends AbstractTransistorSymbol {
 		graphicsContext.drawLine(width * 4 / 5, height * 3 / 4, width * 3 / 5, height * 3 / 4)
 	}
 
-	public void setPolarity(FETPolarity polarity) {
+	public void setPolarity(FetPolarity polarity) {
 		this.@polarity = polarity
 		// Invalidate body
 		body = null

@@ -7,10 +7,10 @@ import org.diylc.core.Project;
 
 public interface Model {
 
-    public List<IDIYComponent> getSelectedComponents();
+  public List<IDIYComponent> getSelectedComponents();
 
-    public void dispose();
+  public void dispose();
 
-    public void loadProject(Project project, boolean freshStart);
+  public void loadProject(Project project, boolean freshStart);
 
 }

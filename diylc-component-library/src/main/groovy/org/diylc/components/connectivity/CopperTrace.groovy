@@ -8,7 +8,7 @@ import java.awt.Shape
 
 import org.diylc.components.AbstractLeadedComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.PCBLayer
+import org.diylc.components.PcbLayer
 import org.diylc.core.ComponentState
 import org.diylc.core.CreationMethod
 import org.diylc.core.IDIYComponent
@@ -32,7 +32,7 @@ public class CopperTrace extends AbstractLeadedComponent {
 	Size thickness = THICKNESS
     
     @EditableProperty
-	private PCBLayer layer = PCBLayer._1
+	private PcbLayer layer = PcbLayer._1
 	
 	public CopperTrace() {
 		super()

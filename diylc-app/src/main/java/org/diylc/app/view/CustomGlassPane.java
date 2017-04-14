@@ -9,46 +9,38 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 
 public class CustomGlassPane extends JPanel implements MouseListener,
-		KeyListener {
+    KeyListener {
 
-	private static final long serialVersionUID = -5344758920442881290L;
+  private static final long serialVersionUID = -5344758920442881290L;
 
-	public CustomGlassPane() {
-		addKeyListener(this);
-		addMouseListener(this);
-		setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		setOpaque(false);
-	}
+  public CustomGlassPane() {
+    addKeyListener(this);
+    addMouseListener(this);
+    setCursor(new Cursor(Cursor.WAIT_CURSOR));
+    setOpaque(false);
+  }
 
-	@Override
-	public void mouseClicked(final MouseEvent pArg0) {
-	}
+  @Override
+  public void mouseClicked(final MouseEvent pArg0) {}
 
-	@Override
-	public void mouseEntered(final MouseEvent pArg0) {
-	}
+  @Override
+  public void mouseEntered(final MouseEvent pArg0) {}
 
-	@Override
-	public void mouseExited(final MouseEvent pArg0) {
-	}
+  @Override
+  public void mouseExited(final MouseEvent pArg0) {}
 
-	@Override
-	public void mousePressed(final MouseEvent pArg0) {
-	}
+  @Override
+  public void mousePressed(final MouseEvent pArg0) {}
 
-	@Override
-	public void mouseReleased(final MouseEvent pArg0) {
-	}
+  @Override
+  public void mouseReleased(final MouseEvent pArg0) {}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-	}
+  @Override
+  public void keyPressed(KeyEvent e) {}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-	}
+  @Override
+  public void keyReleased(KeyEvent e) {}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
+  @Override
+  public void keyTyped(KeyEvent e) {}
 }

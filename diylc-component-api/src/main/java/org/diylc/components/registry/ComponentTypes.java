@@ -1,17 +1,17 @@
 package org.diylc.components.registry;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.diylc.core.ComponentType;
 
 public class ComponentTypes {
 
-    Map<String, List<ComponentType>> categoryTypes = new HashMap<String, List<ComponentType>>();
+    Map<String, List<ComponentType>> categoryTypes = new ConcurrentHashMap<String, List<ComponentType>>();
 
     Set<String> categories = new HashSet<String>();
 
@@ -19,6 +19,7 @@ public class ComponentTypes {
 
     public void add(ComponentType componentType) {
         String category = componentType.getCategory();
+
         List<ComponentType> components = categoryTypes.get(category);
 
         if (components == null) {

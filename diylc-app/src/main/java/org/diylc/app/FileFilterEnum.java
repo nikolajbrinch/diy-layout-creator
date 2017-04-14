@@ -1,53 +1,53 @@
 package org.diylc.app;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Objects;
 
 import javax.swing.filechooser.FileFilter;
 
+import lombok.Getter;
+
 public enum FileFilterEnum {
 
-	PNG("PNG Images (*.png)", "png"), 
-	PDF("PDF Files (*.pdf)", "pdf"), 
-	DIY("DIY Project Files (*.diy)", "diy"), 
-	EXCEL("Excel Workbooks (*.xls)", "xls"), 
-	CSV("Comma Separated Files (*.csv)", "csv"), 
-	HTML("HTML Files (*.html)", "html"), 
-	IMAGES("Image Files (*.png, *.jpg, *.gif)", "png", "jpg", "gif");
+  PNG("PNG Images (*.png)", "png"),
+  PDF("PDF Files (*.pdf)", "pdf"),
+  DIY("DIY Project Files (*.diy)", "diy"),
+  EXCEL("Excel Workbooks (*.xls)", "xls"),
+  CSV("Comma Separated Files (*.csv)", "csv"),
+  HTML("HTML Files (*.html)", "html"),
+  IMAGES("Image Files (*.png, *.jpg, *.gif)", "png", "jpg", "gif");
 
-	FileFilter filter;
-	String[] extensions;
+  @Getter
+  private FileFilter filter;
+  
+  @Getter
+  private String[] extensions;
 
-	private FileFilterEnum(final String description, final String... extensions) {
-		this.extensions = extensions;
-		filter = new FileFilter() {
+  private FileFilterEnum(final String description, final String... extensions) {
+    this.extensions = extensions;
+    filter = new FileFilter() {
 
-			@Override
-			public boolean accept(File f) {
-				if (f.isDirectory()) {
-					return true;
-				}
-				String fileExt = f.getName();
-				fileExt = fileExt.substring(fileExt.lastIndexOf('.') + 1).toLowerCase();
-				for (String ext : extensions) {
-					if (ext.equals(fileExt)) {
-						return true;
-					}
-				}
-				return false;
-			}
+      @Override
+      public boolean accept(File f) {
+        if (f.isDirectory()) {
+          return true;
+        }
+        String fileName = f.getName();
+        final String fileExt = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
 
-			@Override
-			public String getDescription() {
-				return description;
-			}
-		};
-	}
+        return Arrays.stream(extensions)
+            .filter(Objects::nonNull)
+            .filter(ext -> ext.equals(fileExt))
+            .findFirst()
+            .orElse(null) != null;
+      }
 
-	public FileFilter getFilter() {
-		return filter;
-	}
+      @Override
+      public String getDescription() {
+        return description;
+      }
+    };
+  }
 
-	public String[] getExtensions() {
-		return extensions;
-	}
 }

@@ -15,66 +15,71 @@ import org.diylc.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileController extends AbstractController implements ExportController, PrintController {
+public class FileController extends AbstractController
+    implements ExportController, PrintController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(FileController.class);
 
-    private final IDrawingProvider drawingProvider;
+  private final IDrawingProvider drawingProvider;
 
-    public FileController(ApplicationController applicationController, View view, Model model, IPlugInPort plugInPort,
-            IDrawingProvider drawingProvider) {
-        super(applicationController, view, model, plugInPort);
-        this.drawingProvider = drawingProvider;
+  public FileController(ApplicationController applicationController, View view, Model model,
+      IPlugInPort plugInPort,
+      IDrawingProvider drawingProvider) {
+    super(applicationController, view, model, plugInPort);
+    this.drawingProvider = drawingProvider;
+  }
+
+  public IDrawingProvider getDrawingProvider() {
+    return drawingProvider;
+  }
+
+  public void save() {
+    LOG.info("SaveAction triggered");
+    if (!getPlugInPort().isSaved()) {
+      saveAs();
+    } else {
+      new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
+        return doSave(getPlugInPort().getCurrentFile());
+      }, Async.onError((Exception e) -> {
+        getView().showMessage("Could not save to file. " + e.getMessage(), "Error",
+            ISwingUI.ERROR_MESSAGE);
+      }));
+    }
+  }
+
+  public void saveAs() {
+    LOG.info("SaveAsAction triggered");
+    Path initialPath = getPlugInPort().getCurrentFile().toAbsolutePath();
+    String initialFilename = initialPath.toString();
+
+    if (!initialFilename.endsWith(FileFilterEnum.DIY.getExtensions()[0])) {
+      initialPath = Paths.get(initialFilename + "." + FileFilterEnum.DIY.getExtensions()[0]);
     }
 
-    public IDrawingProvider getDrawingProvider() {
-        return drawingProvider;
-    }
+    final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.DIY.getFilter(),
+        Configuration.INSTANCE.getLastPath(), initialPath,
+        FileFilterEnum.DIY.getExtensions()[0], null);
 
-    public void save() {
-        LOG.info("SaveAction triggered");
-        if (!getPlugInPort().isSaved()) {
-            saveAs();
-        } else {
-            new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
-                return doSave(getPlugInPort().getCurrentFile());
-            }, Async.onError((Exception e) -> {
-                getView().showMessage("Could not save to file. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
-            }));
-        }
+    if (path != null) {
+      new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
+        return doSave(path);
+      }, Async.onSuccess((result) -> {
+        updateLastPathAndLru(path);
+      }), Async.onError((Exception e) -> {
+        getView().showMessage("Could not save to file. " + e.getMessage(), "Error",
+            ISwingUI.ERROR_MESSAGE);
+      }));
     }
+  }
 
-    public void saveAs() {
-        LOG.info("SaveAsAction triggered");
-        Path initialPath = getPlugInPort().getCurrentFile().toAbsolutePath();
-        String initialFilename = initialPath.toString();
-        
-        if (!initialFilename.endsWith(FileFilterEnum.DIY.getExtensions()[0])) {
-            initialPath = Paths.get(initialFilename + "." + FileFilterEnum.DIY.getExtensions()[0]);
-        }
-        
-        final Path path = DialogFactory.getInstance().showSaveDialog(FileFilterEnum.DIY.getFilter(), Configuration.INSTANCE.getLastPath(), initialPath,
-                FileFilterEnum.DIY.getExtensions()[0], null);
+  private Object doSave(Path path) {
+    LOG.debug("Saving to " + path.toAbsolutePath());
+    getPlugInPort().saveProjectToFile(path, false);
+    return null;
+  }
 
-        if (path != null) {
-            new Async(() -> getView().block(), () -> getView().unblock()).execute(() -> {
-                return doSave(path);
-            }, Async.onSuccess((result) -> {
-                updateLastPathAndLru(path);
-            }), Async.onError((Exception e) -> {
-                getView().showMessage("Could not save to file. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
-            }));
-        }
-    }
-    
-    private Object doSave(Path path) {
-        LOG.debug("Saving to " + path.toAbsolutePath());
-        getPlugInPort().saveProjectToFile(path, false);
-        return null;
-    }
-
-    private void updateLastPathAndLru(Path savePath) {
-        Configuration.INSTANCE.setLastPath(savePath.getParent().toAbsolutePath().normalize());
-        getApplicationController().addLruPath(savePath);
-    }
+  private void updateLastPathAndLru(Path savePath) {
+    Configuration.INSTANCE.setLastPath(savePath.getParent().toAbsolutePath().normalize());
+    getApplicationController().addLruPath(savePath);
+  }
 }

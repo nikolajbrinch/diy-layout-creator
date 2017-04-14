@@ -8,7 +8,7 @@ import java.awt.geom.GeneralPath
 
 import org.diylc.components.AbstractTransistorSymbol
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.FETPolarity
+import org.diylc.components.FetPolarity
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
 import org.diylc.core.annotations.EditableProperty
@@ -20,7 +20,7 @@ public class JFETSymbol extends AbstractTransistorSymbol {
     private static final long serialVersionUID = 1L
 
     @EditableProperty(name = "Channel")
-    FETPolarity polarity = FETPolarity.NEGATIVE
+    FetPolarity polarity = FetPolarity.NEGATIVE
 
     public Shape[] getBody() {
         if (this.@body == null) {
@@ -49,7 +49,7 @@ public class JFETSymbol extends AbstractTransistorSymbol {
             this.@body[1] = polyline
 
             Polygon arrow
-            if (polarity == FETPolarity.NEGATIVE) {
+            if (polarity == FetPolarity.NEGATIVE) {
                 arrow = new Polygon([x + pinSpacing * 2 / 6, x + pinSpacing * 2 / 6, x + pinSpacing * 6 / 6 ] as int[], [y - pinSpacing / 5, y + pinSpacing / 5, y ] as int[], 3)
             } else {
                 arrow = new Polygon([x + pinSpacing / 6, x + pinSpacing * 5 / 6, x + pinSpacing * 5 / 6 ] as int[], [y, y + pinSpacing / 5, y - pinSpacing / 5 ] as int[], 3)
@@ -76,7 +76,7 @@ public class JFETSymbol extends AbstractTransistorSymbol {
         graphicsContext.drawLine(width / 2, height * 3 / 4, width * 3 / 4, height * 3 / 4)
     }
 
-    public void setPolarity(FETPolarity polarity) {
+    public void setPolarity(FetPolarity polarity) {
         this.@polarity = polarity
         // Invalidate body
         body = null

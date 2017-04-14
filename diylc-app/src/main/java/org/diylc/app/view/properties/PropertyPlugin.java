@@ -20,53 +20,55 @@ import org.slf4j.LoggerFactory;
  */
 public class PropertyPlugin implements IPlugIn {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PropertyPlugin.class);
+  private static final Logger LOG = LoggerFactory.getLogger(PropertyPlugin.class);
 
-    private final ISwingUI swingUI;
+  private final ISwingUI swingUI;
 
-    private IPlugInPort plugInPort;
+  private IPlugInPort plugInPort;
 
-    private PropertyView propertyView;
+  private PropertyView propertyView;
 
-    public PropertyPlugin(ISwingUI swingUI) {
-        this.swingUI = swingUI;
+  public PropertyPlugin(ISwingUI swingUI) {
+    this.swingUI = swingUI;
+  }
+
+  @Override
+  public void connect(IPlugInPort plugInPort) {
+    this.plugInPort = plugInPort;
+    this.propertyView = new PropertyView(new PropertyController(plugInPort));
+
+    try {
+      if (Configuration.INSTANCE.getPropertyPanel()) {
+        swingUI.injectGUIComponent(getPropertyView(), SwingConstants.RIGHT);
+      }
+    } catch (BadPositionException e) {
+      LOG.error("Could not install property plugin", e);
     }
 
-    @Override
-    public void connect(IPlugInPort plugInPort) {
-        this.plugInPort = plugInPort;
-        this.propertyView = new PropertyView(new PropertyController(plugInPort));
-        
-        try {
-            if (Configuration.INSTANCE.getPropertyPanel()) {
+    Configuration.INSTANCE.addListener(Configuration.Key.PROPERTY_PANEL,
+        new ConfigurationListener() {
+
+          @Override
+          public void onValueChanged(Object oldValue, Object newValue) {
+            try {
+              if ((boolean) newValue) {
                 swingUI.injectGUIComponent(getPropertyView(), SwingConstants.RIGHT);
+              } else {
+                swingUI.removeGUIComponent(SwingConstants.RIGHT);
+              }
+            } catch (BadPositionException e) {
+              LOG.error("Could not toggle property plugin", e);
             }
-        } catch (BadPositionException e) {
-            LOG.error("Could not install property plugin", e);
-        }
-
-        Configuration.INSTANCE.addListener(Configuration.Key.PROPERTY_PANEL, new ConfigurationListener() {
-
-            @Override
-            public void onValueChanged(Object oldValue, Object newValue) {
-                try {
-                    if ((boolean) newValue) {
-                        swingUI.injectGUIComponent(getPropertyView(), SwingConstants.RIGHT);
-                    } else {
-                        swingUI.removeGUIComponent(SwingConstants.RIGHT);
-                    }
-                } catch (BadPositionException e) {
-                    LOG.error("Could not toggle property plugin", e);
-                }
-            }
+          }
         });
-    }
+  }
 
-    private PropertyView getPropertyView() {
-        return propertyView;
-    }
-    
-    public void updateSelectionState(List<IDIYComponent> selection, Collection<IDIYComponent> stuckComponents) {
-        getPropertyView().displayProperties(plugInPort.getMutualSelectionProperties());
-    }
+  private PropertyView getPropertyView() {
+    return propertyView;
+  }
+
+  public void updateSelectionState(List<IDIYComponent> selection,
+      Collection<IDIYComponent> stuckComponents) {
+    getPropertyView().displayProperties(plugInPort.getMutualSelectionProperties());
+  }
 }

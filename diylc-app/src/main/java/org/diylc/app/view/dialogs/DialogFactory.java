@@ -18,64 +18,71 @@ import org.diylc.core.platform.Platform;
 
 public class DialogFactory {
 
-    private static DialogFactory instance;
+  private static DialogFactory instance;
 
-    public static DialogFactory getInstance() {
-        if (instance == null) {
-            instance = new DialogFactory();
-        }
-        return instance;
+  public static DialogFactory getInstance() {
+    if (instance == null) {
+      instance = new DialogFactory();
     }
+    return instance;
+  }
 
-    private JFrame mainFrame;
+  private JFrame mainFrame;
 
-    private DialogFactory() {
-    }
+  private DialogFactory() {}
 
-    /**
-     * Sets the frame to be used as dialog parent. This should be called prior
-     * to any other methods in this class.
-     * 
-     * @param mainFrame
-     */
-    public void initialize(JFrame mainFrame) {
-        this.mainFrame = mainFrame;
-    }
+  /**
+   * Sets the frame to be used as dialog parent. This should be called prior to any other methods in
+   * this class.
+   * 
+   * @param mainFrame
+   */
+  public void initialize(JFrame mainFrame) {
+    this.mainFrame = mainFrame;
+  }
 
-    public PropertyEditorDialog createPropertyEditorDialog(List<PropertyWrapper> properties, String title) {
-        return new PropertyEditorDialog(mainFrame, properties, title);
-    }
+  public PropertyEditorDialog createPropertyEditorDialog(List<PropertyWrapper> properties,
+      String title) {
+    return new PropertyEditorDialog(mainFrame, properties, title);
+  }
 
-    public BomDialog createBomDialog(List<BomEntry> bom) {
-        return new BomDialog(mainFrame, bom);
-    }
+  public BomDialog createBomDialog(List<BomEntry> bom) {
+    return new BomDialog(mainFrame, bom);
+  }
 
-    public Path showOpenDialog(FileFilter fileFilter, Path lastPath, Path initialFile, String defaultExtension, IFileChooserAccessory accessory) {
-        return Platform.getPlatform().createOpenDialog(mainFrame, lastPath, initialFile, fileFilter, defaultExtension, accessory).show();
-    }
+  public Path showOpenDialog(FileFilter fileFilter, Path lastPath, Path initialFile,
+      String defaultExtension, IFileChooserAccessory accessory) {
+    return Platform.getPlatform()
+        .createOpenDialog(mainFrame, lastPath, initialFile, fileFilter, defaultExtension, accessory)
+        .show();
+  }
 
-    public Path showSaveDialog(FileFilter fileFilter, Path lastPath, Path initialFile, String defaultExtension, IFileChooserAccessory accessory) {
-        return Platform.getPlatform().createSaveDialog(mainFrame, lastPath, initialFile, fileFilter, defaultExtension).show();
-    }
+  public Path showSaveDialog(FileFilter fileFilter, Path lastPath, Path initialFile,
+      String defaultExtension, IFileChooserAccessory accessory) {
+    return Platform.getPlatform()
+        .createSaveDialog(mainFrame, lastPath, initialFile, fileFilter, defaultExtension).show();
+  }
 
-    public AboutDialog createAboutDialog(String appName, Icon icon, String version, String author, String url, String mail,
-            String htmlContent) {
-        return new AboutDialog(mainFrame, appName, icon, version, author, url, mail, htmlContent);
-    }
+  public AboutDialog createAboutDialog(String appName, Icon icon, String version, String author,
+      String url, String mail,
+      String htmlContent) {
+    return new AboutDialog(mainFrame, appName, icon, version, author, url, mail, htmlContent);
+  }
 
-    public NewUserDialog createNewUserDialog() {
-        return new NewUserDialog(mainFrame);
-    }
+  public NewUserDialog createNewUserDialog() {
+    return new NewUserDialog(mainFrame);
+  }
 
-    public LoginDialog createLoginDialog() {
-        return new LoginDialog(mainFrame);
-    }
+  public LoginDialog createLoginDialog() {
+    return new LoginDialog(mainFrame);
+  }
 
-    public UploadDialog createUploadDialog() {
-        return new UploadDialog(mainFrame);
-    }
+  public UploadDialog createUploadDialog() {
+    return new UploadDialog(mainFrame);
+  }
 
-    public ProgressDialog createProgressDialog(String title, String[] buttonCaptions, String description, boolean useProgress) {
-        return new ProgressDialog(mainFrame, title, buttonCaptions, description, useProgress);
-    }
+  public ProgressDialog createProgressDialog(String title, String[] buttonCaptions,
+      String description, boolean useProgress) {
+    return new ProgressDialog(mainFrame, title, buttonCaptions, description, useProgress);
+  }
 }

@@ -14,82 +14,82 @@ import javax.swing.JPanel;
 
 public abstract class ButtonDialog extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	public static final String OK = "OK";
-	
-	public static final String CANCEL = "Cancel";
+  public static final String OK = "OK";
 
-	private JPanel containerPanel;
-	
-	private JPanel buttonPanel;
+  public static final String CANCEL = "Cancel";
 
-	private String[] buttonCaptions;
+  private JPanel containerPanel;
 
-	private Map<String, JButton> buttonMap;
+  private JPanel buttonPanel;
 
-	private String selectedButtonCaption;
+  private String[] buttonCaptions;
 
-	public ButtonDialog(JFrame owner, String title, String[] buttonCaptions) {
-		super(owner, title);
+  private Map<String, JButton> buttonMap;
 
-		setModal(true);
-		setResizable(false);
+  private String selectedButtonCaption;
 
-		this.buttonCaptions = buttonCaptions;
+  public ButtonDialog(JFrame owner, String title, String[] buttonCaptions) {
+    super(owner, title);
 
-		this.buttonMap = new HashMap<String, JButton>();
-	}
+    setModal(true);
+    setResizable(false);
 
-	protected void layoutGui() {
-		setContentPane(getContainerPanel());
-		pack();
-		setLocationRelativeTo(getParent());
-	}
+    this.buttonCaptions = buttonCaptions;
 
-	public JButton getButton(String caption) {
-		return buttonMap.get(caption);
-	}
+    this.buttonMap = new HashMap<String, JButton>();
+  }
 
-	public String getSelectedButtonCaption() {
-		return selectedButtonCaption;
-	}
+  protected void layoutGui() {
+    setContentPane(getContainerPanel());
+    pack();
+    setLocationRelativeTo(getParent());
+  }
 
-	private JPanel getContainerPanel() {
-		if (containerPanel == null) {
-			containerPanel = new JPanel(new BorderLayout());
-			containerPanel.add(getMainComponent(), BorderLayout.CENTER);
-			containerPanel.add(getButtonPanel(), BorderLayout.SOUTH);
-		}
-		return containerPanel;
-	}
+  public JButton getButton(String caption) {
+    return buttonMap.get(caption);
+  }
 
-	public JPanel getButtonPanel() {
-		if (buttonPanel == null) {
-			buttonPanel = new JPanel();
-			for (String caption : buttonCaptions) {
-				final String command = caption;
-				JButton button = new JButton(caption);
-				button.addActionListener(new ActionListener() {
+  public String getSelectedButtonCaption() {
+    return selectedButtonCaption;
+  }
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (validateInput(command)) {
-							selectedButtonCaption = command;
-							ButtonDialog.this.setVisible(false);
-						}
-					}
-				});
-				buttonPanel.add(button);
-				buttonMap.put(command, button);
-			}
-		}
-		return buttonPanel;
-	}
+  private JPanel getContainerPanel() {
+    if (containerPanel == null) {
+      containerPanel = new JPanel(new BorderLayout());
+      containerPanel.add(getMainComponent(), BorderLayout.CENTER);
+      containerPanel.add(getButtonPanel(), BorderLayout.SOUTH);
+    }
+    return containerPanel;
+  }
 
-	abstract protected JComponent getMainComponent();
+  public JPanel getButtonPanel() {
+    if (buttonPanel == null) {
+      buttonPanel = new JPanel();
+      for (String caption : buttonCaptions) {
+        final String command = caption;
+        JButton button = new JButton(caption);
+        button.addActionListener(new ActionListener() {
 
-	protected boolean validateInput(String button) {
-		return true;
-	}
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            if (validateInput(command)) {
+              selectedButtonCaption = command;
+              ButtonDialog.this.setVisible(false);
+            }
+          }
+        });
+        buttonPanel.add(button);
+        buttonMap.put(command, button);
+      }
+    }
+    return buttonPanel;
+  }
+
+  abstract protected JComponent getMainComponent();
+
+  protected boolean validateInput(String button) {
+    return true;
+  }
 }

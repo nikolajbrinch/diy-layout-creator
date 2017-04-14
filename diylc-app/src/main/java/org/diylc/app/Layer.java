@@ -2,25 +2,25 @@ package org.diylc.app;
 
 import org.diylc.core.IDIYComponent;
 
+import lombok.Getter;
+
 public enum Layer {
-	CHASSIS("Chassis", IDIYComponent.CHASSIS), BOARD("Board",
-			IDIYComponent.BOARD), TRACE("Trace", IDIYComponent.TRACE), COMPONENT(
-			"Component", IDIYComponent.COMPONENT), TEXT("Text",
-			IDIYComponent.TEXT);
+  CHASSIS("Chassis", IDIYComponent.CHASSIS), BOARD("Board",
+      IDIYComponent.BOARD),
+  TRACE("Trace", IDIYComponent.TRACE), COMPONENT(
+      "Component", IDIYComponent.COMPONENT),
+  TEXT("Text",
+      IDIYComponent.TEXT);
 
-	String title;
-	double zOrder;
+  @Getter
+  private String title;
 
-	private Layer(String title, double order) {
-		this.title = title;
-		zOrder = order;
-	}
+  @Getter
+  private double zOrder;
 
-	public String getTitle() {
-		return title;
-	}
+  private Layer(String title, double zOrder) {
+    this.title = title;
+    this.zOrder = zOrder;
+  }
 
-	public double getZOrder() {
-		return zOrder;
-	}
 }

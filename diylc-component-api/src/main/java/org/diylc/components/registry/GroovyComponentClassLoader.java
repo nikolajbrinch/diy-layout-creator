@@ -1,13 +1,13 @@
 package org.diylc.components.registry;
 
-import groovy.lang.GroovyClassLoader;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,18 +17,40 @@ import org.diylc.core.ProgressView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import groovy.lang.GroovyClassLoader;
+
 public class GroovyComponentClassLoader extends AbstractComponentClassLoader {
     
     private static final Logger LOG = LoggerFactory.getLogger(GroovyComponentClassLoader.class);
 
+    private AtomicInteger counter = new AtomicInteger();
+    
     @SuppressWarnings("unchecked")
+    Class<? extends IDIYComponent> loadGroovyClass(GroovyClassLoader groovyClassLoader, ProgressView progressView, double count, Path componentTypeFile) {
+        Class<? extends IDIYComponent> componentClass = null;
+        
+        progressView.update("Loading component files: " + Math.round(counter.doubleValue() / count * 100d) + "%");
+        LOG.trace("Loading component file: \"" + componentTypeFile.toAbsolutePath().toString() + "\"");
+        try {
+            Class<?> clazz = groovyClassLoader.parseClass(componentTypeFile.toFile());
+
+            if (isValidComponentClass(clazz)) {
+                componentClass = (Class<? extends IDIYComponent>) clazz;
+            }
+        } catch (CompilationFailedException e) {
+            LOG.warn("Compilation failed", e);
+        } catch (IOException e) {
+            LOG.warn("IOException loading class", e);
+        }
+        counter.getAndIncrement();
+        
+        return componentClass;
+    }
+    
     Collection<? extends Class<? extends IDIYComponent>> loadGroovyClasses(ClassLoader classLoader, Path[] directories, ProgressView progressView) {
         Set<Class<? extends IDIYComponent>> componentClasses = new HashSet<Class<? extends IDIYComponent>>();
 
-        GroovyClassLoader groovyClassLoader = null;
-
-        try {
-            groovyClassLoader = new GroovyClassLoader(classLoader);
+        try (GroovyClassLoader groovyClassLoader = new GroovyClassLoader(classLoader)) {
 
             Set<Path> componentTypeFiles = null;
 
@@ -39,29 +61,13 @@ public class GroovyComponentClassLoader extends AbstractComponentClassLoader {
             }
 
             double count = componentTypeFiles.size();
-            double counter = 1;
-            for (Path path : componentTypeFiles) {
-                progressView.update("Loading component files: " + Math.round(counter / count * 100d) + "%");
-                LOG.debug("Loading component file: \"" + path.toAbsolutePath().toString() + "\"");
-                try {
-                    Class<?> clazz = groovyClassLoader.parseClass(path.toFile());
-
-                    if (isValidComponentClass(clazz)) {
-                        componentClasses.add((Class<? extends IDIYComponent>) clazz);
-                    }
-                } catch (CompilationFailedException e) {
-                    LOG.warn("Compilation failed", e);
-                } catch (IOException e) {
-                    LOG.warn("IOException loading class", e);
-                }
-                counter++;
-            }
-        } finally {
-            try {
-                groovyClassLoader.close();
-            } catch (IOException e) {
-                LOG.warn("IOException closing GroovyClassLoader", e);
-            }
+            counter.set(1);
+            componentClasses = componentTypeFiles.parallelStream()
+                .map((tf) -> loadGroovyClass(groovyClassLoader, progressView, count, tf))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        } catch (IOException e) {
+            LOG.warn("IOException closing GroovyClassLoader", e);
         }
 
         return componentClasses;
@@ -77,7 +83,7 @@ public class GroovyComponentClassLoader extends AbstractComponentClassLoader {
                         (path, attr) -> {
                             return Files.isRegularFile(path) && path.toString().endsWith(GROOVY_EXTENSION);   
                         })) {
-                    files.addAll(stream.collect(Collectors.toList()));
+                    files.addAll(stream.parallel().collect(Collectors.toList()));
                 }
             }
         }

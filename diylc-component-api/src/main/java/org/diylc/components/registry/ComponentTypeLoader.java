@@ -37,7 +37,7 @@ public class ComponentTypeLoader {
     }
 
     private ComponentTypes loadComponentTypes(ClassLoader classLoader, Path[] directories, ProgressView progressView) throws IOException {
-        LOG.info("Loading component types.");
+        LOG.debug("Loading component types.");
 
         Set<Class<? extends IDIYComponent>> componentClasses = getComponentLoader().loadComponents(classLoader, directories, progressView);
 
@@ -57,7 +57,7 @@ public class ComponentTypeLoader {
 
         try {
             progressView.update("Loading component: " + clazz.getName());
-            LOG.debug("Loading component: \"" + clazz.getName() + "\"");
+            LOG.trace("Loading component: \"" + clazz.getName() + "\"");
 
             IDIYComponent component = (IDIYComponent) clazz.newInstance();
 

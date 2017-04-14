@@ -10,7 +10,7 @@ import java.util.Arrays
 import org.diylc.components.AbstractComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry
-import org.diylc.components.PCBLayer
+import org.diylc.components.PcbLayer
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.IDrawingObserver
@@ -43,7 +43,7 @@ public class GroundFill extends AbstractComponent implements Geometry {
     Color color = COLOR
 
     @EditableProperty
-    PCBLayer layer = PCBLayer._1
+    PcbLayer layer = PcbLayer._1
 
     @EditableProperty(name = "Edges")
     PointCount pointCount = PointCount._4

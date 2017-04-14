@@ -18,7 +18,7 @@ import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.ControlPoint;
 import org.diylc.components.Geometry;
-import org.diylc.components.PCBLayer
+import org.diylc.components.PcbLayer
 import org.diylc.components.Pin;
 import org.diylc.components.PinBase;
 import org.diylc.core.ComponentState

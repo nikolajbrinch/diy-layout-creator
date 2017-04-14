@@ -12,27 +12,28 @@ import org.slf4j.LoggerFactory;
 
 public class ProjectDeserializer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectDeserializer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ProjectDeserializer.class);
 
-    private static ProjectFileManager projectFileManager = new ProjectFileManager();
+  private static ProjectFileManager projectFileManager = new ProjectFileManager();
 
-    public static Project loadProjectFromFile(Path path) throws Exception {
-        LOG.trace(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
-        List<String> warnings = new ArrayList<String>();
-        Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
+  public static Project loadProjectFromFile(Path path) throws Exception {
+    LOG.trace(String.format("loadProjectFromFile(%s)", path.toAbsolutePath()));
+    List<String> warnings = new ArrayList<String>();
+    Project project = (Project) projectFileManager.deserializeProjectFromFile(path, warnings);
 
-        if (!warnings.isEmpty()) {
-            StringBuilder builder = new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
-            for (String warning : warnings) {
-                builder.append(warning);
-                builder.append("<br>");
-            }
-            builder.append("</html");
+    if (!warnings.isEmpty()) {
+      StringBuilder builder =
+          new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
+      for (String warning : warnings) {
+        builder.append(warning);
+        builder.append("<br>");
+      }
+      builder.append("</html");
 
-            Application.getApplication().showMessage(builder.toString(), "Warning", View.WARNING_MESSAGE);
-        }
-
-        return project;
+      Application.getApplication().showMessage(builder.toString(), "Warning", View.WARNING_MESSAGE);
     }
+
+    return project;
+  }
 
 }

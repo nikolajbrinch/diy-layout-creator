@@ -4,6 +4,6 @@ import org.diylc.app.view.View;
 
 public interface Controller {
 
-    public View getView();
+  public View getView();
 
 }

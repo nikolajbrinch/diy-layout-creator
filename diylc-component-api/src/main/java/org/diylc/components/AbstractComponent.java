@@ -40,7 +40,7 @@ public abstract class AbstractComponent implements IDIYComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private ComponentType componentType = null;
+    private transient ComponentType componentType = null;
 
     @EditableProperty(defaultable = false)
     protected String name = "";
@@ -171,11 +171,6 @@ public abstract class AbstractComponent implements IDIYComponent {
         double rotation = angle.getAngle();
         AffineTransform rotate = AffineTransform.getRotateInstance(rotation, point.x, point.y);
         graphicsContext.graphics2D.transform(rotate);
-//        if (angle == Angle._270) {
-//            AffineTransform move = AffineTransform.getTranslateInstance(-(stringBounds.width / 2), -(stringBounds.height / 2));
-//            graphicsContext.graphics2D.transform(move);
-//        }
-
         graphicsContext.drawString(text, textX, textY);
         graphicsContext.setTransform(transform);
     }
@@ -205,7 +200,6 @@ public abstract class AbstractComponent implements IDIYComponent {
             while (AbstractComponent.class.isAssignableFrom(clazz)) {
                 Field[] fields = clazz.getDeclaredFields();
                 clazz = clazz.getSuperclass();
-                // fields = this.getClass().getDeclaredFields();
 
                 /*
                  * Copy over all non-static, non-final fields that are declared

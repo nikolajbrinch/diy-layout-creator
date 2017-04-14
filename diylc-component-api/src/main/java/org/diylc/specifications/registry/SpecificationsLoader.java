@@ -40,19 +40,21 @@ public class SpecificationsLoader {
 
     public SpecificationRegistry loadSpecifications(SpecificationTypeRegistry specificationTypeRegistry, ClassLoader classLoader,
             Path[] directories, ProgressView progressView) throws IOException {
-        LOG.info("Loading specifications.");
+        LOG.debug("Loading specifications.");
         SpecificationRegistry specificationRegistry = new SpecificationRegistry();
 
         Set<URL> specifications = findSpecifications(classLoader, directories);
 
-        for (URL url : specifications) {
-            LOG.debug("Loading specification " + url);
+        specifications.parallelStream().forEach((url) -> {
+            LOG.trace("Loading specification " + url);
             try (InputStream inputStream = url.openStream()) {
                 Specification specification = new SpecificationReader(specificationTypeRegistry).read(inputStream);
                 specificationRegistry.add(specification);
                 progressView.update("Loading specifications: " + specification.getCategory() + "." + specification.getName());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        }
+        });
 
         return specificationRegistry;
     }
@@ -76,31 +78,39 @@ public class SpecificationsLoader {
         for (Path directory : directories) {
             if (Files.exists(directory) && Files.isDirectory(directory)) {
 
-                try (Stream<Path> stream = Files.find(directory,Integer.MAX_VALUE,
-                        (path, attr) -> {
-                            return Files.isRegularFile(path) && path.toString().endsWith(SPECIFICATION_EXTENSION);   
-                        })) {
-                    files.addAll(stream.map(path -> { URL url = null;
-                        try { url = path.toFile().toURI().toURL(); } catch (Exception e) {} return url; }
-                    ).collect(Collectors.toList()));
-                    
+                try (Stream<Path> stream = Files.find(directory, Integer.MAX_VALUE, (path, attr) -> {
+                    return Files.isRegularFile(path) && path.toString().endsWith(SPECIFICATION_EXTENSION);
+                })) {
+                    files.addAll(stream.parallel().map(path -> {
+                        URL url = null;
+                        try {
+                            url = path.toFile().toURI().toURL();
+                        } catch (IOException e) {
+                        }
+                        return url;
+                    }).collect(Collectors.toList()));
+
                 }
             }
         }
-        
+
         return files;
     }
 
     private Set<URL> findClasspathSpecifications(ClassLoader classLoader) throws IOException {
-        Set<URL> files = new HashSet<URL>();
-
         Set<Resource> classResources = resourceLoader.getResources(classLoader, "", SPECIFICATION_EXTENSION);
 
-        for (Resource resource : classResources) {
-            LOG.debug("Adding " + resource + " from classpath to specification files");
-            files.add(resource.toUrl());
-        }
+        return classResources.parallelStream().map((cr) -> {
+            LOG.trace("Adding " + cr + " from classpath to specification files");
+            URL url = null;
 
-        return files;
+            try {
+                url = cr.toUrl();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return url;
+        }).collect(Collectors.toSet());
     }
 }

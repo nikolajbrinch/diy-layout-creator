@@ -16,7 +16,9 @@ public abstract class AbstractSchematicLeadedSymbol extends AbstractLeadedCompon
 
 	public AbstractSchematicLeadedSymbol() {
 		super();
-		// We don't want to fill the body, so use null.
+		/* 
+		 * We don't want to fill the body, so use null.
+		 */
 		this.bodyColor = null;
 		this.leadColor = Colors.SCHEMATIC_LEAD_COLOR;
 		this.borderColor = Colors.SCHEMATIC_COLOR;

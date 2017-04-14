@@ -1,6 +1,6 @@
 package org.diylc.components;
 
-public enum FETPolarity {
+public enum FetPolarity {
 
 	NEGATIVE, POSITIVE;
 

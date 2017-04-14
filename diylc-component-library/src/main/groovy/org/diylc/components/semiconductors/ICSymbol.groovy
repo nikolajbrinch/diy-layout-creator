@@ -18,7 +18,7 @@ import org.diylc.components.Colors
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.ControlPoint
 import org.diylc.components.Geometry
-import org.diylc.components.ICPointCount
+import org.diylc.components.IcPointCount
 import org.diylc.core.ComponentState
 import org.diylc.core.Display
 import org.diylc.core.IDIYComponent
@@ -335,7 +335,7 @@ public class ICSymbol extends AbstractTransparentComponent implements Geometry {
         body = null
     }
 
-    public void setIcPointCount(ICPointCount icPointCount) {
+    public void setIcPointCount(IcPointCount icPointCount) {
         this.icPointCount = icPointCount
         updateControlPoints()
         body = null

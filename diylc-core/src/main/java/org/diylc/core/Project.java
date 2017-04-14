@@ -15,6 +15,9 @@ import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Entity class that defines a project. Contains project properties and a
  * collection of components.This class is serialized to file. Some filed getters
@@ -31,8 +34,22 @@ public class Project implements Serializable {
 	public static Size DEFAULT_HEIGHT = new Size(21d, SizeUnit.cm);
 	public static Size DEFAULT_GRID_SPACING = new Size(0.1d, SizeUnit.in);
 
+	@Getter
+	@Setter
 	private VersionNumber fileVersion;
 
+    @Getter
+    @Setter
+    private double zoomLevel;
+    
+    @Getter
+    @Setter
+    private int scrollX;
+    
+    @Getter
+    @Setter
+    private int scrollY;
+    
     @EditableProperty(defaultable = false)
 	private String title;
     
@@ -134,14 +151,6 @@ public class Project implements Serializable {
 
 	public Set<Double> getLockedLayers() {
 		return lockedLayers;
-	}
-
-	public VersionNumber getFileVersion() {
-		return fileVersion;
-	}
-
-	public void setFileVersion(VersionNumber fileVersion) {
-		this.fileVersion = fileVersion;
 	}
 
 	@Override

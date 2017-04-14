@@ -19,79 +19,79 @@ import org.slf4j.LoggerFactory;
 
 public class PropertyEditorDialog extends ButtonDialog {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PropertyEditorDialog.class);
+  private static final Logger LOG = LoggerFactory.getLogger(PropertyEditorDialog.class);
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private List<PropertyWrapper> properties;
+  private List<PropertyWrapper> properties;
 
-	private Set<PropertyWrapper> defaultedProperties;
+  private Set<PropertyWrapper> defaultedProperties;
 
-	public PropertyEditorDialog(JFrame owner, List<PropertyWrapper> properties,
-			String title) {
-		super(owner, title,
-				new String[] { ButtonDialog.OK, ButtonDialog.CANCEL });
+  public PropertyEditorDialog(JFrame owner, List<PropertyWrapper> properties,
+      String title) {
+    super(owner, title,
+        new String[] {ButtonDialog.OK, ButtonDialog.CANCEL});
 
-		LOG.debug("Creating property editor for: " + properties);
+    LOG.debug("Creating property editor for: " + properties);
 
-		this.properties = properties;
-		this.defaultedProperties = new HashSet<PropertyWrapper>();
+    this.properties = properties;
+    this.defaultedProperties = new HashSet<PropertyWrapper>();
 
-		setMinimumSize(new Dimension(240, 40));
+    setMinimumSize(new Dimension(240, 40));
 
-		layoutGui();
-		setLocationRelativeTo(owner);
-	}
+    layoutGui();
+    setLocationRelativeTo(owner);
+  }
 
-	@Override
-	protected boolean validateInput(String button) {
-		if (button.equals(ButtonDialog.OK)) {
-			for (PropertyWrapper property : properties) {
-				try {
-					property.getValidator().validate(property.getValue());
-				} catch (ValidationException ve) {
-					JOptionPane.showMessageDialog(PropertyEditorDialog.this,
-							"Input error for \"" + property.getName() + "\": " + ve.getMessage(), "Error",
-							JOptionPane.ERROR_MESSAGE);
-					
-					return false;
-				}
-			}
-		}
-		
-		return true;
-	}
+  @Override
+  protected boolean validateInput(String button) {
+    if (button.equals(ButtonDialog.OK)) {
+      for (PropertyWrapper property : properties) {
+        try {
+          property.getValidator().validate(property.getValue());
+        } catch (ValidationException ve) {
+          JOptionPane.showMessageDialog(PropertyEditorDialog.this,
+              "Input error for \"" + property.getName() + "\": " + ve.getMessage(), "Error",
+              JOptionPane.ERROR_MESSAGE);
 
-	public Set<PropertyWrapper> getDefaultedProperties() {
-		return defaultedProperties;
-	}
+          return false;
+        }
+      }
+    }
 
-	public static boolean showFor(JFrame owner, List<PropertyWrapper> properties, String title) {
-		PropertyEditorDialog editor = new PropertyEditorDialog(owner, properties, title);
-		editor.setVisible(true);
-		
-		if (OK.equals(editor.getSelectedButtonCaption())) {
-			return true;
-		}
-		
-		return false;
-	}
+    return true;
+  }
 
-	@Override
-	protected JComponent getMainComponent() {
-	    PropertiesEditor editorPanel = new PropertiesEditor(properties, defaultedProperties);
-        editorPanel.addKeyListener(new KeyAdapter() {
+  public Set<PropertyWrapper> getDefaultedProperties() {
+    return defaultedProperties;
+  }
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    getButton(OK).doClick();
-                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    getButton(CANCEL).doClick();
-                }
-            }
-        });
+  public static boolean showFor(JFrame owner, List<PropertyWrapper> properties, String title) {
+    PropertyEditorDialog editor = new PropertyEditorDialog(owner, properties, title);
+    editor.setVisible(true);
 
-		return editorPanel; 
-	}
+    if (OK.equals(editor.getSelectedButtonCaption())) {
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  protected JComponent getMainComponent() {
+    PropertiesEditor editorPanel = new PropertiesEditor(properties, defaultedProperties);
+    editorPanel.addKeyListener(new KeyAdapter() {
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          getButton(OK).doClick();
+        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+          getButton(CANCEL).doClick();
+        }
+      }
+    });
+
+    return editorPanel;
+  }
 }

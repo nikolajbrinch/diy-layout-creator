@@ -9,7 +9,7 @@ import java.awt.geom.CubicCurve2D
 import org.diylc.components.AbstractCurvedComponent
 import org.diylc.components.ComponentDescriptor
 import org.diylc.components.Geometry;
-import org.diylc.components.PCBLayer
+import org.diylc.components.PcbLayer
 import org.diylc.core.ComponentState
 import org.diylc.core.IDIYComponent
 import org.diylc.core.ObjectCache;
@@ -35,7 +35,7 @@ public class CurvedTrace extends AbstractCurvedComponent implements Geometry {
     Size thickness = SIZE
 
     @EditableProperty
-    PCBLayer layer = PCBLayer._1
+    PcbLayer layer = PcbLayer._1
 
     @Override
     protected Color getDefaultColor() {

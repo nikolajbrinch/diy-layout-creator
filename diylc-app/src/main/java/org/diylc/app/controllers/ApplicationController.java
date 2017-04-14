@@ -10,62 +10,63 @@ import org.diylc.core.platform.QuitResponse;
 
 public interface ApplicationController {
 
-    public Drawing getCurrentDrawing();
+  public Drawing getCurrentDrawing();
 
-    public void setCurrentDrawing(Drawing drawing);
+  public void setCurrentDrawing(Drawing drawing);
 
-    /**
-     * Create new project action
-     * @return
-     */
-    public Drawing createProject(Project project, Path path);
+  /**
+   * Create new project action
+   * 
+   * @return
+   */
+  public Drawing createProject(Project project, Path path);
 
-    /**
-     * Open action
-     */
-    public void open();
+  /**
+   * Open action
+   */
+  public void open();
 
-    /**
-     * Open recent action
-     * 
-     * @param path
-     */
-    public void open(Path path);
+  /**
+   * Open recent action
+   * 
+   * @param path
+   */
+  public void open(Path path);
 
-    /**
-     * Import action
-     */
-    public void importProject();
+  /**
+   * Import action
+   */
+  public void importProject();
 
-    /**
-     * Exit action
-     * 
-     * @param response
-     */
-    public void exit(QuitResponse response);
+  /**
+   * Exit action
+   * 
+   * @param response
+   */
+  public void exit(QuitResponse response);
 
-    /**
-     * Add recent file to LRU list
-     * 
-     * @param file
-     */
-    public void addLruPath(Path path);
+  /**
+   * Add recent file to LRU list
+   * 
+   * @param file
+   */
+  public void addLruPath(Path path);
 
-    /**
-     * Remove recent file from LRU list
-     * 
-     * @param file
-     */
-    public void removeLruPath(Path path);
+  /**
+   * Remove recent file from LRU list
+   * 
+   * @param file
+   */
+  public void removeLruPath(Path path);
 
-    public void autoSave(Project project);
+  public void autoSave(Project project);
 
-    public Collection<Drawing> getDrawings();
+  public Collection<Drawing> getDrawings();
 
-    public void switchWindow(String drawingId);
+  public void switchWindow(String drawingId);
 
-    public void closeDrawing(String drawingId);
+  public void closeDrawing(String drawingId);
 
-    public ComponentRegistry getComponentRegistry();
+  public ComponentRegistry getComponentRegistry();
 
 }

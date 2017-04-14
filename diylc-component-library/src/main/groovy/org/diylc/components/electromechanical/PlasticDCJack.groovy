@@ -14,7 +14,7 @@ import java.awt.geom.Ellipse2D
 
 import org.diylc.components.AbstractTransparentComponent
 import org.diylc.components.ComponentDescriptor
-import org.diylc.components.DCPolarity
+import org.diylc.components.DcPolarity
 import org.diylc.components.Geometry
 import org.diylc.core.ComponentState
 import org.diylc.core.HorizontalAlignment;
@@ -54,7 +54,7 @@ public class PlasticDCJack extends AbstractTransparentComponent implements Geome
     String value = ""
 
     @EditableProperty
-    DCPolarity polarity = DCPolarity.CENTER_NEGATIVE
+    DcPolarity polarity = DcPolarity.CENTER_NEGATIVE
 
 
     public PlasticDCJack() {
@@ -173,16 +173,16 @@ public class PlasticDCJack extends AbstractTransparentComponent implements Geome
                 .darker())
         graphicsContext.draw(body[3])
 
-        if (!outlineMode && getPolarity() != DCPolarity.NONE) {
+        if (!outlineMode && getPolarity() != DcPolarity.NONE) {
             int spacing = (int) SPACING.convertToPixels()
             graphicsContext.setColor(MARKING_COLOR)
             graphicsContext.setFont(LABEL_FONT.deriveFont(12f))
             drawCenteredText(graphicsContext,
-                    getPolarity() == DCPolarity.CENTER_NEGATIVE ? "+" : "-",
+                    getPolarity() == DcPolarity.CENTER_NEGATIVE ? "+" : "-",
                     point(controlPoints[0].x, controlPoints[0].y - spacing * 7 / 16),
                     HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
             drawCenteredText(graphicsContext,
-                    getPolarity() == DCPolarity.CENTER_NEGATIVE ? "_" : "+",
+                    getPolarity() == DcPolarity.CENTER_NEGATIVE ? "_" : "+",
                     point(controlPoints[2].x, controlPoints[2].y - spacing * 3 / 4),
                     HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
         }
@@ -246,9 +246,9 @@ public class PlasticDCJack extends AbstractTransparentComponent implements Geome
         return true
     }
 
-    public DCPolarity getPolarity() {
+    public DcPolarity getPolarity() {
         if (polarity == null) {
-            polarity = DCPolarity.CENTER_NEGATIVE
+            polarity = DcPolarity.CENTER_NEGATIVE
         }
         return polarity
     }

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.diylc.core.IPropertyValidator;
 import org.diylc.core.PropertyWrapper;
@@ -34,7 +36,7 @@ public class PropertyExtractor {
     public PropertyExtractor(ComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
     }
-     
+
     /**
      * Extracts all editable properties from the component class.
      * 
@@ -61,33 +63,26 @@ public class PropertyExtractor {
     }
 
     public List<PropertyWrapper> cloneProperties(List<PropertyWrapper> properties) {
-        List<PropertyWrapper> result = new ArrayList<PropertyWrapper>(properties.size());
-
-        for (PropertyWrapper propertyWrapper : properties) {
-            try {
-                result.add((PropertyWrapper) propertyWrapper.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return result;
+        return properties.parallelStream().map((t) -> t.copy()).collect(Collectors.toList());
     }
 
-    private Collection<? extends PropertyWrapper> findOnFields(Class<?> clazz, String targetName) {
-        List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
-
-        List<Field> fields = getAllFields(clazz);
-
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(SpecificationModel.class)) {
-                properties.add(createSpecificationProperty(clazz, field, targetName));
-            } else if (field.isAnnotationPresent(EditableProperty.class) && !field.isAnnotationPresent(Deprecated.class)) {
-                properties.add(createProperty(clazz, field, targetName));
-            }
+    private PropertyWrapper createFieldProperty(Class<?> clazz, Field field, String targetName) {
+        PropertyWrapper property = null;
+        
+        if (field.isAnnotationPresent(SpecificationModel.class)) {
+            property = createSpecificationProperty(clazz, field, targetName);
+        } else if (field.isAnnotationPresent(EditableProperty.class) && !field.isAnnotationPresent(Deprecated.class)) {
+            property = createProperty(clazz, field, targetName);
         }
-
-        return properties;
+        
+        return property;
+    }
+    
+    private Collection<? extends PropertyWrapper> findOnFields(Class<?> clazz, String targetName) {
+        return getAllFields(clazz).parallelStream()
+            .map((f) -> createFieldProperty(clazz, f, targetName))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     private SpecificationProperty createSpecificationProperty(Class<?> clazz, Field field, String targetName) {
@@ -97,23 +92,24 @@ public class PropertyExtractor {
         SpecificationModel annotation = field.getAnnotation(SpecificationModel.class);
 
         SpecificationProperty specificationProperty = new SpecificationProperty(createProperty(clazz, field, targetName));
-        specificationProperty.getProperties().addAll(extractProperties(fieldType, targetName != null ? targetName + "." + fieldName : fieldName));
+        specificationProperty.getProperties()
+                .addAll(extractProperties(fieldType, targetName != null ? targetName + "." + fieldName : fieldName));
 
         LinkedList<Specification> specifications = new LinkedList<>(componentRegistry.getSpecifications(annotation.category()));
         specifications.sort(ComparatorFactory.getInstance().getSpecificationNameComparator());
-        
+
         specifications.addFirst(new CustomSpecification());
-        
+
         specificationProperty.setSpecifications(specifications);
         specificationProperty.setSpecificationType(annotation.type());
         specificationProperty.setSpecificationEditor(annotation.editor());
-        
+
         return specificationProperty;
     }
 
     private PropertyWrapper createProperty(Class<?> clazz, Field field, String targetName) {
         PropertyWrapper property = null;
-        
+
         String fieldName = field.getName();
         Class<?> fieldType = field.getType();
 
@@ -169,8 +165,8 @@ public class PropertyExtractor {
         }
 
         if (getter != null && !Modifier.isPublic(getter.getModifiers())) {
-            throw new IllegalStateException("Getter for property \"" + propertyName + "\" for class: " + clazz.getName()
-                    + " is not public");
+            throw new IllegalStateException(
+                    "Getter for property \"" + propertyName + "\" for class: " + clazz.getName() + " is not public");
         }
 
         if (setter != null && getter != null) {
@@ -179,47 +175,52 @@ public class PropertyExtractor {
             LOG.debug("Created PropertyWrapper for property " + propertyName + " on component " + clazz.getName());
             property = new PropertyWrapper(propertyName, targetName, fieldType, getter.getName(), setter.getName(),
                     annotation.defaultable(), validator);
-            
-        }   
-    
+
+        }
+
         return property;
     }
 
-    private Collection<? extends PropertyWrapper> findOnMethods(Class<?> clazz, String targetName) {
-        List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
+    private List<PropertyWrapper> createMethodProperty(Class<?> clazz, Method method, String targetName) {
+        List<PropertyWrapper> properties = new ArrayList<>();
+        
+        try {
+            String propertyName = method.getName().substring(3);
+            Class<?> propertyType = method.getReturnType();
+            if (method.isAnnotationPresent(SpecificationModel.class)) {
+                properties.addAll(
+                        extractProperties(propertyType, targetName != null ? targetName + "." + propertyName : propertyName));
+            } else if (method.isAnnotationPresent(EditableProperty.class) && !method.isAnnotationPresent(Deprecated.class)) {
+                EditableProperty annotation = method.getAnnotation(EditableProperty.class);
 
-        for (Method method : clazz.getMethods()) {
-            if (method.getName().startsWith("get")) {
-                try {
-                    String propertyName = method.getName().substring(3);
-                    Class<?> propertyType = method.getReturnType();
-                    if (method.isAnnotationPresent(SpecificationModel.class)) {
-                        properties.addAll(extractProperties(propertyType, targetName != null ? targetName + "." + propertyName : propertyName));
-                    } else if (method.isAnnotationPresent(EditableProperty.class) && !method.isAnnotationPresent(Deprecated.class)) {
-                        EditableProperty annotation = method.getAnnotation(EditableProperty.class);
-
-                        if (!annotation.name().equals("")) {
-                            propertyName = method.getName().substring(3);
-                        }
-                        
-                        IPropertyValidator validator = getPropertyValidator(annotation.validatorClass());
-                        Method setter = clazz.getMethod("set" + method.getName().substring(3), method.getReturnType());
-
-                        LOG.debug("Created PropertyWrapper for property " + propertyName + " on component " + clazz.getName());
-                        PropertyWrapper property = new PropertyWrapper(propertyName, targetName, propertyType, method.getName(),
-                                setter.getName(), annotation.defaultable(), validator);
-                        properties.add(property);
-                        
-                    }
-                } catch (NoSuchMethodException e) {
-                    LOG.debug("No matching setter found for \"" + method.getName() + "\". Skipping...");
+                if (!annotation.name().equals("")) {
+                    propertyName = method.getName().substring(3);
                 }
-            }
-        }
 
+                IPropertyValidator validator = getPropertyValidator(annotation.validatorClass());
+                Method setter = clazz.getMethod("set" + method.getName().substring(3), method.getReturnType());
+
+                LOG.debug("Created PropertyWrapper for property " + propertyName + " on component " + clazz.getName());
+                PropertyWrapper property = new PropertyWrapper(propertyName, targetName, propertyType, method.getName(),
+                        setter.getName(), annotation.defaultable(), validator);
+                properties.add(property);
+
+            }
+        } catch (NoSuchMethodException e) {
+            LOG.debug("No matching setter found for \"" + method.getName() + "\". Skipping...");
+        }
+        
         return properties;
     }
     
+    private Collection<? extends PropertyWrapper> findOnMethods(Class<?> clazz, String targetName) {
+        return Arrays.stream(clazz.getMethods())
+            .parallel()
+            .filter((m) -> m.getName().startsWith("get"))
+            .flatMap((m) -> createMethodProperty(clazz, m, targetName).parallelStream())
+            .collect(Collectors.toList());
+    }
+
     private List<Field> getAllFields(Class<?> clazz) {
         List<Field> fields = new ArrayList<Field>();
 

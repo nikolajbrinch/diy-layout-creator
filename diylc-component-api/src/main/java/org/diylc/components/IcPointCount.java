@@ -1,12 +1,16 @@
 package org.diylc.components;
 
-public enum ICPointCount {
+import lombok.Getter;
+
+public enum IcPointCount {
 	_3("3", 3), _5("5", 5);
 
 	private String title;
+	
+	@Getter
 	private int value;
 
-	private ICPointCount(String title, int value) {
+	private IcPointCount(String title, int value) {
 		this.title = title;
 		this.value = value;
 	}
@@ -16,7 +20,4 @@ public enum ICPointCount {
 		return title;
 	}
 	
-	public int getValue() {
-		return value;
-	}
 }
